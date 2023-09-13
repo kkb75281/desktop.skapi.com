@@ -48,9 +48,13 @@
 
 <script setup>
 import { inject, ref } from 'vue';
+import { useRoute } from 'vue-router';
 import { skapi, account } from '@/main.js';
+import { services } from '@/data.js';
 
-let currnetService = inject('currnetService');
+let route = useRoute();
+let currnetPath = route.path.split('/')[2];
+let currnetService = services.value.find(service => service.service === currnetPath);
 let errorFile = ref('');
 let showFileName = (e) => {
     let file = e.target.value.split('\\')[2];
@@ -127,7 +131,7 @@ let showFileName = (e) => {
             align-items: center;
             justify-content: space-between;
             .setting {
-                width: 45%;
+                width: 47%;
                 .tit {
                     color: rgba(0, 0, 0, 0.40);
                     font-size: 16px;
@@ -207,7 +211,7 @@ let showFileName = (e) => {
             border: 1px solid rgba(0, 0, 0, 0.10);
 
             .noFile {
-                
+
             }
         }
         .create {
