@@ -2,7 +2,7 @@
 .containerWrap
     .container
         h2 Subdomain
-        template(v-if="currnetService.subdomain")
+        template(v-if="!currnetService.subdomain")
             .buttonWrap 
                 .refresh.clickable
                     .material-symbols-outlined.mid cached
@@ -14,34 +14,52 @@
                 .setting
                     .tit Subdomain
                     .cont 
-                        h5 {{ currnetService.subdomain }}
+                        h5 subdomain name here
                         .material-symbols-outlined.mid.btn edit
                 .setting
                     .tit 404 file
                     .cont 
-                        input(type="text" placeholder="Enter path eg. /404.html" :value="errorFile" @input="(e) => errorFile = e.target.value")
-                        .uploadBtn.btn
-                            .material-symbols-outlined.mid upload
-                            button(type="submit") Upload
+                        .customFile 
+                            input#fileName(value="Upload a file")
+                            label.uploadBtn.btn(for="file")
+                                .material-symbols-outlined.mid upload
+                                span Upload
+                            input#file(type="file" @change="showFileName")
         template(v-else)
             .create 
                 .tit Register Subdomain
                 .input 
                     input(type="text" placeholder="Name of Subdomain")
                     button Create
-    .container(v-if="currnetService.subdomain")
+    .container(v-if="!currnetService.subdomain")
         .filesHeader
-            .filesPathWrap
+            .filesPathWrap kk
             .filesButtonWrap
-                .material-symbols-outlined.mid cached
+                .material-symbols-outlined.mid.clickable cached
+                .material-symbols-outlined.mid.clickable more_vert
+                .uploadBtn
+                    .material-symbols-outlined.mid upload
+                    span Upload
         .filesWrapper
+            .noFile 
+                h2 No Files 
+                p You have not uploaded any files
 </template>
 
 <script setup>
 import { inject, ref } from 'vue';
+import { useRoute } from 'vue-router';
 import { skapi, account } from '@/main.js';
-import { currnetService} from '@/data.js';
+import { services } from '@/data.js';
+
+let route = useRoute();
+let currnetPath = route.path.split('/')[2];
+let currnetService = services.value.find(service => service.service === currnetPath);
 let errorFile = ref('');
+let showFileName = (e) => {
+    let file = e.target.value.split('\\')[2];
+    fileName.value = file;
+}
 </script>
 
 <style lang="less" scoped>
@@ -88,13 +106,32 @@ let errorFile = ref('');
                 margin-left: 40px;
             }
         }
+        .uploadBtn {
+            display: flex;
+            flex-wrap: nowrap;
+            align-items: center;
+            justify-content: center;
+            color: #293FE6;
+            width: 105px;
+            height: 32px;
+            border-radius: 8px;
+            border: 2px solid #293FE6;
+            cursor: pointer;
+
+            span {
+                margin-left: 3px;
+                font-size: 16px;
+                font-weight: 700;
+                color: #293FE6;
+            }
+        }
         .settingWrap {
             display: flex;
             flex-wrap: nowrap;
             align-items: center;
             justify-content: space-between;
             .setting {
-                width: 45%;
+                width: 47%;
                 .tit {
                     color: rgba(0, 0, 0, 0.40);
                     font-size: 16px;
@@ -103,7 +140,9 @@ let errorFile = ref('');
                 .cont {
                     position: relative;
                     width: 100%;
-                    padding: 12px 0;
+                    height: 44px;
+                    line-height: 44px;
+
                     &::before {
                         position: absolute;
                         content: '';
@@ -116,31 +155,23 @@ let errorFile = ref('');
                     }
                     h5 {
                         font-size: 16px;
-                        font-weight: 700;
-                    }
-                    input {
-                        border: 0;
-                        background-color: unset;
-                        font-size: 16px;
-                    }
-                    .uploadBtn {
-                        display: flex;
-                        flex-wrap: nowrap;
-                        align-items: center;
-                        color: #293FE6;
-                        height: 32px;
-                        padding: 0 12px;
-                        border-radius: 8px;
-                        border: 2px solid #293FE6;
-                        cursor: pointer;
-
-                        button {
-                            margin-left: 5px;
-                            border: 0;
-                            font-size: 16px;
+                        font-weight: 400;
+                        color: rgba(0,0,0,0.4);
+                        &:hover {
                             font-weight: 700;
-                            color: #293FE6;
+                            color: rgba(0,0,0,0.8);
+                            cursor: default;
+                        }
+                    }
+                    .customFile {
+                        #fileName {
+                            border: 0;
                             background-color: unset;
+                            font-size: 16px;
+                            color: rgba(0,0,0,0.4);
+                        }
+                        input[type="file"] {
+                            display: none;
                         }
                     }
                     .btn {
@@ -148,8 +179,39 @@ let errorFile = ref('');
                         right: 0;
                         top: 50%;
                         transform: translateY(-50%);
+                        cursor: pointer;
                     }
                 }
+            }
+        }
+        .filesHeader {
+            display: flex;
+            flex-wrap: nowrap;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 28px;
+            .filesPathWrap {
+
+            }
+            .filesButtonWrap {
+                display: flex;
+                flex-wrap: nowrap;
+                align-items: center;
+                .mid {
+                    &:nth-child(2) {
+                        margin: 0 25px;
+                    }
+                }
+            }
+        }
+        .filesWrapper {
+            width: 100%;
+            min-height: 448px;
+            border-radius: 8px;
+            border: 1px solid rgba(0, 0, 0, 0.10);
+
+            .noFile {
+
             }
         }
         .create {
