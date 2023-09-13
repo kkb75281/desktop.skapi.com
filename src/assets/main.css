@@ -1,0 +1,223 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: "Radio Canada", sans-serif;
+}
+
+body {
+  width: 100%;
+  height: 100%;
+  background-color: #f0f0f0;
+  color: rgba(0, 0, 0, 0.80);
+}
+
+body.fa {
+  background-color: #fafafa;
+}
+
+/* error */
+.material {
+  display: flex;
+  flex-wrap: nowrap;
+  align-items: center; 
+}
+.material span {
+  margin-left: 6px;
+}
+
+/* password icon */
+.passwordInput {
+  position: relative;
+}
+.passwordInput .passwordIcon {
+  position: absolute;
+  right: 15px;
+  bottom: 8px;
+  opacity: 0.5;
+  cursor: pointer;
+}
+
+/* material icon */
+.material-symbols-outlined.big {
+  font-variation-settings:
+  'FILL' 1,
+  'wght' 400,
+  'GRAD' 0,
+  'opsz' 32;
+  font-size: 32px;
+}
+.material-symbols-outlined.mid {
+  font-variation-settings:
+  'FILL' 1,
+  'wght' 400,
+  'GRAD' 0,
+  'opsz' 24;
+  font-size: 24px;
+}
+.material-symbols-outlined.sml {
+  font-variation-settings:
+  'FILL' 1,
+  'wght' 400,
+  'GRAD' 0,
+  'opsz' 20;
+  font-size: 20px;
+}
+.material-symbols-outlined.empty.sml {
+    font-variation-settings:
+    'FILL' 0,
+    'wght' 400,
+    'GRAD' 0,
+    'opsz' 20;
+    font-size: 20px;
+  }
+
+/* loading img */
+.loading {
+  width: 24px;
+  height: 24px;
+  margin: 0 auto;
+  animation: rotate_image 1.5s linear infinite;
+  transform-origin: 50% 50%;
+}
+@keyframes rotate_image {
+  100% {
+      transform: rotate(360deg);
+  }
+}
+
+input:focus {outline: none;}
+select:focus {outline: none;}
+
+/* select */
+.customSelect {
+  position: relative;
+}
+.customSelect select {
+  width: 100%;
+  border: 0;
+  border-radius: 8px;
+  appearance: none;
+  cursor: pointer;
+}
+.customSelect .selectArrowDown {
+  position: absolute;
+  right: 13px;
+  top: 44%;
+  transform: translateY(-50%);
+  border-radius: 0;
+  user-select: none;
+  /* z-index: -1; */
+}
+
+/* checkBox */
+.customCheckBox {
+  margin-bottom: 0;  
+}
+.customCheckBox input {
+  display: none;
+}
+.customCheckBox label {
+  position: relative;
+  display: flex;
+  flex-wrap: nowrap;
+  align-items: center;
+  color: rgba(0, 0, 0, 0.65);
+  font-size: 16px;
+  font-weight: 400;
+  margin-bottom: 0;
+}
+.customCheckBox label::before {
+  display: inline-block;
+  content:"";
+  width: 16px;
+  height: 16px;
+  margin-right: 8px;
+  border: 2px solid #5f5f5f;
+  background-color: #eee;
+  border-radius: 4px;
+}
+.customCheckBox label .check {
+  position: absolute;
+  left: -2px;
+  top:  -2px;
+  width: 20px;
+  height: 20px;
+  color: #fff;
+  opacity: 0;
+  cursor: pointer;
+}
+.customCheckBox input:checked+label::before{
+  background-color: #5f5f5f;
+} 
+.customCheckBox input:checked+label .check{
+  opacity: 1;
+} 
+.customCheckBox span {
+  user-select: none;
+}
+form .error {
+  margin-top: 20px;
+  color: #F04E4E;
+  font-size: 16px;
+  font-weight: 400;
+}
+form .error svg {
+  margin-right: 4px;
+}
+form .error span {
+  vertical-align: middle;
+}
+
+/* clickable icon */
+.clickable {
+  cursor: pointer;
+  color: rgba(0, 0, 0, 0.6);
+}
+
+/* toggle button */
+.toggleWrap {
+  display: flex;
+  flex-wrap: nowrap;
+  align-items: center;
+  opacity: 1;
+}
+.toggleWrap.locked {
+  opacity: 0.4;
+}
+.toggleWrap.active .toggleBg {
+  background-color: #293FE6;
+}
+.toggleWrap.active .toggleBg .toggleBtn {
+  transform: translate(31px, -50%);
+  transition: all 1s;
+}
+.toggleWrap span {
+  margin-right: 20px;
+  color: rgba(0, 0, 0, 0.40);
+  font-size: 16px;
+  font-weight: 500;
+}
+.toggleWrap .toggleBg {
+  position: relative;
+  width: 63px;
+  height: 32px;
+  border-radius: 16px;
+  background-color: rgba(0,0,0,0.25);
+  transition: all 1s;
+}
+.toggleWrap .toggleBg .toggleBtn {
+  position: absolute;
+  width: 26px;
+  height: 26px;
+  right: unset;
+  left: 3px;
+  top: 50%;
+  transform: translateY(-50%);
+  border-radius: 50%;
+  background-color: #eee;
+  transition: all 1s;
+  cursor: pointer;
+}
+
+
