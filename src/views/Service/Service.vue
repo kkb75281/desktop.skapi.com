@@ -132,13 +132,12 @@ template(v-if='currnetService')
 </template>
 
 <script setup>
-import { inject, nextTick, onMounted, ref, watch } from 'vue';
-import { useRoute, useRouter } from 'vue-router';
-import { services, users } from '@/data.js';
+import { nextTick, ref, watch } from 'vue';
+import { useRouter } from 'vue-router';
+import { currnetService } from '@/data.js';
 import DisableService from '@/views/Service/Overlay/DisableService.vue';
 import DeleteService from '@/views/Service/Overlay/DeleteService.vue';
 
-const route = useRoute();
 const router = useRouter();
 let promiseRunning = ref(false);
 let ableDisable = ref(true);
@@ -150,8 +149,6 @@ let openDeleteService = ref(false);
 let inputServiceName = '';
 let inputCors = ref('');
 let inputKey = ref('')
-let currnetPath = route.path.split('/')[2];
-let currnetService = services.value.find(service => service.service === currnetPath);
 
 let clicked = (e) => {
     let target = e.currentTarget;
@@ -159,16 +156,16 @@ let clicked = (e) => {
     target.classList.add('clicked');
     setTimeout(() => {
         if(target.classList.contains('user')) {
-            router.push({ path: `/dashboard/${currnetService.service}/users` });
+            router.push({ path: `/dashboard/${currnetService.value.service}/users` });
         }
         if(target.classList.contains('record')) {
-            router.push({ path: `/dashboard/${currnetService.service}/records` });
+            router.push({ path: `/dashboard/${currnetService.value.service}/records` });
         }
         if(target.classList.contains('mail')) {
-            router.push({ path: `/dashboard/${currnetService.service}/mail` });
+            router.push({ path: `/dashboard/${currnetService.value.service}/mail` });
         }
         if(target.classList.contains('domain')) {
-            router.push({ path: `/dashboard/${currnetService.service}/subdomain` });
+            router.push({ path: `/dashboard/${currnetService.value.service}/subdomain` });
         }
     }, 200);
 }
@@ -188,18 +185,18 @@ let copy = (e) => {
 }
 let modify = () => {
     promiseRunning.value = true;
-    if(currnetService.name === inputServiceName) {
+    if(currnetService.value.name === inputServiceName) {
         promiseRunning.value = false;
         modifyServiceName.value = false;
     } else {
-        currnetService.name = inputServiceName;
+        currnetService.value.name = inputServiceName;
         promiseRunning.value = false;
         modifyServiceName.value = false;
     }
 }
 let disableCheck = () => {
-    if(currnetService.active === 0) {
-        currnetService.active = 1;
+    if(currnetService.value.active === 0) {
+        currnetService.value.active = 1;
     } else {
         openDisableService.value = true;
     }

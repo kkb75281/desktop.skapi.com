@@ -1,5 +1,5 @@
 <template lang="pug">
-template(v-if='serviceReady')
+template(v-if='currnetService')
     .navSide
         router-link.logo(to="/")
             img(src="@/assets/symbol-logo.png")
@@ -83,19 +83,16 @@ template(v-if='serviceReady')
 </template>
 
 <script setup>
-import { provide, ref } from 'vue';
+import { ref } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
-import { services, users, serviceFetching } from '@/data.js';
+import { services, users, serviceFetching, currnetService } from '@/data.js';
 import { skapi, account } from '@/main.js';
 
-
+currnetService.value = null;
 
 const route = useRoute();
 const router = useRouter();
 let accountInfo = ref(false);
-let currnetPath = ref('');
-let currnetService = ref(null);
-let serviceReady = ref(false);
 let navigateToPage = () => {
     accountInfo.value = false;
     router.push({ path: '/accountSettings' });
@@ -108,10 +105,7 @@ let logout = async () => {
 }
 
 let getCurrentService = () => {
-    currnetPath.value = route.path.split('/')[2];
-    currnetService.value = services.value.find(service => service.service === currnetPath.value);
-    // provide('currnetService', currnetService); // inject 왜 안되는지 모름. service.vue 에서 import 로 가져오는걸로...
-    serviceReady.value = true;
+    currnetService.value = services.value.find(service => service.service === route.path.split('/')[2]);
 }
 
 if (serviceFetching.value instanceof Promise) {

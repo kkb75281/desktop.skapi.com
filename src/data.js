@@ -1,7 +1,7 @@
 import { ref } from "vue";
 export let serviceFetching = ref(false);
 export let services = ref([])
-
+export let currnetService = ref(null);
 export let users = [
     {
         block: 0,
