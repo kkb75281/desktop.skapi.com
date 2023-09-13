@@ -1,5 +1,5 @@
 <template lang="pug">
-.navBar
+.navBar(@click="accountInfo = !accountInfo")
     router-link(to="/")
         img.logo(src="@/assets/logo.png")
     .menu
@@ -8,7 +8,7 @@
                 a(href="https://docs.skapi.com" target="_blank") Documentation
             li
                 router-link(to="/dashboard") Dashboard
-            li.account(@click="accountInfo = !accountInfo") R
+            li.account(@click.stop="accountInfo = !accountInfo") R
         ul(v-else)
             li 
                 a(href="https://docs.skapi.com" target="_blank") Documentation
@@ -16,7 +16,7 @@
                 router-link(to="/login") Login
             li 
                 router-link.signup(to="/signup") Sign-up
-    .prof(v-if="accountInfo && account")
+    .prof(v-if="accountInfo && account" @click.stop)
         .member 
             span {{ account.email }}
         .settings 
@@ -38,11 +38,19 @@ let route = useRoute();
 let router = useRouter();
 let accountInfo = ref(false);
 
+let closeAccountInfo = () => {
+    accountInfo.value = false;
+}
+
+defineExpose({
+    closeAccountInfo
+});
+
 let navigateToPage = () => {
     accountInfo.value = false;
     router.push({ path: '/accountSettings' });
 }
-let logout = async() => {
+let logout = async () => {
     accountInfo.value = false;
     account.value = null;
     await skapi.logout();
@@ -64,6 +72,7 @@ let logout = async() => {
     .logo {
         width: 120px;
     }
+
     .menu {
         ul {
             display: flex;
@@ -73,7 +82,7 @@ let logout = async() => {
             li {
                 list-style: none;
                 margin-right: 60px;
-                
+
                 a {
                     color: #293FE6;
                     text-decoration: none;
@@ -88,9 +97,11 @@ let logout = async() => {
                         background: #293FE6;
                     }
                 }
+
                 &:last-child {
                     margin-right: 0;
                 }
+
                 &.account {
                     position: relative;
                     margin-right: 0;
@@ -109,6 +120,7 @@ let logout = async() => {
             }
         }
     }
+
     .prof {
         position: absolute;
         right: 40px;
@@ -117,7 +129,7 @@ let logout = async() => {
         padding: 20px 20px 0;
         overflow: hidden;
         background-color: #fafafa;
-        color: rgba(0,0,0,0.80);
+        color: rgba(0, 0, 0, 0.80);
         border: 1px solid rgba(0, 0, 0, 0.15);
         filter: drop-shadow(8px 12px 36px rgba(0, 0, 0, 0.10));
         border-radius: 8px;
@@ -128,14 +140,16 @@ let logout = async() => {
                 font-size: 16px;
                 font-weight: 700;
             }
+
             span {
                 font-size: 14px;
             }
         }
+
         .settings {
             position: relative;
             margin-top: 40px;
-            
+
             &::before {
                 position: absolute;
                 content: '';
@@ -146,6 +160,7 @@ let logout = async() => {
                 transform: translateX(-20px);
                 background-color: rgba(0, 0, 0, 0.15);
             }
+
             &::after {
                 position: absolute;
                 content: '';
@@ -156,6 +171,7 @@ let logout = async() => {
                 transform: translateX(-20px);
                 background-color: rgba(0, 0, 0, 0.15);
             }
+
             .setting {
                 display: flex;
                 align-items: center;
@@ -168,6 +184,7 @@ let logout = async() => {
                 &:last-child {
                     margin-bottom: 0;
                 }
+
                 span {
                     &:first-child {
                         fill: #293FE6;
@@ -176,21 +193,21 @@ let logout = async() => {
                 }
             }
         }
+
         .policy {
             display: flex;
             align-items: center;
             justify-content: center;
             font-size: 12px;
             font-weight: 500;
-            color: rgba(0,0,0,0.15);
+            color: rgba(0, 0, 0, 0.15);
             padding: 27px 0 10px;
         }
     }
 }
 
 @media (max-width: 1420px) {
-.navBar {
-    width: 100%;
-}
-}
-</style>
+    .navBar {
+        width: 100%;
+    }
+}</style>

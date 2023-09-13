@@ -4,21 +4,18 @@ template(v-if='currnetService')
         .info
             .title 
                 template(v-if="modifyServiceName")
-                    form.modifyForm(@submit.prevent="modify" action="")
-                        input#modifyServiceName(type="text" :placeholder="`${currnetService.name}`" :value='inputServiceName' @input="(e) => inputServiceName = e.target.value")
-                        .buttonWrap 
-                            template(v-if="promiseRunning")
-                                img.loading(src="@/assets/img/loading.png")
-                            template(v-else)
-                                button.cancel(type="button" @click="modifyServiceName = false;") Cancel
-                                button.save(type="submit") Save
+                    form.modifyForm(@submit.prevent="changeServiceName")
+                        input#modifyServiceName(type="text" placeholder="Service name" :value='inputServiceName' @input="(e) => inputServiceName = e.target.value" required)
+                        .buttonWrap
+                            button.cancel(type="button" @click="modifyServiceName = false;") Cancel
+                            button.save(type="submit") Save
                 template(v-else)
                     h2 {{ currnetService.name }}
                     .material-symbols-outlined.mid.modify.clickable(@click="inputServiceName = currnetService.name; modifyServiceName = true;") edit
-            .toggleWrap(:class="{'active': currnetService.active == 1 }")
+            .toggleWrap(:class="{'active': currnetService.active === 1 }")
                 span Disable/Enable
                 .toggleBg
-                    .toggleBtn(@click="disableCheck")
+                    .toggleBtn(@click="enableDisableToggle")
         .info
             .title 
                 h2 Service Information
@@ -33,42 +30,43 @@ template(v-if='currnetService')
                     h5 {{ currnetService.owner }}
                     .copy.clickable(@click="copy")
                         .material-symbols-outlined.mid file_copy
-                .list(style="width: 50%")
-                    span Service Location
-                    h5 {{ currnetService.created_locale }}
+                //- .list(style="width: 50%")
+                //-     span Service Location
+                //-     h5 {{ currnetService.created_locale }}
                 .list(style="width: 50%")
                     span Date Created
-                    h5 {{ currnetService.timestamp }}
+                    h5 {{ new Date(currnetService.timestamp).toDateString() }}
         .info
             .title 
                 h2 Security Setting
             .listWrap
                 .list(style="width: 100%")
-                    span(:class="{ active: modifyCors }") Cors
+                    span(:class="{ active: modifyCors }") Cors Origin
                     template(v-if="modifyCors")
-                        form.modifyForm(style="margin-top: 8px")
-                            input#modifyCors(type="text" :placeholder="`${currnetService.cors}`" :value='inputCors' @input="(e) => inputCors = e.target.value")
+                        form.modifyForm(style="margin-top: 8px" @submit.prevent="changeCors")
+                            input#modifyCors(type="text" placeholder='example.origin.com' :value='inputCors' @input="(e) => inputCors = e.target.value")
                             .buttonWrap 
                                 button.cancel(type="button" @click="modifyCors = false;") Cancel
-                                button.save(type="button") Save
+                                button.save(type="submit") Save
                     template(v-else)
-                        h5 {{ currnetService.cors }}
-                        .material-symbols-outlined.mid.pen.clickable(@click="inputCors = currnetService.cors; modifyCors = true;") edit
+                        h5 {{ currnetService.cors || '*' }}
+                        .material-symbols-outlined.mid.pen.clickable(@click="inputCors = currnetService.cors === '*' ? '' : currnetService.cors; modifyCors = true;") edit
+
                 .list(style="width: 100%")
                     span(:class="{ active: modifyKey }") Secret Key
                     template(v-if="modifyKey")
-                        form.modifyForm(style="margin-top: 8px")
-                            input#modifyKey(type="text" :placeholder="`${currnetService.secretKey}`" :value='inputKey' @input="(e) => inputKey = e.target.value")
+                        form.modifyForm(style="margin-top: 8px" @submit.prevent="setSecretKey")
+                            input#modifyKey(type="text" placeholder="Secret key for secure request" :value='inputKey' @input="(e) => inputKey = e.target.value")
                             .buttonWrap 
                                 button.cancel(type="button" @click="modifyKey = false;") Cancel
-                                button.save(type="button") Save
+                                button.save(type="submit") Save
                     template(v-else)
-                        h5 {{ currnetService.secretKey }}
-                        .material-symbols-outlined.mid.pen.clickable(@click="inputKey = currnetService.secretKey; modifyKey = true;") edit
+                        h5 {{ currnetService.api_key || 'No key' }}
+                        .material-symbols-outlined.mid.pen.clickable(@click="inputKey = currnetService.api_key; modifyKey = true;") edit
             .que 
                 .material-symbols-outlined.empty.sml help 
                 span Help
-        .info.hover.user(@click="clicked")
+        router-link.info.hover.user.clicked(:to='`/dashboard/${currnetService.service}/users`')
             .titleWrap
                 .title 
                     .material-symbols-outlined.big group
@@ -77,40 +75,31 @@ template(v-if='currnetService')
                 .list
                     span # of Users
                     h5 {{ currnetService.users }}
-                .list
-                    span # of Blocked Users
-                    h5 545
-                .list
-                    span # of Inactive Users
-                    h5 545
-        .info.hover.record(@click="clicked")
+        router-link.info.hover.record.clicked(:to='`/dashboard/${currnetService.service}/records`')
             .titleWrap
                 .title 
                     .material-symbols-outlined.big folder_open
                     h2 Records
             .listWrap.noWrap
                 .list
-                    span # of Records
-                    h5 545
+                    span # of database storage Used
+                    h5 {{ convertToMb(storageInfo?.[currnetService.service]?.database) }}
                 .list
-                    span # of Tables
-                    h5 545
-                .list
-                    span # of Storage Used
-                    h5 233KB
-        .info.hover.mail(@click="clicked")
+                    span # of cloud storage Used
+                    h5 {{ convertToMb(storageInfo?.[currnetService.service]?.cloud) }}
+        router-link.info.hover.mail.clicked(:to='`/dashboard/${currnetService.service}/mail`')
             .titleWrap
                 .title 
                     .material-symbols-outlined.big mail
                     h2 Mail
             .listWrap.noWrap
                 .list
-                    span # of Newsletter
-                    h5 545
-                .list
                     span # Subscribers
-                    h5 545
-        .info.hover.domain(@click="clicked")
+                    h5 {{ currnetService.newsletter_subscribers }}
+                .list 
+                    span # Mail storage used 
+                    h5 {{ convertToMb(storageInfo?.[currnetService.service]?.email) }}
+        router-link.info.hover.domain.clicked(:to='`/dashboard/${currnetService.service}/subdomain`')
             .titleWrap
                 .title 
                     .material-symbols-outlined.big language
@@ -118,15 +107,15 @@ template(v-if='currnetService')
             .listWrap.noWrap
                 .list
                     span Registered Subdomain
-                    h5 {{ currnetService.subdomain }}
+                    h5 {{ currnetService.subdomain ? currnetService.subdomain + ".skapi.com" : 'No subdomain' }}
                 .list
-                    span Storage used
-                    h5 545
+                    span Host storage used
+                    h5 {{ convertToMb(storageInfo?.[currnetService.service]?.host) }}
     .deleteWrap(@click="openDeleteService = true;")
         .deleteInner
             .material-symbols-outlined.mid delete
             span Delete Service
-    DisableService(v-if="openDisableService" @close="openDisableService = false;")
+    DisableService(v-if="openDisableService" @close="disableService")
     DeleteService(v-if="openDeleteService" @close="openDeleteService = false;")
 
 </template>
@@ -134,13 +123,20 @@ template(v-if='currnetService')
 <script setup>
 import { nextTick, ref, watch } from 'vue';
 import { useRouter } from 'vue-router';
-import { currnetService } from '@/data.js';
+import { currnetService, storageInfo } from '@/data.js';
+import { skapi } from '@/main.js';
 import DisableService from '@/views/Service/Overlay/DisableService.vue';
 import DeleteService from '@/views/Service/Overlay/DeleteService.vue';
 
 const router = useRouter();
-let promiseRunning = ref(false);
-let ableDisable = ref(true);
+let convertToMb = (size) => {
+    if (size) {
+        return (size / (1024 * 1024)).toFixed(2) + ' MB'
+    }
+    else {
+        return '-'
+    }
+}
 let modifyServiceName = ref(false);
 let modifyCors = ref(false);
 let modifyKey = ref(false);
@@ -148,27 +144,28 @@ let openDisableService = ref(false);
 let openDeleteService = ref(false);
 let inputServiceName = '';
 let inputCors = ref('');
-let inputKey = ref('')
+let inputKey = '';
+let enableDisablePromise = ref(false);
 
-let clicked = (e) => {
-    let target = e.currentTarget;
+// let clicked = (e) => {
+//     let target = e.currentTarget;
 
-    target.classList.add('clicked');
-    setTimeout(() => {
-        if(target.classList.contains('user')) {
-            router.push({ path: `/dashboard/${currnetService.value.service}/users` });
-        }
-        if(target.classList.contains('record')) {
-            router.push({ path: `/dashboard/${currnetService.value.service}/records` });
-        }
-        if(target.classList.contains('mail')) {
-            router.push({ path: `/dashboard/${currnetService.value.service}/mail` });
-        }
-        if(target.classList.contains('domain')) {
-            router.push({ path: `/dashboard/${currnetService.value.service}/subdomain` });
-        }
-    }, 200);
-}
+//     target.classList.add('clicked');
+//     setTimeout(() => {
+//         if (target.classList.contains('user')) {
+//             router.push({ path: `/dashboard/${currnetService.value.service}/users` });
+//         }
+//         if (target.classList.contains('record')) {
+//             router.push({ path: `/dashboard/${currnetService.value.service}/records` });
+//         }
+//         if (target.classList.contains('mail')) {
+//             router.push({ path: `/dashboard/${currnetService.value.service}/mail` });
+//         }
+//         if (target.classList.contains('domain')) {
+//             router.push({ path: `/dashboard/${currnetService.value.service}/subdomain` });
+//         }
+//     }, 200);
+// }
 let copy = (e) => {
     let currentTarget = e.currentTarget;
     let doc = document.createElement('textarea');
@@ -183,24 +180,80 @@ let copy = (e) => {
         currentTarget.classList.remove('copied');
     }, 1000);
 }
-let modify = () => {
-    promiseRunning.value = true;
-    if(currnetService.value.name === inputServiceName) {
-        promiseRunning.value = false;
-        modifyServiceName.value = false;
-    } else {
+
+let changeServiceName = () => {
+    if (currnetService.value.name !== inputServiceName) {
+        let previous = currnetService.value.name;
+        skapi.updateService(currnetService.value.service, {
+            name: inputServiceName
+        }).catch(err => {
+            currnetService.value.name = previous;
+            throw err;
+        });
         currnetService.value.name = inputServiceName;
-        promiseRunning.value = false;
-        modifyServiceName.value = false;
     }
+    modifyServiceName.value = false;
 }
-let disableCheck = () => {
-    if(currnetService.value.active === 0) {
+let changeCors = () => {
+    let previous = currnetService.value.cors;
+    let corsArr = inputCors.value.split(',');
+    corsArr = skapi.checkCorsOrigin(corsArr);
+    skapi.updateService(currnetService.value.service, {
+        cors: corsArr
+    }).catch(err => {
+        currnetService.value.cors = previous;
+        throw err;
+    });
+
+    currnetService.value.cors = corsArr.join(', ');
+    modifyCors.value = false;
+}
+let setSecretKey = () => {
+    let previous = currnetService.value.api_key;
+    skapi.updateService(currnetService.value.service, {
+        api_key: inputKey
+    }).catch(err => {
+        currnetService.value.api_key = previous;
+        throw err;
+    });
+
+    currnetService.value.api_key = inputKey;
+    modifyKey.value = false;
+}
+let enableDisableToggle = () => {
+    if (enableDisablePromise.value) {
+        return;
+    }
+    if (currnetService.value.active === 0) {
+        // enable
+        enableDisablePromise.value = skapi.enableService(currnetService.value.service).catch(err => {
+            currnetService.value.active = 0;
+            throw err;
+        }).finally(_ => {
+            enableDisablePromise.value = false;
+        });;
         currnetService.value.active = 1;
     } else {
+        // disable (opens disable service dialog)
         openDisableService.value = true;
     }
 }
+let disableService = (e) => {
+    if (enableDisablePromise.value) {
+        return;
+    }
+    if (e === 'disable') {
+        enableDisablePromise.value = skapi.disableService(currnetService.value.service).catch(err => {
+            currnetService.value.active = 1;
+            throw err;
+        }).finally(_ => {
+            enableDisablePromise.value = false;
+        });
+        currnetService.value.active = 0;
+    }
+    openDisableService.value = false;
+}
+
 watch(modifyServiceName, () => {
     if (modifyServiceName.value) {
         nextTick(() => {
@@ -228,6 +281,7 @@ watch(modifyCors, () => {
 .infoWrap {
     display: flex;
     flex-wrap: wrap;
+
     .info {
         width: 100%;
         padding: 40px;
@@ -241,35 +295,49 @@ watch(modifyCors, () => {
             flex-wrap: nowrap;
             justify-content: space-between;
         }
+
         &:not(:first-child) {
             width: 49%;
             margin-right: 2%;
         }
-        &:nth-child(3), &:nth-child(5), &:nth-child(7) {
+
+        &:nth-child(3),
+        &:nth-child(5),
+        &:nth-child(7) {
             margin-right: 0;
         }
+
         &.hover {
             &.clicked {
+                // router-link 스타일 없에기
+                text-decoration: unset;
+                color: unset;
+            }
+
+            &.clicked:active {
                 box-shadow: 0 0 0 4px #A5AFFF inset;
             }
+
             &:hover {
                 cursor: pointer;
                 background-color: rgba(41, 63, 230, 0.05);
                 filter: drop-shadow(8px 12px 36px rgba(255, 255, 255, 0.30));
             }
         }
+
         .titleWrap {
             display: flex;
             flex-wrap: nowrap;
             align-items: center;
             justify-content: space-between;
-            
+
             svg {
                 width: 32px;
                 height: 32px;
-                color: rgba(0,0,0,0.4);
+                color: rgba(0, 0, 0, 0.4);
             }
         }
+
         .title {
             display: flex;
             flex-wrap: nowrap;
@@ -278,9 +346,11 @@ watch(modifyCors, () => {
             h2 {
                 font-size: 24px;
             }
+
             .material-symbols-outlined {
                 margin-right: 17px;
             }
+
             .modify {
                 width: 24px;
                 height: 24px;
@@ -288,6 +358,7 @@ watch(modifyCors, () => {
                 margin-right: 0;
             }
         }
+
         .listWrap {
             display: flex;
             flex-wrap: wrap;
@@ -300,31 +371,36 @@ watch(modifyCors, () => {
                     width: 33.333%;
                 }
             }
+
             .list {
                 position: relative;
                 margin-top: 28px;
 
                 span {
                     font-size: 16px;
-                    color: rgba(0,0,0,0.4);
+                    color: rgba(0, 0, 0, 0.4);
 
                     &.active {
                         font-weight: 700;
-                        color: rgba(0,0,0,0.6);
+                        color: rgba(0, 0, 0, 0.6);
                     }
                 }
+
                 h5 {
                     font-size: 16px;
                     font-weight: 700;
-                    color: rgba(0,0,0,0.6);
+                    color: rgba(0, 0, 0, 0.6);
                     margin-top: 8px;
                 }
-                .copy, .pen {
+
+                .copy,
+                .pen {
                     position: absolute;
                     right: 0;
                     top: 50%;
                     transform: translateY(-50%);
                 }
+
                 .copy {
                     &::after {
                         position: absolute;
@@ -348,6 +424,7 @@ watch(modifyCors, () => {
                 }
             }
         }
+
         .que {
             position: absolute;
             top: 46px;
@@ -355,7 +432,7 @@ watch(modifyCors, () => {
             display: flex;
             flex-wrap: nowrap;
             align-items: center;
-            color: rgba(0,0,0,0.6);
+            color: rgba(0, 0, 0, 0.6);
             cursor: help;
 
             span {
@@ -366,6 +443,7 @@ watch(modifyCors, () => {
         }
     }
 }
+
 .deleteWrap {
     display: inline-block;
     float: right;
@@ -378,6 +456,7 @@ watch(modifyCors, () => {
         display: flex;
         flex-wrap: nowrap;
         align-items: center;
+
         span {
             margin-left: 14px;
             font-size: 16px;
@@ -386,6 +465,7 @@ watch(modifyCors, () => {
         }
     }
 }
+
 .modifyForm {
     display: flex;
     flex-wrap: nowrap;
@@ -400,15 +480,16 @@ watch(modifyCors, () => {
         border-radius: 8px;
         font-size: 16px;
         font-weight: 500;
-        color: rgba(0,0,0,0.8);
+        color: rgba(0, 0, 0, 0.8);
     }
+
     .buttonWrap {
         // width: 35%;
         display: flex;
         flex-wrap: nowrap;
         align-items: center;
         justify-content: end;
-        
+
         button {
             border: 2px solid #293FE6;
             border-radius: 8px;
@@ -416,11 +497,13 @@ watch(modifyCors, () => {
             font-size: 16px;
             font-weight: 700;
             cursor: pointer;
+
             &.cancel {
                 background-color: unset;
                 color: #293FE6;
                 margin-right: 12px;
             }
+
             &.save {
                 background-color: #293FE6;
                 color: #fff;

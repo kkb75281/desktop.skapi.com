@@ -1,38 +1,21 @@
 <template lang="pug">
-#disableService(@click="closeWindow")
-    .wrap
+#disableService(@click="emits('close')")
+    .wrap(@click.stop)
         .title Disable Service
-        p You sure want to disable the service? This action will disable all the functions.
+        p This action will disable your service. Unless the service is re-enabled, the disabled service will be deleted after 1 month.
         .buttonWrap 
-            button.cancel(@click="emits('close');") Cancel
-            button.disable(@click="disable") Disable
+            button.cancel(@click="emits('close')") Cancel
+            button.disable(@click="emits('close','disable')") Disable
 </template>
 
 <script setup>
-import { inject } from 'vue';
-
 let emits = defineEmits(['close']);
-let currnetService = inject('currnetService');
-
-console.log(currnetService);
-
-let closeWindow = (e) => {
-    let rect = e.target.getBoundingClientRect();
-
-    if (rect.left == 0 ||rect.right == 0 || rect.top == 0 || rect.bottom == 0) {
-        emits('close');
-    }
-}
-let disable = () => {
-    currnetService.active = 0
-    console.log(currnetService)
-    emits('close');
-}
 </script>
 
 <style lang="less" scoped>
 #disableService {
-    position: absolute;
+    position: fixed;
+    overflow: auto;
     left: 0;
     top: 0;
     width: 100vw;
@@ -40,7 +23,8 @@ let disable = () => {
     background-color: rgba(26, 26, 26, 0.25);
     z-index: 99999;
 }
-.wrap {    
+
+.wrap {
     position: absolute;
     left: 50%;
     top: 50%;
@@ -66,9 +50,10 @@ let disable = () => {
             bottom: -28px;
             width: calc(100% + 56px);
             height: 1px;
-            background-color: rgba(0,0,0,0.1);
+            background-color: rgba(0, 0, 0, 0.1);
         }
     }
+
     p {
         width: 300px;
         margin-top: 56px;
@@ -76,12 +61,13 @@ let disable = () => {
         font-size: 16px;
         font-weight: 400;
         line-height: 25px;
-        color: rgba(0,0,0,0.8);
+        color: rgba(0, 0, 0, 0.8);
 
         &:last-child {
             margin: 0;
         }
     }
+
     .buttonWrap {
         display: flex;
         flex-wrap: nowrap;
@@ -94,9 +80,11 @@ let disable = () => {
             background-color: unset;
             cursor: pointer;
         }
+
         .cancel {
             border: 0;
         }
+
         .disable {
             border-radius: 8px;
             border: 2px solid #293FE6;
@@ -104,7 +92,8 @@ let disable = () => {
         }
     }
 }
+
 dialog::backdrop {
-    background-color: rgba(0,0,0,0.2);
+    background-color: rgba(0, 0, 0, 0.2);
 }
 </style>

@@ -1,6 +1,6 @@
 <template lang="pug">
 template(v-if='currnetService')
-    .navSide
+    .navSide(@click='accountInfo = false') 
         router-link.logo(to="/")
             img(src="@/assets/symbol-logo.png")
         .menuList 
@@ -19,7 +19,7 @@ template(v-if='currnetService')
             router-link.menu(:to="`/dashboard/${currnetService.service}/subdomain`" :class="{'active': route.name == 'subdomain'}")
                 .material-symbols-outlined.big language
                 p Subdomain
-    .settingWrap    
+    .settingWrap(@click='accountInfo = false') 
         .setting 
             .material-symbols-outlined.empty.sml.que help
             span Help & getting started
@@ -36,7 +36,7 @@ template(v-if='currnetService')
         //-             .dark
         //-                 .material-symbols-outlined.empty.sml clear_night
         //-                 span Dark
-    .navCont 
+    .navCont(@click='accountInfo = false') 
         .navTop
             .routeWrap
                 nav 
@@ -59,7 +59,7 @@ template(v-if='currnetService')
                         a(href="https://docs.skapi.com" target="_blank") Documentation
                     li
                         router-link(to="/dashboard") Dashboard
-                    li.account(@click="accountInfo = !accountInfo") R
+                    li.account(@click.stop="accountInfo = !accountInfo") R
                 ul(v-else)
                     li 
                         a(href="https://docs.skapi.com" target="_blank") Documentation
@@ -67,7 +67,7 @@ template(v-if='currnetService')
                         router-link(to="/login") Login
                     li 
                         router-link.signup(to="/signup") Sign-up
-            .prof(v-if="accountInfo && account")
+            .prof(v-if="accountInfo && account" @click.stop)
                 .member 
                     span {{ account.email }}
                 .settings 
@@ -78,7 +78,7 @@ template(v-if='currnetService')
                         .material-symbols-outlined.mid logout
                         .click Logout
                 .policy terms of service ● privacy policy
-        .cont 
+        .cont(@click='accountInfo = false') 
             router-view
 </template>
 

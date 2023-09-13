@@ -7,13 +7,12 @@ template(v-if="account !== 'pending'")
 import { useRoute, useRouter } from 'vue-router';
 import { account, skapi } from '@/main.js';
 import { watch } from 'vue';
-import { services, serviceFetching } from '@/data.js';
+import { services, serviceFetching, storageInfo } from '@/data.js';
 const router = useRouter();
 let route = useRoute();
 
 watch(account, (a) => {
     // 유저가 주소치고 들어왔는데 account가 로그아웃되있을때 로그인 패이지로 이동
-    console.log({ a })
     if (a === null) {
         switch (route.path.split('/')[1]) {
             case 'dashboard':
@@ -25,9 +24,17 @@ watch(account, (a) => {
         }
     }
     else {
+
         serviceFetching.value = skapi.getServices().then(s => {
-            console.log(s);
-            services.value = s.reverse();
+            let sLen = s.length;
+            while (sLen--) {
+                services.value.push(s[sLen]);
+                let service = s[sLen].service;
+                skapi.storageInformation(service).then(i => {
+                    // get storage info of all services
+                    storageInfo.value[service] = i;
+                });
+            }
         }).finally(() => {
             serviceFetching.value = false;
         });

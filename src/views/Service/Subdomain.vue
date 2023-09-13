@@ -40,10 +40,8 @@
 <script setup>
 import { inject, ref } from 'vue';
 import { skapi, account } from '@/main.js';
-
-let currnetService = inject('currnetService');
+import { currnetService} from '@/data.js';
 let errorFile = ref('');
-console.log(currnetService.subdomain)
 </script>
 
 <style lang="less" scoped>

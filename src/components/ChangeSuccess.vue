@@ -18,11 +18,15 @@ let props = defineProps(['showSuccess']);
 </script>
 <style lang="less" scoped>
 #changeSuccess {
-    position: absolute;
+    top: 0;
+    left: 0;
+    overflow: auto;
+    position: fixed;
     width: 100vw;
     height: 100vh;
     background-color: rgba(26, 26, 26, 0.25);
 }
+
 .wrap {
     position: absolute;
     left: 50%;
@@ -42,6 +46,7 @@ let props = defineProps(['showSuccess']);
         color: rgba(90, 216, 88, 1);
         margin-bottom: 20px;
     }
+
     h4 {
         display: block;
         color: #293FE6;
@@ -49,12 +54,14 @@ let props = defineProps(['showSuccess']);
         font-weight: 700;
         margin-bottom: 36px;
     }
+
     .message {
         font-size: 16px;
         font-weight: 400;
         line-height: 20px;
         margin-bottom: 56px;
     }
+
     a {
         margin: 0 auto;
         width: 104px;
@@ -73,5 +80,4 @@ let props = defineProps(['showSuccess']);
         user-select: none;
         cursor: pointer;
     }
-}
-</style>
+}</style>

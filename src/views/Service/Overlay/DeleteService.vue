@@ -20,15 +20,15 @@
 import { inject, ref } from "vue";
 import { useRouter, useRoute } from 'vue-router';
 import { skapi, account } from '@/main.js';
+import { currnetService } from "@/data.js";
 
 let route = useRoute();
 let emits = defineEmits(['close']);
-let currnetService = inject('currnetService');
 let confirmationCode = ref('');
 </script>
 <style lang="less" scoped>
 #deleteService {
-    position: absolute;
+    position: fixed;
     left: 0;
     top: 0;
     width: 100vw;
