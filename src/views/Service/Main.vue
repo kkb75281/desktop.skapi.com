@@ -1,112 +1,126 @@
 <template lang="pug">
-.navSide
-    router-link.logo(to="/")
-        img(src="@/assets/symbol-logo.png")
-    .menuList 
-        router-link.menu(:to="`/dashboard/${currnetService.service}`" :class="{'active': route.name == 'service'}")
-            .material-symbols-outlined.big home
-            p Home
-        router-link.menu(:to="`/dashboard/${currnetService.service}/users`" :class="{'active': route.name == 'users'}")
-            .material-symbols-outlined.big supervisor_account
-            p Users
-        router-link.menu(:to="`/dashboard/${currnetService.service}/records`" :class="{'active': route.name == 'records'}")
-            .material-symbols-outlined.big database
-            p Records
-        router-link.menu(:to="`/dashboard/${currnetService.service}/mail`" :class="{'active': route.name == 'mail'}")
-            .material-symbols-outlined.big email
-            p Mail
-        router-link.menu(:to="`/dashboard/${currnetService.service}/subdomain`" :class="{'active': route.name == 'subdomain'}")
-            .material-symbols-outlined.big language
-            p Subdomain
-.settingWrap    
-    .setting 
-        .material-symbols-outlined.empty.sml.que help
-        span Help & getting started
-    //- .settingIcon
-    //-     .material-symbols-outlined.empty.sml brightness_5
-    //- .settingToggle
-    //-     input(type="checkbox" id="switch")
-    //-     label(for="switch")
-    //-         .toggle
-    //-         .names
-    //-             .light
-    //-                 .material-symbols-outlined.empty.sml brightness_5
-    //-                 span Light
-    //-             .dark
-    //-                 .material-symbols-outlined.empty.sml clear_night
-    //-                 span Dark
-.navCont 
-    .navTop
-        .routeWrap
-            nav 
-                ol
+template(v-if='serviceReady')
+    .navSide
+        router-link.logo(to="/")
+            img(src="@/assets/symbol-logo.png")
+        .menuList 
+            router-link.menu(:to="`/dashboard/${currnetService.service}`" :class="{'active': route.name == 'service'}")
+                .material-symbols-outlined.big home
+                p Home
+            router-link.menu(:to="`/dashboard/${currnetService.service}/users`" :class="{'active': route.name == 'users'}")
+                .material-symbols-outlined.big supervisor_account
+                p Users
+            router-link.menu(:to="`/dashboard/${currnetService.service}/records`" :class="{'active': route.name == 'records'}")
+                .material-symbols-outlined.big database
+                p Records
+            router-link.menu(:to="`/dashboard/${currnetService.service}/mail`" :class="{'active': route.name == 'mail'}")
+                .material-symbols-outlined.big email
+                p Mail
+            router-link.menu(:to="`/dashboard/${currnetService.service}/subdomain`" :class="{'active': route.name == 'subdomain'}")
+                .material-symbols-outlined.big language
+                p Subdomain
+    .settingWrap    
+        .setting 
+            .material-symbols-outlined.empty.sml.que help
+            span Help & getting started
+        //- .settingIcon
+        //-     .material-symbols-outlined.empty.sml brightness_5
+        //- .settingToggle
+        //-     input(type="checkbox" id="switch")
+        //-     label(for="switch")
+        //-         .toggle
+        //-         .names
+        //-             .light
+        //-                 .material-symbols-outlined.empty.sml brightness_5
+        //-                 span Light
+        //-             .dark
+        //-                 .material-symbols-outlined.empty.sml clear_night
+        //-                 span Dark
+    .navCont 
+        .navTop
+            .routeWrap
+                nav 
+                    ol
+                        li 
+                            router-link(to="/dashboard") Dashboard
+                        li(:class="{'active': route.name == 'service'}")
+                            router-link(:to="`/dashboard/${currnetService.service}`") {{ currnetService.name }}
+                        li(v-if="route.name == 'users'" :class="{'active': route.name == 'users'}")
+                            router-link(:to="`/dashboard/${currnetService.service}/users`") Users
+                        li(v-if="route.name == 'records'" :class="{'active': route.name == 'records'}")
+                            router-link(:to="`/dashboard/${currnetService.service}/records`") Records
+                        li(v-if="route.name == 'mail'" :class="{'active': route.name == 'mail'}")
+                            router-link(:to="`/dashboard/${currnetService.service}/records`") Mail
+                        li(v-if="route.name == 'subdomain'" :class="{'active': route.name == 'subdomain'}")
+                            router-link(:to="`/dashboard/${currnetService.service}/records`") Subdomain
+            .menuWrap
+                ul(v-if="account")
                     li 
+                        a(href="https://docs.skapi.com" target="_blank") Documentation
+                    li
                         router-link(to="/dashboard") Dashboard
-                    li(:class="{'active': route.name == 'service'}")
-                        router-link(:to="`/dashboard/${currnetService.service}`") {{ currnetService.name }}
-                    li(v-if="route.name == 'users'" :class="{'active': route.name == 'users'}")
-                        router-link(:to="`/dashboard/${currnetService.service}/users`") Users
-                    li(v-if="route.name == 'records'" :class="{'active': route.name == 'records'}")
-                        router-link(:to="`/dashboard/${currnetService.service}/records`") Records
-                    li(v-if="route.name == 'mail'" :class="{'active': route.name == 'mail'}")
-                        router-link(:to="`/dashboard/${currnetService.service}/records`") Mail
-                    li(v-if="route.name == 'subdomain'" :class="{'active': route.name == 'subdomain'}")
-                        router-link(:to="`/dashboard/${currnetService.service}/records`") Subdomain
-        .menuWrap
-            ul(v-if="account")
-                li 
-                    a(href="https://docs.skapi.com" target="_blank") Documentation
-                li
-                    router-link(to="/dashboard") Dashboard
-                li.account(@click="accountInfo = !accountInfo") R
-            ul(v-else)
-                li 
-                    a(href="https://docs.skapi.com" target="_blank") Documentation
-                li
-                    router-link(to="/login") Login
-                li 
-                    router-link.signup(to="/signup") Sign-up
-        .prof(v-if="accountInfo && account")
-            .member 
-                span {{ account.email }}
-            .settings 
-                .setting(@click="navigateToPage")
-                    .material-symbols-outlined.mid settings
-                    .click Account Settings
-                .setting(@click="logout")
-                    .material-symbols-outlined.mid logout
-                    .click Logout
-            .policy terms of service ● privacy policy
-    .cont 
-        router-view
+                    li.account(@click="accountInfo = !accountInfo") R
+                ul(v-else)
+                    li 
+                        a(href="https://docs.skapi.com" target="_blank") Documentation
+                    li
+                        router-link(to="/login") Login
+                    li 
+                        router-link.signup(to="/signup") Sign-up
+            .prof(v-if="accountInfo && account")
+                .member 
+                    span {{ account.email }}
+                .settings 
+                    .setting(@click="navigateToPage")
+                        .material-symbols-outlined.mid settings
+                        .click Account Settings
+                    .setting(@click="logout")
+                        .material-symbols-outlined.mid logout
+                        .click Logout
+                .policy terms of service ● privacy policy
+        .cont 
+            router-view
 </template>
 
 <script setup>
 import { provide, ref } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
-import { services, users } from '@/data.js';
+import { services, users, serviceFetching } from '@/data.js';
 import { skapi, account } from '@/main.js';
+
+
 
 const route = useRoute();
 const router = useRouter();
 let accountInfo = ref(false);
 let currnetPath = ref('');
-
+let currnetService = ref(null);
+let serviceReady = ref(false);
 let navigateToPage = () => {
     accountInfo.value = false;
     router.push({ path: '/accountSettings' });
 }
-let logout = async() => {
+let logout = async () => {
     accountInfo.value = false;
     account.value = null;
     await skapi.logout();
     router.push({ path: '/' });
 }
 
-currnetPath.value = route.path.split('/')[2];
-let currnetService = services.value.find(service => service.service === currnetPath.value);
+let getCurrentService = () => {
+    currnetPath.value = route.path.split('/')[2];
+    currnetService.value = services.value.find(service => service.service === currnetPath.value);
+    // provide('currnetService', currnetService); // inject 왜 안되는지 모름. service.vue 에서 import 로 가져오는걸로...
+    serviceReady.value = true;
+}
 
-provide('currnetService', services.value.find(service => service.service === currnetPath.value));
+if (serviceFetching.value instanceof Promise) {
+    serviceFetching.value.then(getCurrentService)
+}
+else {
+    getCurrentService()
+}
+
 </script>
 
 <style lang="less" scoped>
@@ -128,6 +142,7 @@ provide('currnetService', services.value.find(service => service.service === cur
             width: 36px;
         }
     }
+
     .menuList {
         .menu {
             position: relative;
@@ -152,27 +167,33 @@ provide('currnetService', services.value.find(service => service.service === cur
                 box-shadow: 0px -1px 1px 0px rgba(0, 0, 0, 0.15) inset;
                 opacity: 0;
             }
+
             &:hover {
                 &::after {
                     opacity: 1;
                 }
             }
+
             &.active {
                 &::after {
                     opacity: 1;
                 }
+
                 span {
                     font-weight: 700;
                 }
             }
+
             &:first-child {
                 margin-bottom: 72px;
             }
+
             svg {
                 display: inline-block;
                 width: 28px;
                 height: 28px;
             }
+
             p {
                 margin-left: 13px;
                 font-size: 20px;
@@ -181,13 +202,14 @@ provide('currnetService', services.value.find(service => service.service === cur
         }
     }
 }
+
 .settingWrap {
     position: fixed;
     width: 184px;
     left: 28px;
     // bottom: 40px;
     bottom: 10px;
-    color: rgba(0,0,0,0.6);
+    color: rgba(0, 0, 0, 0.6);
 
     &::before {
         position: absolute;
@@ -195,9 +217,11 @@ provide('currnetService', services.value.find(service => service.service === cur
         top: 0;
         width: 100%;
         height: 1px;
-        background-color: rgba(0,0,0,0.1);
+        background-color: rgba(0, 0, 0, 0.1);
     }
-    .setting, .settingIcon {
+
+    .setting,
+    .settingIcon {
         display: flex;
         flex-wrap: nowrap;
         align-items: center;
@@ -207,14 +231,17 @@ provide('currnetService', services.value.find(service => service.service === cur
             padding-top: 28px;
             padding-bottom: 21px;
         }
+
         span {
             margin-left: 9px;
             font-size: 14px;
         }
     }
+
     .settingIcon {
         display: none;
     }
+
     .settingToggle {
         display: flex;
         flex-direction: column;
@@ -229,6 +256,7 @@ provide('currnetService', services.value.find(service => service.service === cur
             position: relative;
             cursor: pointer;
         }
+
         .toggle {
             position: absolute;
             top: 4px;
@@ -240,6 +268,7 @@ provide('currnetService', services.value.find(service => service.service === cur
             box-shadow: 0px -1px 1px 0px rgba(0, 0, 0, 0.15) inset;
             transition: all 0.3s;
         }
+
         .names {
             width: 100%;
             position: absolute;
@@ -247,40 +276,48 @@ provide('currnetService', services.value.find(service => service.service === cur
             transform: translateY(-50%);
             display: flex;
             align-items: center;
-            justify-content:space-around;
+            justify-content: space-around;
             user-select: none;
-            
+
             div {
                 display: flex;
                 flex-wrap: nowrap;
                 align-items: center;
+
                 span {
                     font-size: 14px;
                     font-weight: 500;
                 }
-                svg { 
+
+                svg {
                     margin-right: 8px;
                 }
             }
+
             .dark {
                 opacity: 0.5;
                 padding-right: 9px;
             }
         }
     }
+
     input[type="checkbox"] {
         display: none;
     }
-    input[type="checkbox"]:checked + .settingWrap .toggle{
+
+    input[type="checkbox"]:checked+.settingWrap .toggle {
         transform: translateX(95px);
     }
-    input[type="checkbox"]:checked + .settingWrap .dark{
+
+    input[type="checkbox"]:checked+.settingWrap .dark {
         opacity: 1;
     }
-    input[type="checkbox"]:checked + .settingWrap .light{
+
+    input[type="checkbox"]:checked+.settingWrap .light {
         opacity: .5;
     }
 }
+
 .navCont {
     padding: 0 40px 0 240px;
     width: 100%;
@@ -321,11 +358,13 @@ provide('currnetService', services.value.find(service => service.service === cur
                             font-size: 20px;
                             color: rgba(0, 0, 0, 0.40);
                         }
+
                         &.active {
                             a {
                                 color: #293FE6;
                             }
                         }
+
                         &.active::before {
                             display: none;
                         }
@@ -333,6 +372,7 @@ provide('currnetService', services.value.find(service => service.service === cur
                 }
             }
         }
+
         .menuWrap {
             ul {
                 display: flex;
@@ -342,7 +382,7 @@ provide('currnetService', services.value.find(service => service.service === cur
                 li {
                     list-style: none;
                     margin-right: 60px;
-                    
+
                     a {
                         color: #293FE6;
                         text-decoration: none;
@@ -370,6 +410,7 @@ provide('currnetService', services.value.find(service => service.service === cur
                 }
             }
         }
+
         .prof {
             position: absolute;
             right: 40px;
@@ -378,7 +419,7 @@ provide('currnetService', services.value.find(service => service.service === cur
             padding: 20px 20px 0;
             overflow: hidden;
             background-color: #fafafa;
-            color: rgba(0,0,0,0.80);
+            color: rgba(0, 0, 0, 0.80);
             border: 1px solid rgba(0, 0, 0, 0.15);
             filter: drop-shadow(8px 12px 36px rgba(0, 0, 0, 0.10));
             border-radius: 8px;
@@ -389,14 +430,16 @@ provide('currnetService', services.value.find(service => service.service === cur
                     font-size: 16px;
                     font-weight: 700;
                 }
+
                 span {
                     font-size: 14px;
                 }
             }
+
             .settings {
                 position: relative;
                 margin-top: 40px;
-                
+
                 &::before {
                     position: absolute;
                     content: '';
@@ -407,6 +450,7 @@ provide('currnetService', services.value.find(service => service.service === cur
                     transform: translateX(-20px);
                     background-color: rgba(0, 0, 0, 0.15);
                 }
+
                 &::after {
                     position: absolute;
                     content: '';
@@ -417,6 +461,7 @@ provide('currnetService', services.value.find(service => service.service === cur
                     transform: translateX(-20px);
                     background-color: rgba(0, 0, 0, 0.15);
                 }
+
                 .setting {
                     display: flex;
                     align-items: center;
@@ -429,20 +474,22 @@ provide('currnetService', services.value.find(service => service.service === cur
                     .click {
                         margin-left: 10px;
                         margin-bottom: 0;
-                    } 
+                    }
                 }
             }
+
             .policy {
                 display: flex;
                 align-items: center;
                 justify-content: center;
                 font-size: 12px;
                 font-weight: 500;
-                color: rgba(0,0,0,0.15);
+                color: rgba(0, 0, 0, 0.15);
                 padding: 27px 0 10px;
             }
         }
     }
+
     .cont {
         max-width: 1200px;
         min-width: 935px;
@@ -460,12 +507,14 @@ provide('currnetService', services.value.find(service => service.service === cur
                     width: 56px;
                     height: 56px;
                 }
+
                 p {
                     display: none;
                 }
             }
         }
     }
+
     .navCont {
         padding-left: 88px;
 
@@ -474,6 +523,7 @@ provide('currnetService', services.value.find(service => service.service === cur
             margin: 0 auto;
         }
     }
+
     .settingWrap {
         width: 56px;
         left: 14px;
@@ -484,9 +534,11 @@ provide('currnetService', services.value.find(service => service.service === cur
                 margin-right: 14px;
             }
         }
+
         .settingIcon {
             display: flex;
         }
+
         .settingToggle {
             display: none;
         }

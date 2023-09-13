@@ -7,18 +7,22 @@ main
         .wrapper 
             // service 로딩이 완료 되면 표시
             .boxWrap(v-if="!serviceFetching")
-                .box.btn(v-if="!create" @click="create = true;")
+                .box.btn(v-if="!create" @click="createService")
                     .material-symbols-outlined.mid add
                     span Create Service
                 .box.create(v-if="create")
-                    form(@submit.prevent="" action="")
+                    form(@submit.prevent="addService")
                         h3 Create a new service
-                        input(type="text" placeholder="Name of Service")
+                        input#serviceName(type="text" @input='e=>newServiceName=e.target.value' placeholder="Name of Service")
                         .buttons
-                            button(type="button" @click="create = false;").cancel Cancel
-                            button(type="button").create Create
-                template(v-if="services?.length")         
-                    router-link.box.service.clicked(v-for="service in services" :to="'/dashboard/' + service.service")
+                            template(v-if="promiseRunning")
+                                img.loading(src="@/assets/img/loading.png")
+                            template(v-else)
+                                button(type="button" @click="create = false;").cancel Cancel
+                                button(type="submit").create Create
+
+                template(v-if='services.length')
+                    router-link.box.service.clicked(v-for="service in services" :to="'/dashboard/' + service.service" :style='{opacity: service?.pending ? ".5" : null}')
                         .inner
                             .tit 
                                 h3 {{ service.name }}
@@ -29,11 +33,16 @@ main
                                     h5 {{ service.created_locale }}
                                 .cont 
                                     span Date Created
-                                    h5 {{ new Date(service.timestamp).toDateString() }}
+                                    h5 {{ typeof service.timestamp === 'string' ? service.timestamp : new Date(service.timestamp).toDateString() }}
                                 .cont 
                                     span CORS
                                     h5 {{ service.cors }}
-                            .toggleWrap.locked(:class="{'active': service.active == 1 }")
+                            
+                            .toggleWrap.locked(v-if='service?.pending')
+                                // 왜 인지 모르겠으나 조건 class가 에니메이션을 영향줌 (생성될때 active가 켜졌다->꺼졌다->서비스 생성 완료되면 다시 켜짐)
+                                .toggleBg
+                                    .toggleBtn
+                            .toggleWrap.locked(v-else :class="{'active': service.active == 1 }")
                                 .toggleBg
                                     .toggleBtn
                 template(v-else)
@@ -44,9 +53,36 @@ main
 
 <script setup>
 import { services, serviceFetching } from '@/data.js';
-import { ref } from 'vue';
+import { nextTick, ref } from 'vue';
+import { skapi } from '@/main.js'
 let create = ref(false);
-
+let createService = () => {
+    create.value = true;
+    nextTick(() => {
+        document.getElementById('serviceName').focus();
+    })
+}
+let newServiceName = '';
+let promiseRunning = ref(false);
+let addService = () => {
+    promiseRunning.value = true;
+    services.value.unshift({
+        service: '',
+        name: newServiceName,
+        created_locale: '...',
+        timestamp: '...',
+        cors: '...',
+        pending: true,
+        active: 0
+    });
+    skapi.createService({ name: newServiceName })
+        .then(s => {
+            skapi.insertService(s);
+            services.value[0] = s;
+            create.value = false;
+        })
+        .finally(_ => promiseRunning.value = false)
+}
 </script>
 
 <style lang="less" scoped>
@@ -202,9 +238,11 @@ main {
                         text-decoration: none;
                         color: unset;
                     }
+
                     &.clicked:active {
                         box-shadow: 0 0 0 4px #A5AFFF inset;
                     }
+
                     .inner {
                         .tit {
                             position: relative;
@@ -388,4 +426,5 @@ main {
 //         }
 //     }
 // }
-// }</style>
+// }
+</style>
