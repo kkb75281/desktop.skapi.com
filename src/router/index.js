@@ -72,38 +72,33 @@ const router = createRouter({
       ]
     },
     {
-      path:'/dashboard',
+      path: '/dashboard/:service',
+      component: ServiceMain,
       children: [
         {
-          path: ':service',
-          component: ServiceMain,
-          children: [
-            {
-              path: '',
-              name: 'service',
-              component: Service
-            },
-            {
-              path: 'users',
-              name: 'users',
-              component: Users
-            },
-            {
-              path: 'records',
-              name: 'records',
-              component: Records
-            },
-            {
-                path: 'mail',
-                name: 'mail',
-                component: Mail
-            },
-            {
-                path: 'subdomain',
-                name: 'subdomain',
-                component: Subdomain
-            },
-          ]
+          path: '',
+          name: 'service',
+          component: Service
+        },
+        {
+          path: 'users',
+          name: 'users',
+          component: Users
+        },
+        {
+          path: 'records',
+          name: 'records',
+          component: Records
+        },
+        {
+          path: 'mail',
+          name: 'mail',
+          component: Mail
+        },
+        {
+          path: 'subdomain',
+          name: 'subdomain',
+          component: Subdomain
         }
       ]
     }

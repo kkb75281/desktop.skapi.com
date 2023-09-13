@@ -1,138 +1,140 @@
 <template lang="pug">
-.infoWrap
-    .info
-        .title 
-            template(v-if="modifyServiceName")
-                form.modifyForm(@submit.prevent="modify" action="")
-                    input#modifyServiceName(type="text" :placeholder="`${currnetService.name}`" :value='inputServiceName' @input="(e) => inputServiceName = e.target.value")
-                    .buttonWrap 
-                        template(v-if="promiseRunning")
-                            img.loading(src="@/assets/img/loading.png")
-                        template(v-else)
-                            button.cancel(type="button" @click="modifyServiceName = false;") Cancel
-                            button.save(type="submit") Save
-            template(v-else)
-                h2 {{ currnetService.name }}
-                .material-symbols-outlined.mid.modify.clickable(@click="inputServiceName = currnetService.name; modifyServiceName = true;") edit
-        .toggleWrap(:class="{'active': currnetService.active == 1 }")
-            span Disable/Enable
-            .toggleBg
-                .toggleBtn(@click="disableCheck")
-    .info
-        .title 
-            h2 Service Information
-        .listWrap 
-            .list(style="width: 100%")
-                span Service ID
-                h5 {{ currnetService.service }}
-                .copy.clickable(@click="copy")
-                    .material-symbols-outlined.mid file_copy
-            .list(style="width: 100%")
-                span Owner ID
-                h5 {{ currnetService.owner }}
-                .copy.clickable(@click="copy")
-                    .material-symbols-outlined.mid file_copy
-            .list(style="width: 50%")
-                span Service Location
-                h5 {{ currnetService.created_locale }}
-            .list(style="width: 50%")
-                span Date Created
-                h5 {{ currnetService.timestamp }}
-    .info
-        .title 
-            h2 Security Setting
-        .listWrap
-            .list(style="width: 100%")
-                span(:class="{ active: modifyCors }") Cors
-                template(v-if="modifyCors")
-                    form.modifyForm(style="margin-top: 8px")
-                        input#modifyCors(type="text" :placeholder="`${currnetService.cors}`" :value='inputCors' @input="(e) => inputCors = e.target.value")
+template(v-if='currnetService')
+    .infoWrap
+        .info
+            .title 
+                template(v-if="modifyServiceName")
+                    form.modifyForm(@submit.prevent="modify" action="")
+                        input#modifyServiceName(type="text" :placeholder="`${currnetService.name}`" :value='inputServiceName' @input="(e) => inputServiceName = e.target.value")
                         .buttonWrap 
-                            button.cancel(type="button" @click="modifyCors = false;") Cancel
-                            button.save(type="button") Save
+                            template(v-if="promiseRunning")
+                                img.loading(src="@/assets/img/loading.png")
+                            template(v-else)
+                                button.cancel(type="button" @click="modifyServiceName = false;") Cancel
+                                button.save(type="submit") Save
                 template(v-else)
-                    h5 {{ currnetService.cors }}
-                    .material-symbols-outlined.mid.pen.clickable(@click="inputCors = currnetService.cors; modifyCors = true;") edit
-            .list(style="width: 100%")
-                span(:class="{ active: modifyKey }") Secret Key
-                template(v-if="modifyKey")
-                    form.modifyForm(style="margin-top: 8px")
-                        input#modifyKey(type="text" :placeholder="`${currnetService.secretKey}`" :value='inputKey' @input="(e) => inputKey = e.target.value")
-                        .buttonWrap 
-                            button.cancel(type="button" @click="modifyKey = false;") Cancel
-                            button.save(type="button") Save
-                template(v-else)
-                    h5 {{ currnetService.secretKey }}
-                    .material-symbols-outlined.mid.pen.clickable(@click="inputKey = currnetService.secretKey; modifyKey = true;") edit
-        .que 
-            .material-symbols-outlined.empty.sml help 
-            span Help
-    .info.hover.user(@click="clicked")
-        .titleWrap
+                    h2 {{ currnetService.name }}
+                    .material-symbols-outlined.mid.modify.clickable(@click="inputServiceName = currnetService.name; modifyServiceName = true;") edit
+            .toggleWrap(:class="{'active': currnetService.active == 1 }")
+                span Disable/Enable
+                .toggleBg
+                    .toggleBtn(@click="disableCheck")
+        .info
             .title 
-                .material-symbols-outlined.big group
-                h2 Users
-        .listWrap.noWrap
-            .list
-                span # of Users
-                h5 {{ currnetService.users }}
-            .list
-                span # of Blocked Users
-                h5 545
-            .list
-                span # of Inactive Users
-                h5 545
-    .info.hover.record(@click="clicked")
-        .titleWrap
+                h2 Service Information
+            .listWrap 
+                .list(style="width: 100%")
+                    span Service ID
+                    h5 {{ currnetService.service }}
+                    .copy.clickable(@click="copy")
+                        .material-symbols-outlined.mid file_copy
+                .list(style="width: 100%")
+                    span Owner ID
+                    h5 {{ currnetService.owner }}
+                    .copy.clickable(@click="copy")
+                        .material-symbols-outlined.mid file_copy
+                .list(style="width: 50%")
+                    span Service Location
+                    h5 {{ currnetService.created_locale }}
+                .list(style="width: 50%")
+                    span Date Created
+                    h5 {{ currnetService.timestamp }}
+        .info
             .title 
-                .material-symbols-outlined.big folder_open
-                h2 Records
-        .listWrap.noWrap
-            .list
-                span # of Records
-                h5 545
-            .list
-                span # of Tables
-                h5 545
-            .list
-                span # of Storage Used
-                h5 233KB
-    .info.hover.mail(@click="clicked")
-        .titleWrap
-            .title 
-                .material-symbols-outlined.big mail
-                h2 Mail
-        .listWrap.noWrap
-            .list
-                span # of Newsletter
-                h5 545
-            .list
-                span # Subscribers
-                h5 545
-    .info.hover.domain(@click="clicked")
-        .titleWrap
-            .title 
-                .material-symbols-outlined.big language
-                h2 Subdomain
-        .listWrap.noWrap
-            .list
-                span Registered Subdomain
-                h5 {{ currnetService.subdomain }}
-            .list
-                span Storage used
-                h5 545
-.deleteWrap(@click="openDeleteService = true;")
-    .deleteInner
-        .material-symbols-outlined.mid delete
-        span Delete Service
-DisableService(v-if="openDisableService" @close="openDisableService = false;")
-DeleteService(v-if="openDeleteService" @close="openDeleteService = false;")
+                h2 Security Setting
+            .listWrap
+                .list(style="width: 100%")
+                    span(:class="{ active: modifyCors }") Cors
+                    template(v-if="modifyCors")
+                        form.modifyForm(style="margin-top: 8px")
+                            input#modifyCors(type="text" :placeholder="`${currnetService.cors}`" :value='inputCors' @input="(e) => inputCors = e.target.value")
+                            .buttonWrap 
+                                button.cancel(type="button" @click="modifyCors = false;") Cancel
+                                button.save(type="button") Save
+                    template(v-else)
+                        h5 {{ currnetService.cors }}
+                        .material-symbols-outlined.mid.pen.clickable(@click="inputCors = currnetService.cors; modifyCors = true;") edit
+                .list(style="width: 100%")
+                    span(:class="{ active: modifyKey }") Secret Key
+                    template(v-if="modifyKey")
+                        form.modifyForm(style="margin-top: 8px")
+                            input#modifyKey(type="text" :placeholder="`${currnetService.secretKey}`" :value='inputKey' @input="(e) => inputKey = e.target.value")
+                            .buttonWrap 
+                                button.cancel(type="button" @click="modifyKey = false;") Cancel
+                                button.save(type="button") Save
+                    template(v-else)
+                        h5 {{ currnetService.secretKey }}
+                        .material-symbols-outlined.mid.pen.clickable(@click="inputKey = currnetService.secretKey; modifyKey = true;") edit
+            .que 
+                .material-symbols-outlined.empty.sml help 
+                span Help
+        .info.hover.user(@click="clicked")
+            .titleWrap
+                .title 
+                    .material-symbols-outlined.big group
+                    h2 Users
+            .listWrap.noWrap
+                .list
+                    span # of Users
+                    h5 {{ currnetService.users }}
+                .list
+                    span # of Blocked Users
+                    h5 545
+                .list
+                    span # of Inactive Users
+                    h5 545
+        .info.hover.record(@click="clicked")
+            .titleWrap
+                .title 
+                    .material-symbols-outlined.big folder_open
+                    h2 Records
+            .listWrap.noWrap
+                .list
+                    span # of Records
+                    h5 545
+                .list
+                    span # of Tables
+                    h5 545
+                .list
+                    span # of Storage Used
+                    h5 233KB
+        .info.hover.mail(@click="clicked")
+            .titleWrap
+                .title 
+                    .material-symbols-outlined.big mail
+                    h2 Mail
+            .listWrap.noWrap
+                .list
+                    span # of Newsletter
+                    h5 545
+                .list
+                    span # Subscribers
+                    h5 545
+        .info.hover.domain(@click="clicked")
+            .titleWrap
+                .title 
+                    .material-symbols-outlined.big language
+                    h2 Subdomain
+            .listWrap.noWrap
+                .list
+                    span Registered Subdomain
+                    h5 {{ currnetService.subdomain }}
+                .list
+                    span Storage used
+                    h5 545
+    .deleteWrap(@click="openDeleteService = true;")
+        .deleteInner
+            .material-symbols-outlined.mid delete
+            span Delete Service
+    DisableService(v-if="openDisableService" @close="openDisableService = false;")
+    DeleteService(v-if="openDeleteService" @close="openDeleteService = false;")
+
 </template>
 
 <script setup>
 import { inject, nextTick, onMounted, ref, watch } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
-// import { services, users } from '@/data.js';
+import { services, users } from '@/data.js';
 import DisableService from '@/views/Service/Overlay/DisableService.vue';
 import DeleteService from '@/views/Service/Overlay/DeleteService.vue';
 
@@ -148,7 +150,8 @@ let openDeleteService = ref(false);
 let inputServiceName = '';
 let inputCors = ref('');
 let inputKey = ref('')
-let currnetService = inject('currnetService');
+let currnetPath = route.path.split('/')[2];
+let currnetService = services.value.find(service => service.service === currnetPath);
 
 let clicked = (e) => {
     let target = e.currentTarget;
