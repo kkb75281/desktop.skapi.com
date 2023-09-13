@@ -11,9 +11,9 @@ main
                     .material-symbols-outlined.mid add
                     span Create Service
                 .box.create(v-if="create")
-                    form(@submit.prevent="" action="")
+                    form(@submit.prevent="skapi.createService({name: newServiceName}).then(_=>{create=false;})" action="")
                         h3 Create a new service
-                        input(type="text" placeholder="Name of Service")
+                        input(type="text" @input='e=>newServiceName=e.target.value' placeholder="Name of Service")
                         .buttons
                             button(type="button" @click="create = false;").cancel Cancel
                             button(type="button").create Create
@@ -47,7 +47,7 @@ main
 import { services, serviceFetching } from '@/data.js';
 import { ref } from 'vue';
 let create = ref(false);
-
+let newServiceName = '';
 </script>
 
 <style lang="less" scoped>
