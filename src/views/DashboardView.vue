@@ -1,9 +1,9 @@
 <template lang="pug">
 main
+    .title 
+        h2 Dashboard
+        span All Services
     .container
-        .title 
-            h2 Dashboard
-            span All Services
         .wrapper 
             // service 로딩이 완료 되면 표시
             .boxWrap(v-if="!serviceFetching")
@@ -91,24 +91,18 @@ main {
     margin-top: 68px;
     padding: 0 40px;
 
-    &::before {
-        position: absolute;
-        content: '';
-        left: 0;
-        top: 80px;
-        width: 100%;
-        height: calc(100vh - 208px);
-        background-color: #fafafa;
-        filter: drop-shadow(8px 12px 36px rgba(0, 0, 0, 0.10));
-        border-radius: 8px 8px 0 0;
-        z-index: -1;
-    }
-
-    .container {
-        // margin: 0 120px;
-        width: 1200px;
-        margin: 0 auto;
-    }
+    // &::before {
+    //     position: absolute;
+    //     content: '';
+    //     left: 0;
+    //     top: 80px;
+    //     width: 100%;
+    //     height: calc(100vh - 208px);
+    //     background-color: #fafafa;
+    //     filter: drop-shadow(8px 12px 36px rgba(0, 0, 0, 0.10));
+    //     border-radius: 8px 8px 0 0;
+    //     z-index: -1;
+    // }
 
     .title {
         width: 1200px;
@@ -128,11 +122,19 @@ main {
             color: rgba(0, 0, 0, 0.40);
         }
     }
-
-    .wrapper {
-        width: 100%;
-        height: 100%;
+    .container {
+        width: calc(100% + 80px);
+        min-height: calc(100vh - 208px);
+        margin-left: -40px;
         padding: 40px;
+        background-color: #fafafa;
+        filter: drop-shadow(8px 12px 36px rgba(0, 0, 0, 0.10));
+        border-radius: 8px;
+    }
+    
+    .wrapper {
+        width: 1200px;
+        margin: 0 auto;
 
         .boxWrap {
             width: 100%;
@@ -367,8 +369,13 @@ main {
 
 @media (max-width: 1280px) {
     main {
-        .container {
+        .title {
             width: 100%;
+        }
+        .container {
+            .wrapper {
+                width: 100%;
+            }
         }
     }
 }

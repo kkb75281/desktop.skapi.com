@@ -13,7 +13,7 @@
             template(v-if="promiseRunning")
                 img.loading(src="@/assets/img/loading.png")
             template(v-else)
-                button.cancel(type="button" @click="close") Cancel
+                button.cancel(type="button" @click="emits('close')") Cancel
                 button.delete(type="submit" :loading="promiseRunning") Delete
 </template>
 <script setup>
@@ -22,6 +22,7 @@ import { useRouter, useRoute } from 'vue-router';
 import { skapi, account } from '@/main.js';
 
 let route = useRoute();
+let emits = defineEmits(['close']);
 let currnetService = inject('currnetService');
 let confirmationCode = ref('');
 </script>

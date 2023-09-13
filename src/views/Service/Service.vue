@@ -126,7 +126,7 @@
         .material-symbols-outlined.mid delete
         span Delete Service
 DisableService(v-if="openDisableService" @close="openDisableService = false;")
-DeleteService(@close="openDeleteService = false;")
+DeleteService(v-if="openDeleteService" @close="openDeleteService = false;")
 </template>
 
 <script setup>
