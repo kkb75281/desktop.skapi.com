@@ -1,6 +1,6 @@
 <template lang="pug">
-#deleteService
-    .wrap 
+#deleteService(@click="closeWindow")
+    .wrap(@click.stop)
         .material-symbols-outlined error
         h4 Delete the Service
         .message Are you sure you want to delete "{{ currentService.name }}" permanently? You can’t undo this action.
@@ -13,7 +13,7 @@
             template(v-if="promiseRunning")
                 img.loading(src="@/assets/img/loading.png")
             template(v-else)
-                button.cancel(type="button" @click="emits('close')") Cancel
+                button.cancel(type="button" @click="closeWindow") Cancel
                 button.delete(type="submit" :loading="promiseRunning") Delete
 </template>
 <script setup>
@@ -24,7 +24,11 @@ import { currentService } from "@/data.js";
 
 let route = useRoute();
 let emits = defineEmits(['close']);
+let promiseRunning = ref(false);
 let confirmationCode = ref('');
+let closeWindow = () => {
+    emits('close');
+}
 </script>
 <style lang="less" scoped>
 #deleteService {

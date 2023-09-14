@@ -126,7 +126,7 @@ import { useRouter } from 'vue-router';
 import { currentService, storageInfo } from '@/data.js';
 import { skapi } from '@/main.js';
 import DisableService from '@/views/Service/Overlay/DisableService.vue';
-import DeleteService from '@/views/Service/Overlay/DeleteService.vue';
+import DeleteService from '@/components/DeleteService.vue';
 
 const router = useRouter();
 let convertToMb = (size) => {
