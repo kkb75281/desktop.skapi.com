@@ -3,12 +3,12 @@
     .wrap 
         .material-symbols-outlined error
         h4 Delete the Service
-        .message Are you sure you want to delete "{{ currnetService.name }}" permanently? You can’t undo this action.
+        .message Are you sure you want to delete "{{ currentService.name }}" permanently? You can’t undo this action.
         .message
             | To confirm deletion, enter Service ID 
             br
-            span {{ currnetService.service }}
-        input(type="text" :placeholder="currnetService.service" @input="(e) => confirmationCode = e.target.value")
+            span {{ currentService.service }}
+        input(type="text" :placeholder="currentService.service" @input="(e) => confirmationCode = e.target.value")
         .buttonWrap
             template(v-if="promiseRunning")
                 img.loading(src="@/assets/img/loading.png")
@@ -20,7 +20,7 @@
 import { inject, ref } from "vue";
 import { useRouter, useRoute } from 'vue-router';
 import { skapi, account } from '@/main.js';
-import { currnetService } from "@/data.js";
+import { currentService } from "@/data.js";
 
 let route = useRoute();
 let emits = defineEmits(['close']);

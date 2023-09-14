@@ -2,7 +2,7 @@
 .containerWrap
     .container
         h2 Subdomain
-        template(v-if="!currnetService.subdomain")
+        template(v-if="!currentService.subdomain")
             .buttonWrap 
                 .refresh.clickable
                     .material-symbols-outlined.mid cached
@@ -15,7 +15,7 @@
                     .tit Subdomain
                     template(v-if="modifySudomain")
                         form.modifyForm(style="margin-top: 8px")
-                            input#modifySudomain(type="text" :placeholder="`${currnetService.subdomain}`" :value='inputSubdomain' @input="(e) => inputSubdomain = e.target.value")
+                            input#modifySudomain(type="text" :placeholder="`${currentService.subdomain}`" :value='inputSubdomain' @input="(e) => inputSubdomain = e.target.value")
                             .btnWrap
                                 button.cancel(type="button" @click="modifySudomain = false;") Cancel
                                 button.save(type="submit") Save
@@ -38,7 +38,7 @@
                 .input 
                     input(type="text" placeholder="Name of Subdomain")
                     button Create
-    .container(v-if="!currnetService.subdomain")
+    .container(v-if="!currentService.subdomain")
         .filesHeader
             .filesPathWrap
                 .material-symbols-outlined.big.clickable hard_drive
@@ -50,11 +50,11 @@
                     .material-symbols-outlined.mid upload
                     span Upload
         .filesWrapper
-            template(v-if="currnetService?.files[currnetService.subdomain+"/"]?.list?.length == 0")
+            template(v-if="currentService?.files[currentService.subdomain+"/"]?.list?.length == 0")
                 .noFile
                     h2 No Files 
                     p You have not uploaded any files
-            template(v-else-if="currnetService?.files[currnetService.subdomain+"/"]?.list?.length")
+            template(v-else-if="currentService?.files[currentService.subdomain+"/"]?.list?.length")
                 .fileWrapper
                     .file(v-for="(file, index) in fileList")
                         .customCheckBox
@@ -97,7 +97,7 @@ import { services } from '@/data.js';
 
 let route = useRoute();
 let currnetPath = route.path.split('/')[2];
-let currnetService = services.value.find(service => service.service === currnetPath);
+let currentService = services.value.find(service => service.service === currnetPath);
 let modifySudomain = ref(false);
 let inputSubdomain = ref('');
 let errorFile = ref('');

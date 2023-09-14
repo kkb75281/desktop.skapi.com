@@ -1,22 +1,22 @@
 <template lang="pug">
-template(v-if='currnetService')
+template(v-if='currentService')
     .navSide(@click='accountInfo = false') 
         router-link.logo(to="/")
             img(src="@/assets/symbol-logo.png")
         .menuList 
-            router-link.menu(:to="`/dashboard/${currnetService.service}`" :class="{'active': route.name == 'service'}")
+            router-link.menu(:to="`/dashboard/${currentService.service}`" :class="{'active': route.name == 'service'}")
                 .material-symbols-outlined.big home
                 p Home
-            router-link.menu(:to="`/dashboard/${currnetService.service}/users`" :class="{'active': route.name == 'users'}")
+            router-link.menu(:to="`/dashboard/${currentService.service}/users`" :class="{'active': route.name == 'users'}")
                 .material-symbols-outlined.big supervisor_account
                 p Users
-            router-link.menu(:to="`/dashboard/${currnetService.service}/records`" :class="{'active': route.name == 'records'}")
+            router-link.menu(:to="`/dashboard/${currentService.service}/records`" :class="{'active': route.name == 'records'}")
                 .material-symbols-outlined.big database
                 p Records
-            router-link.menu(:to="`/dashboard/${currnetService.service}/mail`" :class="{'active': route.name == 'mail'}")
+            router-link.menu(:to="`/dashboard/${currentService.service}/mail`" :class="{'active': route.name == 'mail'}")
                 .material-symbols-outlined.big email
                 p Mail
-            router-link.menu(:to="`/dashboard/${currnetService.service}/subdomain`" :class="{'active': route.name == 'subdomain'}")
+            router-link.menu(:to="`/dashboard/${currentService.service}/subdomain`" :class="{'active': route.name == 'subdomain'}")
                 .material-symbols-outlined.big language
                 p Subdomain
     .settingWrap(@click='accountInfo = false') 
@@ -44,15 +44,15 @@ template(v-if='currnetService')
                         li 
                             router-link(to="/dashboard") Dashboard
                         li(:class="{'active': route.name == 'service'}")
-                            router-link(:to="`/dashboard/${currnetService.service}`") {{ currnetService.name }}
+                            router-link(:to="`/dashboard/${currentService.service}`") {{ currentService.name }}
                         li(v-if="route.name == 'users'" :class="{'active': route.name == 'users'}")
-                            router-link(:to="`/dashboard/${currnetService.service}/users`") Users
+                            router-link(:to="`/dashboard/${currentService.service}/users`") Users
                         li(v-if="route.name == 'records'" :class="{'active': route.name == 'records'}")
-                            router-link(:to="`/dashboard/${currnetService.service}/records`") Records
+                            router-link(:to="`/dashboard/${currentService.service}/records`") Records
                         li(v-if="route.name == 'mail'" :class="{'active': route.name == 'mail'}")
-                            router-link(:to="`/dashboard/${currnetService.service}/records`") Mail
+                            router-link(:to="`/dashboard/${currentService.service}/records`") Mail
                         li(v-if="route.name == 'subdomain'" :class="{'active': route.name == 'subdomain'}")
-                            router-link(:to="`/dashboard/${currnetService.service}/records`") Subdomain
+                            router-link(:to="`/dashboard/${currentService.service}/records`") Subdomain
             .menuWrap
                 ul(v-if="account")
                     li 
@@ -85,10 +85,10 @@ template(v-if='currnetService')
 <script setup>
 import { ref } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
-import { services, users, serviceFetching, currnetService } from '@/data.js';
+import { services, users, serviceFetching, currentService } from '@/data.js';
 import { skapi, account } from '@/main.js';
 
-currnetService.value = null;
+currentService.value = null;
 
 const route = useRoute();
 const router = useRouter();
@@ -105,7 +105,7 @@ let logout = async () => {
 }
 
 let getCurrentService = () => {
-    currnetService.value = services.value.find(service => service.service === route.path.split('/')[2]);
+    currentService.value = services.value.find(service => service.service === route.path.split('/')[2]);
 }
 
 if (serviceFetching.value instanceof Promise) {

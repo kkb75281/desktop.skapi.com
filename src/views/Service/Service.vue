@@ -1,5 +1,5 @@
 <template lang="pug">
-template(v-if='currnetService')
+template(v-if='currentService')
     .infoWrap
         .info
             .title 
@@ -10,9 +10,9 @@ template(v-if='currnetService')
                             button.cancel(type="button" @click="modifyServiceName = false;") Cancel
                             button.save(type="submit") Save
                 template(v-else)
-                    h2 {{ currnetService.name }}
-                    .material-symbols-outlined.mid.modify.clickable(@click="inputServiceName = currnetService.name; modifyServiceName = true;") edit
-            .toggleWrap(:class="{'active': currnetService.active === 1 }")
+                    h2 {{ currentService.name }}
+                    .material-symbols-outlined.mid.modify.clickable(@click="inputServiceName = currentService.name; modifyServiceName = true;") edit
+            .toggleWrap(:class="{'active': currentService.active === 1 }")
                 span Disable/Enable
                 .toggleBg
                     .toggleBtn(@click="enableDisableToggle")
@@ -22,20 +22,20 @@ template(v-if='currnetService')
             .listWrap 
                 .list(style="width: 100%")
                     span Service ID
-                    h5 {{ currnetService.service }}
+                    h5 {{ currentService.service }}
                     .copy.clickable(@click="copy")
                         .material-symbols-outlined.mid file_copy
                 .list(style="width: 100%")
                     span Owner ID
-                    h5 {{ currnetService.owner }}
+                    h5 {{ currentService.owner }}
                     .copy.clickable(@click="copy")
                         .material-symbols-outlined.mid file_copy
                 //- .list(style="width: 50%")
                 //-     span Service Location
-                //-     h5 {{ currnetService.created_locale }}
+                //-     h5 {{ currentService.created_locale }}
                 .list(style="width: 50%")
                     span Date Created
-                    h5 {{ new Date(currnetService.timestamp).toDateString() }}
+                    h5 {{ new Date(currentService.timestamp).toDateString() }}
         .info
             .title 
                 h2 Security Setting
@@ -49,8 +49,8 @@ template(v-if='currnetService')
                                 button.cancel(type="button" @click="modifyCors = false;") Cancel
                                 button.save(type="submit") Save
                     template(v-else)
-                        h5 {{ currnetService.cors || '*' }}
-                        .material-symbols-outlined.mid.pen.clickable(@click="inputCors = currnetService.cors === '*' ? '' : currnetService.cors; modifyCors = true;") edit
+                        h5 {{ currentService.cors || '*' }}
+                        .material-symbols-outlined.mid.pen.clickable(@click="inputCors = currentService.cors === '*' ? '' : currentService.cors; modifyCors = true;") edit
 
                 .list(style="width: 100%")
                     span(:class="{ active: modifyKey }") Secret Key
@@ -61,12 +61,12 @@ template(v-if='currnetService')
                                 button.cancel(type="button" @click="modifyKey = false;") Cancel
                                 button.save(type="submit") Save
                     template(v-else)
-                        h5 {{ currnetService.api_key || 'No key' }}
-                        .material-symbols-outlined.mid.pen.clickable(@click="inputKey = currnetService.api_key; modifyKey = true;") edit
+                        h5 {{ currentService.api_key || 'No key' }}
+                        .material-symbols-outlined.mid.pen.clickable(@click="inputKey = currentService.api_key; modifyKey = true;") edit
             .que 
                 .material-symbols-outlined.empty.sml help 
                 span Help
-        router-link.info.hover.user.clicked(:to='`/dashboard/${currnetService.service}/users`')
+        router-link.info.hover.user.clicked(:to='`/dashboard/${currentService.service}/users`')
             .titleWrap
                 .title 
                     .material-symbols-outlined.big group
@@ -74,8 +74,8 @@ template(v-if='currnetService')
             .listWrap.noWrap
                 .list
                     span # of Users
-                    h5 {{ currnetService.users }}
-        router-link.info.hover.record.clicked(:to='`/dashboard/${currnetService.service}/records`')
+                    h5 {{ currentService.users }}
+        router-link.info.hover.record.clicked(:to='`/dashboard/${currentService.service}/records`')
             .titleWrap
                 .title 
                     .material-symbols-outlined.big folder_open
@@ -83,11 +83,11 @@ template(v-if='currnetService')
             .listWrap.noWrap
                 .list
                     span # of database storage Used
-                    h5 {{ convertToMb(storageInfo?.[currnetService.service]?.database) }}
+                    h5 {{ convertToMb(storageInfo?.[currentService.service]?.database) }}
                 .list
                     span # of cloud storage Used
-                    h5 {{ convertToMb(storageInfo?.[currnetService.service]?.cloud) }}
-        router-link.info.hover.mail.clicked(:to='`/dashboard/${currnetService.service}/mail`')
+                    h5 {{ convertToMb(storageInfo?.[currentService.service]?.cloud) }}
+        router-link.info.hover.mail.clicked(:to='`/dashboard/${currentService.service}/mail`')
             .titleWrap
                 .title 
                     .material-symbols-outlined.big mail
@@ -95,11 +95,11 @@ template(v-if='currnetService')
             .listWrap.noWrap
                 .list
                     span # Subscribers
-                    h5 {{ currnetService.newsletter_subscribers }}
+                    h5 {{ currentService.newsletter_subscribers }}
                 .list 
                     span # Mail storage used 
-                    h5 {{ convertToMb(storageInfo?.[currnetService.service]?.email) }}
-        router-link.info.hover.domain.clicked(:to='`/dashboard/${currnetService.service}/subdomain`')
+                    h5 {{ convertToMb(storageInfo?.[currentService.service]?.email) }}
+        router-link.info.hover.domain.clicked(:to='`/dashboard/${currentService.service}/subdomain`')
             .titleWrap
                 .title 
                     .material-symbols-outlined.big language
@@ -107,10 +107,10 @@ template(v-if='currnetService')
             .listWrap.noWrap
                 .list
                     span Registered Subdomain
-                    h5 {{ currnetService.subdomain ? currnetService.subdomain + ".skapi.com" : 'No subdomain' }}
+                    h5 {{ currentService.subdomain ? currentService.subdomain + ".skapi.com" : 'No subdomain' }}
                 .list
                     span Host storage used
-                    h5 {{ convertToMb(storageInfo?.[currnetService.service]?.host) }}
+                    h5 {{ convertToMb(storageInfo?.[currentService.service]?.host) }}
     .deleteWrap(@click="openDeleteService = true;")
         .deleteInner
             .material-symbols-outlined.mid delete
@@ -123,7 +123,7 @@ template(v-if='currnetService')
 <script setup>
 import { nextTick, ref, watch } from 'vue';
 import { useRouter } from 'vue-router';
-import { currnetService, storageInfo } from '@/data.js';
+import { currentService, storageInfo } from '@/data.js';
 import { skapi } from '@/main.js';
 import DisableService from '@/views/Service/Overlay/DisableService.vue';
 import DeleteService from '@/views/Service/Overlay/DeleteService.vue';
@@ -153,16 +153,16 @@ let enableDisablePromise = ref(false);
 //     target.classList.add('clicked');
 //     setTimeout(() => {
 //         if (target.classList.contains('user')) {
-//             router.push({ path: `/dashboard/${currnetService.value.service}/users` });
+//             router.push({ path: `/dashboard/${currentService.value.service}/users` });
 //         }
 //         if (target.classList.contains('record')) {
-//             router.push({ path: `/dashboard/${currnetService.value.service}/records` });
+//             router.push({ path: `/dashboard/${currentService.value.service}/records` });
 //         }
 //         if (target.classList.contains('mail')) {
-//             router.push({ path: `/dashboard/${currnetService.value.service}/mail` });
+//             router.push({ path: `/dashboard/${currentService.value.service}/mail` });
 //         }
 //         if (target.classList.contains('domain')) {
-//             router.push({ path: `/dashboard/${currnetService.value.service}/subdomain` });
+//             router.push({ path: `/dashboard/${currentService.value.service}/subdomain` });
 //         }
 //     }, 200);
 // }
@@ -182,57 +182,57 @@ let copy = (e) => {
 }
 
 let changeServiceName = () => {
-    if (currnetService.value.name !== inputServiceName) {
-        let previous = currnetService.value.name;
-        skapi.updateService(currnetService.value.service, {
+    if (currentService.value.name !== inputServiceName) {
+        let previous = currentService.value.name;
+        skapi.updateService(currentService.value.service, {
             name: inputServiceName
         }).catch(err => {
-            currnetService.value.name = previous;
+            currentService.value.name = previous;
             throw err;
         });
-        currnetService.value.name = inputServiceName;
+        currentService.value.name = inputServiceName;
     }
     modifyServiceName.value = false;
 }
 let changeCors = () => {
-    let previous = currnetService.value.cors;
+    let previous = currentService.value.cors;
     let corsArr = inputCors.value.split(',');
     corsArr = skapi.checkCorsOrigin(corsArr);
-    skapi.updateService(currnetService.value.service, {
+    skapi.updateService(currentService.value.service, {
         cors: corsArr
     }).catch(err => {
-        currnetService.value.cors = previous;
+        currentService.value.cors = previous;
         throw err;
     });
 
-    currnetService.value.cors = corsArr.join(', ');
+    currentService.value.cors = corsArr.join(', ');
     modifyCors.value = false;
 }
 let setSecretKey = () => {
-    let previous = currnetService.value.api_key;
-    skapi.updateService(currnetService.value.service, {
+    let previous = currentService.value.api_key;
+    skapi.updateService(currentService.value.service, {
         api_key: inputKey
     }).catch(err => {
-        currnetService.value.api_key = previous;
+        currentService.value.api_key = previous;
         throw err;
     });
 
-    currnetService.value.api_key = inputKey;
+    currentService.value.api_key = inputKey;
     modifyKey.value = false;
 }
 let enableDisableToggle = () => {
     if (enableDisablePromise.value) {
         return;
     }
-    if (currnetService.value.active === 0) {
+    if (currentService.value.active === 0) {
         // enable
-        enableDisablePromise.value = skapi.enableService(currnetService.value.service).catch(err => {
-            currnetService.value.active = 0;
+        enableDisablePromise.value = skapi.enableService(currentService.value.service).catch(err => {
+            currentService.value.active = 0;
             throw err;
         }).finally(_ => {
             enableDisablePromise.value = false;
         });;
-        currnetService.value.active = 1;
+        currentService.value.active = 1;
     } else {
         // disable (opens disable service dialog)
         openDisableService.value = true;
@@ -243,13 +243,13 @@ let disableService = (e) => {
         return;
     }
     if (e === 'disable') {
-        enableDisablePromise.value = skapi.disableService(currnetService.value.service).catch(err => {
-            currnetService.value.active = 1;
+        enableDisablePromise.value = skapi.disableService(currentService.value.service).catch(err => {
+            currentService.value.active = 1;
             throw err;
         }).finally(_ => {
             enableDisablePromise.value = false;
         });
-        currnetService.value.active = 0;
+        currentService.value.active = 0;
     }
     openDisableService.value = false;
 }
