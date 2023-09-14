@@ -13,9 +13,16 @@
             .settingWrap 
                 .setting
                     .tit Subdomain
-                    .cont 
-                        h5 subdomain name here
-                        .material-symbols-outlined.mid.btn edit
+                    template(v-if="modifySudomain")
+                        form.modifyForm(style="margin-top: 8px")
+                            input#modifySudomain(type="text" :placeholder="`${currnetService.subdomain}`" :value='inputSubdomain' @input="(e) => inputSubdomain = e.target.value")
+                            .btnWrap
+                                button.cancel(type="button" @click="modifySudomain = false;") Cancel
+                                button.save(type="submit") Save
+                    template(v-else)
+                        .cont
+                            h5 subdomain name here
+                            .material-symbols-outlined.mid.btn(@click="modifySudomain = true;") edit
                 .setting
                     .tit 404 file
                     .cont 
@@ -24,7 +31,7 @@
                             label.uploadBtn.btn(for="file")
                                 .material-symbols-outlined.mid upload
                                 span Upload
-                            input#file(type="file" @change="showFileName")
+                            input#file(hidden type="file" @change="showFileName")
         template(v-else)
             .create 
                 .tit Register Subdomain
@@ -33,7 +40,9 @@
                     button Create
     .container(v-if="!currnetService.subdomain")
         .filesHeader
-            .filesPathWrap kk
+            .filesPathWrap
+                .material-symbols-outlined.big.clickable hard_drive
+                span /
             .filesButtonWrap
                 .material-symbols-outlined.mid.clickable cached
                 .material-symbols-outlined.mid.clickable more_vert
@@ -41,9 +50,43 @@
                     .material-symbols-outlined.mid upload
                     span Upload
         .filesWrapper
-            .noFile 
-                h2 No Files 
-                p You have not uploaded any files
+            template(v-if="currnetService?.files[currnetService.subdomain+"/"]?.list?.length == 0")
+                .noFile
+                    h2 No Files 
+                    p You have not uploaded any files
+            template(v-else-if="currnetService?.files[currnetService.subdomain+"/"]?.list?.length")
+                .fileWrapper
+                    .file(v-for="(file, index) in fileList")
+                        .customCheckBox
+                            input(type="checkbox" v-bind:id="index")
+                            label(:for="index")
+                                .material-symbols-outlined.mid.check check
+                        .material-symbols-outlined.mid(v-if="file.type == 'folder'") folder
+                        .material-symbols-outlined.mid(v-else-if="file.type == 'file'") draft
+                        .pathWrapper
+                            .path {{ file.name }}
+            template(v-else)
+                .dragNdropUpload
+                    input(hidden type="file")
+                    div
+                        .material-symbols-outlined.empty(style="font-size:80px") file_present
+                        p Drag and Drop Files or Folders here
+                .selectUpload
+                    input#selectFile(hidden type="file")
+                    label(for="selectFile") Select File
+        .uploadListWrapper 
+            .header
+                .number Uploading 24 files
+            .progressBar
+            .content    
+                .list(v-for="(file, index) in fileList") 
+                    .file 
+                        .material-symbols-outlined.mid(v-if="file.type == 'folder'") folder
+                        .material-symbols-outlined.mid(v-else-if="file.type == 'file'") draft
+                        .pathWrapper
+                            .path {{ file.name }}
+                    .sucess
+
 </template>
 
 <script setup>
@@ -55,7 +98,35 @@ import { services } from '@/data.js';
 let route = useRoute();
 let currnetPath = route.path.split('/')[2];
 let currnetService = services.value.find(service => service.service === currnetPath);
+let modifySudomain = ref(false);
+let inputSubdomain = ref('');
 let errorFile = ref('');
+let fileList = ref([
+    {
+        name: 'asdasd.jpg',
+        type: 'file'
+    },
+    {
+        name: 'asduhaosudad.css',
+        type: 'file'
+    },
+    {
+        name: 'imagefile.png',
+        type: 'file'
+    },
+    {
+        name: 'someFolder',
+        type: 'folder'
+    },
+    {
+        name: 'someFile.file',
+        type: 'file'
+    },
+    {
+        name: 'asduhaosudad.html',
+        type: 'file'
+    }
+])
 let showFileName = (e) => {
     let file = e.target.value.split('\\')[2];
     fileName.value = file;
@@ -155,10 +226,9 @@ let showFileName = (e) => {
                     }
                     h5 {
                         font-size: 16px;
-                        font-weight: 400;
-                        color: rgba(0,0,0,0.4);
+                        font-weight: 700;
+                        color: rgba(0,0,0,0.6);
                         &:hover {
-                            font-weight: 700;
                             color: rgba(0,0,0,0.8);
                             cursor: default;
                         }
@@ -170,9 +240,9 @@ let showFileName = (e) => {
                             font-size: 16px;
                             color: rgba(0,0,0,0.4);
                         }
-                        input[type="file"] {
-                            display: none;
-                        }
+                        // input[type="file"] {
+                        //     display: none;
+                        // }
                     }
                     .btn {
                         position: absolute;
@@ -180,6 +250,48 @@ let showFileName = (e) => {
                         top: 50%;
                         transform: translateY(-50%);
                         cursor: pointer;
+                    }
+                }
+                .modifyForm {
+                    display: flex;
+                    flex-wrap: nowrap;
+                    // gap: 12px;
+
+                    input {
+                        width: max(65%, 280px);
+                        margin-right: 32px;
+                        background-color: #EDEDED;
+                        border: 0;
+                        padding: 12px 20px;
+                        border-radius: 8px;
+                        font-size: 16px;
+                        font-weight: 500;
+                        color: rgba(0,0,0,0.8);
+                    }
+                    .btnWrap {
+                        // width: 35%;
+                        display: flex;
+                        flex-wrap: nowrap;
+                        align-items: center;
+                        justify-content: end;
+                        
+                        button {
+                            border: 2px solid #293FE6;
+                            border-radius: 8px;
+                            padding: 6px 12px;
+                            font-size: 16px;
+                            font-weight: 700;
+                            cursor: pointer;
+                            &.cancel {
+                                background-color: unset;
+                                color: #293FE6;
+                                margin-right: 12px;
+                            }
+                            &.save {
+                                background-color: #293FE6;
+                                color: #fff;
+                            }
+                        }
                     }
                 }
             }
@@ -191,7 +303,15 @@ let showFileName = (e) => {
             justify-content: space-between;
             margin-bottom: 28px;
             .filesPathWrap {
-
+                display: flex;
+                flex-wrap: nowrap;
+                align-items: center;
+                color: rgba(0, 0, 0, 0.60);
+                span {
+                    font-size: 20px;
+                    font-weight: 500;
+                    margin-left: 13px;
+                }
             }
             .filesButtonWrap {
                 display: flex;
@@ -205,13 +325,128 @@ let showFileName = (e) => {
             }
         }
         .filesWrapper {
+            position: relative;
             width: 100%;
             min-height: 448px;
             border-radius: 8px;
             border: 1px solid rgba(0, 0, 0, 0.10);
 
             .noFile {
+                position: absolute;
+                left: 50%;
+                top: 50%;
+                transform: translate(-50%, -50%);
+                color: rgba(0, 0, 0, 0.40);
+                text-align: center;
+                h2 {
+                    font-size: 28px;
+                    font-weight: 700;
+                    margin-bottom: 28px;
+                }
+                p {
+                    font-size: 20px;
+                    font-weight: 500;
+                }
+            }
+            .fileWrapper {
+                padding: 32px 28px;
+                .file {
+                    width: 100%;
+                    height: 40px;
+                    padding: 10px;
+                    border-radius: 4px;
+                    display: flex;
+                    flex-wrap: nowrap;
+                    align-items: center;
+                    color: rgba(0,0,0,0.6);
+                    &:nth-child(2n+1) {
+                        background: rgba(0, 0, 0, 0.05);
+                    }
+                    .material-symbols-outlined {
+                        margin-left: 10px;
+                        margin-right: 20px;
+                    }
+                    .pathWrapper {
+                        font-size: 14px;
+                        font-weight: 500;
+                    }
+                }
+            }
+            .dragNdropUpload {
+                width: 100%;
+                min-height: 448px;
+                text-align: center;
+                padding-top: 130px;
+                color: rgba(0,0,0,0.4);
+                p {
+                    font-size: 20px;
+                    font-weight: 500;
+                    margin-top: 10px;
+                }
+            }
+            .selectUpload {
+                position: absolute;
+                left: 50%;
+                top: 65%;
+                transform: translate(-50%, -50%);
+                text-align: center;
 
+                label {
+                    width: 105px;
+                    height: 32px;
+                    padding: 6px 12px;
+                    border-radius: 8px;
+                    border: 2px solid #293FE6;
+                    color: #293FE6;
+                    font-size: 16px;
+                    font-weight: 700;
+                    cursor: pointer;
+                }
+            }
+        }
+        .uploadListWrapper {
+            position: absolute;
+            width: 500px;
+            border-radius: 4px;
+            right: 0;
+            bottom: 0;
+            background-color: #fafafa;
+            border: 1px solid rgba(0,0,0,0.15);
+            .header {
+                width: 100%;
+                height: 60px;
+                border-radius: 4px 4px 0px 0px;
+                background: rgba(41, 63, 230, 0.05);
+                padding: 20px 28px;
+                font-size: 20px;
+                font-weight: 500;
+            }
+            .progressBar {
+                width: 100%;
+                height: 8px;
+                background: rgba(41, 63, 230, 0.20);
+            }
+            .content {
+                width: 100%;
+                height: 320px;
+                overflow-y: auto;
+                padding: 16px 28px;
+                .list {
+                    height: 56px;
+                    display: flex;
+                    flex-wrap: nowrap;
+                    align-items: center;
+                    justify-content: space-between;
+                    .file {
+                        display: flex;
+                        flex-wrap: nowrap;
+                        align-items: center;
+                        color: rgba(0,0,0,0.6);
+                        .pathWrapper {
+                            margin-left: 12px;
+                        }
+                    }
+                }
             }
         }
         .create {

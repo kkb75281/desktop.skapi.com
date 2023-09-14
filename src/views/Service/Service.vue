@@ -50,7 +50,7 @@ template(v-if='currnetService')
                             input#modifyCors(type="text" :placeholder="`${currnetService.cors}`" :value='inputCors' @input="(e) => inputCors = e.target.value")
                             .buttonWrap 
                                 button.cancel(type="button" @click="modifyCors = false;") Cancel
-                                button.save(type="button") Save
+                                button.save(type="submit") Save
                     template(v-else)
                         h5 {{ currnetService.cors }}
                         .material-symbols-outlined.mid.pen.clickable(@click="inputCors = currnetService.cors; modifyCors = true;") edit

@@ -63,13 +63,12 @@ body.fa {
   'opsz' 20;
   font-size: 20px;
 }
-.material-symbols-outlined.empty.sml {
+.material-symbols-outlined.empty {
     font-variation-settings:
     'FILL' 0,
     'wght' 400,
     'GRAD' 0,
     'opsz' 20;
-    font-size: 20px;
   }
 
 /* loading img */

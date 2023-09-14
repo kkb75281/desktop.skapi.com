@@ -313,7 +313,7 @@
                             .customCheckBox
                                 input#allRecords(type="checkbox")
                                 label(for="allRecords")
-                                    span.material-symbols-outlined.mid.check check
+                                    .material-symbols-outlined.mid.check check
                         th Table Name
                         th Record ID
                         th User ID
@@ -326,7 +326,7 @@
                             .customCheckBox
                                 input(type="checkbox" v-bind:id="index")
                                 label(:for="index")
-                                    span.material-symbols-outlined.mid.check check
+                                    .material-symbols-outlined.mid.check check
                         td {{ record.table.name }}
                         td
                             .overflow {{ record.record_id }}
