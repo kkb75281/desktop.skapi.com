@@ -488,6 +488,7 @@ else {
         max-width: 1200px;
         min-width: 935px;
         margin: 0 auto;
+        padding-bottom: 56px;
     }
 }
 

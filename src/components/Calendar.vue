@@ -2,10 +2,10 @@
 #calendar
     .timeWrap
         .timeNav 
-            select.year(v-model="currentYear")
+            select.year(v-model="currentYear" @wheel="scrollYearOptions" @change="updateCalendar")
                 option(v-for="year in years" :key="year" :value="year") {{ year }}
             //- input(type="number" min="1111" max="9999")
-            select.month(v-model="whatMonth[currentMonth]")
+            select.month(v-model="whatMonth[currentMonth]" @change="updateCalendar")
                 option(v-for="month in whatMonth" :key="month" :value="month") {{ month }}
             .goback
                 .material-symbols-outlined.sml.prev(@click="prevTime") arrow_back_ios
@@ -31,8 +31,8 @@
 import { onMounted, ref } from 'vue';
 
 let activeTime = ref(false);
-let startDate = ref('0000-00-00');
-let endDate = ref('0000-00-00');
+let startDate = ref('');
+let endDate = ref('');
 
 let newDate = new Date(); // 현재 날짜
 let utc = newDate.getTime() + (newDate.getTimezoneOffset() * 60 * 1000); // utc 표준시
@@ -44,8 +44,26 @@ let thisMonth = new Date(today.getFullYear(), today.getMonth(), today.getDate())
 let currentYear = ref(thisMonth.getFullYear());
 let currentMonth = ref(thisMonth.getMonth());
 let currentDate = thisMonth.getDate();
-let years = Array.from({ length: 3000 }, (_, index) => index);
+let startYear = currentYear.value - 5; // 현재 년도에서 5년 전부터 시작
+let endYear = currentYear.value + 5;   // 현재 년도에서 5년 후까지 표시
+let years = ref(Array.from({ length: endYear - startYear + 1 }, (_, index) => startYear + index));
+// let years = Array.from({ length: 3000 }, (_, index) => index);
 let dates = ref([]);
+
+let scrollYearOptions = (e) => {
+    console.log(e)
+    e.preventDefault();
+    const deltaY = e.deltaY;
+
+
+    if (deltaY > 0) {
+        // 스크롤 다운 (다음 년도로 이동)
+        currentYear.value++;
+    } else {
+        // 스크롤 업 (이전 년도로 이동)
+        currentYear.value--;
+    }
+}
 
 function renderCalender(thisMonth) {
     dates.value.splice(0);
@@ -85,7 +103,8 @@ onMounted(()=>{
 })
 
 let updateCalendar = () => {
-    
+    thisMonth = new Date(currentYear.value, currentMonth.value, 1);
+    renderCalender(thisMonth);
 }
 
 let prevTime = () => {
@@ -97,6 +116,8 @@ let nextTime = () => {
     thisMonth = new Date(currentYear.value, currentMonth.value + 1, 1);
     renderCalender(thisMonth);
 }
+
+let emit = defineEmits(['dateClicked']);
 
 let createdDate = (date) => {
     let selectedYear = currentYear.value;
@@ -114,6 +135,7 @@ let createdDate = (date) => {
             startDate.value = null;
             endDate.value = null;
         }
+        emit('dateClicked', startDate.value, endDate.value);
     } else {
         startDate.value = formattedDate;
         endDate.value = null;

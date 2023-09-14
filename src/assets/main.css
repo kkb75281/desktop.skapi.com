@@ -102,11 +102,11 @@ select:focus {outline: none;}
 .customSelect .selectArrowDown {
   position: absolute;
   right: 13px;
-  top: 44%;
+  top: 50%;
   transform: translateY(-50%);
   border-radius: 0;
   user-select: none;
-  /* z-index: -1; */
+  z-index: -1;
 }
 
 /* checkBox */

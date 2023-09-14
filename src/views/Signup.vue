@@ -329,7 +329,7 @@ let signup = () => {
                 padding: 0 16px;
                 border: 0;
                 border-radius: 8px;
-                background: #EDEDED;
+                background: rgba(0,0,0,0.05);
                 box-shadow: 0px -1px 1px 0px rgba(0, 0, 0, 0.15) inset;
                 color: rgba(0, 0, 0, 0.60);
                 font-size: 16px;

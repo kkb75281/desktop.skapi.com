@@ -27,7 +27,8 @@
                 input(v-if="searchFor === 'locale'" placeholder="2 digit country code e.g. KR" v-model="searchText")
                 input(v-if="searchFor === 'birthdate'" placeholder="YYYY-MM-DD" v-model="searchText")
                 .material-symbols-outlined.mid.delete(v-if="searchText" @click="searchText = ''") close
-                .material-symbols-outlined.mid.cal(v-if="searchFor === 'timestamp'" @click="showCalendar = !showCalendar") calendar_today
+                .material-symbols-outlined.mid.modalIcon(v-if="searchFor === 'timestamp' && !searchText" @click="showCalendar = !showCalendar") calendar_today
+                .material-symbols-outlined.mid.modalIcon(v-if="searchFor === 'locale' && !searchText" @click="showLocale = !showLocale") arrow_drop_down
     .container(style="overflow: hidden;")
         .tableHeader 
             .actions 
@@ -151,18 +152,16 @@
             .noUsers(v-if="!users.length")
                 h2 No Users
                 p There are no users matching your search terms.
-    Calendar(v-if="showCalendar" :startDate = "startDate" :endDate = "endDate")
-    //- LocaleSelector(v-if="showLocale")
+    Calendar(v-if="showCalendar" @dateClicked="handledateClick")
+    LocaleSelector(v-if="showLocale" @countryClicked="handleCountryClick")
 </template>
 
 <script setup>
 import { services, users } from '@/data.js';
 import { computed, onMounted, ref } from 'vue';
 import Calendar from '@/components/Calendar.vue';
-// import LocaleSelector from '@/components/LocaleSelector.vue';
+import LocaleSelector from '@/components/LocaleSelector.vue';
 
-let startDate = ref(null);
-let endDate = ref(null);
 let searchText = ref('');
 let searchFor = ref('user_id');
 let showFilter = ref(false);
@@ -180,6 +179,19 @@ let filterOptions = ref({
     group: false,
 })
 let maxTrCount = 10;
+let handleCountryClick = (key) => {
+  searchText.value = key;
+  showLocale.value = false;
+}
+let handledateClick = (startDate, endDate) => {
+    if(startDate == null && endDate == null) {
+        searchText.value = ''
+        showCalendar.value = true;
+    } else {
+        searchText.value = startDate + '~' + endDate;
+        showCalendar.value = false;
+    }
+}
 let trCount = computed(() => {
     return Math.max(0, maxTrCount - users.length);
 });
@@ -190,7 +202,7 @@ let trCount = computed(() => {
     position: relative;
     display: flex;
     flex-wrap: wrap;
-    #calendar {
+    #calendar, #localeSelector {
         position: absolute;
         right: 41px;
         top: 80px;
@@ -246,7 +258,7 @@ let trCount = computed(() => {
                 top: 10px;
                 cursor: pointer;
             }
-            .cal {
+            .modalIcon {
                 position: absolute;
                 right: 16px;
                 top: 10px;

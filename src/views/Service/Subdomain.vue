@@ -50,11 +50,11 @@
                     .material-symbols-outlined.mid upload
                     span Upload
         .filesWrapper
-            template(v-if="currentService?.files[currentService.subdomain+"/"]?.list?.length == 0")
+            template(v-if="fileList.length == 0")
                 .noFile
                     h2 No Files 
                     p You have not uploaded any files
-            template(v-else-if="currentService?.files[currentService.subdomain+"/"]?.list?.length")
+            template(v-else-if="fileList.length")
                 .fileWrapper
                     .file(v-for="(file, index) in fileList")
                         .customCheckBox
@@ -78,14 +78,15 @@
             .header
                 .number Uploading 24 files
             .progressBar
-            .content    
-                .list(v-for="(file, index) in fileList") 
-                    .file 
-                        .material-symbols-outlined.mid(v-if="file.type == 'folder'") folder
-                        .material-symbols-outlined.mid(v-else-if="file.type == 'file'") draft
-                        .pathWrapper
-                            .path {{ file.name }}
-                    .sucess
+            .content   
+                .listWrap 
+                    .list(v-for="(file, index) in fileList") 
+                        .file 
+                            .material-symbols-outlined.mid(v-if="file.type == 'folder'") folder
+                            .material-symbols-outlined.mid(v-else-if="file.type == 'file'") draft
+                            .pathWrapper
+                                .path {{ file.name }}
+                        .sucess
 
 </template>
 
@@ -429,8 +430,12 @@ let showFileName = (e) => {
             .content {
                 width: 100%;
                 height: 320px;
-                overflow-y: auto;
                 padding: 16px 28px;
+                overflow: hidden;
+                .listWrap {
+                    height: 100%;
+                    overflow-y: auto;
+                }
                 .list {
                     height: 56px;
                     display: flex;

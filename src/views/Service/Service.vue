@@ -111,8 +111,8 @@ template(v-if='currentService')
                 .list
                     span Host storage used
                     h5 {{ convertToMb(storageInfo?.[currentService.service]?.host) }}
-    .deleteWrap(@click="openDeleteService = true;")
-        .deleteInner
+    .deleteWrap
+        .deleteInner(@click="openDeleteService = true;")
             .material-symbols-outlined.mid delete
             span Delete Service
     DisableService(v-if="openDisableService" @close="disableService")
@@ -445,17 +445,18 @@ watch(modifyCors, () => {
 }
 
 .deleteWrap {
-    display: inline-block;
-    float: right;
-    width: 150px;
+    display: flex;
+    flex-wrap: nowrap;
+    justify-content: flex-end;
     color: #F04E4E;
     margin-top: 20px;
-    cursor: pointer;
-
+    
     .deleteInner {
+        width: 150px;
         display: flex;
         flex-wrap: nowrap;
         align-items: center;
+        cursor: pointer;
 
         span {
             margin-left: 14px;
