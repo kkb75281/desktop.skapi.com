@@ -3,3 +3,4 @@ skapi-extensions/
 package-lock.json
 .vscode
 .DS_Store
+dist

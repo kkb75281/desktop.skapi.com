@@ -4,9 +4,9 @@ main
         h2 Dashboard
         span All Services
     .container
-        .wrapper 
+        .wrapper(v-if="!serviceFetching")
             // service 로딩이 완료 되면 표시
-            .boxWrap(v-if="!serviceFetching")
+            .boxWrap
                 .box.btn(v-if="!create" @click="createService")
                     .material-symbols-outlined.mid add
                     span Create Service
