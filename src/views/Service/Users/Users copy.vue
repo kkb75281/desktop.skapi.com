@@ -85,8 +85,8 @@
                                 .material-symbols-outlined.mid.check check
                         span Group
                 .material-symbols-outlined.mid.refresh.clickable cached
-                .material-symbols-outlined.mid.menu.clickable(@click.stop="showUserSetting = !showUserSetting") more_vert
-                .userSettingWrap(v-if="showUserSetting" @click.stop)
+                .material-symbols-outlined.mid.menu.clickable(@click="showUserSetting = !showUserSetting") more_vert
+                .userSettingWrap(v-if="showUserSetting")
                     .setting
                         .material-symbols-outlined.mid account_circle_off
                         span block
@@ -99,39 +99,30 @@
             .pagenator 
                 .material-symbols-outlined.sml.prevPage.clickable arrow_back_ios
                 .material-symbols-outlined.sml.nextPage.clickable arrow_forward_ios
-        .tableWrap 
-            table#resizeMe.table
+        .tableWrap
+            table
+                //- colgroup
+                //-     col(width="6%")
+                //-     col(width="7%")
+                //-     col(width="12%")
+                //-     col(width="25%")
+                //-     col(width="25%")
+                //-     col(width="25%")
                 thead
                     tr
-                        th(style="width:20px;")
+                        th(style="width:40px;min-width:40px;max-width:40px")
                             .customCheckBox
                                 input#allUsers(type="checkbox")
                                 label(for="allUsers")
                                     .material-symbols-outlined.mid.check check
-                        th.th.center(v-if="filterOptions.block" style="width:70px;")
-                            | Block
-                            .resizer(@mousedown="mousedown")
-                        th.th.center(v-if="filterOptions.status" style="width:70px;")
-                            | Status
-                            .resizer(@mousedown="mousedown")
-                        th.th(v-if="filterOptions.userID" style="width:360px;")
-                            | User ID
-                            .resizer(@mousedown="mousedown")
-                        th.th(v-if="filterOptions.name" style="width:160px;")
-                            | Name
-                            .resizer(@mousedown="mousedown")
-                        th.th(v-if="filterOptions.email" style="width:160px;")
-                            | Email
-                            .resizer(@mousedown="mousedown")
-                        th.th(v-if="filterOptions.address" style="width:160px;")
-                            | Address
-                            .resizer(@mousedown="mousedown")
-                        th.th(v-if="filterOptions.gender" style="width:160px;")
-                            | Gender
-                            .resizer(@mousedown="mousedown")
-                        th.th(v-if="filterOptions.group" style="width:160px;")
-                            | Group
-                            .resizer(@mousedown="mousedown")
+                        th.center(v-if="filterOptions.block" style="width:80px;min-width:80px;max-width:80px") Block
+                        th.center(v-if="filterOptions.status" style="width:80px;min-width:80px;max-width:80px") Status
+                        th(v-if="filterOptions.userID" style="width:360px;min-width:360px;max-width:360px") User ID
+                        th(v-if="filterOptions.name" style="width:100px;min-width:100px;max-width:120px") Name
+                        th(v-if="filterOptions.email" style="width:150px;min-width:150px;max-width:190px") Email
+                        th(v-if="filterOptions.address" style="width:120px;min-width:120px;max-width:160px") Address
+                        th(v-if="filterOptions.gender" style="width:120px;min-width:120px;max-width:160px") Gender
+                        th(v-if="filterOptions.group" style="width:120px;min-width:120px;max-width:160px") Group
                 tbody(v-if="users.length")
                     tr(v-for="(user, index) in users" :key="index")
                         td(style="min-width:20px")
@@ -140,15 +131,14 @@
                                 label(:for="index")
                                     .material-symbols-outlined.mid.check check
                         td.center(v-if="filterOptions.block")
-                            .material-symbols-outlined.mid.block(v-if="user.block == 1") no_accounts
+                            .material-symbols-outlined.mid.block(v-if="user.block == 1") account_circle_off
                             .material-symbols-outlined.mid.unblock(v-else) account_circle
                         td.center(v-if="filterOptions.status")
                             .material-symbols-outlined.mid.enable(v-if="user.status == 1") check_circle
                             .material-symbols-outlined.mid.disable(v-else) cancel
-                        td(v-if="filterOptions.userID") 
-                            .overflow {{ user.user_id }}
+                        td(v-if="filterOptions.userID") {{ user.user_id }}
                         td(v-if="filterOptions.name")
-                            .overflow {{ user.name }}
+                            .overflow(@scroll="scrollOverflow") {{ user.name }}
                         td(v-if="filterOptions.email")
                             .overflow {{ user.email }}
                         td(v-if="filterOptions.address") 
@@ -166,15 +156,10 @@
 </template>
 
 <script setup>
-import { bodyClick } from '@/main.js';
 import { services, users } from '@/data.js';
 import { computed, onMounted, ref } from 'vue';
 import Calendar from '@/components/Calendar.vue';
 import LocaleSelector from '@/components/LocaleSelector.vue';
-
-bodyClick.showUserSetting = () => {
-    showUserSetting.value = false;
-}
 
 let searchText = ref('');
 // let searchFor = ref('user_id');
@@ -210,43 +195,12 @@ let handledateClick = (startDate, endDate) => {
 let trCount = computed(() => {
     return Math.max(0, maxTrCount - users.length);
 });     
-
-// table resize
-let prevX, prevW, nextW = 0;
-let prevCol, nextCol = null;
-let mouseMoveHandler = function (e) {
-    let ths = document.getElementsByTagName('th');
-    let thsArr = Array.from(ths);
-    let dx = e.clientX - prevX;
-    let widthSum = 0;
-
-    thsArr.forEach((e) => {
-        widthSum += e.offsetWidth - 2;
-    });
-
-    if ((widthSum < window.innerWidth || dx < 0) && (prevW + dx > 200 && nextW - dx > 200)) {
-        prevCol.style.width = `${prevW + dx}px`;
-        nextCol.style.width = `${nextW - dx}px`;
+let scrollOverflow = (e) => {
+    console.log('dddd')
+    if (e.currentTarget.scrollLeft + e.currentTarget.clientWidth === e.currentTarget.scrollWidth) {
+        e.currentTarget.parentNode.classList.remove('ellipsis');
     }
-};
-
-let mousedown = function (e) {
-    prevCol = e.target.parentNode;
-    nextCol = prevCol.nextSibling;
-
-    let prevStyles = window.getComputedStyle(e.target.parentNode);
-    let nextStyles = window.getComputedStyle(prevCol.nextSibling);
-
-    prevX = e.clientX;
-    prevW = parseInt(prevStyles.width, 10);
-    nextW = parseInt(nextStyles.width, 10);
-    document.addEventListener('mousemove', mouseMoveHandler);
-};
-
-document.addEventListener('mouseup', function () {
-    document.removeEventListener('mousemove', mouseMoveHandler);
-});
-
+}
 onMounted(() => {
     let overflows = document.querySelectorAll('.overflow');
     overflows.forEach(overflow => {
@@ -439,115 +393,70 @@ onMounted(() => {
         table {
             width: 100%;
             border-collapse: collapse;
-            table-layout: fixed;
-            .customCheckBox {
-                label {
-                    &::before {
-                        margin-right: 0;
-                    }
-                }
+            // table-layout: fixed;
+
+            tr {
+                height: 60px;
+                border-bottom: 1px solid rgba(0, 0, 0, 0.10);
+                filter: drop-shadow(0px 1px 3px rgba(0, 0, 0, 0.06));  
             }
-
-            thead {
-                text-align: left;
-                tr {
-                    height: 60px;
-                    
-                    th {
-                        position: relative;
-                        color: rgba(0, 0, 0, 0.40);
-                        font-size: 16px;
-                        font-weight: 700;
-                        padding-left: 20px;
-                        
-                        &::after {
-                            position: absolute;
-                            content: '';
-                            width: 100%;
-                            height: 1px;
-                            left: 0;
-                            bottom: 0;
-                            background: rgba(0,0,0,0.1);
-                            box-shadow: 0px 1px 3px 0px rgba(0, 0, 0, 0.06);
-                        }
-                        &:first-child {
-                            padding-left: 0;
-                        }
-                        &:last-child {
-                            .resizer {
-                                display: none;
-                            }
-                        }
-                        &.center {
-                            padding: 0;
-                            text-align: center;
-                        }
-                        .resizer {
-                            position: absolute;
-                            top: 50%;
-                            right: 0px;
-                            transform: translateY(-50%);
-                            width: 4px;
-                            height: 20px;
-                            background-color: rgba(0,0,0,0.1);
-                            cursor: col-resize;
-                            user-select: none;
-
-                            &.contrast {
-                                background-color: #fff !important;
-                            }
-                        }
-
-                        .resizable {
-                            height: 100px;
-                            width: 100px;
-                            position: relative;
-                        }
-                    }
-                }
-            }
-            tbody {
-                font-weight: 400;
-                td {
-                    position: relative;
-                    height: 60px;
-                    padding-left: 20px;
-
+            td {
+                position: relative;
+                &.ellipsis {
                     &::after {
                         position: absolute;
-                        content: '';
-                        width: 100%;
-                        height: 1px;
-                        left: 0;
-                        bottom: 0;
-                        background: rgba(0,0,0,0.1);
-                        box-shadow: 0px 1px 3px 0px rgba(0, 0, 0, 0.06);
+                        content: '...';
+                        right: 15px;
+                        top: 50%;
+                        transform: translateY(-50%);
                     }
-                    &:first-child {
-                        padding-left: 0;
-                    }
-                    &.center {
-                        padding: 0;
-                        text-align: center;
-                    }
-                    .block {
-                        color: rgba(0,0,0,0.4);
-                    }
-                    .enable {
-                        color: rgba(90, 216, 88, 1);
-                    }
-                    .disable {
-                        color: rgba(240, 78, 78, 1);
-                    }
-                    .overflow {
-                        position: relative;
-                        width: 100%;
-                        white-space: nowrap;
-                        overflow: hidden;
-                        text-overflow: ellipsis;
+                }
+                .overflow {
+                    position: relative;
+                    width: 120px;
+                    overflow: scroll;
+                    white-space: nowrap;
 
-                        &::-webkit-scrollbar {
-                            display: none;
+                    &::-webkit-scrollbar {
+                        display: none;
+                    }
+                }
+                // .overflow {
+                //     width: 150px;
+                //     white-space: nowrap;
+                //     overflow: hidden;
+                //     text-overflow: ellipsis;
+                //     display: block;
+                // }
+                .block {
+                    color: rgba(0,0,0,0.4);
+                }
+                .enable {
+                    color: rgba(90, 216, 88, 1);
+                }
+                .disable {
+                    color: rgba(240, 78, 78, 1);
+                }
+            }
+            td, th {
+                // padding-right: 15px;
+                &.center {
+                    text-align: center;
+                }
+            }
+            thead {
+                color: rgba(0, 0, 0, 0.40);
+                font-weight: 700;
+                text-align: left;
+            }
+            tbody {
+                color: rgba(0, 0, 0, 0.80);
+                font-weight: 400;
+
+                .customCheckBox {
+                    label {
+                        &::before {
+                            margin-right: 0;
                         }
                     }
                 }

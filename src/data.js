@@ -15,7 +15,7 @@ export let users = [
         group: "test2@gmail.com"
     },
     {
-        block: 0,
+        block: 1,
         status: 0,
         user_id: "f8982f17-6fff-491b-9876-31a49566f9fc",
         name: "asdf",
@@ -25,7 +25,7 @@ export let users = [
         group: "test2@gmail.com"
     },
     {
-        block: 0,
+        block: 1,
         status: 0,
         user_id: "a4c9aec8-c106-49ef-8cb9-cc96f2f24e2b",
         name: "tteesstt",
@@ -55,7 +55,7 @@ export let users = [
         group: "test2@gmail.com"
     },
     {
-        block: 0,
+        block: 1,
         status: 0,
         user_id: "a3aaa127-547f-46b1-9abd-c32461e42f33",
         name: "testA",

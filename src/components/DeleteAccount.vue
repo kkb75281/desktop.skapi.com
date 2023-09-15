@@ -14,7 +14,7 @@
                             span.material-symbols-outlined.mid.check check
                     .point All the services will be permanently deleted
                     .point All the information will be permanently deleted
-                    .material(v-if="acknowledgeError")
+                    .material.error(v-if="acknowledgeError")
                         .material-symbols-outlined.mid error
                         span {{ acknowledgeError }}
                     .buttonWrap.block
@@ -42,7 +42,7 @@
                         label.normal Other reasons why you might be leaving :
                         input(type="text"
                         @input="e=> { reasonText = e.target.value; }")
-                    .material(v-if="reasonError")
+                    .material.error(v-if="reasonError")
                         .material-symbols-outlined.mid error
                         span {{ reasonError }}
                     .buttonWrap 
@@ -57,7 +57,7 @@
                         @input="e=> { password = e.target.value; }" 
                         placeholder="Password" 
                         required)
-                    .material(v-if="disableError")
+                    .material.error(v-if="disableError")
                         .material-symbols-outlined.mid error
                         span {{ disableError }}
                     .buttonWrap 
