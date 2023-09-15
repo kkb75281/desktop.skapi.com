@@ -10,7 +10,7 @@ export let users = [
         user_id: "0c4d24ea-4382-4363-a6b3-e261c6dbd4d1",
         name: "test2",
         email: "test2@gmail.com",
-        address: "KR",
+        address: "경기도 안산시 상록구 사동",
         gender: "test2@gmail.com",
         group: "test2@gmail.com"
     },
@@ -19,7 +19,7 @@ export let users = [
         status: 0,
         user_id: "f8982f17-6fff-491b-9876-31a49566f9fc",
         name: "asdf",
-        email: "asdf@gmail.com",
+        email: "assdasdkasdajlssdkajsdlaksjdlaskdjaslkdjasddf@gmail.com",
         address: "KR",
         gender: "test2@gmail.com",
         group: "test2@gmail.com"

@@ -110,19 +110,19 @@
                 //-     col(width="25%")
                 thead
                     tr
-                        th
+                        th(style="width:40px;min-width:40px;max-width:40px")
                             .customCheckBox
                                 input#allUsers(type="checkbox")
                                 label(for="allUsers")
                                     .material-symbols-outlined.mid.check check
-                        th.center(v-if="filterOptions.block") Block
-                        th.center(v-if="filterOptions.status") Status
-                        th(v-if="filterOptions.userID") User ID
-                        th(v-if="filterOptions.name") Name
-                        th(v-if="filterOptions.email") Email
-                        th(v-if="filterOptions.address") Address
-                        th(v-if="filterOptions.gender") Gender
-                        th(v-if="filterOptions.group") Group
+                        th.center(v-if="filterOptions.block" style="width:80px;min-width:80px;max-width:80px") Block
+                        th.center(v-if="filterOptions.status" style="width:80px;min-width:80px;max-width:80px") Status
+                        th(v-if="filterOptions.userID" style="width:360px;min-width:360px;max-width:360px") User ID
+                        th(v-if="filterOptions.name" style="width:100px;min-width:100px;max-width:120px") Name
+                        th(v-if="filterOptions.email" style="width:150px;min-width:150px;max-width:190px") Email
+                        th(v-if="filterOptions.address" style="width:120px;min-width:120px;max-width:160px") Address
+                        th(v-if="filterOptions.gender" style="width:120px;min-width:120px;max-width:160px") Gender
+                        th(v-if="filterOptions.group" style="width:120px;min-width:120px;max-width:160px") Group
                 tbody(v-if="users.length")
                     tr(v-for="(user, index) in users" :key="index")
                         td(style="min-width:20px")
@@ -130,23 +130,22 @@
                                 input(type="checkbox" v-bind:id="index")
                                 label(:for="index")
                                     .material-symbols-outlined.mid.check check
-                        td.center(v-if="filterOptions.block" style="min-width:80px")
-                            .material-symbols-outlined.mid(v-if="user.block == 1") account_circle_off
-                            .material-symbols-outlined.mid(v-else) account_circle
-                        td.center(v-if="filterOptions.status" style="min-width:80px")
-                            .material-symbols-outlined.mid(v-if="user.status == 1") check_circle
-                            .material-symbols-outlined.mid(v-else) cancel
-                        td(v-if="filterOptions.userID" style="min-width:120px")
-                            .overflow {{ user.user_id }}
-                        td(v-if="filterOptions.name" style="min-width:100px")
+                        td.center(v-if="filterOptions.block")
+                            .material-symbols-outlined.mid.block(v-if="user.block == 1") account_circle_off
+                            .material-symbols-outlined.mid.unblock(v-else) account_circle
+                        td.center(v-if="filterOptions.status")
+                            .material-symbols-outlined.mid.enable(v-if="user.status == 1") check_circle
+                            .material-symbols-outlined.mid.disable(v-else) cancel
+                        td(v-if="filterOptions.userID") {{ user.user_id }}
+                        td(v-if="filterOptions.name")
                             .overflow {{ user.name }}
-                        td(v-if="filterOptions.email" style="min-width:100px")
+                        td(v-if="filterOptions.email")
                             .overflow {{ user.email }}
-                        td(v-if="filterOptions.address" style="min-width:80px")
+                        td(v-if="filterOptions.address") 
                             .overflow {{ user.address }}
-                        td(v-if="filterOptions.gender" style="min-width:80px")
+                        td(v-if="filterOptions.gender")
                             .overflow {{ user.gender }}
-                        td(v-if="filterOptions.group" style="min-width:80px")
+                        td(v-if="filterOptions.group")
                             .overflow {{ user.group }}
                     tr(v-for="i in trCount" :key="'extra-' + i")
             .noUsers(v-if="!users.length")
@@ -163,7 +162,8 @@ import Calendar from '@/components/Calendar.vue';
 import LocaleSelector from '@/components/LocaleSelector.vue';
 
 let searchText = ref('');
-let searchFor = ref('user_id');
+// let searchFor = ref('user_id');
+let searchFor = ref('timestamp');
 let showFilter = ref(false);
 let showCalendar = ref(false);
 let showLocale = ref(false);
@@ -194,7 +194,16 @@ let handledateClick = (startDate, endDate) => {
 }
 let trCount = computed(() => {
     return Math.max(0, maxTrCount - users.length);
-});
+});     
+onMounted(() => {
+    let overflows = document.querySelectorAll('.overflow');
+    overflows.forEach(overflow => {
+        let scrollWidth = overflow.scrollWidth;
+        if (scrollWidth > 120) {
+            overflow.parentNode.classList.add('ellipsis');
+        }
+    });  
+})
 </script>
 
 <style lang="less" scoped>
@@ -375,7 +384,7 @@ let trCount = computed(() => {
             }
         }
         table {
-            min-width: 100%;
+            // width: 1120px;
             border-collapse: collapse;
             // table-layout: fixed;
 
@@ -384,17 +393,48 @@ let trCount = computed(() => {
                 border-bottom: 1px solid rgba(0, 0, 0, 0.10);
                 filter: drop-shadow(0px 1px 3px rgba(0, 0, 0, 0.06));  
             }
-            td, th {
-                padding-right: 15px;
-                &.center {
-                    text-align: center;
+            td {
+                position: relative;
+                &.ellipsis {
+                    &::after {
+                        position: absolute;
+                        content: '...';
+                        right: 15px;
+                        top: 50%;
+                        transform: translateY(-50%);
+                    }
                 }
                 .overflow {
-                    width: 150px;
+                    position: relative;
+                    width: 120px;
+                    overflow: scroll;
                     white-space: nowrap;
-                    overflow: hidden;
-                    text-overflow: ellipsis;
-                    display: block;
+
+                    &::-webkit-scrollbar {
+                        display: none;
+                    }
+                }
+                // .overflow {
+                //     width: 150px;
+                //     white-space: nowrap;
+                //     overflow: hidden;
+                //     text-overflow: ellipsis;
+                //     display: block;
+                // }
+                .block {
+                    color: rgba(0,0,0,0.4);
+                }
+                .enable {
+                    color: rgba(90, 216, 88, 1);
+                }
+                .disable {
+                    color: rgba(240, 78, 78, 1);
+                }
+            }
+            td, th {
+                // padding-right: 15px;
+                &.center {
+                    text-align: center;
                 }
             }
             thead {

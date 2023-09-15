@@ -21,6 +21,8 @@ body.fa {
   display: flex;
   flex-wrap: nowrap;
   align-items: center; 
+  color: #F04E4E;
+  padding-top: 16px;
 }
 .material span {
   margin-left: 6px;
