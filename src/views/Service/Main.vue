@@ -1,6 +1,6 @@
 <template lang="pug">
 template(v-if='currentService')
-    .navSide(@click='accountInfo = false') 
+    .navSide
         router-link.logo(to="/")
             img(src="@/assets/symbol-logo.png")
         .menuList 
@@ -19,7 +19,7 @@ template(v-if='currentService')
             router-link.menu(:to="`/dashboard/${currentService.service}/subdomain`" :class="{'active': route.name == 'subdomain'}")
                 .material-symbols-outlined.big language
                 p Subdomain
-    .settingWrap(@click='accountInfo = false') 
+    .settingWrap
         .setting 
             .material-symbols-outlined.empty.sml.que help
             span Help & getting started
@@ -36,7 +36,7 @@ template(v-if='currentService')
         //-             .dark
         //-                 .material-symbols-outlined.empty.sml clear_night
         //-                 span Dark
-    .navCont(@click='accountInfo = false') 
+    .navCont
         .navTop
             .routeWrap
                 nav 
@@ -78,17 +78,21 @@ template(v-if='currentService')
                         .material-symbols-outlined.mid logout
                         .click Logout
                 .policy terms of service ● privacy policy
-        .cont(@click='accountInfo = false') 
+        .cont
             router-view
 </template>
 
 <script setup>
 import { ref } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
-import { services, users, serviceFetching, currentService } from '@/data.js';
-import { skapi, account } from '@/main.js';
+import { services, serviceFetching, currentService } from '@/data.js';
+import { skapi, account, bodyClick } from '@/main.js';
 
 currentService.value = null;
+
+bodyClick.nav = () => {
+    accountInfo.value = false;
+}
 
 const route = useRoute();
 const router = useRouter();

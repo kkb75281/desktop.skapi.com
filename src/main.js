@@ -18,4 +18,13 @@ app.use(router)
 
 app.mount('#app')
 
-export { skapi, account }
+let bodyClick = {}
+document.body.addEventListener('click', ()=>{
+    if(Object.keys(bodyClick).length) {
+        for(let key in bodyClick) {
+            bodyClick[key]();
+        }
+    }
+})
+
+export { skapi, account, bodyClick }

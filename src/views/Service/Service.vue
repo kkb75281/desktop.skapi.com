@@ -44,7 +44,7 @@ template(v-if='currentService')
                     span(:class="{ active: modifyCors }") Cors Origin
                     template(v-if="modifyCors")
                         form.modifyForm(style="margin-top: 8px" @submit.prevent="changeCors")
-                            input#modifyCors(type="text" placeholder='example.origin.com' :value='inputCors' @input="(e) => inputCors = e.target.value")
+                            input#modifyCors(type="text" placeholder='https://your.domain.com' :value='inputCors' @input="(e) => {e.target.setCustomValidity(''); inputCors = e.target.value;}")
                             .buttonWrap 
                                 button.cancel(type="button" @click="modifyCors = false;") Cancel
                                 button.save(type="submit") Save
@@ -56,7 +56,7 @@ template(v-if='currentService')
                     span(:class="{ active: modifyKey }") Secret Key
                     template(v-if="modifyKey")
                         form.modifyForm(style="margin-top: 8px" @submit.prevent="setSecretKey")
-                            input#modifyKey(type="text" placeholder="Secret key for secure request" :value='inputKey' @input="(e) => inputKey = e.target.value")
+                            input#modifyKey(type="text" placeholder="Secret key for external request" :value='inputKey' @input="(e) => inputKey = e.target.value")
                             .buttonWrap 
                                 button.cancel(type="button" @click="modifyKey = false;") Cancel
                                 button.save(type="submit") Save
@@ -197,15 +197,27 @@ let changeServiceName = () => {
 let changeCors = () => {
     let previous = currentService.value.cors;
     let corsArr = inputCors.value.split(',');
-    corsArr = skapi.checkCorsOrigin(corsArr);
+    let corsToUpdate = []
+    for (let u of corsArr) {
+        u = u.trim().toLowerCase();
+        if (u && skapi.validate.url(u)) {
+            corsToUpdate.push(u);
+        }
+        else {
+            document.getElementById('modifyCors').setCustomValidity('Cors origin should be a valid URL. ex) https://your.domain.com');
+            document.getElementById('modifyCors').reportValidity();
+            return;
+        }
+    }
+
+    corsToUpdate.sort()
     skapi.updateService(currentService.value.service, {
-        cors: corsArr
+        cors: corsToUpdate.length ? corsToUpdate : ['*']
     }).catch(err => {
         currentService.value.cors = previous;
         throw err;
     });
-
-    currentService.value.cors = corsArr.join(', ');
+    currentService.value.cors = corsToUpdate.join(', ');
     modifyCors.value = false;
 }
 let setSecretKey = () => {
@@ -450,7 +462,7 @@ watch(modifyCors, () => {
     justify-content: flex-end;
     color: #F04E4E;
     margin-top: 20px;
-    
+
     .deleteInner {
         width: 150px;
         display: flex;
