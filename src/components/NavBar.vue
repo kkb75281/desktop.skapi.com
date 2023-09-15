@@ -1,5 +1,5 @@
 <template lang="pug">
-.navBar(@click="accountInfo = !accountInfo")
+.navBar
     router-link(to="/")
         img.logo(src="@/assets/logo.png")
     .menu
@@ -32,19 +32,15 @@
 <script setup>
 import { ref } from 'vue'
 import { useRouter, useRoute } from 'vue-router';
-import { skapi, account } from '@/main.js';
+import { skapi, account, bodyClick } from '@/main.js';
 
 let route = useRoute();
 let router = useRouter();
 let accountInfo = ref(false);
 
-let closeAccountInfo = () => {
+bodyClick.nav = ()=>{
     accountInfo.value = false;
 }
-
-defineExpose({
-    closeAccountInfo
-});
 
 let navigateToPage = () => {
     accountInfo.value = false;

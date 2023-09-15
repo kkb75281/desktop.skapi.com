@@ -4,7 +4,7 @@
         .header Delete Your Account
         .content
             template(v-if="step === 1")
-                form(@submit.prevent="acknowledgeCheck" action="")
+                form(@submit.prevent="acknowledgeCheck")
                     p Are you sure you want to delete your account permanently? 
                     .warning Warning : this cannot be undone.
                     .customCheckBox(style="margin-bottom: 16px;")
