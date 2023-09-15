@@ -1,8 +1,11 @@
-import { ref } from "vue";
+import { ref, reactive } from "vue";
+
 export let serviceFetching = ref(false);
 export let services = ref([]);
 export let storageInfo = ref({});
 export let currentService = ref(null);
+export let serviceUsers = {};
+
 export let users = [
     {
         block: 0,

@@ -156,10 +156,58 @@
 </template>
 
 <script setup>
-import { services, users } from '@/data.js';
+import { services, currentService, serviceUsers } from '@/data.js';
+import { skapi } from '@/main.js'
 import { computed, onMounted, ref } from 'vue';
 import Calendar from '@/components/Calendar.vue';
 import LocaleSelector from '@/components/LocaleSelector.vue';
+import Pager from '@/skapi-extensions/js/pager.js';
+const worker = new Worker(
+    new URL('@/skapi-extensions/js/pager_worker.js', import.meta.url),
+    { type: 'module' }
+);
+
+let serviceId = currentService.value.service;
+if (!serviceUsers?.[serviceId]) {
+    serviceUsers[serviceId] = {
+        default: new Pager(worker, {
+            id: 'user_id',
+            sortBy: 'timestamp',
+            order: 'desc',
+            resultsPerPage: 10
+        })
+    }
+}
+
+let userPage = serviceUsers[serviceId].default;
+
+let users = ref(userPage.getPage(1).list);
+console.log({users:users.value})
+// {
+//         block: 0,
+//         status: 1,
+//         user_id: "0c4d24ea-4382-4363-a6b3-e261c6dbd4d1",
+//         name: "test2",
+//         email: "test2@gmail.com",
+//         address: "경기도 안산시 상록구 사동",
+//         gender: "test2@gmail.com",
+//         group: "test2@gmail.com"
+// }
+if (!users.value.length) {
+    skapi.getUsers({
+        service: serviceId,
+        searchFor: 'timestamp',
+        condition: '>',
+        value: 0
+    }).then(u => {
+        userPage.insertItems(u.list).then(_ => {
+            let currPage = userPage.getPage(1).list;
+            console.log({currPage})
+            // users.value = currPage;
+        });
+    });
+}
+
 
 let searchText = ref('');
 // let searchFor = ref('user_id');
@@ -180,11 +228,11 @@ let filterOptions = ref({
 })
 let maxTrCount = 10;
 let handleCountryClick = (key) => {
-  searchText.value = key;
-  showLocale.value = false;
+    searchText.value = key;
+    showLocale.value = false;
 }
 let handledateClick = (startDate, endDate) => {
-    if(startDate == null && endDate == null) {
+    if (startDate == null && endDate == null) {
         searchText.value = ''
         showCalendar.value = true;
     } else {
@@ -194,7 +242,7 @@ let handledateClick = (startDate, endDate) => {
 }
 let trCount = computed(() => {
     return Math.max(0, maxTrCount - users.length);
-});     
+});
 onMounted(() => {
     let overflows = document.querySelectorAll('.overflow');
     overflows.forEach(overflow => {
@@ -202,7 +250,7 @@ onMounted(() => {
         if (scrollWidth > 120) {
             overflow.parentNode.classList.add('ellipsis');
         }
-    });  
+    });
 })
 </script>
 
@@ -211,11 +259,14 @@ onMounted(() => {
     position: relative;
     display: flex;
     flex-wrap: wrap;
-    #calendar, #localeSelector {
+
+    #calendar,
+    #localeSelector {
         position: absolute;
         right: 41px;
         top: 80px;
     }
+
     .container {
         width: 100%;
         padding: 28px 40px;
@@ -224,13 +275,15 @@ onMounted(() => {
         margin-bottom: 2%;
         filter: drop-shadow(8px 12px 36px rgba(0, 0, 0, 0.10));
     }
+
     form {
         display: flex;
         flex-wrap: nowrap;
+
         .selectBar {
             width: 200px;
             margin-right: 20px;
-            
+
             select {
                 height: 44px;
                 background: rgba(0, 0, 0, 0.05);
@@ -241,10 +294,11 @@ onMounted(() => {
                 cursor: pointer;
             }
         }
+
         .searchBar {
             position: relative;
             width: calc(100% - 220px);
-            
+
             input {
                 width: 100%;
                 height: 44px;
@@ -255,31 +309,36 @@ onMounted(() => {
                 padding-left: 50px;
                 font-weight: 400;
             }
+
             .search {
                 position: absolute;
                 left: 16px;
                 top: 10px;
-                color: rgba(0,0,0,0.4);
+                color: rgba(0, 0, 0, 0.4);
             }
+
             .delete {
                 position: absolute;
                 right: 16px;
                 top: 10px;
                 cursor: pointer;
             }
+
             .modalIcon {
                 position: absolute;
                 right: 16px;
                 top: 10px;
-                color: rgba(0,0,0,0.8);
+                color: rgba(0, 0, 0, 0.8);
                 cursor: pointer;
             }
         }
     }
+
     .tableHeader {
         display: flex;
         flex-wrap: nowrap;
         justify-content: space-between;
+
         .actions {
             position: relative;
             display: flex;
@@ -289,14 +348,16 @@ onMounted(() => {
             * {
                 cursor: pointer;
             }
+
             .dropDown {
                 display: flex;
                 align-items: center;
                 font-size: 16px;
                 font-weight: 500;
                 margin-right: 20px;
-                color: rgba(0,0,0,0.6);
+                color: rgba(0, 0, 0, 0.6);
             }
+
             .filterWrap {
                 position: absolute;
                 left: 0;
@@ -307,6 +368,7 @@ onMounted(() => {
                 background: #FAFAFA;
                 box-shadow: 8px 12px 36px 0px rgba(0, 0, 0, 0.10);
                 z-index: 10;
+
                 .filter {
                     display: flex;
                     align-items: center;
@@ -318,6 +380,7 @@ onMounted(() => {
                     }
                 }
             }
+
             .userSettingWrap {
                 position: absolute;
                 right: -100px;
@@ -329,6 +392,7 @@ onMounted(() => {
                 color: rgba(0, 0, 0, 0.80);
                 box-shadow: 8px 12px 36px 0px rgba(0, 0, 0, 0.10);
                 z-index: 10;
+
                 .setting {
                     display: flex;
                     align-items: center;
@@ -337,28 +401,34 @@ onMounted(() => {
                     &:last-child {
                         margin-bottom: 0;
                     }
+
                     span {
                         margin-left: 12px;
                     }
                 }
             }
+
             .refresh {
                 margin-right: 20px;
             }
         }
+
         .pagenator {
             display: flex;
             flex-wrap: nowrap;
             align-items: center;
+
             .page {
                 color: rgba(0, 0, 0, 0.60);
                 margin-right: 10px;
             }
+
             .prevPage {
                 margin-right: 20px;
             }
         }
     }
+
     .tableWrap {
         position: relative;
         min-height: 660px;
@@ -369,20 +439,23 @@ onMounted(() => {
             position: absolute;
             left: 50%;
             top: 50%;
-            transform: translate(-50%,-50%);
+            transform: translate(-50%, -50%);
             text-align: center;
+
             h2 {
                 color: rgba(0, 0, 0, 0.40);
                 font-size: 28px;
                 font-weight: 700;
                 margin-bottom: 28px;
             }
+
             p {
                 color: rgba(0, 0, 0, 0.40);
                 font-size: 20px;
                 font-weight: 500;
             }
         }
+
         table {
             // width: 1120px;
             border-collapse: collapse;
@@ -391,10 +464,12 @@ onMounted(() => {
             tr {
                 height: 60px;
                 border-bottom: 1px solid rgba(0, 0, 0, 0.10);
-                filter: drop-shadow(0px 1px 3px rgba(0, 0, 0, 0.06));  
+                filter: drop-shadow(0px 1px 3px rgba(0, 0, 0, 0.06));
             }
+
             td {
                 position: relative;
+
                 &.ellipsis {
                     &::after {
                         position: absolute;
@@ -404,6 +479,7 @@ onMounted(() => {
                         transform: translateY(-50%);
                     }
                 }
+
                 .overflow {
                     position: relative;
                     width: 120px;
@@ -414,6 +490,7 @@ onMounted(() => {
                         display: none;
                     }
                 }
+
                 // .overflow {
                 //     width: 150px;
                 //     white-space: nowrap;
@@ -422,26 +499,33 @@ onMounted(() => {
                 //     display: block;
                 // }
                 .block {
-                    color: rgba(0,0,0,0.4);
+                    color: rgba(0, 0, 0, 0.4);
                 }
+
                 .enable {
                     color: rgba(90, 216, 88, 1);
                 }
+
                 .disable {
                     color: rgba(240, 78, 78, 1);
                 }
             }
-            td, th {
+
+            td,
+            th {
+
                 // padding-right: 15px;
                 &.center {
                     text-align: center;
                 }
             }
+
             thead {
                 color: rgba(0, 0, 0, 0.40);
                 font-weight: 700;
                 text-align: left;
             }
+
             tbody {
                 color: rgba(0, 0, 0, 0.80);
                 font-weight: 400;
