@@ -19,7 +19,7 @@ dialog#changePasswordDialog(@click="closeDialog")
                             .material-symbols-outlined.sml visibility
                         template(v-else)
                             .material-symbols-outlined.sml visibility_off
-                .material(v-if="error")
+                .material.error(v-if="error")
                     .material-symbols-outlined.mid error
                     span {{ error }}
                 .buttonWrap 

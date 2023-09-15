@@ -38,13 +38,11 @@ main
                                     span CORS
                                     h5 {{ service.cors }}
                             
-                            .toggleWrap.locked(v-if='service?.pending')
+                            .serviceActive(v-if='service?.pending')
                                 // 왜 인지 모르겠으나 조건 class가 에니메이션을 영향줌 (생성될때 active가 켜졌다->꺼졌다->서비스 생성 완료되면 다시 켜짐)
-                                .toggleBg
-                                    .toggleBtn
-                            .toggleWrap.locked(v-else :class="{'active': service.active == 1 }")
-                                .toggleBg
-                                    .toggleBtn
+                                .material-symbols-outlined.big power_settings_new
+                            .serviceActive(v-else :class="{'active': service.active == 1 }")
+                                .material-symbols-outlined.big power_settings_new
                 template(v-else)
                     .box.noService
                         h2 No Services
@@ -300,25 +298,21 @@ main {
                             }
                         }
 
-                        .toggleWrap {
+                        .serviceActive {
                             position: absolute;
+                            width: 36px;
+                            height: 36px;
                             right: 29px;
                             bottom: 27px;
-                            opacity: 1;
-
-                            &.locked {
-                                opacity: 0.4;
-                            }
+                            display: flex;
+                            align-items: center;
+                            justify-content: center;
+                            color: #fff;
+                            background-color: rgba(0, 0, 0, 0.25);
+                            border-radius: 50%;
 
                             &.active {
-                                .toggleBg {
-                                    background-color: #293FE6;
-
-                                    .toggleBtn {
-                                        transform: translate(31px, -50%);
-                                        transition: all 1s;
-                                    }
-                                }
+                                background-color: rgba(90, 216, 88, 1);
                             }
 
                             .toggleBg {

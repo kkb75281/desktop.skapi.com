@@ -2,11 +2,23 @@
 #calendar
     .timeWrap
         .timeNav 
-            select.year(v-model="currentYear" @wheel="scrollYearOptions" @change="updateCalendar")
-                option(v-for="year in years" :key="year" :value="year") {{ year }}
-            //- input(type="number" min="1111" max="9999")
-            select.month(v-model="whatMonth[currentMonth]" @change="updateCalendar")
-                option(v-for="month in whatMonth" :key="month" :value="month") {{ month }}
+            input#here(type="date" hidden)
+            //- select.year(v-model="currentYear" @wheel="scrollYearOptions" @change="updateCalendar")
+            //-     option(v-for="year in years" :key="year" :value="year") {{ year }}
+            input.year(type="text" pattern="[0-9]+" minlength="4" :value="currentYear" @input="(e) => currentYear = e.target.value" @change="updateCalendar")
+            select.month(v-model="currentMonth" @change="updateCalendar")
+                option(value="0") January
+                option(value="1") February
+                option(value="2") March
+                option(value="3") April
+                option(value="4") May
+                option(value="5") June
+                option(value="6") July
+                option(value="7") August
+                option(value="8") September
+                option(value="9") October
+                option(value="10") November
+                option(value="11") December
             .goback
                 .material-symbols-outlined.sml.prev(@click="prevTime") arrow_back_ios
                 .material-symbols-outlined.sml.next(@click="nextTime") arrow_forward_ios
@@ -30,6 +42,7 @@
 <script setup>
 import { onMounted, ref } from 'vue';
 
+let showDropDown = ref(false);
 let activeTime = ref(false);
 let startDate = ref('');
 let endDate = ref('');
@@ -39,7 +52,6 @@ let utc = newDate.getTime() + (newDate.getTimezoneOffset() * 60 * 1000); // utc 
 let kstGap = 9 * 60 * 60 * 1000; // 한국 kst 기준시
 let today = new Date(utc + kstGap); // 한국 시간 date
 
-let whatMonth = [ 'January', 'February', 'March', 'Aprill', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December' ];
 let thisMonth = new Date(today.getFullYear(), today.getMonth(), today.getDate());
 let currentYear = ref(thisMonth.getFullYear());
 let currentMonth = ref(thisMonth.getMonth());
@@ -47,23 +59,9 @@ let currentDate = thisMonth.getDate();
 let startYear = currentYear.value - 5; // 현재 년도에서 5년 전부터 시작
 let endYear = currentYear.value + 5;   // 현재 년도에서 5년 후까지 표시
 let years = ref(Array.from({ length: endYear - startYear + 1 }, (_, index) => startYear + index));
-// let years = Array.from({ length: 3000 }, (_, index) => index);
 let dates = ref([]);
+let visibleYears = ref([]);
 
-let scrollYearOptions = (e) => {
-    console.log(e)
-    e.preventDefault();
-    const deltaY = e.deltaY;
-
-
-    if (deltaY > 0) {
-        // 스크롤 다운 (다음 년도로 이동)
-        currentYear.value++;
-    } else {
-        // 스크롤 업 (이전 년도로 이동)
-        currentYear.value--;
-    }
-}
 
 function renderCalender(thisMonth) {
     dates.value.splice(0);
@@ -105,7 +103,6 @@ onMounted(()=>{
 })
 
 let updateCalendar = () => {
-    console.log(thisMonth, currentYear.value, currentMonth.value)
     thisMonth = new Date(currentYear.value, currentMonth.value, 1);
     renderCalender(thisMonth);
 }
@@ -153,6 +150,31 @@ let createdDate = (date) => {
     border: 1px solid rgba(0, 0, 0, 0.15);
     background: #FAFAFA;
     box-shadow: 8px 12px 36px 0px rgba(0, 0, 0, 0.10);
+    .infiniteScroll {
+        position: relative;
+        width: 65px;
+        padding: 5px;
+        cursor: pointer;
+        &.active {
+            .dropdown {
+                display: block;
+            }
+        }
+        .dropdown {
+            position: absolute;
+            left: 0;
+            bottom: 0;
+            border: 1px solid #ccc;
+            max-height: 100px; /* 최대 높이 조절 */
+            overflow-y: auto;
+            background-color: white;
+            display: none;
+            > div {
+                padding: 5px;
+                cursor: pointer;
+            }
+        }
+    }
     .timeWrap {
         padding: 28px;
         .timeNav {
@@ -163,12 +185,13 @@ let createdDate = (date) => {
             margin-bottom: 28px;
             * {
                 text-align: center;
-                font-size: 20px;
-                font-weight: 700;
             }
             .goback {
                 width: 27%;
-                text-align: right;
+                display: flex;
+                flex-wrap: nowrap;
+                align-items: center;
+                justify-content: end;
                 padding-right: 7px;
 
                 * {
@@ -178,17 +201,23 @@ let createdDate = (date) => {
                     margin-right: 10px;
                 }
             }
-            select {
+            .year {
+                width: 25%;
+                font-size: 16px;
+            }
+            .month {
+                width: 48%;
                 background-color: unset;
                 border: 0;
                 cursor: pointer;
+                font-size: 20px;
 
-                &.year {
-                    width: 25%;
-                }
-                &.month {
-                    width: 48%;
-                }
+                // &.year {
+                //     width: 25%;
+                // }
+                // &.month {
+                    // width: 48%;
+                // }
             }
         }
         .timeCont {

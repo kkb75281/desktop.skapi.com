@@ -18,7 +18,7 @@
                 title="Please enter a valid email address." 
                 placeholder="Enter your email address" 
                 required)
-            .material(v-if="codeError") 
+            .material.error(v-if="codeError") 
                 .material-symbols-outlined.mid error
                 span {{ codeError }}
             .bottom
@@ -48,7 +48,7 @@
                 template(v-else)
                     span Haven’t got any Code?
                     .click(@click="resend") Re-send Code
-            .material(v-if="codeError") 
+            .material.error(v-if="codeError") 
                 .material-symbols-outlined.mid error
                 span {{ codeError }}
             .bottom

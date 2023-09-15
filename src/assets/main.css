@@ -22,6 +22,8 @@ body.fa {
   flex-wrap: nowrap;
   align-items: center; 
   color: #F04E4E;
+}
+.material.error {
   padding-top: 16px;
 }
 .material span {

@@ -30,7 +30,7 @@
                     span Remember Me
                     span.material-symbols-outlined.mid.check check
             RouterLink(:to="{name: 'forgotpassword'}") Forgot Email & Password?
-        .material(v-if="error")
+        .material.error(v-if="error")
             .material-symbols-outlined.mid error
             span {{ error }}
         .bottom

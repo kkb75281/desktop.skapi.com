@@ -32,10 +32,10 @@
     .container(style="overflow: hidden;")
         .tableHeader 
             .actions 
-                .dropDown(@click.stop="showFilter = !showFilter")
+                .dropDown(@click="showFilter = !showFilter")
                     span Headers
                     .material-symbols-outlined.mid arrow_drop_down
-                .filterWrap(v-if="showFilter" @click.stop)
+                .filterWrap(v-if="showFilter")
                     .filter 
                         .customCheckBox
                             input#userID(type="checkbox" :checked="filterOptions.userID" @change="filterOptions.userID = !filterOptions.userID")
@@ -85,70 +85,60 @@
                                 .material-symbols-outlined.mid.check check
                         span Group
                 .material-symbols-outlined.mid.refresh.clickable cached
-                .material-symbols-outlined.mid.menu.clickable(@click.stop="showUserSetting = !showUserSetting") more_vert
-                .userSettingWrap(v-if="showUserSetting" @click.stop)
-                    .setting(@click="userBlock")
+                .material-symbols-outlined.mid.menu.clickable(@click="showUserSetting = !showUserSetting") more_vert
+                .userSettingWrap(v-if="showUserSetting")
+                    .setting
                         .material-symbols-outlined.mid account_circle_off
                         span block
-                    .setting(@click="userUnblock")
+                    .setting
                         .material-symbols-outlined.mid account_circle
                         span unblock
-                    .setting(@click="userDelete")
+                    .setting
                         .material-symbols-outlined.mid delete
                         span delete
             .pagenator 
                 .material-symbols-outlined.sml.prevPage.clickable arrow_back_ios
                 .material-symbols-outlined.sml.nextPage.clickable arrow_forward_ios
-        .tableWrap 
-            table#resizeMe.table
+        .tableWrap
+            table
+                //- colgroup
+                //-     col(width="6%")
+                //-     col(width="7%")
+                //-     col(width="12%")
+                //-     col(width="25%")
+                //-     col(width="25%")
+                //-     col(width="25%")
                 thead
                     tr
-                        th(style="width:20px;")
+                        th(style="width:40px;min-width:40px;max-width:40px")
                             .customCheckBox
-                                input#allUsers(type="checkbox" value='selectall' @click="selectAll")
+                                input#allUsers(type="checkbox")
                                 label(for="allUsers")
                                     .material-symbols-outlined.mid.check check
-                        th.th.center(v-if="filterOptions.block" style="width:70px;")
-                            | Block
-                            .resizer(@mousedown="mousedown")
-                        th.th.center(v-if="filterOptions.status" style="width:70px;")
-                            | Status
-                            .resizer(@mousedown="mousedown")
-                        th.th(v-if="filterOptions.userID" style="width:360px;")
-                            | User ID
-                            .resizer(@mousedown="mousedown")
-                        th.th(v-if="filterOptions.name" style="width:160px;")
-                            | Name
-                            .resizer(@mousedown="mousedown")
-                        th.th(v-if="filterOptions.email" style="width:160px;")
-                            | Email
-                            .resizer(@mousedown="mousedown")
-                        th.th(v-if="filterOptions.address" style="width:160px;")
-                            | Address
-                            .resizer(@mousedown="mousedown")
-                        th.th(v-if="filterOptions.gender" style="width:160px;")
-                            | Gender
-                            .resizer(@mousedown="mousedown")
-                        th.th(v-if="filterOptions.group" style="width:160px;")
-                            | Group
-                            .resizer(@mousedown="mousedown")
+                        th.center(v-if="filterOptions.block" style="width:80px;min-width:80px;max-width:80px") Block
+                        th.center(v-if="filterOptions.status" style="width:80px;min-width:80px;max-width:80px") Status
+                        th(v-if="filterOptions.userID" style="width:360px;min-width:360px;max-width:360px") User ID
+                        th(v-if="filterOptions.name" style="width:100px;min-width:100px;max-width:120px") Name
+                        th(v-if="filterOptions.email" style="width:150px;min-width:150px;max-width:190px") Email
+                        th(v-if="filterOptions.address" style="width:120px;min-width:120px;max-width:160px") Address
+                        th(v-if="filterOptions.gender" style="width:120px;min-width:120px;max-width:160px") Gender
+                        th(v-if="filterOptions.group" style="width:120px;min-width:120px;max-width:160px") Group
                 tbody(v-if="users.length")
                     tr(v-for="(user, index) in users" :key="index")
                         td(style="min-width:20px")
                             .customCheckBox
-                                input(type="checkbox" name="user" :id="user.user_id")
-                                label(:for="user.user_id")
+                                input(type="checkbox" v-bind:id="index")
+                                label(:for="index")
                                     .material-symbols-outlined.mid.check check
                         td.center(v-if="filterOptions.block")
-                            .material-symbols-outlined.mid.block(v-if="user.block == 1") no_accounts
+                            .material-symbols-outlined.mid.block(v-if="user.block == 1") account_circle_off
                             .material-symbols-outlined.mid.unblock(v-else) account_circle
                         td.center(v-if="filterOptions.status")
                             .material-symbols-outlined.mid.enable(v-if="user.status == 1") check_circle
                             .material-symbols-outlined.mid.disable(v-else) cancel
-                        td(v-if="filterOptions.userID") 
-                            .overflow {{ user.user_id }}
+                        td(v-if="filterOptions.userID") {{ user.user_id }}
                         td(v-if="filterOptions.name")
-                            .overflow {{ user.name }}
+                            .overflow(@scroll="scrollOverflow") {{ user.name }}
                         td(v-if="filterOptions.email")
                             .overflow {{ user.email }}
                         td(v-if="filterOptions.address") 
@@ -157,7 +147,7 @@
                             .overflow {{ user.gender }}
                         td(v-if="filterOptions.group")
                             .overflow {{ user.group }}
-                    tr(v-if="users.length < 10" v-for="i in (10 - users.length)" :key="'extra-' + i")
+                    tr(v-for="i in trCount" :key="'extra-' + i")
             .noUsers(v-if="!users.length")
                 h2 No Users
                 p There are no users matching your search terms.
@@ -166,66 +156,10 @@
 </template>
 
 <script setup>
-import { bodyClick, skapi } from '@/main.js';
-import { services, currentService, serviceUsers, users } from '@/data.js';
+import { services, users } from '@/data.js';
 import { computed, onMounted, ref } from 'vue';
 import Calendar from '@/components/Calendar.vue';
 import LocaleSelector from '@/components/LocaleSelector.vue';
-import Pager from '@/skapi-extensions/js/pager.js';
-
-const worker = new Worker(
-    new URL('@/skapi-extensions/js/pager_worker.js', import.meta.url),
-    { type: 'module' }
-);
-
-let serviceId = currentService.value.service;
-if (!serviceUsers?.[serviceId]) {
-    serviceUsers[serviceId] = {
-        default: new Pager(worker, {
-            id: 'user_id',
-            sortBy: 'timestamp',
-            order: 'desc',
-            resultsPerPage: 10
-        })
-    }
-}
-
-let userPage = serviceUsers[serviceId].default;
-
-let users = ref(userPage.getPage(1).list);
-console.log({users:users.value})
-// {
-//         block: 0,
-//         status: 1,
-//         user_id: "0c4d24ea-4382-4363-a6b3-e261c6dbd4d1",
-//         name: "test2",
-//         email: "test2@gmail.com",
-//         address: "경기도 안산시 상록구 사동",
-//         gender: "test2@gmail.com",
-//         group: "test2@gmail.com"
-// }
-if (!users.value.length) {
-    skapi.getUsers({
-        service: serviceId,
-        searchFor: 'timestamp',
-        condition: '>',
-        value: 0
-    }).then(u => {
-        userPage.insertItems(u.list).then(_ => {
-            let currPage = userPage.getPage(1).list;
-            console.log({currPage})
-            // users.value = currPage;
-        });
-    });
-}
-
-
-bodyClick.showUserSetting = () => {
-    showUserSetting.value = false;
-}
-bodyClick.showFilter = () => {
-    showFilter.value = false;
-}
 
 let searchText = ref('');
 // let searchFor = ref('user_id');
@@ -245,58 +179,12 @@ let filterOptions = ref({
     group: false,
 })
 let maxTrCount = 10;
-let selectAll = (e) => {
-    let checkboxes = document.querySelectorAll('input[type="checkbox"]');
-    checkboxes.forEach((checkbox) => {
-        checkbox.checked = e.target.checked
-    })
-}
-let userBlock = () => {
-    let checkedUsers = document.querySelectorAll('input[name="user"]:checked');
-    checkedUsers.forEach(checkedUser => {
-        users.value[checkedUser.id].block = 0;
-        checkedUser.checked = false;
-    })
-    allUsers.checked = false;
-    showUserSetting.value = false;
-}
-let userUnblock = () => {
-    let checkedUsers = document.querySelectorAll('input[name="user"]:checked');
-    checkedUsers.forEach(checkedUser => {
-        users.value[checkedUser.id].block = 1;
-        checkedUser.checked = false;
-    })
-    allUsers.checked = false;
-    showUserSetting.value = false;
-}
-let userDelete = () => {
-    let checkedUsers = document.querySelectorAll('input[name="user"]:checked');
-    checkedUsers.forEach(checkedUser => {
-        checkedUser.checked = false;
-
-        let to_delete = null;
-        for (let idx = 0; users.value.length > idx; idx++) {
-            if (checkedUser.id === users.value[idx].user_id) {
-                to_delete = idx;
-                break;
-            }
-        }
-        if (to_delete !== null) {
-            users.value.splice(to_delete, 1);
-        }
-    })
-    allUsers.checked = false;
-    showUserSetting.value = false;
-}
 let handleCountryClick = (key) => {
-    searchText.value = key;
-    showLocale.value = false;
-    searchText.value = key;
-    showLocale.value = false;
+  searchText.value = key;
+  showLocale.value = false;
 }
 let handledateClick = (startDate, endDate) => {
-    if (startDate == null && endDate == null) {
-    if (startDate == null && endDate == null) {
+    if(startDate == null && endDate == null) {
         searchText.value = ''
         showCalendar.value = true;
     } else {
@@ -305,54 +193,23 @@ let handledateClick = (startDate, endDate) => {
     }
 }
 let trCount = computed(() => {
-    // return Math.max(0, maxTrCount - users.value.length);
-});
-
-// table resize
-let prevX, prevW, nextW = 0;
-let prevCol, nextCol = null;
-let mouseMoveHandler = function (e) {
-    let ths = document.getElementsByTagName('th');
-    let thsArr = Array.from(ths);
-    let dx = e.clientX - prevX;
-    let widthSum = 0;
-
-    thsArr.forEach((e) => {
-        widthSum += e.offsetWidth - 2;
-    });
-
-    if ((widthSum < window.innerWidth || dx < 0) && (prevW + dx > 200 && nextW - dx > 200)) {
-        prevCol.style.width = `${prevW + dx}px`;
-        nextCol.style.width = `${nextW - dx}px`;
+    return Math.max(0, maxTrCount - users.length);
+});     
+let scrollOverflow = (e) => {
+    console.log('dddd')
+    if (e.currentTarget.scrollLeft + e.currentTarget.clientWidth === e.currentTarget.scrollWidth) {
+        e.currentTarget.parentNode.classList.remove('ellipsis');
     }
-};
-
-let mousedown = function (e) {
-    prevCol = e.target.parentNode;
-    nextCol = prevCol.nextSibling;
-
-    let prevStyles = window.getComputedStyle(e.target.parentNode);
-    let nextStyles = window.getComputedStyle(prevCol.nextSibling);
-
-    prevX = e.clientX;
-    prevW = parseInt(prevStyles.width, 10);
-    nextW = parseInt(nextStyles.width, 10);
-    document.addEventListener('mousemove', mouseMoveHandler);
-};
-
-document.addEventListener('mouseup', function () {
-    document.removeEventListener('mousemove', mouseMoveHandler);
-});
-
+}
 onMounted(() => {
     let overflows = document.querySelectorAll('.overflow');
     overflows.forEach(overflow => {
         let scrollWidth = overflow.scrollWidth;
+        console.log(overflow.scroll)
         if (scrollWidth > 120) {
             overflow.parentNode.classList.add('ellipsis');
         }
-    });
-    });
+    });  
 })
 </script>
 
@@ -361,18 +218,11 @@ onMounted(() => {
     position: relative;
     display: flex;
     flex-wrap: wrap;
-
-    #calendar,
-    #localeSelector {
-
-    #calendar,
-    #localeSelector {
+    #calendar, #localeSelector {
         position: absolute;
         right: 41px;
         top: 80px;
     }
-
-
     .container {
         width: 100%;
         padding: 28px 40px;
@@ -381,18 +231,13 @@ onMounted(() => {
         margin-bottom: 2%;
         filter: drop-shadow(8px 12px 36px rgba(0, 0, 0, 0.10));
     }
-
-
     form {
         display: flex;
         flex-wrap: nowrap;
-
-
         .selectBar {
             width: 200px;
             margin-right: 20px;
-
-
+            
             select {
                 height: 44px;
                 background: rgba(0, 0, 0, 0.05);
@@ -403,13 +248,10 @@ onMounted(() => {
                 cursor: pointer;
             }
         }
-
-
         .searchBar {
             position: relative;
             width: calc(100% - 220px);
-
-
+            
             input {
                 width: 100%;
                 height: 44px;
@@ -420,43 +262,31 @@ onMounted(() => {
                 padding-left: 50px;
                 font-weight: 400;
             }
-
-
             .search {
                 position: absolute;
                 left: 16px;
                 top: 10px;
-                color: rgba(0, 0, 0, 0.4);
-                color: rgba(0, 0, 0, 0.4);
+                color: rgba(0,0,0,0.4);
             }
-
-
             .delete {
                 position: absolute;
                 right: 16px;
                 top: 10px;
                 cursor: pointer;
             }
-
-
             .modalIcon {
                 position: absolute;
                 right: 16px;
                 top: 10px;
-                color: rgba(0, 0, 0, 0.8);
-                color: rgba(0, 0, 0, 0.8);
+                color: rgba(0,0,0,0.8);
                 cursor: pointer;
             }
         }
     }
-
-
     .tableHeader {
         display: flex;
         flex-wrap: nowrap;
         justify-content: space-between;
-
-
         .actions {
             position: relative;
             display: flex;
@@ -466,19 +296,14 @@ onMounted(() => {
             * {
                 cursor: pointer;
             }
-
-
             .dropDown {
                 display: flex;
                 align-items: center;
                 font-size: 16px;
                 font-weight: 500;
                 margin-right: 20px;
-                color: rgba(0, 0, 0, 0.6);
-                color: rgba(0, 0, 0, 0.6);
+                color: rgba(0,0,0,0.6);
             }
-
-
             .filterWrap {
                 position: absolute;
                 left: 0;
@@ -489,8 +314,6 @@ onMounted(() => {
                 background: #FAFAFA;
                 box-shadow: 8px 12px 36px 0px rgba(0, 0, 0, 0.10);
                 z-index: 10;
-
-
                 .filter {
                     display: flex;
                     align-items: center;
@@ -502,8 +325,6 @@ onMounted(() => {
                     }
                 }
             }
-
-
             .userSettingWrap {
                 position: absolute;
                 right: -100px;
@@ -515,8 +336,6 @@ onMounted(() => {
                 color: rgba(0, 0, 0, 0.80);
                 box-shadow: 8px 12px 36px 0px rgba(0, 0, 0, 0.10);
                 z-index: 10;
-
-
                 .setting {
                     display: flex;
                     align-items: center;
@@ -525,40 +344,28 @@ onMounted(() => {
                     &:last-child {
                         margin-bottom: 0;
                     }
-
-
                     span {
                         margin-left: 12px;
                     }
                 }
             }
-
-
             .refresh {
                 margin-right: 20px;
             }
         }
-
-
         .pagenator {
             display: flex;
             flex-wrap: nowrap;
             align-items: center;
-
-
             .page {
                 color: rgba(0, 0, 0, 0.60);
                 margin-right: 10px;
             }
-
-
             .prevPage {
                 margin-right: 20px;
             }
         }
     }
-
-
     .tableWrap {
         position: relative;
         min-height: 660px;
@@ -569,157 +376,92 @@ onMounted(() => {
             position: absolute;
             left: 50%;
             top: 50%;
-            transform: translate(-50%, -50%);
-            transform: translate(-50%, -50%);
+            transform: translate(-50%,-50%);
             text-align: center;
-
-
             h2 {
                 color: rgba(0, 0, 0, 0.40);
                 font-size: 28px;
                 font-weight: 700;
                 margin-bottom: 28px;
             }
-
-
             p {
                 color: rgba(0, 0, 0, 0.40);
                 font-size: 20px;
                 font-weight: 500;
             }
         }
-
-
         table {
             width: 100%;
             border-collapse: collapse;
-            table-layout: fixed;
+            // table-layout: fixed;
 
-            .customCheckBox {
-                label {
-                    &::before {
-                        margin-right: 0;
-                    }
-                }
+            tr {
+                height: 60px;
+                border-bottom: 1px solid rgba(0, 0, 0, 0.10);
+                filter: drop-shadow(0px 1px 3px rgba(0, 0, 0, 0.06));  
             }
-
-            thead {
-                text-align: left;
-
-                tr {
-                    height: 60px;
-
-                    th {
-                        position: relative;
-                        color: rgba(0, 0, 0, 0.40);
-                        font-size: 16px;
-                        font-weight: 700;
-                        padding-left: 20px;
-
-                        &::after {
-                            position: absolute;
-                            content: '';
-                            width: 100%;
-                            height: 1px;
-                            left: 0;
-                            bottom: 0;
-                            background: rgba(0, 0, 0, 0.1);
-                            box-shadow: 0px 1px 3px 0px rgba(0, 0, 0, 0.06);
-                        }
-
-                        &:first-child {
-                            padding-left: 0;
-                        }
-
-                        &:last-child {
-                            .resizer {
-                                display: none;
-                            }
-                        }
-
-                        &.center {
-                            padding: 0;
-                            text-align: center;
-                        }
-
-                        .resizer {
-                            position: absolute;
-                            top: 50%;
-                            right: 0px;
-                            transform: translateY(-50%);
-                            width: 4px;
-                            height: 20px;
-                            background-color: rgba(0, 0, 0, 0.1);
-                            cursor: col-resize;
-                            user-select: none;
-
-                            &.contrast {
-                                background-color: #fff !important;
-                            }
-                        }
-
-                        .resizable {
-                            height: 100px;
-                            width: 100px;
-                            position: relative;
-                        }
-                    }
-                }
-            }
-
-            tbody {
-                font-weight: 400;
-
-                td {
-                    position: relative;
-                    height: 60px;
-                    padding-left: 20px;
-
+            td {
+                position: relative;
+                &.ellipsis {
                     &::after {
                         position: absolute;
-                        content: '';
-                        width: 100%;
-                        height: 1px;
-                        left: 0;
-                        bottom: 0;
-                        background: rgba(0, 0, 0, 0.1);
-                        box-shadow: 0px 1px 3px 0px rgba(0, 0, 0, 0.06);
+                        content: '...';
+                        right: 15px;
+                        top: 50%;
+                        transform: translateY(-50%);
                     }
+                }
+                .overflow {
+                    position: relative;
+                    width: 120px;
+                    overflow: scroll;
+                    white-space: nowrap;
 
-                    &:first-child {
-                        padding-left: 0;
+                    &::-webkit-scrollbar {
+                        display: none;
                     }
+                }
+                // .overflow {
+                //     width: 150px;
+                //     white-space: nowrap;
+                //     overflow: hidden;
+                //     text-overflow: ellipsis;
+                //     display: block;
+                // }
+                .block {
+                    color: rgba(0,0,0,0.4);
+                }
+                .enable {
+                    color: rgba(90, 216, 88, 1);
+                }
+                .disable {
+                    color: rgba(240, 78, 78, 1);
+                }
+            }
+            td, th {
+                // padding-right: 15px;
+                &.center {
+                    text-align: center;
+                }
+            }
+            thead {
+                color: rgba(0, 0, 0, 0.40);
+                font-weight: 700;
+                text-align: left;
+            }
+            tbody {
+                color: rgba(0, 0, 0, 0.80);
+                font-weight: 400;
 
-                    &.center {
-                        padding: 0;
-                        text-align: center;
-                    }
-
-                    .block {
-                        color: rgba(0, 0, 0, 0.4);
-                    }
-
-                    .enable {
-                        color: rgba(90, 216, 88, 1);
-                    }
-
-                    .disable {
-                        color: rgba(240, 78, 78, 1);
-                    }
-
-                    .overflow {
-                        position: relative;
-                        width: 100%;
-                        white-space: nowrap;
-                        overflow: hidden;
-                        text-overflow: ellipsis;
-
-                        &::-webkit-scrollbar {
-                            display: none;
+                .customCheckBox {
+                    label {
+                        &::before {
+                            margin-right: 0;
                         }
                     }
                 }
             }
         }
     }
-}</style>
+}
+</style>
