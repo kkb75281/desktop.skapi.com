@@ -32,10 +32,10 @@
     .container(style="overflow: hidden;")
         .tableHeader 
             .actions 
-                .dropDown(@click="showFilter = !showFilter")
+                .dropDown(@click.stop="showFilter = !showFilter")
                     span Headers
                     .material-symbols-outlined.mid arrow_drop_down
-                .filterWrap(v-if="showFilter")
+                .filterWrap(v-if="showFilter" @click.stop)
                     .filter 
                         .customCheckBox
                             input#userID(type="checkbox" :checked="filterOptions.userID" @change="filterOptions.userID = !filterOptions.userID")
@@ -87,13 +87,13 @@
                 .material-symbols-outlined.mid.refresh.clickable cached
                 .material-symbols-outlined.mid.menu.clickable(@click.stop="showUserSetting = !showUserSetting") more_vert
                 .userSettingWrap(v-if="showUserSetting" @click.stop)
-                    .setting
+                    .setting(@click="userBlock")
                         .material-symbols-outlined.mid account_circle_off
                         span block
-                    .setting
+                    .setting(@click="userUnblock")
                         .material-symbols-outlined.mid account_circle
                         span unblock
-                    .setting
+                    .setting(@click="userDelete")
                         .material-symbols-outlined.mid delete
                         span delete
             .pagenator 
@@ -105,7 +105,7 @@
                     tr
                         th(style="width:20px;")
                             .customCheckBox
-                                input#allUsers(type="checkbox")
+                                input#allUsers(type="checkbox" value='selectall' @click="selectAll")
                                 label(for="allUsers")
                                     .material-symbols-outlined.mid.check check
                         th.th.center(v-if="filterOptions.block" style="width:70px;")
@@ -136,7 +136,7 @@
                     tr(v-for="(user, index) in users" :key="index")
                         td(style="min-width:20px")
                             .customCheckBox
-                                input(type="checkbox" v-bind:id="index")
+                                input(type="checkbox" name="user" v-bind:id="index")
                                 label(:for="index")
                                     .material-symbols-outlined.mid.check check
                         td.center(v-if="filterOptions.block")
@@ -157,7 +157,7 @@
                             .overflow {{ user.gender }}
                         td(v-if="filterOptions.group")
                             .overflow {{ user.group }}
-                    tr(v-for="i in trCount" :key="'extra-' + i")
+                    tr(v-if="users.length < 10" v-for="i in (10 - users.length)" :key="'extra-' + i")
             .noUsers(v-if="!users.length")
                 h2 No Users
                 p There are no users matching your search terms.
@@ -174,6 +174,9 @@ import LocaleSelector from '@/components/LocaleSelector.vue';
 
 bodyClick.showUserSetting = () => {
     showUserSetting.value = false;
+}
+bodyClick.showFilter = () => {
+    showFilter.value = false;
 }
 
 let searchText = ref('');
@@ -194,6 +197,39 @@ let filterOptions = ref({
     group: false,
 })
 let maxTrCount = 10;
+let selectAll = (e) => {
+    let checkboxes = document.querySelectorAll('input[type="checkbox"]');
+    checkboxes.forEach((checkbox) => {
+        checkbox.checked = e.target.checked
+    })
+}
+let userBlock = () => {
+    let checkedUsers = document.querySelectorAll('input[name="user"]:checked');
+    checkedUsers.forEach(checkedUser => {
+        users.value[checkedUser.id].block = 0;
+        checkedUser.checked = false;
+        allUsers.checked = false;
+    })
+    showUserSetting.value = false;
+}
+let userUnblock = () => {
+    let checkedUsers = document.querySelectorAll('input[name="user"]:checked');
+    checkedUsers.forEach(checkedUser => {
+        users.value[checkedUser.id].block = 1;
+        checkedUser.checked = false;
+        allUsers.checked = false;
+    })
+    showUserSetting.value = false;
+}
+let userDelete = () => {
+    let checkedUsers = document.querySelectorAll('input[name="user"]:checked');
+    checkedUsers.forEach(checkedUser => {
+        users.value.splice(checkedUser.id, 1);
+        checkedUser.checked = false;
+        allUsers.checked = false;
+    })
+    showUserSetting.value = false;
+}
 let handleCountryClick = (key) => {
   searchText.value = key;
   showLocale.value = false;
@@ -208,7 +244,7 @@ let handledateClick = (startDate, endDate) => {
     }
 }
 let trCount = computed(() => {
-    return Math.max(0, maxTrCount - users.length);
+    // return Math.max(0, maxTrCount - users.value.length);
 });     
 
 // table resize
@@ -251,7 +287,6 @@ onMounted(() => {
     let overflows = document.querySelectorAll('.overflow');
     overflows.forEach(overflow => {
         let scrollWidth = overflow.scrollWidth;
-        console.log(overflow.scroll)
         if (scrollWidth > 120) {
             overflow.parentNode.classList.add('ellipsis');
         }

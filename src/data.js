@@ -3,7 +3,7 @@ export let serviceFetching = ref(false);
 export let services = ref([]);
 export let storageInfo = ref({});
 export let currentService = ref(null);
-export let users = [
+export let users = ref([
     {
         block: 0,
         status: 1,
@@ -74,7 +74,7 @@ export let users = [
         gender: "test2@gmail.com",
         group: "test2@gmail.com"
     },
-]
+])
 
 export let records = [
     {
