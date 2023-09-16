@@ -7,7 +7,7 @@ template(v-if="account !== 'pending'")
 import { useRoute, useRouter } from 'vue-router';
 import { account, skapi } from '@/main.js';
 import { watch } from 'vue';
-import { services, serviceFetching, storageInfo } from '@/data.js';
+import { services, serviceFetching } from '@/data.js';
 const router = useRouter();
 let route = useRoute();
 
@@ -26,15 +26,7 @@ watch(account, (a) => {
     else {
 
         serviceFetching.value = skapi.getServices().then(s => {
-            let sLen = s.length;
-            while (sLen--) {
-                services.value.push(s[sLen]);
-                let service = s[sLen].service;
-                skapi.storageInformation(service).then(i => {
-                    // get storage info of all services
-                    storageInfo.value[service] = i;
-                });
-            }
+            services.value=s.reverse();
         }).finally(() => {
             serviceFetching.value = false;
         });

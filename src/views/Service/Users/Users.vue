@@ -132,7 +132,7 @@
                         th.th(v-if="filterOptions.group" style="width:160px;")
                             | Group
                             .resizer(@mousedown="mousedown")
-                tbody(v-if="users.length")
+                tbody(v-if="users && users.length")
                     tr(v-for="(user, index) in users" :key="index")
                         td(style="min-width:20px")
                             .customCheckBox
@@ -140,10 +140,10 @@
                                 label(:for="user.user_id")
                                     .material-symbols-outlined.mid.check check
                         td.center(v-if="filterOptions.block")
-                            .material-symbols-outlined.mid.block(v-if="user.block == 1") no_accounts
+                            .material-symbols-outlined.mid.block(v-if="user.group < 0") no_accounts
                             .material-symbols-outlined.mid.unblock(v-else) account_circle
                         td.center(v-if="filterOptions.status")
-                            .material-symbols-outlined.mid.enable(v-if="user.status == 1") check_circle
+                            .material-symbols-outlined.mid.enable(v-if="user.group > 0") check_circle
                             .material-symbols-outlined.mid.disable(v-else) cancel
                         td(v-if="filterOptions.userID") 
                             .overflow {{ user.user_id }}
@@ -158,21 +158,24 @@
                         td(v-if="filterOptions.group")
                             .overflow {{ user.group }}
                     tr(v-if="users.length < 10" v-for="i in (10 - users.length)" :key="'extra-' + i")
-            .noUsers(v-if="!users.length")
+            .noUsers(v-if="users === null")
+                img.loading(src="@/assets/img/loading.png" style='filter: grayscale(100%);')
+            .noUsers(v-else-if="!users.length")
                 h2 No Users
                 p There are no users matching your search terms.
     Calendar(v-if="showCalendar" @dateClicked="handledateClick")
     LocaleSelector(v-if="showLocale" @countryClicked="handleCountryClick")
-</template>
-
+    </template>
+    
 <script setup>
-import { bodyClick, skapi } from '@/main.js';
-import { services, currentService, serviceUsers, users } from '@/data.js';
+import { bodyClick } from '@/main.js';
+import { currentService, serviceUsers } from '@/data.js';
+import { skapi } from '@/main.js';
 import { computed, onMounted, ref } from 'vue';
 import Calendar from '@/components/Calendar.vue';
 import LocaleSelector from '@/components/LocaleSelector.vue';
-import Pager from '@/skapi-extensions/js/pager.js';
 
+import Pager from '@/skapi-extensions/js/pager.js';
 const worker = new Worker(
     new URL('@/skapi-extensions/js/pager_worker.js', import.meta.url),
     { type: 'module' }
@@ -191,20 +194,13 @@ if (!serviceUsers?.[serviceId]) {
 }
 
 let userPage = serviceUsers[serviceId].default;
+let users = ref(null);
+let firstPage = userPage.getPage(1).list;
 
-let users = ref(userPage.getPage(1).list);
-console.log({users:users.value})
-// {
-//         block: 0,
-//         status: 1,
-//         user_id: "0c4d24ea-4382-4363-a6b3-e261c6dbd4d1",
-//         name: "test2",
-//         email: "test2@gmail.com",
-//         address: "경기도 안산시 상록구 사동",
-//         gender: "test2@gmail.com",
-//         group: "test2@gmail.com"
-// }
-if (!users.value.length) {
+if (firstPage.length) {
+    users.value = firstPage;
+}
+else {
     skapi.getUsers({
         service: serviceId,
         searchFor: 'timestamp',
@@ -213,12 +209,10 @@ if (!users.value.length) {
     }).then(u => {
         userPage.insertItems(u.list).then(_ => {
             let currPage = userPage.getPage(1).list;
-            console.log({currPage})
-            // users.value = currPage;
+            users.value = currPage;
         });
     });
 }
-
 
 bodyClick.showUserSetting = () => {
     showUserSetting.value = false;
@@ -291,11 +285,8 @@ let userDelete = () => {
 let handleCountryClick = (key) => {
     searchText.value = key;
     showLocale.value = false;
-    searchText.value = key;
-    showLocale.value = false;
 }
 let handledateClick = (startDate, endDate) => {
-    if (startDate == null && endDate == null) {
     if (startDate == null && endDate == null) {
         searchText.value = ''
         showCalendar.value = true;
@@ -352,10 +343,9 @@ onMounted(() => {
             overflow.parentNode.classList.add('ellipsis');
         }
     });
-    });
 })
 </script>
-
+    
 <style lang="less" scoped>
 .containerWrap {
     position: relative;
@@ -364,14 +354,10 @@ onMounted(() => {
 
     #calendar,
     #localeSelector {
-
-    #calendar,
-    #localeSelector {
         position: absolute;
         right: 41px;
         top: 80px;
     }
-
 
     .container {
         width: 100%;
@@ -382,16 +368,13 @@ onMounted(() => {
         filter: drop-shadow(8px 12px 36px rgba(0, 0, 0, 0.10));
     }
 
-
     form {
         display: flex;
         flex-wrap: nowrap;
 
-
         .selectBar {
             width: 200px;
             margin-right: 20px;
-
 
             select {
                 height: 44px;
@@ -404,11 +387,9 @@ onMounted(() => {
             }
         }
 
-
         .searchBar {
             position: relative;
             width: calc(100% - 220px);
-
 
             input {
                 width: 100%;
@@ -421,15 +402,12 @@ onMounted(() => {
                 font-weight: 400;
             }
 
-
             .search {
                 position: absolute;
                 left: 16px;
                 top: 10px;
                 color: rgba(0, 0, 0, 0.4);
-                color: rgba(0, 0, 0, 0.4);
             }
-
 
             .delete {
                 position: absolute;
@@ -438,24 +416,20 @@ onMounted(() => {
                 cursor: pointer;
             }
 
-
             .modalIcon {
                 position: absolute;
                 right: 16px;
                 top: 10px;
-                color: rgba(0, 0, 0, 0.8);
                 color: rgba(0, 0, 0, 0.8);
                 cursor: pointer;
             }
         }
     }
 
-
     .tableHeader {
         display: flex;
         flex-wrap: nowrap;
         justify-content: space-between;
-
 
         .actions {
             position: relative;
@@ -467,7 +441,6 @@ onMounted(() => {
                 cursor: pointer;
             }
 
-
             .dropDown {
                 display: flex;
                 align-items: center;
@@ -475,9 +448,7 @@ onMounted(() => {
                 font-weight: 500;
                 margin-right: 20px;
                 color: rgba(0, 0, 0, 0.6);
-                color: rgba(0, 0, 0, 0.6);
             }
-
 
             .filterWrap {
                 position: absolute;
@@ -489,7 +460,6 @@ onMounted(() => {
                 background: #FAFAFA;
                 box-shadow: 8px 12px 36px 0px rgba(0, 0, 0, 0.10);
                 z-index: 10;
-
 
                 .filter {
                     display: flex;
@@ -503,7 +473,6 @@ onMounted(() => {
                 }
             }
 
-
             .userSettingWrap {
                 position: absolute;
                 right: -100px;
@@ -516,7 +485,6 @@ onMounted(() => {
                 box-shadow: 8px 12px 36px 0px rgba(0, 0, 0, 0.10);
                 z-index: 10;
 
-
                 .setting {
                     display: flex;
                     align-items: center;
@@ -526,38 +494,32 @@ onMounted(() => {
                         margin-bottom: 0;
                     }
 
-
                     span {
                         margin-left: 12px;
                     }
                 }
             }
 
-
             .refresh {
                 margin-right: 20px;
             }
         }
-
 
         .pagenator {
             display: flex;
             flex-wrap: nowrap;
             align-items: center;
 
-
             .page {
                 color: rgba(0, 0, 0, 0.60);
                 margin-right: 10px;
             }
-
 
             .prevPage {
                 margin-right: 20px;
             }
         }
     }
-
 
     .tableWrap {
         position: relative;
@@ -570,9 +532,7 @@ onMounted(() => {
             left: 50%;
             top: 50%;
             transform: translate(-50%, -50%);
-            transform: translate(-50%, -50%);
             text-align: center;
-
 
             h2 {
                 color: rgba(0, 0, 0, 0.40);
@@ -581,14 +541,12 @@ onMounted(() => {
                 margin-bottom: 28px;
             }
 
-
             p {
                 color: rgba(0, 0, 0, 0.40);
                 font-size: 20px;
                 font-weight: 500;
             }
         }
-
 
         table {
             width: 100%;
@@ -722,4 +680,5 @@ onMounted(() => {
             }
         }
     }
-}</style>
+}
+</style>
