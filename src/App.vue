@@ -24,9 +24,8 @@ watch(account, (a) => {
         }
     }
     else {
-
         serviceFetching.value = skapi.getServices().then(s => {
-            services.value=s.reverse();
+            services.value = s.reverse();
         }).finally(() => {
             serviceFetching.value = false;
         });

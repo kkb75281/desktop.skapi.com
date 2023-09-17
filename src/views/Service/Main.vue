@@ -114,10 +114,16 @@ let getCurrentService = () => {
 
 if (serviceFetching.value instanceof Promise) {
     serviceFetching.value.then(getCurrentService).then(_ => {
-        skapi.storageInformation(currentService.value.service).then(i => {
-            // get storage info
-            storageInfo.value[currentService.value.service] = i;
-        });
+        if (currentService.value) {
+            skapi.storageInformation(currentService.value.service).then(i => {
+                // get storage info
+                storageInfo.value[currentService.value.service] = i;
+            });
+        }
+        else {
+            // no such service
+            router.replace({ path: '/dashboard' });
+        }
     })
 }
 else {

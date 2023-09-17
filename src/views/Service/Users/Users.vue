@@ -19,7 +19,7 @@
                 .material-symbols-outlined.mid.search search
                 input(v-if="searchFor === 'timestamp'" placeholder="2020-02-09~2023-02-09" v-model="searchText")
                 input(v-if="searchFor === 'user_id'" placeholder="Search Users" v-model="searchText")
-                input(v-if="searchFor === 'email'" placeholder="someone@email.com" v-model="searchText")
+                input(v-if="searchFor === 'email'" placeholder="Search exact match of email" v-model="searchText")
                 input(v-if="searchFor === 'phone_number'" placeholder="eg+821234567890" v-model="searchText")
                 input(v-if="searchFor === 'address'" placeholder="Address" v-model="searchText")
                 input(v-if="searchFor === 'gender'" placeholder="Gender" v-model="searchText")
@@ -27,8 +27,8 @@
                 input(v-if="searchFor === 'locale'" placeholder="2 digit country code e.g. KR" v-model="searchText")
                 input(v-if="searchFor === 'birthdate'" placeholder="YYYY-MM-DD" v-model="searchText")
                 .material-symbols-outlined.mid.delete(v-if="searchText" @click="searchText = ''") close
-                .material-symbols-outlined.mid.modalIcon(v-if="searchFor === 'timestamp' && !searchText" @click="showCalendar = !showCalendar") calendar_today
-                .material-symbols-outlined.mid.modalIcon(v-if="searchFor === 'locale' && !searchText" @click="showLocale = !showLocale") arrow_drop_down
+                .material-symbols-outlined.mid.modalIcon(v-if="searchFor === 'timestamp' && !searchText" @click.stop="showCalendar = !showCalendar") calendar_today
+                .material-symbols-outlined.mid.modalIcon(v-if="searchFor === 'locale' && !searchText" @click.stop="showLocale = !showLocale") arrow_drop_down
     .container(style="overflow: hidden;")
         .tableHeader 
             .actions 
@@ -84,26 +84,34 @@
                             label(for="group")
                                 .material-symbols-outlined.mid.check check
                         span Group
-                .material-symbols-outlined.mid.refresh.clickable cached
-                .material-symbols-outlined.mid.menu.clickable(@click.stop="showUserSetting = !showUserSetting") more_vert
+                    .filter 
+                        .customCheckBox
+                            input#timestamp(type="checkbox" :checked="filterOptions.timestamp" @change="filterOptions.timestamp = !filterOptions.group")
+                            label(for="timestamp")
+                                .material-symbols-outlined.mid.check check
+                        span Timestamp
+                .material-symbols-outlined.mid.refresh.clickable(@click='refresh' :class='{"rotate_animation": fetching }') cached
+                .material-symbols-outlined.mid.menu.clickable(:class='{"nonClickable": !checkedUsers.length}' @click.stop="showUserSetting = !showUserSetting") more_vert
                 .userSettingWrap(v-if="showUserSetting" @click.stop)
-                    .setting(@click="userBlock")
-                        .material-symbols-outlined.mid account_circle_off
-                        span block
-                    .setting(@click="userUnblock")
-                        .material-symbols-outlined.mid account_circle
-                        span unblock
-                    .setting(@click="userDelete")
-                        .material-symbols-outlined.mid delete
-                        span delete
+                    .nest
+                        .setting(@click="()=>{showBlockUser=true; showUserSetting=false;}")
+                            .material-symbols-outlined.mid account_circle_off
+                            span block
+                        .setting(@click="()=>{showUnblockUser=true; showUserSetting=false;}")
+                            .material-symbols-outlined.mid account_circle
+                            span unblock
+                        .setting(@click="()=>{showDeleteUser = true; showUserSetting = false;}")
+                            .material-symbols-outlined.mid delete
+                            span delete
+                button.create(@click="createUserShow=true" style='margin-left:1rem') Create User
             .pagenator 
-                .material-symbols-outlined.sml.prevPage.clickable arrow_back_ios
-                .material-symbols-outlined.sml.nextPage.clickable arrow_forward_ios
+                .material-symbols-outlined.sml.prevPage.clickable(:class='{"nonClickable": currentPage === 1 }' @click='e=>{currentPage--; nextTick(selectNone)}') arrow_back_ios
+                .material-symbols-outlined.sml.nextPage.clickable(:class='{"nonClickable": maxPage <= currentPage || maxPage === currentPage && userPage?.endOfList }' @click='e=>{currentPage++; nextTick(selectNone)}') arrow_forward_ios
         .tableWrap 
             table#resizeMe.table
                 thead
                     tr
-                        th(style="width:20px;")
+                        th(style="width:20px;" :class='{nonClickable: users === null || !users.length}')
                             .customCheckBox
                                 input#allUsers(type="checkbox" value='selectall' @click="selectAll")
                                 label(for="allUsers")
@@ -132,15 +140,18 @@
                         th.th(v-if="filterOptions.group" style="width:160px;")
                             | Group
                             .resizer(@mousedown="mousedown")
+                        th.th(v-if="filterOptions.timestamp" style="width:160px;")
+                            | Timestamp
+                            .resizer(@mousedown="mousedown")
                 tbody(v-if="users && users.length")
                     tr(v-for="(user, index) in users" :key="index")
                         td(style="min-width:20px")
                             .customCheckBox
-                                input(type="checkbox" name="user" :id="user.user_id")
+                                input(type="checkbox" name="user" :id="user.user_id" @change='trackSelectedUsers' :value="user.user_id")
                                 label(:for="user.user_id")
                                     .material-symbols-outlined.mid.check check
                         td.center(v-if="filterOptions.block")
-                            .material-symbols-outlined.mid.block(v-if="user.group < 0") no_accounts
+                            .material-symbols-outlined.mid.block(v-if="user.approved.includes('suspended')") no_accounts
                             .material-symbols-outlined.mid.unblock(v-else) account_circle
                         td.center(v-if="filterOptions.status")
                             .material-symbols-outlined.mid.enable(v-if="user.group > 0") check_circle
@@ -157,68 +168,119 @@
                             .overflow {{ user.gender }}
                         td(v-if="filterOptions.group")
                             .overflow {{ user.group }}
+                        td(v-if="filterOptions.timestamp")
+                            .overflow {{ new Date(user.timestamp).toLocaleString() }}
                     tr(v-if="users.length < 10" v-for="i in (10 - users.length)" :key="'extra-' + i")
-            .noUsers(v-if="users === null")
-                img.loading(src="@/assets/img/loading.png" style='filter: grayscale(100%);')
-            .noUsers(v-else-if="!users.length")
+            .noUsers(v-if="users !== null && !users.length")
                 h2 No Users
                 p There are no users matching your search terms.
     Calendar(v-if="showCalendar" @dateClicked="handledateClick")
     LocaleSelector(v-if="showLocale" @countryClicked="handleCountryClick")
-    </template>
+    CreateUserOverlay(v-if='createUserShow' @close='userCreated')
+    DeleteUserOverlay(v-if='showDeleteUser' @close='userDelete' :checkedUsers='checkedUsers')
+    BlockUserOverlay(v-if='showBlockUser' @close='userBlock' :checkedUsers='checkedUsers')
+    UnblockUserOverlay(v-if='showUnblockUser' @close='userUnblock' :checkedUsers='checkedUsers')
+</template>
     
 <script setup>
 import { bodyClick } from '@/main.js';
 import { currentService, serviceUsers } from '@/data.js';
 import { skapi } from '@/main.js';
-import { computed, onMounted, ref } from 'vue';
+import { computed, nextTick, onMounted, ref, watch } from 'vue';
+
 import Calendar from '@/components/Calendar.vue';
 import LocaleSelector from '@/components/LocaleSelector.vue';
-
+import CreateUserOverlay from './CreateUserOverlay.vue';
+import DeleteUserOverlay from './DeleteUserOverlay.vue';
+import BlockUserOverlay from './BlockUserOverlay.vue';
+import UnblockUserOverlay from './UnblockUserOverlay.vue';
 import Pager from '@/skapi-extensions/js/pager.js';
 const worker = new Worker(
     new URL('@/skapi-extensions/js/pager_worker.js', import.meta.url),
     { type: 'module' }
 );
 
+let createUserShow = ref(false);
 let serviceId = currentService.value.service;
-if (!serviceUsers?.[serviceId]) {
-    serviceUsers[serviceId] = {
-        default: new Pager(worker, {
-            id: 'user_id',
-            sortBy: 'timestamp',
-            order: 'desc',
-            resultsPerPage: 10
-        })
-    }
-}
-
-let userPage = serviceUsers[serviceId].default;
 let users = ref(null);
-let firstPage = userPage.getPage(1).list;
+let userPage = null;
+let currentPage = ref(1);
+let maxPage = ref(1);
+let fetching = ref(false);
 
-if (firstPage.length) {
-    users.value = firstPage;
+watch(currentPage, (page) => {
+    getPage(page);
+});
+
+let getPage = (p) => {
+    let res = userPage.getPage(p);
+    userPage.maxPage = res.maxPage;
+    users.value = res.list;
+    maxPage.value = res.maxPage;
 }
-else {
+
+let refresh = () => {
+    users.value = null;
+    serviceUsers[serviceId] = new Pager(worker, {
+        id: 'user_id',
+        sortBy: 'timestamp',
+        order: 'desc',
+        resultsPerPage: 10
+    })
+
+    userPage = serviceUsers[serviceId];
+
+    fetching.value = true;
     skapi.getUsers({
         service: serviceId,
         searchFor: 'timestamp',
         condition: '>',
         value: 0
     }).then(u => {
+        if (u.endOfList) {
+            userPage.endOfList = true;
+        }
         userPage.insertItems(u.list).then(_ => {
-            let currPage = userPage.getPage(1).list;
-            users.value = currPage;
+            // to avoid watch trigger
+            if (currentPage.value === 1) {
+                getPage(1);
+            }
+            else {
+                currentPage.value = 1;
+            }
+            fetching.value = false;
         });
     });
 }
 
-bodyClick.showUserSetting = () => {
-    showUserSetting.value = false;
+if (!serviceUsers?.[serviceId]) {
+    refresh();
 }
-bodyClick.showFilter = () => {
+else {
+    userPage = serviceUsers[serviceId];
+    getPage(currentPage.value);
+}
+
+let userCreated = e => {
+    if (e) {
+        // from CreateUserOverlay.vue - if user created
+        userPage = serviceUsers[serviceId];
+        userPage.insertItems([e]).then(_ => {
+            users.value = userPage.getPage(currentPage.value).list
+            createUserShow.value = false;
+        });
+    }
+    else {
+        createUserShow.value = false;
+    }
+}
+
+bodyClick.userPage = () => {
+    showUserSetting.value = false;
     showFilter.value = false;
+    showCalendar.value = false;
+    showLocale.value = false;
+    showDeleteUser.value = false;
 }
 
 let searchText = ref('');
@@ -228,6 +290,10 @@ let showFilter = ref(false);
 let showCalendar = ref(false);
 let showLocale = ref(false);
 let showUserSetting = ref(false);
+let showDeleteUser = ref(false);
+let showBlockUser = ref(false);
+let showUnblockUser = ref(false);
+
 let filterOptions = ref({
     userID: true,
     name: true,
@@ -237,6 +303,7 @@ let filterOptions = ref({
     address: false,
     gender: false,
     group: false,
+    timestamp: false
 })
 let maxTrCount = 10;
 let selectAll = (e) => {
@@ -244,44 +311,67 @@ let selectAll = (e) => {
     checkboxes.forEach((checkbox) => {
         checkbox.checked = e.target.checked
     })
+    trackSelectedUsers();
 }
-let userBlock = () => {
-    let checkedUsers = document.querySelectorAll('input[name="user"]:checked');
-    checkedUsers.forEach(checkedUser => {
-        users.value[checkedUser.id].block = 0;
-        checkedUser.checked = false;
+let selectNone = () => {
+    // page 넘길때 사용
+    let checkboxes = document.querySelectorAll('input[type="checkbox"]');
+    checkboxes.forEach((checkbox) => {
+        checkbox.checked = false;
+    });
+    trackSelectedUsers();
+}
+let checkedUsers = ref([]);
+let trackSelectedUsers = () => {
+    let checkboxes = document.querySelectorAll('input[type="checkbox"]');
+    let checked = [];
+    checkboxes.forEach((checkbox) => {
+        if (checkbox.checked && checkbox.value !== 'selectall') {
+            checked.push(checkbox.value);
+        }
     })
-    allUsers.checked = false;
-    showUserSetting.value = false;
+    checkedUsers.value = checked;
 }
-let userUnblock = () => {
-    let checkedUsers = document.querySelectorAll('input[name="user"]:checked');
-    checkedUsers.forEach(checkedUser => {
-        users.value[checkedUser.id].block = 1;
-        checkedUser.checked = false;
-    })
-    allUsers.checked = false;
-    showUserSetting.value = false;
-}
-let userDelete = () => {
-    let checkedUsers = document.querySelectorAll('input[name="user"]:checked');
-    checkedUsers.forEach(checkedUser => {
-        checkedUser.checked = false;
+let userBlock = async (blockedUsers) => {
+    showBlockUser.value = false;
+    if (blockedUsers) {
+        for (let u of blockedUsers) {
+            let to_update = userPage.list[u]
+            to_update.approved = 'by_admin:suspended:'
+            await userPage.editItem(to_update);
+        }
 
-        let to_delete = null;
-        for (let idx = 0; users.value.length > idx; idx++) {
-            if (checkedUser.id === users.value[idx].user_id) {
-                to_delete = idx;
-                break;
-            }
-        }
-        if (to_delete !== null) {
-            users.value.splice(to_delete, 1);
-        }
-    })
-    allUsers.checked = false;
-    showUserSetting.value = false;
+        selectNone();
+        getPage(currentPage.value);
+    }
 }
+let userUnblock = async (unblockedUsers) => {
+    showUnblockUser.value = false;
+    if (unblockedUsers) {
+        for (let u of unblockedUsers) {
+            let to_update = userPage.list[u]
+            to_update.approved = 'by_admin:approved:'
+            await userPage.editItem(to_update);
+        }
+
+        selectNone();
+        getPage(currentPage.value);
+    }
+}
+let userDelete = async (deletedUsers) => {
+    showDeleteUser.value = false;
+
+    if (deletedUsers) {
+        for (let u of deletedUsers) {
+            await userPage.deleteItem(u);
+        }
+
+        selectNone();
+        getPage(currentPage.value);
+    }
+}
+
+
 let handleCountryClick = (key) => {
     searchText.value = key;
     showLocale.value = false;
@@ -473,31 +563,50 @@ onMounted(() => {
                 }
             }
 
-            .userSettingWrap {
-                position: absolute;
-                right: -100px;
-                bottom: -162px;
-                padding: 20px;
+            .create {
+                // create user
+                height: 32px;
+                padding: 0px 12px;
                 border-radius: 8px;
-                border: 1px solid rgba(0, 0, 0, 0.15);
-                background: #FAFAFA;
-                color: rgba(0, 0, 0, 0.80);
-                box-shadow: 8px 12px 36px 0px rgba(0, 0, 0, 0.10);
-                z-index: 10;
+                border: 2px solid #293FE6;
+                color: #293FE6;
+                font-size: 16px;
+                font-weight: 700;
+                background-color: unset;
+                user-select: none;
+                cursor: pointer;
+            }
 
-                .setting {
-                    display: flex;
-                    align-items: center;
-                    margin-bottom: 16px;
+            .userSettingWrap {
+                position: relative;
 
-                    &:last-child {
-                        margin-bottom: 0;
-                    }
+                .nest {
+                    position: absolute;
+                    right: -100px;
+                    bottom: -162px;
+                    padding: 20px;
+                    border-radius: 8px;
+                    border: 1px solid rgba(0, 0, 0, 0.15);
+                    background: #FAFAFA;
+                    color: rgba(0, 0, 0, 0.80);
+                    box-shadow: 8px 12px 36px 0px rgba(0, 0, 0, 0.10);
+                    z-index: 10;
 
-                    span {
-                        margin-left: 12px;
+                    .setting {
+                        display: flex;
+                        align-items: center;
+                        margin-bottom: 16px;
+
+                        &:last-child {
+                            margin-bottom: 0;
+                        }
+
+                        span {
+                            margin-left: 12px;
+                        }
                     }
                 }
+
             }
 
             .refresh {

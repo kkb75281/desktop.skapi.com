@@ -23,7 +23,7 @@
 import { inject, ref } from "vue";
 import { useRouter, useRoute } from 'vue-router';
 import { skapi, account } from '@/main.js';
-import { currentService } from "@/data.js";
+import { currentService, services } from "@/data.js";
 
 let router = useRouter();
 let emits = defineEmits(['close']);
@@ -33,12 +33,24 @@ let error = ref('');
 let closeWindow = () => {
     emits('close');
 }
-let deleteService = ()=>{
+let deleteService = () => {
     if (confirmationCode.value !== currentService.value.service) {
         error.value = 'Service ID does not match.';
         return;
     }
-    skapi.deleteService(currentService.value.service)
+    promiseRunning.value = true;
+    skapi.deleteService(currentService.value.service).then(_ => {
+        // remove from services
+        let idx = services.value.findIndex(s => s.service === currentService.value.service);
+        services.value.splice(idx, 1);
+        // remove from currentService
+        currentService.value = null;
+        router.replace({ path: '/dashboard' });
+    }).catch(e => {
+        error.value = e.message;
+    }).finally(() => {
+        promiseRunning.value = false;
+    })
 }
 </script>
 <style lang="less" scoped>
@@ -52,6 +64,7 @@ let deleteService = ()=>{
     background-color: rgba(26, 26, 26, 0.25);
     z-index: 99999;
 }
+
 .wrap {
     position: absolute;
     left: 50%;
@@ -66,26 +79,30 @@ let deleteService = ()=>{
     box-shadow: 0px 2px 4px 0px rgba(0, 0, 0, 0.10);
 
     .material-symbols-outlined {
-        font-size:57px;
-        color:rgba(240, 78, 78, 1);
+        font-size: 57px;
+        color: rgba(240, 78, 78, 1);
         margin-bottom: 20px;
     }
+
     h4 {
         display: block;
-        color:rgba(240, 78, 78, 1);
+        color: rgba(240, 78, 78, 1);
         font-size: 24px;
         font-weight: 700;
         margin-bottom: 36px;
     }
+
     .message {
         font-size: 16px;
         font-weight: 400;
         line-height: 20px;
         margin-bottom: 35px;
+
         span {
             font-weight: 700;
         }
     }
+
     input {
         width: 360px;
         height: 44px;
@@ -94,6 +111,7 @@ let deleteService = ()=>{
         padding-left: 16px;
         background: rgba(0, 0, 0, 0.05);
     }
+
     .buttonWrap {
         width: 100%;
         margin-top: 56px;
@@ -115,6 +133,7 @@ let deleteService = ()=>{
                 border-radius: 8px;
                 border: 2px solid #293FE6;
             }
+
             &.delete {
                 border: 0;
             }
