@@ -135,7 +135,7 @@
                                         template(v-if="selectedRecord?.tags")
                                             .tag(v-for="tag in selectedRecord?.tags") {{ tag }}
                                         template(v-else) -
-                        .hidden.tags(v-if="hiddenTags")
+                        .hidden.tags(v-if="hiddenTags && selectedRecord?.tags")
                             .tag(v-for="tag in selectedRecord?.tags") {{ tag }}
                 .recordData
                     .header
@@ -144,7 +144,7 @@
                         .tit Context
                     .content
                         template(v-if="records_data.length")
-                            .dataRow(v-for="(data, index) in records_data" :key="index")
+                            template(v-for="(data, index) in records_data" :key="index")
                                 template(v-if="records_data.length && !recordInfoEdit")
                                     .row(@click="showRecordData(index, data)")
                                         .data {{ data.type }}
@@ -177,7 +177,7 @@
                                                 .context.disabled {{ data.context }}
                                         template(v-else)
                                             input.context(type="text" :value="data.context" :placeholder="`${data.context}`")
-                            .dataRow(v-if="!recordInfoEdit" v-for="i in dataTrCount" :key="'extra-' + i")
+                            template(v-if="!recordInfoEdit" v-for="i in dataTrCount" :key="'extra-' + i")
                                 .row
                         template(v-else)
                             .noData(v-if="!recordInfoEdit")
@@ -187,9 +187,13 @@
                             .material-symbols-outlined.sml add_circle
                             span Add data
                 .material-symbols-outlined.mid.menu(v-if="!recordInfoEdit" @click="showEdit = !showEdit") more_vert
-                .edit(v-if="showEdit" @click="recordInfoEdit = true; showEdit = false;")
-                    .material-symbols-outlined.mid edit
-                    span eidt   
+                .editMenuWrap(v-if="showEdit" @click="recordInfoEdit = true; showEdit = false;")
+                    div
+                        .material-symbols-outlined.mid edit
+                        span eidt   
+                    div
+                        .material-symbols-outlined.mid delete
+                        span delete  
                 .editBtnWrap(v-if="recordInfoEdit") 
                     button.cancel(@click="recordInfoEdit = false;") 
                         .material-symbols-outlined.mid close
@@ -657,6 +661,8 @@ let createRecordData = () => {
             }
             .recordInfo, .recordData {
                 width: 50%;
+                overflow: hidden;
+                padding-bottom: 20px;
             }
             .recordData {
                 .header {
@@ -666,6 +672,9 @@ let createRecordData = () => {
                         padding-left: 0;
                     }
                 }
+                // .content {
+                //     padding-top: 12px;
+                // }
             }
             .menu {
                 position: absolute;
@@ -694,7 +703,7 @@ let createRecordData = () => {
                     }
                 }
             }
-            .edit {
+            .editMenuWrap {
                 position: absolute;
                 right: 20px;
                 top: 34px;
@@ -707,8 +716,18 @@ let createRecordData = () => {
                 cursor: pointer;
                 z-index: 2;
                 display: flex;
-                flex-wrap: nowrap;
+                flex-wrap: wrap;
                 align-items: center;
+
+                > div {
+                    display: flex;
+                    flex-wrap: nowrap;
+                    align-items: center;
+
+                    &:first-child {
+                        margin-bottom: 20px;
+                    }
+                }
 
                 span {
                     margin-left: 10px;
@@ -734,7 +753,7 @@ let createRecordData = () => {
                     min-width: 84px;
                     height: 40px;
                     line-height: 40px;
-                    margin-right: 10px;
+                    margin-right: 20px;
                     display: inline-block;
                     color: rgba(0, 0, 0, 0.40);
                     font-size: 14px;
@@ -747,6 +766,9 @@ let createRecordData = () => {
                 }
             }
             .content {
+                height: 404px;
+                padding: 16px 20px 0 20px;
+                overflow-y: auto;
                 .info, .smallInfo {
                     position: relative;
                     user-select: none;
@@ -807,7 +829,7 @@ let createRecordData = () => {
                     }
                     .copy {
                         position: absolute;
-                        top: 50%;
+                        top: 65%;
                         right: 20px;
                         transform: translateY(-50%);
                         color: rgba(0,0,0,0.4);
@@ -842,7 +864,6 @@ let createRecordData = () => {
                 }
                 .info {
                     position: relative;
-                    padding-left: 20px;
                     margin-bottom: 12px;
                     
                     .label {
@@ -855,9 +876,6 @@ let createRecordData = () => {
                         input, select {
                             width: calc(100% - 20px);
                         }
-                    }
-                    &:first-child {
-                        margin-top: 16px;
                     }
                     &:nth-child(8) {
                         margin-bottom: 42px;
@@ -937,130 +955,84 @@ let createRecordData = () => {
                         }
                     }
                 }
-                .dataRow {
-                    &:nth-child(2n) {
-                        .row {
-                            &::after {
-                                opacity: 1;
-                            }
-                        }
-                    }
-                    &:first-child {
-                        margin-top: 5px;
-                    }
-                    &:last-child {
-                        margin-bottom: 14px;
-                    }
-                    .row {
-                        position: relative;
-                        padding: 0 20px;
-                        margin: 0 20px;
-                        height: 40px;
-                        border-radius: 4px;
-                        font-size: 14px;
-                        color: rgba(0, 0, 0, 0.40);
-                        font-weight: 500;
-                        display: flex;
-                        flex-wrap: nowrap;
-                        align-items: center;
-                        cursor: pointer;
-    
-                        &::after {
-                            position: absolute;
-                            content: '';
-                            width: 100%;
-                            height: 100%;
-                            left: 0;
-                            top: 0;
-                            background: rgba(0, 0, 0, 0.05);
-                            border-radius: 4px;
-                            opacity: 0;
-                        }
-                        &:hover {
-                            color: rgba(0, 0, 0, 0.80);
-                            font-weight: 700;
-                        }
-                    }
-                    .rowEdit {
-                        position: relative;
-                        padding: 8px 20px;
-                        margin-left: 20px;
-                        height: 32px;
-                        border-radius: 4px;
-                        font-size: 14px;
-                        color: rgba(0, 0, 0, 0.60);
-                        font-weight: 500;
-                        display: flex;
-                        flex-wrap: nowrap;
-                        align-items: center;
-                        .minus {
-                            position: absolute;
-                            left: -8px;
-                            top: 50%;
-                            width: 20px;
-                            height: 20px;
-                            transform: translateY(-50%);
-                            color: rgba(0, 0, 0, 0.60);
-                            cursor: pointer;
-                        }
-                        .type, .key, .context {
-                            position: relative;
-                            border: 0;
-                            background-color: unset;
-                        }
-                        .type {
-                            width: 84px;
-                            margin-right: 20px;
-                        }
-                        .key {
-                            width: 84px;
-                            margin-right: 20px;
-                            border-bottom: 1px solid rgba(0, 0, 0, 0.80);
-                        }
-                        .context {
-                            width: calc(100% - 208px);
-                            border-bottom: 1px solid rgba(0, 0, 0, 0.80);
-    
-                            &.disabled {
-                                color: rgba(0, 0, 0, 0.25);
-                                font-size: 14px;
-                                font-weight: 500;
-                                border-bottom: 0;
-                            }
-                            &.fileUpload {
-                                color: #293FE6;
-                                font-size: 14px;
-                                font-weight: 500;
-                                border-bottom: 0;
-                                cursor: pointer;
-                            }
-                            &.click {
-                                cursor: pointer;
-                            }
-                            .overflow {
-                                width: 100%;
-                                white-space: nowrap;
-                                overflow: hidden;
-                                text-overflow: ellipsis;
-                                display: block;
-                            }
-                        }
-                        select {
-                            cursor: pointer;
-                        }
-                        input {
-                            color: rgba(0, 0, 0, 0.60);
-                        }
-                    }
-                    .data {
-                        min-width: 84px;
-                        // width: 84px;
-                        margin-right: 10px;
-                        display: inline-block;
+                .row {
+                    position: relative;
+                    padding: 0 20px;
+                    height: 40px;
+                    border-radius: 4px;
+                    font-size: 14px;
+                    color: rgba(0, 0, 0, 0.40);
+                    font-weight: 500;
+                    display: flex;
+                    flex-wrap: nowrap;
+                    align-items: center;
+                    cursor: pointer;
 
-                        &:last-child {
-                            min-width: 84px;
-                            margin-right: 0;
+                    &:first-child {
+                        margin-top: -12px;
+                    }
+                    &:nth-child(2n) {
+                        background: rgba(0, 0, 0, 0.05);
+                    }
+                    &:hover {
+                        color: rgba(0, 0, 0, 0.80);
+                        font-weight: 700;
+                    }
+                }
+                .rowEdit {
+                    position: relative;
+                    padding-left: 20px;
+                    margin-bottom: 12px;
+                    border-radius: 4px;
+                    font-size: 14px;
+                    color: rgba(0, 0, 0, 0.60);
+                    font-weight: 500;
+                    display: flex;
+                    flex-wrap: nowrap;
+                    align-items: center;
+                    .minus {
+                        position: absolute;
+                        left: -8px;
+                        top: 50%;
+                        width: 20px;
+                        height: 20px;
+                        transform: translateY(-50%);
+                        color: rgba(0, 0, 0, 0.60);
+                        cursor: pointer;
+                    }
+                    .type, .key, .context {
+                        position: relative;
+                        border: 0;
+                        background-color: unset;
+                    }
+                    .type {
+                        width: 84px;
+                        margin-right: 20px;
+                    }
+                    .key {
+                        width: 84px;
+                        margin-right: 20px;
+                        border-bottom: 1px solid rgba(0, 0, 0, 0.80);
+                    }
+                    .context {
+                        width: calc(100% - 208px);
+                        border-bottom: 1px solid rgba(0, 0, 0, 0.80);
+
+                        &.disabled {
+                            color: rgba(0, 0, 0, 0.25);
+                            font-size: 14px;
+                            font-weight: 500;
+                            border-bottom: 0;
+                        }
+                        &.fileUpload {
+                            color: #293FE6;
+                            font-size: 14px;
+                            font-weight: 500;
+                            border-bottom: 0;
+                            cursor: pointer;
+                        }
+                        &.click {
+                            cursor: pointer;
                         }
                         .overflow {
                             width: 100%;
@@ -1070,13 +1042,37 @@ let createRecordData = () => {
                             display: block;
                         }
                     }
+                    select {
+                        cursor: pointer;
+                    }
+                    input {
+                        color: rgba(0, 0, 0, 0.60);
+                    }
+                }
+                .data {
+                    min-width: 84px;
+                    // width: 84px;
+                    margin-right: 10px;
+                    display: inline-block;
+
+                    &:last-child {
+                        min-width: 84px;
+                        margin-right: 0;
+                    }
+                    .overflow {
+                        width: 100%;
+                        white-space: nowrap;
+                        overflow: hidden;
+                        text-overflow: ellipsis;
+                        display: block;
+                    }
                 }
                 .addDataRow {
                     display: flex;
                     flex-wrap: nowrap;
                     align-items: center;
                     justify-content: center;
-                    margin: 20px 20px 0 20px;
+                    margin-top: 12px;
                     text-align: center;
                     padding: 6px 0;
                     color: #293FE6;
