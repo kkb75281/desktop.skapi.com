@@ -27,7 +27,7 @@
                 input#searchInput(v-else-if="searchFor === 'locale'" placeholder="2 digit country code e.g. KR" v-model="searchText")
                 input#searchInput(v-else-if="searchFor === 'birthdate'" placeholder="YYYY-MM-DD ~ YYYY-MM-DD" v-model="searchText")
                 input(hidden type='submit')
-                .material-symbols-outlined.mid.delete(v-if="searchText" @click="searchText = ''") close
+                .material-symbols-outlined.mid.delete(v-if="searchText" @click="e=>{searchText = ''; if(fetchParams.searchFor !== 'timestamp') { fetchParams = defaultFetchParams; refresh(); }}") close
                 .material-symbols-outlined.mid.modalIcon(v-if="(searchFor === 'timestamp' || searchFor === 'birthdate') && !searchText" @click.stop="showCalendar = !showCalendar") calendar_today
                 .material-symbols-outlined.mid.modalIcon(v-if="searchFor === 'locale' && !searchText" @click.stop="showLocale = !showLocale") arrow_drop_down
     .container(style="overflow: hidden;")
@@ -480,7 +480,6 @@ let searchUsers = (e) => {
             value: search,
             condition: '>='
         }
-        console.log(fetchParams)
         refresh();
     }
 }
