@@ -75,6 +75,10 @@ body.fa {
     'opsz' 20;
   }
 
+.rotate_animation {
+  animation: rotate_image 1.5s linear infinite;
+}
+
 /* loading img */
 .loading {
   width: 24px;
@@ -176,6 +180,12 @@ form .error span {
 .clickable {
   cursor: pointer;
   color: rgba(0, 0, 0, 0.6);
+}
+
+.nonClickable {
+  cursor: default !important;
+  color: rgba(0, 0, 0, 0.3) !important;
+  pointer-events: none !important;
 }
 
 /* toggle button */

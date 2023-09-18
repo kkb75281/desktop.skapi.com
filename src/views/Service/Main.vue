@@ -85,7 +85,7 @@ template(v-if='currentService')
 <script setup>
 import { ref } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
-import { services, serviceFetching, currentService } from '@/data.js';
+import { services, serviceFetching, currentService, storageInfo } from '@/data.js';
 import { skapi, account, bodyClick } from '@/main.js';
 
 currentService.value = null;
@@ -113,7 +113,18 @@ let getCurrentService = () => {
 }
 
 if (serviceFetching.value instanceof Promise) {
-    serviceFetching.value.then(getCurrentService)
+    serviceFetching.value.then(getCurrentService).then(_ => {
+        if (currentService.value) {
+            skapi.storageInformation(currentService.value.service).then(i => {
+                // get storage info
+                storageInfo.value[currentService.value.service] = i;
+            });
+        }
+        else {
+            // no such service
+            router.replace({ path: '/dashboard' });
+        }
+    })
 }
 else {
     getCurrentService()

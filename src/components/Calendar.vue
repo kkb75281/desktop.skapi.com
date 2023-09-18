@@ -1,5 +1,5 @@
 <template lang="pug">
-#calendar
+#calendar(@click.stop)
     .timeWrap
         .timeNav 
             input#here(type="date" hidden)

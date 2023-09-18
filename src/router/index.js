@@ -13,6 +13,10 @@ import Mail from '@/views/Service/Mail.vue'
 import Subdomain from '@/views/Service/Subdomain.vue'
 
 const router = createRouter({
+  scrollBehavior(to, from, savedPosition) {
+    // always scroll to top
+    return { top: 0 }
+  },
   history: createWebHistory(import.meta.env.BASE_URL),
   routes: [
     {

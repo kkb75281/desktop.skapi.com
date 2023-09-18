@@ -1,5 +1,5 @@
 <template lang="pug">
-#localeSelector(@click.stop="")
+#localeSelector(@click.stop)
     .wrap
         .country(v-for="(c, key) in Countries" @click="handleCountryClick(key)") 
             span.flag {{ c.flag }}
