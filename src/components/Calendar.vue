@@ -135,11 +135,12 @@ let createdDate = (date) => {
             startDate.value = null;
             endDate.value = null;
         }
-        emit('dateClicked', startDate.value, endDate.value);
+        // emit('dateClicked', startDate.value, endDate.value);
     } else {
         startDate.value = formattedDate;
         endDate.value = null;
     }
+    emit('dateClicked', startDate.value, endDate.value); // 칼랜더를 닫히게 하지 않고 계속 아웃풋이 나오게 하는건 어떤가요?
 }
 </script>
 
