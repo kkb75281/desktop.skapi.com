@@ -1,26 +1,28 @@
 <template lang="pug">
-dialog#recordDataDialog(@click="closeDialog")
-    template(v-if="selectedData")
-        .header 
-            h4 {{ selectedData.type }} - {{ selectedData.key }}
-            .editWrap(@click="edit")
-                .material-symbols-outlined.mid edit
-                span edit
-        .content {{ selectedData.context }}
-    template(v-else-if="editRecordData")
-        .header 
-            h4 {{ editRecordData.type }} - {{ editRecordData.key }}
-        .content 
-            textarea(:value="editRecordData.context" @input="heightControl")
-        .buttonWrap 
-            button.cancel Cancel
-            button.save Save
+#recordData(@click="emits('close')")
+    .wrap(@click.stop)
+        template(v-if="selectedData  !editRecordData")
+            .header 
+                h4 {{ selectedData.type }} - {{ selectedData.key }}
+                .editWrap(@click="edit")
+                    .material-symbols-outlined.mid edit
+                    span edit
+            .content {{ selectedData.context }}
+        template(v-else-if="editRecordData")
+            .header 
+                h4 {{ editRecordData.type }} - {{ editRecordData.key }}
+            .content 
+                textarea(:value="editRecordData.context" @input="heightControl")
+            .buttonWrap 
+                button.cancel(@click="emits('close')") Cancel
+                button.save Save
 </template>
 
 <script setup>
 import { ref } from 'vue';
 
 let props = defineProps(['selectedData','editRecordData']);
+let emits = defineEmits(['close']);
 let editRecordData = ref(null);
 
 let edit = async() => {
@@ -48,8 +50,18 @@ let heightControl = (e) => {
 </script>
 
 <style lang="less" scoped>
-dialog {
+#recordData {
     position: fixed;
+    overflow: auto;
+    left: 0;
+    top: 0;
+    width: 100vw;
+    height: 100vh;
+    background-color: rgba(26, 26, 26, 0.25);
+    z-index: 99999;
+}
+.wrap {
+    position: absolute;
     content: '';
     left: 50%;
     top: 50%;
@@ -125,8 +137,5 @@ dialog {
             }
         }
     }
-}
-dialog::backdrop {
-    background-color: rgba(0,0,0,0.2);
 }
 </style>

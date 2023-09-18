@@ -79,7 +79,7 @@ export let users = ref([
     },
 ])
 
-export let records = [
+export let records = ref([
     {
         data: {
             answer:"점"
@@ -137,7 +137,7 @@ export let records = [
             answer:"123123"
         },
         ip: "125.180.116.116",
-        record_id:"Tn1LKvARcnrTUs38",
+        record_id:"Tv4LKvARcnrTUs38",
         index: {
             name:"aaadsfsdf",
             value:"ssdsa"
@@ -151,6 +151,9 @@ export let records = [
             access_group: 'private',
             name:"uploadAnswer"
         },
+        tags: [
+            "hhh", "iii", "jjj", "kkkk", "lll", "mmm", "nnn"
+        ],
         ref: {
             dddd: "sdsds"
         },
@@ -163,7 +166,7 @@ export let records = [
             answer:"123123"
         },
         ip: "125.180.116.116",
-        record_id:"Tn1LKvARcnrTUs38",
+        record_id:"Tn3LKvARcnrTUs38",
         index: {
             name:"aaadsfsdf",
             value:"ssdsa"
@@ -184,7 +187,7 @@ export let records = [
         uploaded:1692117202352,
         user_id:"f66a6888-653d-4e9c-ace6-0c1486986170"
     }
-]
+])
 
 export let records_data = ref([
     {

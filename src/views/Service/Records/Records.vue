@@ -1,58 +1,59 @@
 <template lang="pug">
 .containerWrap
     .container
-        form.searchForm
-            .selectBar
-                .customSelect
-                    select(v-model="selectedOption")
-                        option(value="table") Table Name
-                        option(value="user") User ID
-                        option(value="record") Record ID
-                    .material-symbols-outlined.mid.selectArrowDown arrow_drop_down
-            .searchBar
-                .material-symbols-outlined.mid.search search
-                input(placeholder="Search Record" v-model="searchText")
-                .material-symbols-outlined.mid.delete(v-if="searchText" @click="searchText = ''") close
-        .advancedForm(v-if="selectedOption === 'table'")
-            .left 
-                .condition
-                    .label Access Group
-                    .radioFormWrap
-                        .customSelect
-                            select
-                                option(value="1") All
-                                option(value="0") Public
-                                option(value="private") Private
-                            .material-symbols-outlined.mid.selectArrowDown arrow_drop_down
-                .condition 
-                    .label Reference ID
-                    .textFormWrap
-                        input(type="text" name='reference')
-                .condition 
-                    .label Subscription
-                    .textFormWrap
-                        input(type="text" name='reference')
-                .condition 
-                    .label Tag
-                    .textFormWrap
-                        input(type="text" name='reference')
-            .right
-                .title Index
-                .condition 
-                    .label Name
-                    .textFormWrap
-                        input(type="text" name='reference' v-model="firstInput" @input="checkFirstInput")
-                .condition 
-                    .label(:class="{'disabled': !firstInputCompleted}") Value Type
-                    .textFormWrap
-                        input(type="text" name='reference' :disabled="!firstInputCompleted")
-                .condition 
-                    .label(:class="{'disabled': !firstInputCompleted}") Index Value
-                    .textFormWrap
-                        input(type="text" name='reference' :disabled="!firstInputCompleted")
-            .buttonWrap 
-                button.clear Clear filter
-                button.search Search
+        form
+            .searchForm
+                .selectBar
+                    .customSelect
+                        select(v-model="selectedOption")
+                            option(value="table") Table Name
+                            option(value="user") User ID
+                            option(value="record") Record ID
+                        .material-symbols-outlined.mid.selectArrowDown arrow_drop_down
+                .searchBar
+                    .material-symbols-outlined.mid.search search
+                    input(placeholder="Search Record" v-model="searchText")
+                    .material-symbols-outlined.mid.delete(v-if="searchText" @click="searchText = ''") close
+            .advancedForm(v-if="selectedOption === 'table'")
+                .left 
+                    .condition
+                        .label Access Group
+                        .radioFormWrap
+                            .customSelect
+                                select
+                                    option(value="1") All
+                                    option(value="0") Public
+                                    option(value="private") Private
+                                .material-symbols-outlined.mid.selectArrowDown arrow_drop_down
+                    .condition 
+                        .label Reference ID
+                        .textFormWrap
+                            input(type="text" name='reference')
+                    .condition 
+                        .label Subscription
+                        .textFormWrap
+                            input(type="text" name='reference')
+                    .condition 
+                        .label Tag
+                        .textFormWrap
+                            input(type="text" name='reference')
+                .right
+                    .title Index
+                    .condition 
+                        .label Name
+                        .textFormWrap
+                            input(type="text" name='reference' v-model="firstInput")
+                    .condition 
+                        .label(:class="{'disabled': !firstInput}") Value Type
+                        .textFormWrap
+                            input(type="text" name='reference' :disabled="!firstInput")
+                    .condition 
+                        .label(:class="{'disabled': !firstInput}") Index Value
+                        .textFormWrap
+                            input(type="text" name='reference' :disabled="!firstInput")
+                .buttonWrap 
+                    input.clear(type="reset" value="Clear filter" @click="clearSearchFilter")
+                    button.search(type="submit") Search
     .container 
         .viewRecord(:loading="isSaving || null")
             form.recordForm(v-if="selectedRecordForm" @submit.prevent="saveRecordData")
@@ -187,11 +188,11 @@
                             .material-symbols-outlined.sml add_circle
                             span Add data
                 .material-symbols-outlined.mid.menu(v-if="!recordInfoEdit" @click="showEdit = !showEdit") more_vert
-                .editMenuWrap(v-if="showEdit" @click="recordInfoEdit = true; showEdit = false;")
-                    div
+                .editMenuWrap(v-if="showEdit")
+                    div(@click="recordInfoEdit = true; showEdit = false;")
                         .material-symbols-outlined.mid edit
                         span eidt   
-                    div
+                    div(@click="recordDelete")
                         .material-symbols-outlined.mid delete
                         span delete  
                 .editBtnWrap(v-if="recordInfoEdit") 
@@ -284,9 +285,9 @@
                             .material-symbols-outlined.sml add_circle
                             span Add data
                 .editBtnWrap
-                    button.cancel(@click="createRecordForm = false;")
+                    button.cancel(type="button" @click="createRecordForm = false;")
                         .material-symbols-outlined.mid close
-                    button.save
+                    button.save(type="submit")
                         .material-symbols-outlined.mid check
             .noSelect(v-else) No record selected
         .tableHeader 
@@ -342,24 +343,33 @@
                             .material-symbols-outlined.mid(v-else) language
                         td.center
                             .featureWrap
-                                .feature(:class="{'active': record?.tags}") Tag
-                                .feature(:class="{'active': record?.index}") Index
-                                .feature(:class="{'active': record?.ref}") Ref
+                                .feature.tag(:class="{'active': record?.tags}" @mouseenter="previewTags = true;" @mouseleave="previewTags = false;") Tag
+                                .feature.index(:class="{'active': record?.index}") Index
+                                .feature.ref(:class="{'active': record?.ref}") Ref
+                            .previewWrap
+                                .preview
+                                    .tag.tag(v-if="previewTags") {{ record.tags }}
+                                    .tag.index(v-if="previewIndex") {{ record.index }}
+                                    .tag.ref(v-if="previewRef") {{ record.ref }}
                     tr(v-for="i in trCount" :key="'extra-' + i")
             .noRecords(v-if="!records.length")
                 h2 No Records
                 p List of records will show when there is data
-RecordData(:selectedData="selectedData" :editRecordData="editRecordData")
+    RecordData(v-if="showRecordDataWindow" :selectedData="selectedData" :editRecordData="editRecordData" @close="showRecordDataWindow = false;")
 </template>
 
 <script setup>
 import { computed, nextTick, onMounted, ref } from 'vue';
 import { records, records_data } from '@/data.js';
-import RecordData from '@/views/Service/Overlay/RecordData.vue';
+import RecordData from '@/views/Service/Records/RecordData.vue';
 // import EditRecord from '../Dialog/EditRecord.vue';
 // import TagsInput from '@/components/TagsInput.vue';
 
 let isSaving = ref(false);
+let showRecordDataWindow = ref(false);
+let previewTags = ref(false);
+let previewIndex = ref(false);
+let previewRef = ref(false);
 let showFilter = ref(false);
 let showUserSetting = ref(false);
 let showEdit = ref(false);
@@ -368,7 +378,6 @@ let addData = ref(false);
 let hiddenUserID = ref(false);
 let hiddenTags = ref(false);
 let searchText = ref('');
-let firstInputCompleted = ref(false);
 let recordInfoEdit = ref(false);
 let activeIndex = ref(null);
 let selectedRecordForm = ref(false);
@@ -385,25 +394,24 @@ let selectedOption = ref('table');
 let maxTrCount = 10;
 
 let trCount = computed(() => {
-    return Math.max(0, maxTrCount - records.length);
+    return Math.max(0, maxTrCount - records.value.length);
 });
 let dataTrCount = computed(() => {
     return Math.max(0, maxTrCount - records_data.value.length);
 });
-let checkFirstInput = () => {
-  firstInputCompleted.value = firstInput.value !== '';
-};
 let showRecordInfo = (index) => {
     createRecordForm.value = false;
     if(currentIndex === index) {
         selectedRecordForm.value = false;
         activeIndex.value = null;
         currentIndex = -1;
+        hiddenTags.value = false;
     } else {
         currentIndex = index;
         activeIndex.value = currentIndex;
-        selectedRecord.value = records[currentIndex];
+        selectedRecord.value = records.value[currentIndex];
         selectedRecordForm.value = true;
+        hiddenTags.value = false;
     }
 }
 let viewRecordCheck = () => {
@@ -412,6 +420,7 @@ let viewRecordCheck = () => {
         activeIndex.value = null;
         currentIndex = -1;
     }
+    dataList.value = [];
     createRecordForm.value = true;
 }
 let showRecordData = (index, data) => {
@@ -424,8 +433,9 @@ let showRecordData = (index, data) => {
         selectedData.value = records_data.value[index];
         console.log('eeee')
     }
-    let recordDataWindow = document.getElementById('recordDataDialog');
-    recordDataWindow.showModal();
+    showRecordDataWindow.value = true;
+    // let recordDataWindow = document.getElementById('recordDataDialog');
+    // recordDataWindow.showModal();
 } 
 let showHidden = (e) => {
     if(e.currentTarget.classList.contains('tagsWrapper')) {
@@ -457,6 +467,10 @@ let copy = (e) => {
     setTimeout(() => {
         e.target.parentNode.parentNode.classList.remove('copied');
     }, 1000);
+}
+
+let clearSearchFilter = () => {
+    firstInput.value = '';
 }
 
 // recordData edit
@@ -491,6 +505,15 @@ let createAddField = () => {
 }
 let createRecordData = () => {
     console.log(selectedRecord.value)
+}
+
+// delete Record
+let recordDelete = () => {
+    records.value.splice(currentIndex, 1); 
+    selectedRecordForm.value = false;
+    activeIndex.value = null;
+    currentIndex = -1;
+    showEdit.value = false;
 }
 </script>
 
@@ -590,7 +613,7 @@ let createRecordData = () => {
             }
             .radioFormWrap {
                 select {
-                    width: 90px;
+                    width: 110px;
                     border: 0;
                     background: unset;
                     color: rgba(0, 0, 0, 0.60);
@@ -618,23 +641,22 @@ let createRecordData = () => {
         }
         .buttonWrap {
             text-align: right;
-
-            button {
+            * {
                 padding: 12px 28px;
                 border: 0;
-                background-color: unset;
                 font-size: 16px;
                 font-weight: 700;
                 border-radius: 8px;
+                background-color: unset;
                 cursor: pointer;
-                &.clear {
-                    color: #293FE6;
-                }
-                &.search {
-                    color: #fff;
-                    background-color: #293FE6;
-                    box-shadow: 0px -1px 1px 0px rgba(0, 0, 0, 0.15) inset;
-                }
+            }
+            .clear {
+                color: #293FE6;
+            }
+            .search {
+                color: #fff;
+                background-color: #293FE6;
+                box-shadow: 0px -1px 1px 0px rgba(0, 0, 0, 0.15) inset;
             }
         }
     }
@@ -1050,13 +1072,17 @@ let createRecordData = () => {
                     }
                 }
                 .data {
-                    min-width: 84px;
-                    // width: 84px;
-                    margin-right: 10px;
+                    margin-right: 20px;
                     display: inline-block;
 
+                    &:first-child {
+                        width: 84px;
+                    }
+                    &:nth-child(2) {
+                        width: 84px;
+                    }
                     &:last-child {
-                        min-width: 84px;
+                        width: calc(100% - 208px);
                         margin-right: 0;
                     }
                     .overflow {
@@ -1257,6 +1283,7 @@ let createRecordData = () => {
             // width: 100%;
             table-layout: fixed;
             .featureWrap {
+                position: relative;
                 width: 100%;
                 .feature {
                     display: inline-block;
@@ -1266,6 +1293,7 @@ let createRecordData = () => {
                     box-shadow: 0px -1px 1px 0px rgba(0, 0, 0, 0.15) inset;
                     margin-right: 8px;
                     color: #fff;
+                    cursor: pointer;
                     opacity: 0;
 
                     &.active {
@@ -1288,13 +1316,52 @@ let createRecordData = () => {
                 border-bottom: 1px solid rgba(0, 0, 0, 0.10);
                 border-radius: 8px;
                 filter: drop-shadow(0px 1px 3px rgba(0, 0, 0, 0.06));  
-                cursor: pointer;
+                // cursor: pointer;
                 overflow: hidden;
 
                 &.active {
                     background-color: rgba(41, 63, 230, 0.05);
                     box-shadow: 0px -1px 1px 0px rgba(0, 0, 0, 0.15) inset;
                     border: 0;
+                }
+            }
+            td {
+                position: relative;
+                .previewWrap {
+                    position: absolute;
+                    left: 0;
+                    top: -33px;
+                    .preview {
+                        position: relative;
+                        height: 44px;
+                        background-color: #fafafa;
+                        border-radius: 8px;
+                        filter: drop-shadow(1px 2px 2px rgba(0, 0, 0, 0.25));
+                        color: rgba(0, 0, 0, 0.60);
+                        font-size: 14px;
+                        padding: 0 12px;
+                        font-weight: 700;
+                        display: none;
+                        &::after {
+                            position: absolute;
+                            content: '';
+                            left: 45px;
+                            top: 50%;
+                            border-top: 20px solid transparent;
+                            border-right: 20px solid transparent;
+                            border-left: 20px solid #fafafa;
+                            rotate: -45deg;
+                        }
+                        // &.active {
+                        //     display: block;
+                        // }
+                        .tag {
+                            width: 150px;
+                            line-height: 44px;
+                            white-space: nowrap;
+                            overflow: hidden;
+                        }
+                    }
                 }
             }
             td, th {
