@@ -122,9 +122,10 @@ onMounted(() => {
         }
     }
     .buttonWrap {
-        width: 100%;
+        // width: 100%;
         height: 44px;
-        padding: 0 20px 20px 20px;
+        // padding: 0 20px 20px 20px;
+        margin: 0 20px 20px 20px;
         display: flex;
         flex-wrap: nowrap;
         justify-content: space-between;

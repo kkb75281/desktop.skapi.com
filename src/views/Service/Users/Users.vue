@@ -709,6 +709,7 @@ onMounted(() => {
 
             .refresh {
                 margin-right: 20px;
+                color: #293FE6;
             }
         }
 

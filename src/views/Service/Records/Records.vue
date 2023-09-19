@@ -210,11 +210,11 @@
                         .info 
                             .label Record ID 
                             .value
-                                input(type="text" @input="(e) => {createRecord.record_id = e.target.value; }")
+                                input(type="text" @input="(e) => {validateTableName(e); createRecord.record_id = e.target.value; }")
                         .info 
                             .label Table name 
                             .value 
-                                input(type="text" @input="(e) => {createRecord.table.name = e.target.value; }")
+                                input(type="text" @input="(e) => {validateTableName(e); createRecord.table.name = e.target.value; }" required)
                         .info 
                             .label Access group 
                             .value 
@@ -224,14 +224,18 @@
                         .info 
                             .label User ID 
                             .value
-                                input(type="text" @input="(e) => {createRecord.user_id = e.target.value; }")
+                                input(type="text" @input="(e) => {validateTableName(e); createRecord.user_id = e.target.value; }")
                         .info(style="padding-right:0")
                             .label Reference
                             .value.various
                                 .smallInfo 
                                     .smallLabel Index Name 
                                     .smallValue 
-                                        input(type="text" @input="(e)=> {createRecord.index.name = e.target.value;}")
+                                        input(
+                                            type="text" 
+                                            @input="(e)=> {validateTableName(e); createRecord.index.name = e.target.value;}" 
+                                            :required="createRecord.index.value !== '' ? true : null"
+                                        )
                                 .smallInfo 
                                     .smallLabel Index Value 
                                     .smallValue 
@@ -240,7 +244,7 @@
                                                 option(value="string") String
                                                 option(value="number") Number
                                                 option(value="boolean") Boolean
-                                            input(type="text" @input="(e)=> {createRecord.index.value = e.target.value;}")
+                                            input(type="text" @input="(e)=> {validateTableName(e); createRecord.index.value = e.target.value;}")
                         .info 
                             .label Reference Setting 
                             .value.various
@@ -253,7 +257,7 @@
                                 .smallInfo 
                                     .smallLabel Reference Limit
                                     .smallValue 
-                                        input(type="number" min="1" placeholder="Infinite" @input="(e) => createRecord.reference.reference_limit = e.target.value ? parseInt(e.target.value) : null")
+                                        input(type="number" min="1" placeholder="Infinite" @input="(e) => {validateTableName(e); createRecord.reference.reference_limit = e.target.value ? parseInt(e.target.value) : null}")
                         .info 
                             .label Tags 
                             .value 
@@ -278,7 +282,7 @@
                                 template(v-else-if="data.type == 'file'")
                                     template(v-if="data.context === ''")
                                         input#file.inputfile(type="file" name="file" style="display:none;")
-                                        label.context.fileUpload(for="file") Choose a file OR Drag and drop
+                                        label.context.fileUpload(for="file") Choose a file
                                     template(v-else)
                                         .context.disabled {{ data.context }}
                                 template(v-else)
@@ -295,7 +299,7 @@
         .tableHeader 
             .actions 
                 .material-symbols-outlined.mid.refresh.clickable cached
-                .material-symbols-outlined.mid.menu.clickable(@click.stop="showRecordSetting = !showRecordSetting") more_vert
+                .material-symbols-outlined.mid.menu.clickable(:class='{"nonClickable": !checkedRecords.length}' @click.stop="showRecordSetting = !showRecordSetting") more_vert
                 .recordSettingWrap(v-if="showRecordSetting" @click.stop)
                     .nest
                         .setting(@click="()=>{showDeleteRecord=true; showRecordSetting=false;}")
@@ -332,7 +336,7 @@
                     tr(v-for="(record, index) in records" :key="index" @click="showRecordInfo(index)" :class="{ active: activeIndex === index }")
                         td(style="text-align:center")
                             .customCheckBox
-                                input(type="checkbox" :id="record.record_id")
+                                input(type="checkbox" name="record" :id="record.record_id" @change='trackSelectedRecords' :value="record.record_id")
                                 label(:for="record.record_id")
                                     .material-symbols-outlined.mid.check check
                         td {{ record.table.name }}
@@ -389,7 +393,22 @@ let selectedRecordForm = ref(false);
 let selectedRecord = ref(null);
 let currentIndex = -1;
 let createRecordForm = ref(false);
-let createRecord = ref(null);
+let createRecord = ref({
+    record_id: '',
+    table: {
+        name: '',
+        access_group: '',
+    },
+    user_id: '',
+    index: {
+        name: '',
+        value: '',
+    },
+    reference: {
+        allow_multiple_reference: '',
+        reference_limit: ''
+    }
+});
 let dataList = ref([]);
 let checkedRecords = ref([]);
 let selectedData = ref(null);
@@ -495,6 +514,18 @@ let trackSelectedRecords = () => {
     })
     checkedRecords.value = checked;
 }
+
+let validateTableName = (event) => {
+	let regex = /^[\p{L}\d\s.]+$/u;
+
+	let isValid = event.target.value.match(regex) ? true : false;
+	if (isValid) {
+        event.target.setCustomValidity('');
+    } else {
+		event.target.setCustomValidity('Can not contain special characters other than period and spaces');
+		event.target.reportValidity();
+	}
+};
 
 // recordData edit
 let addField = () => {
@@ -1288,6 +1319,9 @@ bodyClick.recordPage = () => {
             align-items: center;
             .refresh, .menu {
                 margin-right: 20px;
+            }
+            .refresh {
+                color: #293FE6;
             }
             .dropDown {
                 display: flex;
