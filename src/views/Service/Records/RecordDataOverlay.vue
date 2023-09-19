@@ -1,36 +1,43 @@
 <template lang="pug">
-dialog#recordDataDialog(@click="closeDialog")
-    template(v-if="selectedData")
-        .header 
-            h4 {{ selectedData.type }} - {{ selectedData.key }}
-            .editWrap(@click="edit")
-                .material-symbols-outlined.mid edit
-                span edit
-        .content {{ selectedData.context }}
-    template(v-else-if="editRecordData")
-        .header 
-            h4 {{ editRecordData.type }} - {{ editRecordData.key }}
-        .content 
-            textarea(:value="editRecordData.context" @input="heightControl")
-        .buttonWrap 
-            button.cancel Cancel
-            button.save Save
+#recordData(@click="emits('close')")
+    .wrap(@click.stop)
+        template(v-if="selectedData && !editSelectedData")
+            .header 
+                h4 {{ selectedData.type }} - {{ selectedData.key }}
+                .editWrap(@click="edit")
+                    .material-symbols-outlined.mid edit
+                    span edit
+            .content {{ selectedData.context }}
+        template(v-else-if="editRecordData")
+            .header 
+                h4 {{ editRecordData.type }} - {{ editRecordData.key }}
+            .content 
+                textarea#editData(:value="editRecordData.context" @input="heightControl")
+            .buttonWrap 
+                button.cancel(@click="emits('close')") Cancel
+                button.save Save
+        template(v-else-if="editSelectedData")
+            .header 
+                h4 {{ selectedData.type }} - {{ selectedData.key }}
+            .content 
+                textarea#editData(:value="selectedData.context" @input="heightControl")
+            .buttonWrap 
+                button.cancel(@click="emits('close')") Cancel
+                button.save Save
 </template>
 
 <script setup>
-import { ref } from 'vue';
+import { nextTick, onMounted, ref } from 'vue';
 
 let props = defineProps(['selectedData','editRecordData']);
-let editRecordData = ref(null);
+let emits = defineEmits(['close']);
+let editSelectedData = ref(false);
 
 let edit = async() => {
-    if (props.selectedData) {
-        editRecordData.value = {
-            type: props.selectedData.type,
-            key: props.selectedData.key,
-            context: props.selectedData.context,
-        };
-    }
+    editSelectedData.value = true;
+    nextTick(() => {
+        document.getElementById('editData').focus();
+    })
 }
 let closeDialog = (e) => {
     let rect = e.target.getBoundingClientRect();
@@ -45,11 +52,26 @@ let heightControl = (e) => {
     e.target.style.height = "auto";
     e.target.style.height = (e.target.scrollHeight) + "px";
 }
+onMounted(() => {
+    if(props.editRecordData) {
+        document.getElementById('editData').focus();
+    }
+})
 </script>
 
 <style lang="less" scoped>
-dialog {
+#recordData {
     position: fixed;
+    overflow: auto;
+    left: 0;
+    top: 0;
+    width: 100vw;
+    height: 100vh;
+    background-color: rgba(26, 26, 26, 0.25);
+    z-index: 99999;
+}
+.wrap {
+    position: absolute;
     content: '';
     left: 50%;
     top: 50%;
@@ -125,8 +147,5 @@ dialog {
             }
         }
     }
-}
-dialog::backdrop {
-    background-color: rgba(0,0,0,0.2);
 }
 </style>

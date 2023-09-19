@@ -355,14 +355,13 @@
             .noRecords(v-if="!records.length")
                 h2 No Records
                 p List of records will show when there is data
-    RecordData(v-if="showRecordDataWindow" :selectedData="selectedData" :editRecordData="editRecordData" @close="showRecordDataWindow = false;")
+    RecordDataOverlay(v-if="showRecordDataWindow" :selectedData="selectedData" :editRecordData="editRecordData" @close="showRecordDataWindow = false;")
 </template>
 
 <script setup>
 import { computed, nextTick, onMounted, ref } from 'vue';
 import { records, records_data } from '@/data.js';
-import RecordData from '@/views/Service/Records/RecordData.vue';
-// import EditRecord from '../Dialog/EditRecord.vue';
+import RecordDataOverlay from '@/views/Service/Records/RecordDataOverlay.vue';
 // import TagsInput from '@/components/TagsInput.vue';
 
 let isSaving = ref(false);
@@ -427,15 +426,11 @@ let showRecordData = (index, data) => {
     if(recordInfoEdit.value) {
         editRecordData.value = data;
         selectedData.value = null;
-        console.log('iiii')
     } else {
         editRecordData.value = null;
         selectedData.value = records_data.value[index];
-        console.log('eeee')
     }
     showRecordDataWindow.value = true;
-    // let recordDataWindow = document.getElementById('recordDataDialog');
-    // recordDataWindow.showModal();
 } 
 let showHidden = (e) => {
     if(e.currentTarget.classList.contains('tagsWrapper')) {
@@ -477,6 +472,12 @@ let clearSearchFilter = () => {
 let addField = () => {
 	records_data.value.push({ type: 'string', key: '', context: '' });
     console.log(records_data.value)
+    nextTick(() => {
+        let scrollTarget = document.querySelector('.recordData .content');
+        if(scrollTarget.getBoundingClientRect().height < scrollTarget.scrollHeight) {
+            scrollTarget.scrollTop = scrollTarget.getBoundingClientRect().height + 30;
+        }
+    })
 };
 let removeField = (index) => {
     if(createRecordForm.value) {

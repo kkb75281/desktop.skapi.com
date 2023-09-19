@@ -115,7 +115,7 @@ template(v-if='currentService')
         .deleteInner(@click="openDeleteService = true;")
             .material-symbols-outlined.mid delete
             span Delete Service
-    DisableService(v-if="openDisableService" @close="disableService")
+    DisableServiceOverlay(v-if="openDisableService" @close="disableService")
     DeleteService(v-if="openDeleteService" @close="openDeleteService = false;")
 
 </template>
@@ -125,7 +125,7 @@ import { nextTick, ref, watch } from 'vue';
 import { useRouter } from 'vue-router';
 import { currentService, storageInfo } from '@/data.js';
 import { skapi } from '@/main.js';
-import DisableService from '@/views/Service/Overlay/DisableService.vue';
+import DisableServiceOverlay from '@/views/Service/Records/DisableServiceOverlay.vue';
 import DeleteService from '@/components/DeleteService.vue';
 
 const router = useRouter();
