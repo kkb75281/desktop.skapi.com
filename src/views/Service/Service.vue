@@ -306,6 +306,7 @@ watch(modifyCors, () => {
             display: flex;
             flex-wrap: nowrap;
             justify-content: space-between;
+            padding: 28px 40px;
         }
 
         &:not(:first-child) {

@@ -55,7 +55,7 @@
                     input.clear(type="reset" value="Clear filter" @click="clearSearchFilter")
                     button.search(type="submit") Search
     .container 
-        .viewRecord(:loading="isSaving || null")
+        .viewRecord
             form.recordForm(v-if="selectedRecordForm" @submit.prevent="saveRecordData")
                 .recordInfo 
                     .header
@@ -80,10 +80,10 @@
                                 template(v-else) {{ selectedRecord.table.access_group == 'private' ? 'Private' : selectedRecord.table.access_group ? 'Registered' : 'Public' }}
                         .info 
                             .label User ID 
-                            .value(:class="{ disabled: recordInfoEdit }" :value="selectedRecord.user_id" @click="showHidden" style="width: calc(100% - 200px); cursor: pointer") {{ selectedRecord.user_id }}
+                            .value(:class="{ disabled: recordInfoEdit }" :value="selectedRecord.user_id" @click.stop="showHidden" style="width: calc(100% - 200px); cursor: pointer") {{ selectedRecord.user_id }}
                             .copy(v-if="!recordInfoEdit" @click="copy")
                                 .material-symbols-outlined.sml file_copy
-                        .hidden.userID(v-if="hiddenUserID") {{ selectedRecord.user_id }}
+                        .hidden.userID(v-if="hiddenUserID" @click.stop) {{ selectedRecord.user_id }}
                         .info
                             .label Reference
                             .value.various
@@ -127,16 +127,16 @@
                             .label Tags 
                             .value(style="width: calc(100% - 170px);")
                                 template(v-if="recordInfoEdit")
-                                    .tagsWrapper(@click="showRecordData")
+                                    .tagsWrapper(@click="showData")
                                         template(v-if="selectedRecord?.tags")
                                             .tag(v-for="tag in selectedRecord?.tags") {{ tag }}
                                         template(v-else) -
                                 template(v-else)
-                                    .tagsWrapper(@click="showHidden")
+                                    .tagsWrapper(@click.stop="showHidden")
                                         template(v-if="selectedRecord?.tags")
                                             .tag(v-for="tag in selectedRecord?.tags") {{ tag }}
                                         template(v-else) -
-                        .hidden.tags(v-if="hiddenTags && selectedRecord?.tags")
+                        .hidden.tags(v-if="hiddenTags && selectedRecord?.tags" @click.stop)
                             .tag(v-for="tag in selectedRecord?.tags") {{ tag }}
                 .recordData
                     .header
@@ -147,13 +147,14 @@
                         template(v-if="records_data.length")
                             template(v-for="(data, index) in records_data" :key="index")
                                 template(v-if="records_data.length && !recordInfoEdit")
-                                    .row(@click="showRecordData(index, data)")
+                                    .row(@click="showData(index, data)" :class="{'boolean' : data.type == 'boolean', 'file': data.type == 'file'}")
                                         .data {{ data.type }}
                                         .data
                                             .overflow(v-if="data?.key") {{ data.key }}
                                             .overflow(v-else) -
                                         .data 
                                             .overflow {{ data.context }}
+                                        .material-symbols-outlined.sml.download(v-if="data.type == 'file'") download
                                 template(v-else)
                                     .rowEdit
                                         .material-symbols-outlined.sml.minus(@click="removeField(index)") do_not_disturb_on
@@ -179,7 +180,7 @@
                                         template(v-else)
                                             input.context(type="text" :value="data.context" :placeholder="`${data.context}`")
                             template(v-if="!recordInfoEdit" v-for="i in dataTrCount" :key="'extra-' + i")
-                                .row
+                                .row.empty
                         template(v-else)
                             .noData(v-if="!recordInfoEdit")
                                 .material-symbols-outlined.big scan_delete
@@ -187,14 +188,15 @@
                         .addDataRow(v-if="recordInfoEdit" @click="addField")  
                             .material-symbols-outlined.sml add_circle
                             span Add data
-                .material-symbols-outlined.mid.menu(v-if="!recordInfoEdit" @click="showEdit = !showEdit") more_vert
-                .editMenuWrap(v-if="showEdit")
-                    div(@click="recordInfoEdit = true; showEdit = false;")
-                        .material-symbols-outlined.mid edit
-                        span eidt   
-                    div(@click="recordDelete")
-                        .material-symbols-outlined.mid delete
-                        span delete  
+                .material-symbols-outlined.mid.menu(v-if="!recordInfoEdit" @click.stop="showEdit = !showEdit") more_vert
+                .editMenuWrap(v-if="showEdit" @click.stop)
+                    .nest
+                        .editMenu(@click="recordInfoEdit = true; showEdit = false;")
+                            .material-symbols-outlined.mid edit
+                            span edit   
+                        .editMenu(@click="recordDelete")
+                            .material-symbols-outlined.mid delete
+                            span delete  
                 .editBtnWrap(v-if="recordInfoEdit") 
                     button.cancel(@click="recordInfoEdit = false;") 
                         .material-symbols-outlined.mid close
@@ -293,11 +295,12 @@
         .tableHeader 
             .actions 
                 .material-symbols-outlined.mid.refresh.clickable cached
-                .material-symbols-outlined.mid.menu.clickable(@click="showUserSetting = !showUserSetting") more_vert
-                .recordSettingWrap(v-if="showUserSetting")
-                    .setting
-                        .material-symbols-outlined.mid delete
-                        span delete
+                .material-symbols-outlined.mid.menu.clickable(@click.stop="showRecordSetting = !showRecordSetting") more_vert
+                .recordSettingWrap(v-if="showRecordSetting" @click.stop)
+                    .nest
+                        .setting(@click="()=>{showDeleteRecord=true; showRecordSetting=false;}")
+                            .material-symbols-outlined.mid delete
+                            span delete
                 button.create(@click="viewRecordCheck") create record
             .pagenator 
                 .material-symbols-outlined.sml.prevPage.clickable arrow_back_ios
@@ -316,7 +319,7 @@
                     tr
                         th
                             .customCheckBox
-                                input#allRecords(type="checkbox")
+                                input#allRecords(type="checkbox" value='allRecords' @click="selectAll")
                                 label(for="allRecords")
                                     .material-symbols-outlined.mid.check check
                         th Table Name
@@ -329,8 +332,8 @@
                     tr(v-for="(record, index) in records" :key="index" @click="showRecordInfo(index)" :class="{ active: activeIndex === index }")
                         td(style="text-align:center")
                             .customCheckBox
-                                input(type="checkbox" v-bind:id="index")
-                                label(:for="index")
+                                input(type="checkbox" :id="record.record_id")
+                                label(:for="record.record_id")
                                     .material-symbols-outlined.mid.check check
                         td {{ record.table.name }}
                         td
@@ -343,39 +346,42 @@
                             .material-symbols-outlined.mid(v-else) language
                         td.center
                             .featureWrap
-                                .feature.tag(:class="{'active': record?.tags}" @mouseenter="previewTags = true;" @mouseleave="previewTags = false;") Tag
-                                .feature.index(:class="{'active': record?.index}") Index
-                                .feature.ref(:class="{'active': record?.ref}") Ref
+                                .feature.tag(:class="{'active': record?.tags}" @mouseenter="(e) => showPreview(e, index)" @mouseleave="(e) => hidePreview(e, index)") Tag
+                                .feature.index(:class="{'active': record?.index}" @mouseenter="(e) => showPreview(e, index)" @mouseleave="(e) => hidePreview(e, index)") Index
+                                .feature.ref(:class="{'active': record?.ref}" @mouseenter="(e) => showPreview(e, index)" @mouseleave="(e) => hidePreview(e, index)") Ref
                             .previewWrap
                                 .preview
-                                    .tag.tag(v-if="previewTags") {{ record.tags }}
-                                    .tag.index(v-if="previewIndex") {{ record.index }}
-                                    .tag.ref(v-if="previewRef") {{ record.ref }}
+                                    .tag(v-if="record?.tags") {{ record.tags }}
+                                    .index(v-if="record?.index") {{ record.index }}
+                                    .ref(v-if="record?.ref") {{ record.ref }}
                     tr(v-for="i in trCount" :key="'extra-' + i")
-            .noRecords(v-if="!records.length")
-                h2 No Records
-                p List of records will show when there is data
-    RecordDataOverlay(v-if="showRecordDataWindow" :selectedData="selectedData" :editRecordData="editRecordData" @close="showRecordDataWindow = false;")
+            //- .noRecords(v-if="!records.length")
+            //-     h2 No Records
+            //-     p List of records will show when there is data
+            .noRecordsFound(v-if="!records.length")
+                .tit 
+                    .material-symbols-outlined.big search
+                    h2 No Records Found
+                p There was no record matching query
+    RecordDataOverlay(v-if="showRecordData" @close="showRecordData = false;" :selectedData="selectedData" :editRecordData="editRecordData")
+    DeleteRecordOverlay(v-if="showDeleteRecord" @close="showDeleteRecord = false;" :checkedRecords='checkedRecords')
 </template>
 
 <script setup>
+import { bodyClick } from '@/main.js';
 import { computed, nextTick, onMounted, ref } from 'vue';
 import { records, records_data } from '@/data.js';
 import RecordDataOverlay from '@/views/Service/Records/RecordDataOverlay.vue';
+import DeleteRecordOverlay from '@/views/Service/Records/DeleteRecordOverlay.vue';
 // import TagsInput from '@/components/TagsInput.vue';
 
-let isSaving = ref(false);
-let showRecordDataWindow = ref(false);
-let previewTags = ref(false);
-let previewIndex = ref(false);
-let previewRef = ref(false);
-let showFilter = ref(false);
-let showUserSetting = ref(false);
+let showRecordData = ref(false);
+let showDeleteRecord = ref(false);
+let showRecordSetting = ref(false);
 let showEdit = ref(false);
-let showData = ref(false);
-let addData = ref(false);
 let hiddenUserID = ref(false);
 let hiddenTags = ref(false);
+
 let searchText = ref('');
 let recordInfoEdit = ref(false);
 let activeIndex = ref(null);
@@ -385,6 +391,7 @@ let currentIndex = -1;
 let createRecordForm = ref(false);
 let createRecord = ref(null);
 let dataList = ref([]);
+let checkedRecords = ref([]);
 let selectedData = ref(null);
 let editRecordData = ref(null);
 let firstInput = ref('');
@@ -422,15 +429,17 @@ let viewRecordCheck = () => {
     dataList.value = [];
     createRecordForm.value = true;
 }
-let showRecordData = (index, data) => {
-    if(recordInfoEdit.value) {
-        editRecordData.value = data;
-        selectedData.value = null;
-    } else {
-        editRecordData.value = null;
-        selectedData.value = records_data.value[index];
+let showData = (index, data) => {
+    if(data.type !== 'boolean' && data.type !== 'file') {
+        if(recordInfoEdit.value) {
+            editRecordData.value = data;
+            selectedData.value = null;
+        } else {
+            editRecordData.value = null;
+            selectedData.value = records_data.value[index];
+        }
+        showRecordData.value = true;
     }
-    showRecordDataWindow.value = true;
 } 
 let showHidden = (e) => {
     if(e.currentTarget.classList.contains('tagsWrapper')) {
@@ -452,20 +461,39 @@ let editWindow = (e) => {
 }
 let copy = (e) => {
     let doc = document.createElement('textarea');
-    doc.textContent = e.target.parentNode.parentNode.previousSibling.textContent;
+    doc.textContent = e.target.parentNode.previousSibling.textContent;
     document.body.append(doc);
     doc.select();
     document.execCommand('copy');
     doc.remove();
 
-    e.target.parentNode.parentNode.classList.add('copied');
+    e.target.parentNode.classList.add('copied');
     setTimeout(() => {
-        e.target.parentNode.parentNode.classList.remove('copied');
+        e.target.parentNode.classList.remove('copied');
     }, 1000);
 }
 
 let clearSearchFilter = () => {
     firstInput.value = '';
+}
+
+let selectAll = (e) => {
+    let checkboxes = document.querySelectorAll('input[type="checkbox"]');
+    checkboxes.forEach((checkbox) => {
+        checkbox.checked = e.target.checked
+    })
+    trackSelectedRecords();
+}
+
+let trackSelectedRecords = () => {
+    let checkboxes = document.querySelectorAll('input[type="checkbox"]');
+    let checked = [];
+    checkboxes.forEach((checkbox) => {
+        if (checkbox.checked && checkbox.value !== 'selectall') {
+            checked.push(checkbox.value);
+        }
+    })
+    checkedRecords.value = checked;
 }
 
 // recordData edit
@@ -510,11 +538,77 @@ let createRecordData = () => {
 
 // delete Record
 let recordDelete = () => {
-    records.value.splice(currentIndex, 1); 
-    selectedRecordForm.value = false;
-    activeIndex.value = null;
-    currentIndex = -1;
+    showDeleteRecord.value = true;
+    // records.value.splice(currentIndex, 1); 
+    // selectedRecordForm.value = false;
+    // activeIndex.value = null;
+    // currentIndex = -1;
+    // showEdit.value = false;
+}
+
+let showPreview = (e, index) => {
+    nextTick(() => {
+        let tr = document.querySelectorAll('table tbody tr');
+        let target = tr[index];
+        let child;
+        if(e.target.classList.contains('tag')) {
+            child = target.querySelectorAll(".tag");
+            if(child.length > 1) { 
+                child[1].parentNode.classList.add('active');
+                child[1].parentNode.classList.add('fir');
+                child[1].classList.add('active');
+            }
+        } else if(e.target.classList.contains('index')) {
+            child = target.querySelectorAll(".index");
+            if(child.length > 1) { 
+                child[1].parentNode.classList.add('active');
+                child[1].parentNode.classList.add('sec');
+                child[1].classList.add('active');
+            }
+        } else {
+            child = target.querySelectorAll(".ref");
+            if(child.length > 1) { 
+                child[1].parentNode.classList.add('active');
+                child[1].parentNode.classList.add('last');
+                child[1].classList.add('active');
+            }
+        }
+    })
+}
+let hidePreview = (e, index) => {
+    nextTick(() => {
+        let tr = document.querySelectorAll('table tbody tr');
+        let target = tr[index];
+        let child;
+        if(e.target.classList.contains('tag')) {
+            child = target.querySelectorAll(".tag");
+            if(child.length > 1) { 
+                child[1].parentNode.classList.remove('active');
+                child[1].parentNode.classList.remove('fir');
+                child[1].classList.remove('active');
+            }
+        } else if(e.target.classList.contains('index')) {
+            child = target.querySelectorAll(".index");
+            if(child.length > 1) { 
+                child[1].parentNode.classList.remove('active');
+                child[1].parentNode.classList.remove('sec');
+                child[1].classList.remove('active');
+            }
+        } else {
+            child = target.querySelectorAll(".ref");
+            if(child.length > 1) { 
+                child[1].parentNode.classList.remove('active');
+                child[1].parentNode.classList.remove('last');
+                child[1].classList.remove('active');
+            }
+        }
+    })
+}
+bodyClick.recordPage = () => {
+    showRecordSetting.value = false;
     showEdit.value = false;
+    hiddenTags.value = false;
+    hiddenUserID.value = false;
 }
 </script>
 
@@ -727,35 +821,39 @@ let recordDelete = () => {
                 }
             }
             .editMenuWrap {
-                position: absolute;
-                right: 20px;
-                top: 34px;
-                border-radius: 8px;
-                border: 1px solid rgba(0, 0, 0, 0.15);
-                background: #FAFAFA;
-                box-shadow: 8px 12px 36px 0px rgba(0, 0, 0, 0.10);
-                padding: 20px;
-                width: 134px;
-                cursor: pointer;
-                z-index: 2;
-                display: flex;
-                flex-wrap: wrap;
-                align-items: center;
-
-                > div {
-                    display: flex;
-                    flex-wrap: nowrap;
-                    align-items: center;
-
-                    &:first-child {
-                        margin-bottom: 20px;
+                position: relative;
+                .nest {
+                    position: absolute;
+                    right: 20px;
+                    top: 34px;
+                    border-radius: 8px;
+                    border: 1px solid rgba(0, 0, 0, 0.15);
+                    background: #FAFAFA;
+                    box-shadow: 8px 12px 36px 0px rgba(0, 0, 0, 0.10);
+                    padding: 20px;
+                    width: 134px;
+                    z-index: 2;
+                    
+                    .editMenu {
+                        display: flex;
+                        flex-wrap: nowrap;
+                        align-items: center;
+                        cursor: pointer;
+    
+                        &:first-child {
+                            margin-bottom: 20px;
+                        }
+                        &:hover {
+                            span {
+                                font-weight: 700;
+                            }
+                        }
+                        span {
+                            margin-left: 10px;
+                            font-size: 16px;
+                            font-weight: 500;
+                        }
                     }
-                }
-
-                span {
-                    margin-left: 10px;
-                    font-size: 16px;
-                    font-weight: 500;
                 }
             }
             .header {
@@ -805,10 +903,11 @@ let recordDelete = () => {
                         display: inline-block;
                         vertical-align: middle;
                         font-size: 14px;
-                        font-weight: 700;
+                        font-weight: 500;
                         white-space: nowrap;
                         overflow: hidden;
                         text-overflow: ellipsis;
+                        color: rgba(0,0,0,0.6);
                         &.disabled {
                             color: rgba(0, 0, 0, 0.25);
                         }
@@ -853,7 +952,7 @@ let recordDelete = () => {
                     .copy {
                         position: absolute;
                         top: 65%;
-                        right: 20px;
+                        right: 0;
                         transform: translateY(-50%);
                         color: rgba(0,0,0,0.4);
                         cursor: pointer;
@@ -905,7 +1004,7 @@ let recordDelete = () => {
                     }
                     .que {
                         position: absolute;
-                        left: 170px;
+                        left: 148px;
                         top: 0;
                         width: 20px;
                         height: 20px;
@@ -997,9 +1096,29 @@ let recordDelete = () => {
                     &:nth-child(2n) {
                         background: rgba(0, 0, 0, 0.05);
                     }
+                    &.empty:hover {
+                        cursor: default;
+                    }
+                    &.boolean:hover {
+                        color: rgba(0, 0, 0, 0.40);
+                        font-weight: 500;
+                        cursor: default;
+                    }
+                    &.file:hover {
+                        .download {
+                            display: block;
+                        }
+                    }
                     &:hover {
                         color: rgba(0, 0, 0, 0.80);
                         font-weight: 700;
+                    }
+                    .download {
+                        position: absolute;
+                        right: 12px;
+                        top: 50%;
+                        transform: translateY(-50%);
+                        display: none;
                     }
                 }
                 .rowEdit {
@@ -1205,27 +1324,33 @@ let recordDelete = () => {
                 }
             }
             .recordSettingWrap {
-                position: absolute;
-                left: -64px;
-                bottom: -64px;
-                padding: 20px;
-                border-radius: 8px;
-                border: 1px solid rgba(0, 0, 0, 0.15);
-                background: #FAFAFA;
-                color: rgba(0, 0, 0, 0.80);
-                box-shadow: 8px 12px 36px 0px rgba(0, 0, 0, 0.10);
-                z-index: 10;
-                .setting {
-                    display: flex;
-                    align-items: center;
-                    margin-bottom: 16px;
-                    user-select: none;
-
-                    &:last-child {
-                        margin-bottom: 0;
-                    }
-                    span {
-                        margin-left: 14px;
+                position: relative;
+                .nest {
+                    position: absolute;
+                    width: 134px;
+                    left: -40px;
+                    bottom: -78px;
+                    padding: 20px;
+                    border-radius: 8px;
+                    border: 1px solid rgba(0, 0, 0, 0.15);
+                    background: #FAFAFA;
+                    color: rgba(0, 0, 0, 0.80);
+                    box-shadow: 8px 12px 36px 0px rgba(0, 0, 0, 0.10);
+                    z-index: 10;
+                    cursor: pointer;
+                    
+                    .setting {
+                        display: flex;
+                        align-items: center;
+                        user-select: none;
+                        &:hover {
+                            span {
+                                font-weight: 700;
+                            }
+                        }
+                        span {
+                            margin-left: 14px;
+                        }
                     }
                 }
             }
@@ -1259,22 +1384,31 @@ let recordDelete = () => {
         min-height: 660px;
         margin: 40px 0;
 
-        .noRecords {
+        .noRecords, .noRecordsFound {
             position: absolute;
             left: 50%;
             top: 50%;
             transform: translate(-50%,-50%);
             text-align: center;
+            color: rgba(0, 0, 0, 0.40);
+            .tit {
+                display: flex;
+                flex-wrap: nowrap;
+                align-items: center;
+                justify-content: center;
+
+                .material-symbols-outlined {
+                    margin-right: 12px;
+                }
+            }
             h2 {
-                color: rgba(0, 0, 0, 0.40);
                 font-size: 28px;
                 font-weight: 700;
-                margin-bottom: 28px;
             }
             p {
-                color: rgba(0, 0, 0, 0.40);
                 font-size: 20px;
                 font-weight: 500;
+                margin-top: 28px;
             }
         }
         table {
@@ -1322,8 +1456,9 @@ let recordDelete = () => {
 
                 &.active {
                     background-color: rgba(41, 63, 230, 0.05);
-                    box-shadow: 0px -1px 1px 0px rgba(0, 0, 0, 0.15) inset;
-                    border: 0;
+                }
+                &:hover {
+                    background-color: rgba(41, 63, 230, 0.05);
                 }
             }
             td {
@@ -1343,6 +1478,7 @@ let recordDelete = () => {
                         padding: 0 12px;
                         font-weight: 700;
                         display: none;
+
                         &::after {
                             position: absolute;
                             content: '';
@@ -1353,14 +1489,27 @@ let recordDelete = () => {
                             border-left: 20px solid #fafafa;
                             rotate: -45deg;
                         }
-                        // &.active {
-                        //     display: block;
-                        // }
-                        .tag {
+                        &.active {
+                            display: block;
+                        }
+                        &.fir {
+                            left: 10%;
+                        }
+                        &.sec {
+                            left: 50%;
+                        }
+                        &.last {
+                            left: 90%;
+                        }
+                        div {
                             width: 150px;
                             line-height: 44px;
                             white-space: nowrap;
                             overflow: hidden;
+                            display: none;
+                            &.active {
+                                display: block;
+                            }
                         }
                     }
                 }
@@ -1381,6 +1530,12 @@ let recordDelete = () => {
                 color: rgba(0, 0, 0, 0.40);
                 font-weight: 700;
                 text-align: left;
+
+                tr {
+                    &:hover {
+                        background-color: unset;
+                    }
+                }
             }
             tbody {
                 color: rgba(0, 0, 0, 0.80);

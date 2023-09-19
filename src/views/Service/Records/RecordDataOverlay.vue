@@ -4,7 +4,7 @@
         template(v-if="selectedData && !editSelectedData")
             .header 
                 h4 {{ selectedData.type }} - {{ selectedData.key }}
-                .editWrap(@click="edit")
+                .editWrap(v-if="selectedData.type == 'json'" @click="edit")
                     .material-symbols-outlined.mid edit
                     span edit
             .content {{ selectedData.context }}
