@@ -123,6 +123,7 @@ onMounted(() => {
     }
     .buttonWrap {
         width: 100%;
+        height: 44px;
         padding: 0 20px 20px 20px;
         display: flex;
         flex-wrap: nowrap;

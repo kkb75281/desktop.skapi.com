@@ -186,7 +186,7 @@
             .noUsers(v-if="users !== null && !users.length")
                 h2 No Users
                 p There are no users matching your search terms.
-    Calendar(v-if="showCalendar" @dateClicked="handledateClick")
+    Calendar(v-if="showCalendar" @dateClicked="handledateClick" alwaysEmit='true')
     LocaleSelector(v-if="showLocale" @countryClicked="handleCountryClick")
     CreateUserOverlay(v-if='createUserShow' @close='userCreated')
     DeleteUserOverlay(v-if='showDeleteUser' @close='userDelete' :checkedUsers='checkedUsers')

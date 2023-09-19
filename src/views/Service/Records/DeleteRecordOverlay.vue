@@ -85,11 +85,13 @@ let deleteRecords = () => {
     }
 
     .buttonWrap {
+        height: 44px;
         display: flex;
         flex-wrap: nowrap;
         justify-content: space-between;
 
         button {
+            height: 44px;
             color: #293FE6;
             font-size: 16px;
             font-weight: 700;

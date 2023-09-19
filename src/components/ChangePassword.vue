@@ -236,6 +236,7 @@ let changePassword = () => {
 
         .buttonWrap {
             width: 100%;
+            height: 44px;
             margin-top: 56px;
             display: flex;
             flex-wrap: nowrap;
