@@ -12,7 +12,7 @@ template(v-if='currentService')
                 template(v-else)
                     h2 {{ currentService.name }}
                     .material-symbols-outlined.mid.modify.clickable(@click="inputServiceName = currentService.name; modifyServiceName = true;") edit
-            .toggleWrap(:class="{'active': currentService.active === 1 }")
+            .toggleWrap(:class="{'active': currentService.active >= 1 }")
                 span Disable/Enable
                 .toggleBg
                     .toggleBtn(@click="enableDisableToggle")

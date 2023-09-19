@@ -78,15 +78,15 @@ function renderCalender(thisMonth) {
     let endDay = new Date(currentYear.value, currentMonth.value + 1, 0);
     let nextDate = endDay.getDate();    // 이번달 마지막 날짜
     let nextDay = endDay.getDay();      // 이번달 마지막 요일
-    
+
     for (let i = prevDate - prevDay + 1; i <= prevDate; i++) {
         dates.value.push({ day: i, classes: 'date prev disable', key: 'prev-' + i });
     }
-    
+
     for (let i = 1; i <= nextDate; i++) {
         dates.value.push({ day: i, classes: 'date current', key: 'current-' + i });
     }
-    
+
     for (let i = 1; i <= (7 - nextDay == 7 ? 0 : 7 - nextDay); i++) {
         dates.value.push({ day: i, classes: 'date next disable', key: 'next-' + i });
     }
@@ -94,11 +94,11 @@ function renderCalender(thisMonth) {
 renderCalender(thisMonth);
 
 // 오늘 날짜 표기
-onMounted(()=>{
+onMounted(() => {
     if (today.getMonth() == currentMonth.value) {
         let todayDate = today.getDate();
         let currentMonthDate = document.querySelectorAll('.dates .current');
-        currentMonthDate[todayDate -1].classList.add('today');
+        currentMonthDate[todayDate - 1].classList.add('today');
     }
 })
 
@@ -119,12 +119,14 @@ let nextTime = () => {
 
 let emit = defineEmits(['dateClicked']);
 
+let props = defineProps(['alwaysEmit']); // 임시로 만들어놓은 props
+
 let createdDate = (date) => {
     let selectedYear = currentYear.value;
     let selectedMonth = currentMonth.value + 1
     let selectedDay = date.day
-    let formattedDate = `${selectedYear}-${selectedMonth<10?`0${selectedMonth}`:selectedMonth}-${selectedDay<10?`0${selectedDay}`:selectedDay}`;
-    
+    let formattedDate = `${selectedYear}-${selectedMonth < 10 ? `0${selectedMonth}` : selectedMonth}-${selectedDay < 10 ? `0${selectedDay}` : selectedDay}`;
+
     activeTime.value = true;
 
     if (!startDate.value) {
@@ -135,10 +137,15 @@ let createdDate = (date) => {
             startDate.value = null;
             endDate.value = null;
         }
-        emit('dateClicked', startDate.value, endDate.value);
+        if (!props?.alwaysEmit) {
+            emit('dateClicked', startDate.value, endDate.value);
+        }
     } else {
         startDate.value = formattedDate;
         endDate.value = null;
+    }
+    if (props?.alwaysEmit) {
+        emit('dateClicked', startDate.value, endDate.value); // 칼랜더를 닫히게 하지 않고 계속 아웃풋이 나오게 하는건 어떤가요?
     }
 }
 </script>
@@ -150,42 +157,51 @@ let createdDate = (date) => {
     border: 1px solid rgba(0, 0, 0, 0.15);
     background: #FAFAFA;
     box-shadow: 8px 12px 36px 0px rgba(0, 0, 0, 0.10);
+
     .infiniteScroll {
         position: relative;
         width: 65px;
         padding: 5px;
         cursor: pointer;
+
         &.active {
             .dropdown {
                 display: block;
             }
         }
+
         .dropdown {
             position: absolute;
             left: 0;
             bottom: 0;
             border: 1px solid #ccc;
-            max-height: 100px; /* 최대 높이 조절 */
+            max-height: 100px;
+            /* 최대 높이 조절 */
             overflow-y: auto;
             background-color: white;
             display: none;
-            > div {
+
+            >div {
                 padding: 5px;
                 cursor: pointer;
             }
         }
     }
+
     .timeWrap {
         padding: 28px;
+
         .timeNav {
             display: flex;
             flex-wrap: nowrap;
             align-items: center;
             justify-content: center;
             margin-bottom: 28px;
+
             * {
                 text-align: center;
             }
+
             .goback {
                 width: 27%;
                 display: flex;
@@ -197,14 +213,17 @@ let createdDate = (date) => {
                 * {
                     cursor: pointer;
                 }
+
                 .prev {
                     margin-right: 10px;
                 }
             }
+
             .year {
                 width: 25%;
                 font-size: 16px;
             }
+
             .month {
                 width: 48%;
                 background-color: unset;
@@ -216,16 +235,17 @@ let createdDate = (date) => {
                 //     width: 25%;
                 // }
                 // &.month {
-                    // width: 48%;
+                // width: 48%;
                 // }
             }
         }
+
         .timeCont {
             .days {
                 display: flex;
                 flex-wrap: nowrap;
                 margin-bottom: 15px;
-    
+
                 .day {
                     text-align: center;
                     width: calc(100% / 7);
@@ -234,10 +254,11 @@ let createdDate = (date) => {
                     font-weight: 500;
                 }
             }
+
             .dates {
                 display: flex;
                 flex-wrap: wrap;
-    
+
                 .date {
                     position: relative;
                     display: flex;
@@ -259,16 +280,20 @@ let createdDate = (date) => {
                         border-radius: 4px;
                         opacity: 0;
                     }
-                    &:hover::before { 
+
+                    &:hover::before {
                         opacity: 1;
                     }
-                    &.prev, &.next {
-                        color: rgba(0,0,0,0.2);
+
+                    &.prev,
+                    &.next {
+                        color: rgba(0, 0, 0, 0.2);
                     }
                 }
             }
         }
     }
+
     .timeSettingWrap {
         position: relative;
         padding: 20px;
@@ -276,7 +301,7 @@ let createdDate = (date) => {
         flex-wrap: nowrap;
         align-items: center;
         justify-content: center;
-        
+
         &::after {
             position: absolute;
             content: '';
@@ -287,12 +312,17 @@ let createdDate = (date) => {
             background: rgba(0, 0, 0, 0.10);
             filter: drop-shadow(0px 1px 3px rgba(0, 0, 0, 0.06));
         }
+
         &.active {
-            .start, .end {
+
+            .start,
+            .end {
                 opacity: 1;
             }
         }
-        .start, .end {
+
+        .start,
+        .end {
             width: 130px;
             height: 40px;
             text-align: center;
@@ -303,6 +333,7 @@ let createdDate = (date) => {
             font-weight: 700;
             opacity: 0.4;
         }
+
         span {
             font-size: 20px;
             padding: 0 10px;

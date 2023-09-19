@@ -1,10 +1,10 @@
 <template lang="pug">
 .containerWrap
     .container
-        form
+        form(@submit.prevent="searchUsers")
             .selectBar
                 .customSelect
-                    select(:value="searchFor" @change="(e) => { searchFor = e.target.value;}")
+                    select(:value="searchFor" @change="searchForChange")
                         option(value="timestamp") Date Created
                         option(value="user_id") User ID
                         option(value="email") Email
@@ -17,17 +17,18 @@
                     .material-symbols-outlined.mid.search.selectArrowDown arrow_drop_down
             .searchBar
                 .material-symbols-outlined.mid.search search
-                input(v-if="searchFor === 'timestamp'" placeholder="2020-02-09~2023-02-09" v-model="searchText")
-                input(v-if="searchFor === 'user_id'" placeholder="Search Users" v-model="searchText")
-                input(v-if="searchFor === 'email'" placeholder="Search exact match of email" v-model="searchText")
-                input(v-if="searchFor === 'phone_number'" placeholder="eg+821234567890" v-model="searchText")
-                input(v-if="searchFor === 'address'" placeholder="Address" v-model="searchText")
-                input(v-if="searchFor === 'gender'" placeholder="Gender" v-model="searchText")
-                input(v-if="searchFor === 'name'" placeholder="Name" v-model="searchText")
-                input(v-if="searchFor === 'locale'" placeholder="2 digit country code e.g. KR" v-model="searchText")
-                input(v-if="searchFor === 'birthdate'" placeholder="YYYY-MM-DD" v-model="searchText")
-                .material-symbols-outlined.mid.delete(v-if="searchText" @click="searchText = ''") close
-                .material-symbols-outlined.mid.modalIcon(v-if="searchFor === 'timestamp' && !searchText" @click.stop="showCalendar = !showCalendar") calendar_today
+                input#searchInput(v-if="searchFor === 'timestamp'" placeholder="YYYY-MM-DD ~ YYYY-MM-DD" v-model="searchText")
+                input#searchInput(v-else-if="searchFor === 'user_id'" placeholder="Search Users" v-model="searchText")
+                input#searchInput(v-else-if="searchFor === 'email'" placeholder="Search public email address" v-model="searchText")
+                input#searchInput(v-else-if="searchFor === 'phone_number'" placeholder="eg+821234567890" v-model="searchText")
+                input#searchInput(v-else-if="searchFor === 'address'" placeholder="Address" v-model="searchText")
+                input#searchInput(v-else-if="searchFor === 'gender'" placeholder="Gender" v-model="searchText")
+                input#searchInput(v-else-if="searchFor === 'name'" placeholder="Name" v-model="searchText")
+                input#searchInput(v-else-if="searchFor === 'locale'" placeholder="2 digit country code e.g. KR" v-model="searchText")
+                input#searchInput(v-else-if="searchFor === 'birthdate'" placeholder="YYYY-MM-DD ~ YYYY-MM-DD" v-model="searchText")
+                input(hidden type='submit')
+                .material-symbols-outlined.mid.delete(v-if="searchText" @click="e=>{searchText = ''; if(fetchParams.searchFor !== 'timestamp') { fetchParams = defaultFetchParams; refresh(); }}") close
+                .material-symbols-outlined.mid.modalIcon(v-if="(searchFor === 'timestamp' || searchFor === 'birthdate') && !searchText" @click.stop="showCalendar = !showCalendar") calendar_today
                 .material-symbols-outlined.mid.modalIcon(v-if="searchFor === 'locale' && !searchText" @click.stop="showLocale = !showLocale") arrow_drop_down
     .container(style="overflow: hidden;")
         .tableHeader 
@@ -80,16 +81,22 @@
                         span Gender
                     .filter 
                         .customCheckBox
-                            input#group(type="checkbox" :checked="filterOptions.group" @change="filterOptions.group = !filterOptions.group")
-                            label(for="group")
+                            input#locale(type="checkbox" :checked="filterOptions.locale" @change="filterOptions.locale = !filterOptions.locale")
+                            label(for="locale")
                                 .material-symbols-outlined.mid.check check
-                        span Group
+                        span Locale
+                    //- .filter 
+                    //-     .customCheckBox
+                    //-         input#group(type="checkbox" :checked="filterOptions.group" @change="filterOptions.group = !filterOptions.group")
+                    //-         label(for="group")
+                    //-             .material-symbols-outlined.mid.check check
+                    //-     span Group
                     .filter 
                         .customCheckBox
                             input#timestamp(type="checkbox" :checked="filterOptions.timestamp" @change="filterOptions.timestamp = !filterOptions.group")
                             label(for="timestamp")
                                 .material-symbols-outlined.mid.check check
-                        span Timestamp
+                        span Date Created
                 .material-symbols-outlined.mid.refresh.clickable(@click='refresh' :class='{"rotate_animation": fetching }') cached
                 .material-symbols-outlined.mid.menu.clickable(:class='{"nonClickable": !checkedUsers.length}' @click.stop="showUserSetting = !showUserSetting") more_vert
                 .userSettingWrap(v-if="showUserSetting" @click.stop)
@@ -105,8 +112,8 @@
                             span delete
                 button.create(@click="createUserShow=true" style='margin-left:1rem') Create User
             .pagenator 
-                .material-symbols-outlined.sml.prevPage.clickable(:class='{"nonClickable": currentPage === 1 }' @click='e=>{currentPage--; nextTick(selectNone)}') arrow_back_ios
-                .material-symbols-outlined.sml.nextPage.clickable(:class='{"nonClickable": maxPage <= currentPage || maxPage === currentPage && userPage?.endOfList }' @click='e=>{currentPage++; nextTick(selectNone)}') arrow_forward_ios
+                .material-symbols-outlined.sml.prevPage.clickable(:class='{"nonClickable": currentPage === 1 || fetching }' @click='e=>{currentPage--; nextTick(selectNone)}') arrow_back_ios
+                .material-symbols-outlined.sml.nextPage.clickable(:class='{"nonClickable": maxPage <= currentPage && userPage?.endOfList || fetching }' @click='nextPage') arrow_forward_ios
         .tableWrap 
             table#resizeMe.table
                 thead
@@ -137,11 +144,14 @@
                         th.th(v-if="filterOptions.gender" style="width:160px;")
                             | Gender
                             .resizer(@mousedown="mousedown")
-                        th.th(v-if="filterOptions.group" style="width:160px;")
-                            | Group
+                        //- th.th(v-if="filterOptions.group" style="width:160px;")
+                        //-     | Group
+                        //-     .resizer(@mousedown="mousedown")
+                        th.th(v-if="filterOptions.locale" style="width:160px;")
+                            | Locale
                             .resizer(@mousedown="mousedown")
                         th.th(v-if="filterOptions.timestamp" style="width:160px;")
-                            | Timestamp
+                            | Date Created
                             .resizer(@mousedown="mousedown")
                 tbody(v-if="users && users.length")
                     tr(v-for="(user, index) in users" :key="index")
@@ -166,8 +176,10 @@
                             .overflow {{ user.address }}
                         td(v-if="filterOptions.gender")
                             .overflow {{ user.gender }}
-                        td(v-if="filterOptions.group")
-                            .overflow {{ user.group }}
+                        td(v-if="filterOptions.locale")
+                            .overflow {{ Countries[user.locale].flag }}
+                        //- td(v-if="filterOptions.group")
+                        //-     .overflow {{ user.group }}
                         td(v-if="filterOptions.timestamp")
                             .overflow {{ new Date(user.timestamp).toLocaleString() }}
                     tr(v-if="users.length < 10" v-for="i in (10 - users.length)" :key="'extra-' + i")
@@ -187,7 +199,7 @@ import { bodyClick } from '@/main.js';
 import { currentService, serviceUsers } from '@/data.js';
 import { skapi } from '@/main.js';
 import { computed, nextTick, onMounted, ref, watch } from 'vue';
-
+import Countries from '@/skapi-extensions/js/countries.js';
 import Calendar from '@/components/Calendar.vue';
 import LocaleSelector from '@/components/LocaleSelector.vue';
 import CreateUserOverlay from './CreateUserOverlay.vue';
@@ -212,6 +224,15 @@ watch(currentPage, (page) => {
     getPage(page);
 });
 
+let defaultFetchParams = {
+    service: serviceId,
+    searchFor: 'timestamp',
+    condition: '<=',
+    value: new Date().getTime()
+}
+
+let fetchParams = defaultFetchParams
+
 let getPage = (p) => {
     let res = userPage.getPage(p);
     userPage.maxPage = res.maxPage;
@@ -223,20 +244,15 @@ let refresh = () => {
     users.value = null;
     serviceUsers[serviceId] = new Pager(worker, {
         id: 'user_id',
-        sortBy: 'timestamp',
-        order: 'desc',
+        sortBy: fetchParams.searchFor,
+        order: fetchParams?.condition?.includes('<') ? 'desc' : 'asc',
         resultsPerPage: 10
     })
 
     userPage = serviceUsers[serviceId];
 
     fetching.value = true;
-    skapi.getUsers({
-        service: serviceId,
-        searchFor: 'timestamp',
-        condition: '>',
-        value: 0
-    }).then(u => {
+    skapi.getUsers(fetchParams, { limit: 50 }).then(u => {
         if (u.endOfList) {
             userPage.endOfList = true;
         }
@@ -254,21 +270,51 @@ let refresh = () => {
 }
 
 if (!serviceUsers?.[serviceId]) {
-    refresh();
+    refresh('desc');
 }
 else {
     userPage = serviceUsers[serviceId];
     getPage(currentPage.value);
 }
+let nextPage = () => {
+    if (currentPage.value === maxPage.value && !userPage.endOfList) {
+        users.value = null;
+        fetching.value = true;
+        skapi.getUsers(fetchParams, { fetchMore: true, limit: 50 }).then(u => {
+            if (u.endOfList) {
+                userPage.endOfList = true;
+            }
+            userPage.insertItems(u.list).then(_ => {
+                currentPage.value++;
+                fetching.value = false;
+            });
+        });
+    }
 
+    else {
+        currentPage.value++;
+    }
+
+    nextTick(selectNone);
+
+}
 let userCreated = e => {
     if (e) {
         // from CreateUserOverlay.vue - if user created
         userPage = serviceUsers[serviceId];
-        userPage.insertItems([e]).then(_ => {
-            users.value = userPage.getPage(currentPage.value).list
-            createUserShow.value = false;
-        });
+
+        // if the list is timestamp based, or if the user has the searchFor value
+        // if the searchFor is user_id ignore insert because user_id search is only for one user
+        if (
+            fetchParams.searchFor !== 'user_id' &&
+            fetchParams.searchFor === 'timestamp' ||
+            e[fetchParams.searchFor]
+        ) {
+            userPage.insertItems([e]).then(_ => {
+                users.value = userPage.getPage(currentPage.value).list
+                createUserShow.value = false;
+            });
+        }
     }
     else {
         createUserShow.value = false;
@@ -302,7 +348,8 @@ let filterOptions = ref({
     email: true,
     address: false,
     gender: false,
-    group: false,
+    // group: false,
+    locale: false,
     timestamp: false
 })
 let maxTrCount = 10;
@@ -371,18 +418,69 @@ let userDelete = async (deletedUsers) => {
     }
 }
 
-
 let handleCountryClick = (key) => {
     searchText.value = key;
     showLocale.value = false;
+    document.querySelector('#searchInput').focus();
 }
 let handledateClick = (startDate, endDate) => {
     if (startDate == null && endDate == null) {
         searchText.value = ''
-        showCalendar.value = true;
+        // showCalendar.value = true;
     } else {
-        searchText.value = startDate + '~' + endDate;
-        showCalendar.value = false;
+        searchText.value = (startDate || '') + ' ~ ' + (endDate || '');
+        // showCalendar.value = false;
+    }
+    document.querySelector('#searchInput').focus();
+}
+let searchForChange = (e) => {
+    searchFor.value = e.target.value;
+    searchText.value = '';
+    nextTick(() => {
+        document.querySelector('#searchInput').focus();
+    });
+}
+let searchUsers = (e) => {
+    let search = searchText.value;
+    let searchTarget = searchFor.value;
+
+    if (!search) {
+        fetchParams = defaultFetchParams;
+        refresh();
+    }
+
+    else if (searchTarget === 'timestamp' || searchTarget === 'birthdate') {
+        let dates = search.split('~');
+
+        let startDate = dates[0].trim();
+        startDate = startDate ? new Date(dates[0].trim()).getTime() : 0;
+        let endDate = dates[1].trim();
+        endDate = endDate ? new Date(dates[1].trim()).getTime() : 0;
+
+        fetchParams = {
+            service: serviceId,
+            searchFor: searchTarget,
+            value: startDate,
+            range: endDate
+        }
+        refresh();
+    }
+    else if (searchTarget === 'user_id') {
+        fetchParams = {
+            service: serviceId,
+            searchFor: 'user_id',
+            value: search
+        }
+        refresh();
+    }
+    else {
+        fetchParams = {
+            service: serviceId,
+            searchFor: searchTarget,
+            value: search,
+            condition: '>='
+        }
+        refresh();
     }
 }
 let trCount = computed(() => {

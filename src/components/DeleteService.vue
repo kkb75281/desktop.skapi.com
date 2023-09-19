@@ -33,24 +33,39 @@ let error = ref('');
 let closeWindow = () => {
     emits('close');
 }
-let deleteService = () => {
+let deleteService = async () => {
     if (confirmationCode.value !== currentService.value.service) {
         error.value = 'Service ID does not match.';
         return;
     }
     promiseRunning.value = true;
-    skapi.deleteService(currentService.value.service).then(_ => {
-        // remove from services
-        let idx = services.value.findIndex(s => s.service === currentService.value.service);
-        services.value.splice(idx, 1);
-        // remove from currentService
-        currentService.value = null;
-        router.replace({ path: '/dashboard' });
-    }).catch(e => {
-        error.value = e.message;
-    }).finally(() => {
-        promiseRunning.value = false;
-    })
+
+    let deleteService = () => {
+        return skapi.deleteService(currentService.value.service).then(_ => {
+            // remove from services
+            let idx = services.value.findIndex(s => s.service === currentService.value.service);
+            services.value.splice(idx, 1);
+            // remove from currentService
+            currentService.value = null;
+            router.replace({ path: '/dashboard' });
+        });
+    }
+
+    if (currentService.value.active >= 1) {
+        try {
+            await skapi.disableService(currentService.value.service);
+            await deleteService();
+        }
+        catch (e) {
+            error.value = e.message;
+        }
+        finally {
+            promiseRunning.value = false;
+        }
+    }
+    else {
+        deleteService();
+    }
 }
 </script>
 <style lang="less" scoped>
