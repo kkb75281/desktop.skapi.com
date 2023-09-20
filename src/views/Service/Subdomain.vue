@@ -28,10 +28,10 @@
                     .cont 
                         .customFile 
                             input#fileName(value="Upload a file")
-                            label.uploadBtn.btn(for="file")
+                            label.uploadBtn.btn(for="file404")
                                 .material-symbols-outlined.mid upload
                                 span Upload
-                            input#file(hidden type="file" @change="showFileName")
+                            input#file404(hidden type="file" @change="showFileName")
         template(v-else)
             .create 
                 .tit Register Subdomain
@@ -45,15 +45,33 @@
                 span /
             .filesButtonWrap
                 .material-symbols-outlined.mid.clickable cached
-                .material-symbols-outlined.mid.clickable more_vert
-                .uploadBtn
-                    .material-symbols-outlined.mid upload
-                    span Upload
-        .filesWrapper
+                .material-symbols-outlined.mid.clickable(:class='{"nonClickable": !fileList.length}' @click.stop="showEdit = !showEdit") more_vert
+                .editMenuWrap(v-if="showEdit" @click.stop)
+                    .nest
+                        .editMenu(@click="recordInfoEdit = true; showEdit = false;")
+                            .material-symbols-outlined.mid download
+                            span download   
+                        .editMenu(@click="recordDelete")
+                            .material-symbols-outlined.mid delete
+                            span delete
+                .customFile 
+                    label.uploadBtn.btn(for="files")
+                        .material-symbols-outlined.mid upload
+                        span Upload
+                    input#files(hidden type="file" @change="showFileList")
+        .filesWrapper(
+                @dragover="onDragover"
+                @drop="onDrop"
+            )
             template(v-if="fileList.length == 0")
-                .noFile
-                    h2 No Files 
-                    p You have not uploaded any files
+                //- .noFile
+                //-     h2 No Files 
+                //-     p You have not uploaded any files
+                .dragNdropUpload
+                    input(hidden type="file")
+                    div
+                        .material-symbols-outlined.empty(style="font-size:80px") file_present
+                        p Drag and Drop Files or Folders here
             template(v-else-if="fileList.length")
                 .fileWrapper
                     .file(v-for="(file, index) in fileList")
@@ -61,76 +79,101 @@
                             input(type="checkbox" v-bind:id="index")
                             label(:for="index")
                                 .material-symbols-outlined.mid.check check
-                        .material-symbols-outlined.mid(v-if="file.type == 'folder'") folder
-                        .material-symbols-outlined.mid(v-else-if="file.type == 'file'") draft
+                        .material-symbols-outlined.mid.type(v-if="file.type == 'folder'") folder
+                        .material-symbols-outlined.mid.type(v-else-if="file.type.includes('html')") html
+                        .material-symbols-outlined.mid.type(v-else-if="file.type.includes('css')") css
+                        .material-symbols-outlined.mid.type(v-else-if="file.type.includes('pdf')") picture_as_pdf
+                        .material-symbols-outlined.mid.type(v-else-if="file.type.includes('image')") image
+                        .material-symbols-outlined.mid.type(v-else-if="file.type.includes('video')") movie
+                        .material-symbols-outlined.mid.type(v-else="file.type == 'file'") draft
                         .pathWrapper
                             .path {{ file.name }}
-            template(v-else)
-                .dragNdropUpload
-                    input(hidden type="file")
-                    div
-                        .material-symbols-outlined.empty(style="font-size:80px") file_present
-                        p Drag and Drop Files or Folders here
-                .selectUpload
-                    input#selectFile(hidden type="file")
-                    label(for="selectFile") Select File
-        .uploadListWrapper 
-            .header
-                .number Uploading 24 files
-            .progressBar
-            .content   
-                .listWrap 
-                    .list(v-for="(file, index) in fileList") 
-                        .file 
-                            .material-symbols-outlined.mid(v-if="file.type == 'folder'") folder
-                            .material-symbols-outlined.mid(v-else-if="file.type == 'file'") draft
-                            .pathWrapper
-                                .path {{ file.name }}
-                        .sucess
-
+UploadFileList(v-if="fileList.length && showUploadFileList" :fileList = "fileList" @close="showUploadFileList = false;")
 </template>
 
 <script setup>
 import { inject, ref } from 'vue';
 import { useRoute } from 'vue-router';
-import { skapi, account } from '@/main.js';
+import { skapi, account, bodyClick } from '@/main.js';
 import { services } from '@/data.js';
+import UploadFileList from '@/components/UploadFileList.vue'
 
 let route = useRoute();
 let currnetPath = route.path.split('/')[2];
 let currentService = services.value.find(service => service.service === currnetPath);
+let showUploadFileList = ref(false);
 let modifySudomain = ref(false);
+let showEdit = ref(false);
 let inputSubdomain = ref('');
 let errorFile = ref('');
-let fileList = ref([
-    {
-        name: 'asdasd.jpg',
-        type: 'file'
-    },
-    {
-        name: 'asduhaosudad.css',
-        type: 'file'
-    },
-    {
-        name: 'imagefile.png',
-        type: 'file'
-    },
-    {
-        name: 'someFolder',
-        type: 'folder'
-    },
-    {
-        name: 'someFile.file',
-        type: 'file'
-    },
-    {
-        name: 'asduhaosudad.html',
-        type: 'file'
-    }
-])
+let fileList = ref([]);
 let showFileName = (e) => {
     let file = e.target.value.split('\\')[2];
     fileName.value = file;
+}
+let showFileList = (e) => {
+    let files = e.target.files;
+    if (files.length > 0) {
+        for (let i = 0; i < files.length; i++) {
+            const file = files[i];
+            const existingIndex = fileList.value.findIndex((uploadedFile) => uploadedFile.name === file.name);
+
+            if (existingIndex !== -1) {
+                const existingFile = fileList.value[existingIndex];
+                if (file.lastModified > existingFile.lastModified) {
+                    fileList.value.splice(existingIndex, 1, {
+                        name: file.name,
+                        type: file.type,
+                        lastModified: file.lastModified // 파일의 최신 수정 일자 저장
+                    });
+                }
+            } else {
+                fileList.value.push({
+                    name: file.name,
+                    type: file.type,
+                    lastModified: file.lastModified // 파일의 수정 일자 저장
+                });
+            }
+        }
+
+        showUploadFileList.value = true;
+    } else {
+        fileList.value = [];
+    }
+}
+let onDragover = (event) => {
+    event.preventDefault()  
+}
+let onDrop = (event) => {
+    event.preventDefault()
+    showUploadFileList.value = true;
+    const files = event.dataTransfer.files;
+    console.log(files)
+    addFiles(files)
+}
+let addFiles = async(files) => {
+    for (let i = 0; i < files.length; i++) {
+        let file = files[i];
+
+        // 중복 파일 확인
+        let duplicateIndex = fileList.value.findIndex(
+            (uploadedFile) => uploadedFile.name === file.name
+        );
+
+        if (duplicateIndex !== -1) {
+            // 중복 파일이 존재하는 경우 최신 버전으로 교체
+            let existingFile = fileList.value[duplicateIndex];
+            if (file.lastModified > existingFile.lastModified) {
+                fileList.value.splice(duplicateIndex, 1, file);
+            }
+        } else {
+            // 중복 파일이 없는 경우 파일을 추가
+            fileList.value.push(file);
+        }
+    }
+}
+bodyClick.recordPage = () => {
+    showEdit.value = false;
 }
 </script>
 
@@ -254,23 +297,40 @@ let showFileName = (e) => {
                     }
                 }
                 .modifyForm {
+                    position: relative;
                     display: flex;
                     flex-wrap: nowrap;
-                    // gap: 12px;
-
-                    input {
-                        width: max(65%, 280px);
-                        margin-right: 32px;
-                        background-color: #EDEDED;
-                        border: 0;
-                        padding: 12px 20px;
+                    height: 44px;
+                    
+                    &::before {
+                        position: absolute;
+                        content: '';
+                        width: 65%;
+                        height: 100%;
                         border-radius: 8px;
+                        background: rgba(0, 0, 0, 0.05);
+                        z-index: -1;
+                    }
+                    &::after {
+                        position: absolute;
+                        content: '.skapi.com';
+                        left: 47%;
+                        top: 50%;
+                        transform: translateY(-50%);
                         font-size: 16px;
-                        font-weight: 500;
-                        color: rgba(0,0,0,0.8);
+                        font-weight: 400;
+                    }
+                    input {
+                        border: 0;
+                        width: 65%;
+                        height: 44px;
+                        padding: 13px 115px 13px 13px;
+                        background-color: unset;
+                        font-size: 16px;
+                        font-weight: 400;
                     }
                     .btnWrap {
-                        // width: 35%;
+                        width: 35%;
                         display: flex;
                         flex-wrap: nowrap;
                         align-items: center;
@@ -323,12 +383,51 @@ let showFileName = (e) => {
                         margin: 0 25px;
                     }
                 }
+                .editMenuWrap {
+                    position: relative;
+                    .nest {
+                        position: absolute;
+                        right: 20px;
+                        top: 34px;
+                        border-radius: 8px;
+                        border: 1px solid rgba(0, 0, 0, 0.15);
+                        background: #FAFAFA;
+                        box-shadow: 8px 12px 36px 0px rgba(0, 0, 0, 0.10);
+                        padding: 20px;
+                        width: 155px;
+                        z-index: 2;
+                        
+                        .editMenu {
+                            display: flex;
+                            flex-wrap: nowrap;
+                            align-items: center;
+                            cursor: pointer;
+        
+                            &:first-child {
+                                margin-bottom: 20px;
+                            }
+                            &:hover {
+                                span {
+                                    font-weight: 700;
+                                }
+                            }
+                            span {
+                                margin-left: 10px;
+                                font-size: 16px;
+                                font-weight: 500;
+                            }
+                        }
+                    }
+                }
             }
         }
         .filesWrapper {
             position: relative;
             width: 100%;
-            min-height: 448px;
+            // min-height: 448px;
+            height: 450px;
+            overflow: hidden;
+            padding: 32px 28px;
             border-radius: 8px;
             border: 1px solid rgba(0, 0, 0, 0.10);
 
@@ -350,7 +449,8 @@ let showFileName = (e) => {
                 }
             }
             .fileWrapper {
-                padding: 32px 28px;
+                height: 100%;
+                overflow: auto;
                 .file {
                     width: 100%;
                     height: 40px;
@@ -363,7 +463,7 @@ let showFileName = (e) => {
                     &:nth-child(2n+1) {
                         background: rgba(0, 0, 0, 0.05);
                     }
-                    .material-symbols-outlined {
+                    .type {
                         margin-left: 10px;
                         margin-right: 20px;
                     }
@@ -375,33 +475,17 @@ let showFileName = (e) => {
             }
             .dragNdropUpload {
                 width: 100%;
-                min-height: 448px;
+                height: 100%;
+                background-color: rgba(250,250,250,0.6);
                 text-align: center;
-                padding-top: 130px;
                 color: rgba(0,0,0,0.4);
+                display: flex;
+                align-items: center;
+                justify-content: center;
                 p {
                     font-size: 20px;
                     font-weight: 500;
                     margin-top: 10px;
-                }
-            }
-            .selectUpload {
-                position: absolute;
-                left: 50%;
-                top: 65%;
-                transform: translate(-50%, -50%);
-                text-align: center;
-
-                label {
-                    width: 105px;
-                    height: 32px;
-                    padding: 6px 12px;
-                    border-radius: 8px;
-                    border: 2px solid #293FE6;
-                    color: #293FE6;
-                    font-size: 16px;
-                    font-weight: 700;
-                    cursor: pointer;
                 }
             }
         }

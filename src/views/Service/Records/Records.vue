@@ -375,8 +375,8 @@
 import { bodyClick } from '@/main.js';
 import { computed, nextTick, onMounted, ref } from 'vue';
 import { records, records_data } from '@/data.js';
-import RecordDataOverlay from '@/views/Service/Records/RecordDataOverlay.vue';
-import DeleteRecordOverlay from '@/views/Service/Records/DeleteRecordOverlay.vue';
+import RecordDataOverlay from '@/views/service/records/RecordDataOverlay.vue';
+import DeleteRecordOverlay from '@/views/service/records/DeleteRecordOverlay.vue';
 // import TagsInput from '@/components/TagsInput.vue';
 
 let showRecordData = ref(false);
