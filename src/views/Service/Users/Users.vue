@@ -93,7 +93,7 @@
                     //-     span Group
                     .filter 
                         .customCheckBox
-                            input#timestamp(type="checkbox" :checked="filterOptions.timestamp" @change="filterOptions.timestamp = !filterOptions.group")
+                            input#timestamp(type="checkbox" :checked="filterOptions.timestamp" @change="filterOptions.timestamp = !filterOptions.timestamp")
                             label(for="timestamp")
                                 .material-symbols-outlined.mid.check check
                         span Date Created
