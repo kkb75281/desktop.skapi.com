@@ -85,7 +85,7 @@ template(v-if='currentService')
 <script setup>
 import { ref } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
-import { services, serviceFetching, currentService, storageInfo } from '@/data.js';
+import { services, serviceFetching, currentService, storageInfo, serviceUsers } from '@/data.js';
 import { skapi, account, bodyClick } from '@/main.js';
 
 currentService.value = null;
@@ -104,7 +104,12 @@ let navigateToPage = () => {
 let logout = async () => {
     accountInfo.value = false;
     account.value = null;
+    services.value = [];
+    storageInfo.value = {};
+    serviceUsers = {};
+
     await skapi.logout();
+
     router.push({ path: '/' });
 }
 
