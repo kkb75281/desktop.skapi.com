@@ -1,7 +1,7 @@
 <template lang="pug">
 .container
     RouterLink(:to="{name: 'home'}")
-        img.logo(src="@/assets/symbol-logo.png")
+        img.logo(src="@/assets/img/logo/symbol-logo.png")
     .title Forgot Password
     template(v-if="step === 1")
         form(@submit.prevent="forgotPassword" action="")

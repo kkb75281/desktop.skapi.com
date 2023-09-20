@@ -1,7 +1,7 @@
 <template lang="pug">
 .navBar
     router-link(to="/")
-        img.logo(src="@/assets/logo.png")
+        img.logo(src="@/assets/img/logo/logo.png")
     .menu
         ul(v-if="account")
             li 

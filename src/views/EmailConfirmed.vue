@@ -1,7 +1,7 @@
 <template lang="pug">
 .container
     RouterLink(:to="{name: 'home'}")
-        img.logo(src="@/assets/logo.png")
+        img.logo(src="@/assets/img/logo/logo.png")
     h5 Congratulations!
     .message 
         | Thanks for joining!

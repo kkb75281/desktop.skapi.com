@@ -1,7 +1,7 @@
 <template lang="pug">
 .container
     RouterLink(:to="{name: 'home'}")
-        img.logo(src="@/assets/symbol-logo.png")
+        img.logo(src="@/assets/img/logo/symbol-logo.png")
     .title Confirm your email
     .content 
         | Please check your inbox for a confirmation email. 

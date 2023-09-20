@@ -1,7 +1,7 @@
 <template lang="pug">
 .container
     RouterLink(to="/")
-        img.logo(src="@/assets/symbol-logo.png")
+        img.logo(src="@/assets/img/logo/symbol-logo.png")
     template(v-if="step === 1")
         .title Sign up
         form(@submit.prevent="checkExist")

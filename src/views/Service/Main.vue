@@ -2,7 +2,7 @@
 template(v-if='currentService')
     .navSide
         router-link.logo(to="/")
-            img(src="@/assets/symbol-logo.png")
+            img(src="@/assets/img/logo/symbol-logo.png")
         .menuList 
             router-link.menu(:to="`/dashboard/${currentService.service}`" :class="{'active': route.name == 'service'}")
                 .material-symbols-outlined.big home
