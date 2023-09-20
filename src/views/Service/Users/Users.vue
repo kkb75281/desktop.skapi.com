@@ -241,6 +241,10 @@ let getPage = (p) => {
 }
 
 let refresh = () => {
+    if(fetching.value) {
+        return;
+    }
+
     users.value = null;
     serviceUsers[serviceId] = new Pager(worker, {
         id: 'user_id',
@@ -270,7 +274,7 @@ let refresh = () => {
 }
 
 if (!serviceUsers?.[serviceId]) {
-    refresh('desc');
+    refresh();
 }
 else {
     userPage = serviceUsers[serviceId];
@@ -351,8 +355,8 @@ let filterOptions = ref({
     // group: false,
     locale: false,
     timestamp: false
-})
-let maxTrCount = 10;
+});
+
 let selectAll = (e) => {
     let checkboxes = document.querySelectorAll('input[type="checkbox"]');
     checkboxes.forEach((checkbox) => {
@@ -483,9 +487,6 @@ let searchUsers = (e) => {
         refresh();
     }
 }
-let trCount = computed(() => {
-    // return Math.max(0, maxTrCount - users.value.length);
-});
 
 // table resize
 let prevX, prevW, nextW = 0;

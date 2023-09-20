@@ -5,6 +5,7 @@ export let services = ref([]);
 export let storageInfo = ref({});
 export let currentService = ref(null);
 export let serviceUsers = {};
+export let serviceRecords = {};
 
 export let users = ref([
     {

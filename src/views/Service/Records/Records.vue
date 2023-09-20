@@ -67,6 +67,14 @@
                             .copy(v-if="!recordInfoEdit" @click="copy")
                                 .material-symbols-outlined.sml file_copy
                         .info 
+                            .label User ID 
+                            .value(:class="{ disabled: recordInfoEdit }" :value="selectedRecord.user_id" @click.stop="showHidden" style="width: calc(100% - 200px); cursor: pointer") {{ selectedRecord.user_id }}
+                            .copy(v-if="!recordInfoEdit" @click="copy")
+                                .material-symbols-outlined.sml file_copy
+                        .info 
+                            .label Uploaded
+                            .value(:class="{ disabled: recordInfoEdit }" style="width: calc(100% - 170px);") {{ new Date(selectedRecord.updated).toLocaleString() }}
+                        .info 
                             .label Table name 
                             .value 
                                 input(v-if="recordInfoEdit" type="text" :value="selectedRecord.table.name" :placeholder="`${selectedRecord.table.name}`" @input="(e) => {selectedRecord.table.name = e.target.value; }")
@@ -77,12 +85,8 @@
                                 select(v-if="recordInfoEdit" :value="selectedRecord.table.access_group" @change="(e) => selectedRecord.table.access_group = e.target.value")
                                     option(value="0") Public
                                     option(value="1") Registered
-                                template(v-else) {{ selectedRecord.table.access_group == 'private' ? 'Private' : selectedRecord.table.access_group ? 'Registered' : 'Public' }}
-                        .info 
-                            .label User ID 
-                            .value(:class="{ disabled: recordInfoEdit }" :value="selectedRecord.user_id" @click.stop="showHidden" style="width: calc(100% - 200px); cursor: pointer") {{ selectedRecord.user_id }}
-                            .copy(v-if="!recordInfoEdit" @click="copy")
-                                .material-symbols-outlined.sml file_copy
+                                template(v-else) {{ selectedRecord.table.access_group == 'private' ? 'Private' : selectedRecord.table.access_group ? 'Authorized' : 'Public' }}
+
                         .hidden.userID(v-if="hiddenUserID" @click.stop) {{ selectedRecord.user_id }}
                         .info
                             .label Reference
@@ -101,12 +105,7 @@
                                                 option(value="number") Number
                                                 option(value="boolean") Boolean
                                             input(type="text" :value="selectedRecord.index.value" :placeholder="`${selectedRecord.index.value}`" @input="(e)=> {selectedRecord.index.value = e.target.value;}")
-                                        template(v-else) {{ selectedRecord.index.value }}
-                                    .copy(v-if="!recordInfoEdit" @click="copy")
-                                        .material-symbols-outlined.sml file_copy
-                                .smallInfo 
-                                    .smallLabel Upload Datetime 
-                                    .smallValue(:class="{ disabled: recordInfoEdit }" :value="selectedRecord.updated") {{ selectedRecord.updated }}
+                                        template(v-else) &lt;{{ typeof selectedRecord.index.value }}&gt; {{ selectedRecord.index.value }}
                             .material-symbols-outlined.empty.sml.que help
                         .info 
                             .label Reference Setting 
@@ -298,7 +297,7 @@
             .noSelect(v-else) No record selected
         .tableHeader 
             .actions 
-                .material-symbols-outlined.mid.refresh.clickable cached
+                .material-symbols-outlined.mid.refresh.clickable(@click='refresh' :class='{"rotate_animation": fetching }') cached
                 .material-symbols-outlined.mid.menu.clickable(:class='{"nonClickable": !checkedRecords.length}' @click.stop="showRecordSetting = !showRecordSetting") more_vert
                 .recordSettingWrap(v-if="showRecordSetting" @click.stop)
                     .nest
@@ -329,10 +328,10 @@
                         th Table Name
                         th Record ID
                         th User ID
-                        th Date
+                        th Uploaded
                         th.center Access Group
                         th.center Features
-                tbody(v-if="records.length")
+                tbody(v-if="records !== null && records.length")
                     tr(v-for="(record, index) in records" :key="index" @click="showRecordInfo(index)" :class="{ active: activeIndex === index }")
                         td(style="text-align:center")
                             .customCheckBox
@@ -344,7 +343,7 @@
                             .overflow {{ record.record_id }}
                         td
                             .overflow {{ record.user_id }}
-                        td {{ record.uploaded }}
+                        td {{ timeSince(record.uploaded) }}
                         td.center
                             .material-symbols-outlined.mid(v-if="record.table.access_group == 'private'") vpn_key
                             .material-symbols-outlined.mid(v-else) language
@@ -362,7 +361,7 @@
             //- .noRecords(v-if="!records.length")
             //-     h2 No Records
             //-     p List of records will show when there is data
-            .noRecordsFound(v-if="!records.length")
+            .noRecordsFound(v-if="records && !records.length")
                 .tit 
                     .material-symbols-outlined.big search
                     h2 No Records Found
@@ -373,11 +372,153 @@
 
 <script setup>
 import { bodyClick } from '@/main.js';
-import { computed, nextTick, onMounted, ref } from 'vue';
-import { records, records_data } from '@/data.js';
+import { computed, nextTick, onMounted, ref, watch } from 'vue';
+import { records_data, serviceRecords, currentService } from '@/data.js';
+import { skapi } from '@/main.js'
 import RecordDataOverlay from '@/views/service/records/RecordDataOverlay.vue';
 import DeleteRecordOverlay from '@/views/service/records/DeleteRecordOverlay.vue';
 // import TagsInput from '@/components/TagsInput.vue';
+
+// record page -start-
+
+import Pager from '@/skapi-extensions/js/pager.js';
+const worker = new Worker(
+    new URL('@/skapi-extensions/js/pager_worker.js', import.meta.url),
+    { type: 'module' }
+);
+
+let serviceId = currentService.value.service;
+let records = ref(null);
+let recordPage = null;
+let currentPage = ref(1);
+let maxPage = ref(1);
+let fetching = ref(false);
+watch(currentPage, (page) => {
+    getPage(page);
+});
+
+let defaultFetchParams = null;
+
+let fetchParams = defaultFetchParams
+
+let getPage = (p) => {
+    let res = recordPage.getPage(p);
+    recordPage.maxPage = res.maxPage;
+    records.value = res.list;
+    maxPage.value = res.maxPage;
+}
+
+let refresh = () => {
+    if (fetching.value) {
+        return;
+    }
+
+    records.value = null;
+    let reserved_index = {
+        $uploaded: 'record_id',
+        $updated: 'updated',
+        $referenced_count: 'referenced_count',
+        $user_id: 'record_id'
+    }
+
+    let targetIndex = fetchParams?.index && fetchParams.index in reserved_index ? reserved_index[fetchParams.index] : fetchParams?.index || 'record_id';
+
+    serviceRecords[serviceId] = new Pager(worker, {
+        id: 'record_id',
+        sortBy: targetIndex,
+        order: fetchParams === null || fetchParams?.condition?.includes('<') ? 'desc' : 'asc',
+        resultsPerPage: 10
+    })
+
+    recordPage = serviceRecords[serviceId];
+
+    fetching.value = true;
+    skapi.getRecords(fetchParams || {
+        service: serviceId
+    }, { limit: 50 }).then(u => {
+        console.log({ u })
+        if (u.endOfList) {
+            recordPage.endOfList = true;
+        }
+        recordPage.insertItems(u.list).then(_ => {
+            // to avoid watch trigger
+            if (currentPage.value === 1) {
+                getPage(1);
+            }
+            else {
+                currentPage.value = 1;
+            }
+            fetching.value = false;
+        });
+    });
+}
+
+if (!serviceRecords?.[serviceId]) {
+    refresh();
+}
+else {
+    recordPage = serviceRecords[serviceId];
+    getPage(currentPage.value);
+}
+let selectNone = () => {
+    // page 넘길때 사용
+    let checkboxes = document.querySelectorAll('input[type="checkbox"]');
+    checkboxes.forEach((checkbox) => {
+        checkbox.checked = false;
+    });
+    trackSelectedUsers();
+}
+let nextPage = () => {
+    if (currentPage.value === maxPage.value && !recordPage.endOfList) {
+        records.value = null;
+        fetching.value = true;
+        skapi.getRecords(fetchParams || {
+            service: serviceId
+        }, { fetchMore: true, limit: 50 }).then(u => {
+            if (u.endOfList) {
+                recordPage.endOfList = true;
+            }
+            recordPage.insertItems(u.list).then(_ => {
+                currentPage.value++;
+                fetching.value = false;
+            });
+        });
+    }
+
+    else {
+        currentPage.value++;
+    }
+
+    nextTick(selectNone);
+}
+let timeSince = (date) => {
+    var seconds = Math.floor((new Date() - date) / 1000);
+
+    var interval = seconds / 31536000;
+
+    if (interval > 1) {
+        return Math.floor(interval) + " y";
+    }
+    interval = seconds / 2592000;
+    if (interval > 1) {
+        return Math.floor(interval) + " M";
+    }
+    interval = seconds / 86400;
+    if (interval > 1) {
+        return Math.floor(interval) + " d";
+    }
+    interval = seconds / 3600;
+    if (interval > 1) {
+        return Math.floor(interval) + " h";
+    }
+    interval = seconds / 60;
+    if (interval > 1) {
+        return Math.floor(interval) + " m";
+    }
+    return Math.floor(seconds) + " s";
+}
+
+// record page -end-
 
 let showRecordData = ref(false);
 let showDeleteRecord = ref(false);
@@ -426,7 +567,7 @@ let dataTrCount = computed(() => {
 });
 let showRecordInfo = (index) => {
     createRecordForm.value = false;
-    if(currentIndex === index) {
+    if (currentIndex === index) {
         selectedRecordForm.value = false;
         activeIndex.value = null;
         currentIndex = -1;
@@ -440,7 +581,7 @@ let showRecordInfo = (index) => {
     }
 }
 let viewRecordCheck = () => {
-    if(selectedRecordForm.value) {
+    if (selectedRecordForm.value) {
         selectedRecordForm.value = false;
         activeIndex.value = null;
         currentIndex = -1;
@@ -449,8 +590,8 @@ let viewRecordCheck = () => {
     createRecordForm.value = true;
 }
 let showData = (index, data) => {
-    if(data.type !== 'boolean' && data.type !== 'file') {
-        if(recordInfoEdit.value) {
+    if (data.type !== 'boolean' && data.type !== 'file') {
+        if (recordInfoEdit.value) {
             editRecordData.value = data;
             selectedData.value = null;
         } else {
@@ -459,16 +600,16 @@ let showData = (index, data) => {
         }
         showRecordData.value = true;
     }
-} 
+}
 let showHidden = (e) => {
-    if(e.currentTarget.classList.contains('tagsWrapper')) {
-        if(hiddenTags.value) {
+    if (e.currentTarget.classList.contains('tagsWrapper')) {
+        if (hiddenTags.value) {
             hiddenTags.value = false;
         } else {
             hiddenTags.value = true;
         }
     } else {
-        if(hiddenUserID.value) {
+        if (hiddenUserID.value) {
             hiddenUserID.value = false;
         } else {
             hiddenUserID.value = true;
@@ -516,30 +657,30 @@ let trackSelectedRecords = () => {
 }
 
 let validateTableName = (event) => {
-	let regex = /^[\p{L}\d\s.]+$/u;
+    let regex = /^[\p{L}\d\s.]+$/u;
 
-	let isValid = event.target.value.match(regex) ? true : false;
-	if (isValid) {
+    let isValid = event.target.value.match(regex) ? true : false;
+    if (isValid) {
         event.target.setCustomValidity('');
     } else {
-		event.target.setCustomValidity('Can not contain special characters other than period and spaces');
-		event.target.reportValidity();
-	}
+        event.target.setCustomValidity('Can not contain special characters other than period and spaces');
+        event.target.reportValidity();
+    }
 };
 
 // recordData edit
 let addField = () => {
-	records_data.value.push({ type: 'string', key: '', context: '' });
+    records_data.value.push({ type: 'string', key: '', context: '' });
     console.log(records_data.value)
     nextTick(() => {
         let scrollTarget = document.querySelector('.recordData .content');
-        if(scrollTarget.getBoundingClientRect().height < scrollTarget.scrollHeight) {
+        if (scrollTarget.getBoundingClientRect().height < scrollTarget.scrollHeight) {
             scrollTarget.scrollTop = scrollTarget.getBoundingClientRect().height + 30;
         }
     })
 };
 let removeField = (index) => {
-    if(createRecordForm.value) {
+    if (createRecordForm.value) {
         dataList.value.splice(index, 1);
     } else {
         records_data.value.splice(index, 1);
@@ -547,7 +688,7 @@ let removeField = (index) => {
 };
 let selectType = (e, data) => {
     data.type = e.target.value;
-    if(data.type == 'file'){
+    if (data.type == 'file') {
         data.context = '';
     }
 }
@@ -582,23 +723,23 @@ let showPreview = (e, index) => {
         let tr = document.querySelectorAll('table tbody tr');
         let target = tr[index];
         let child;
-        if(e.target.classList.contains('tag')) {
+        if (e.target.classList.contains('tag')) {
             child = target.querySelectorAll(".tag");
-            if(child.length > 1) { 
+            if (child.length > 1) {
                 child[1].parentNode.classList.add('active');
                 child[1].parentNode.classList.add('fir');
                 child[1].classList.add('active');
             }
-        } else if(e.target.classList.contains('index')) {
+        } else if (e.target.classList.contains('index')) {
             child = target.querySelectorAll(".index");
-            if(child.length > 1) { 
+            if (child.length > 1) {
                 child[1].parentNode.classList.add('active');
                 child[1].parentNode.classList.add('sec');
                 child[1].classList.add('active');
             }
         } else {
             child = target.querySelectorAll(".ref");
-            if(child.length > 1) { 
+            if (child.length > 1) {
                 child[1].parentNode.classList.add('active');
                 child[1].parentNode.classList.add('last');
                 child[1].classList.add('active');
@@ -611,23 +752,23 @@ let hidePreview = (e, index) => {
         let tr = document.querySelectorAll('table tbody tr');
         let target = tr[index];
         let child;
-        if(e.target.classList.contains('tag')) {
+        if (e.target.classList.contains('tag')) {
             child = target.querySelectorAll(".tag");
-            if(child.length > 1) { 
+            if (child.length > 1) {
                 child[1].parentNode.classList.remove('active');
                 child[1].parentNode.classList.remove('fir');
                 child[1].classList.remove('active');
             }
-        } else if(e.target.classList.contains('index')) {
+        } else if (e.target.classList.contains('index')) {
             child = target.querySelectorAll(".index");
-            if(child.length > 1) { 
+            if (child.length > 1) {
                 child[1].parentNode.classList.remove('active');
                 child[1].parentNode.classList.remove('sec');
                 child[1].classList.remove('active');
             }
         } else {
             child = target.querySelectorAll(".ref");
-            if(child.length > 1) { 
+            if (child.length > 1) {
                 child[1].parentNode.classList.remove('active');
                 child[1].parentNode.classList.remove('last');
                 child[1].classList.remove('active');
@@ -647,6 +788,7 @@ bodyClick.recordPage = () => {
 .containerWrap {
     display: flex;
     flex-wrap: wrap;
+
     .container {
         width: 100%;
         padding: 28px 40px;
@@ -655,13 +797,15 @@ bodyClick.recordPage = () => {
         margin-bottom: 2%;
         filter: drop-shadow(8px 12px 36px rgba(0, 0, 0, 0.10));
     }
+
     .searchForm {
         display: flex;
         flex-wrap: nowrap;
+
         .selectBar {
             width: 200px;
             margin-right: 20px;
-            
+
             select {
                 height: 44px;
                 background: rgba(0, 0, 0, 0.05);
@@ -671,10 +815,11 @@ bodyClick.recordPage = () => {
                 color: rgba(0, 0, 0, 0.80);
             }
         }
+
         .searchBar {
             position: relative;
             width: calc(100% - 220px);
-            
+
             input {
                 width: 100%;
                 height: 44px;
@@ -685,12 +830,14 @@ bodyClick.recordPage = () => {
                 padding-left: 50px;
                 font-weight: 400;
             }
+
             .search {
                 position: absolute;
                 left: 16px;
                 top: 10px;
-                color: rgba(0,0,0,0.4);
+                color: rgba(0, 0, 0, 0.4);
             }
+
             .delete {
                 position: absolute;
                 right: 16px;
@@ -699,6 +846,7 @@ bodyClick.recordPage = () => {
             }
         }
     }
+
     .advancedForm {
         margin-top: 30px;
 
@@ -707,9 +855,11 @@ bodyClick.recordPage = () => {
             margin-right: 4%;
             display: inline-block;
         }
+
         .right {
             width: 48%;
             display: inline-block;
+
             .title {
                 color: rgba(0, 0, 0, 0.80);
                 font-size: 14px;
@@ -717,15 +867,20 @@ bodyClick.recordPage = () => {
                 margin-bottom: 20px;
             }
         }
+
         .condition {
             margin-bottom: 20px;
 
             &:last-child {
                 margin-bottom: 28px;
             }
-            .label, .radioFormWrap, .radio {
+
+            .label,
+            .radioFormWrap,
+            .radio {
                 display: inline-block;
             }
+
             .label {
                 width: 90px;
                 color: rgba(0, 0, 0, 0.80);
@@ -737,6 +892,7 @@ bodyClick.recordPage = () => {
                     color: rgba(0, 0, 0, 0.25);
                 }
             }
+
             .radioFormWrap {
                 select {
                     width: 110px;
@@ -747,12 +903,15 @@ bodyClick.recordPage = () => {
                     font-weight: 700;
                 }
             }
+
             .radio {
                 margin-right: 20px;
             }
+
             .textFormWrap {
                 width: calc(100% - 124px);
                 display: inline-block;
+
                 input {
                     position: relative;
                     width: 100%;
@@ -760,13 +919,16 @@ bodyClick.recordPage = () => {
                     border-bottom: 1px solid rgba(0, 0, 0, 0.80);
                     background-color: unset;
                 }
+
                 input:disabled {
                     border-bottom: 1px solid rgba(0, 0, 0, 0.10);
                 }
             }
         }
+
         .buttonWrap {
             text-align: right;
+
             * {
                 padding: 12px 28px;
                 border: 0;
@@ -776,9 +938,11 @@ bodyClick.recordPage = () => {
                 background-color: unset;
                 cursor: pointer;
             }
+
             .clear {
                 color: #293FE6;
             }
+
             .search {
                 color: #fff;
                 background-color: #293FE6;
@@ -786,12 +950,15 @@ bodyClick.recordPage = () => {
             }
         }
     }
+
     .viewRecord {
         width: 100%;
         border-radius: 8px;
         border: 1px solid rgba(0, 0, 0, 0.10);
         margin-bottom: 40px;
-        .recordForm, .createForm {
+
+        .recordForm,
+        .createForm {
             position: relative;
             display: flex;
             flex-wrap: nowrap;
@@ -807,52 +974,63 @@ bodyClick.recordPage = () => {
                 background: rgba(0, 0, 0, 0.1);
                 filter: drop-shadow(0px 1px 3px rgba(0, 0, 0, 0.06));
             }
-            .recordInfo, .recordData {
+
+            .recordInfo,
+            .recordData {
                 width: 50%;
                 overflow: hidden;
                 padding-bottom: 20px;
             }
+
             .recordData {
                 .header {
                     padding-left: 40px;
+
                     .tit {
                         min-width: 84px;
                         padding-left: 0;
                     }
                 }
+
                 // .content {
                 //     padding-top: 12px;
                 // }
             }
+
             .menu {
                 position: absolute;
                 right: 14px;
                 top: 7.5px;
-                color: rgba(0,0,0,0.6);
+                color: rgba(0, 0, 0, 0.6);
                 cursor: pointer;
             }
+
             .editBtnWrap {
                 position: absolute;
                 right: 20px;
                 top: 8px;
-                
+
                 button {
                     font-size: 16px;
                     font-weight: 700;
                     border: 0;
                     background-color: unset;
                     cursor: pointer;
+
                     &.cancel {
                         color: rgba(0, 0, 0, 0.80);
                         margin-right: 6px;
                     }
+
                     &.save {
                         color: #293FE6;
                     }
                 }
             }
+
             .editMenuWrap {
                 position: relative;
+
                 .nest {
                     position: absolute;
                     right: 20px;
@@ -864,21 +1042,23 @@ bodyClick.recordPage = () => {
                     padding: 20px;
                     width: 134px;
                     z-index: 2;
-                    
+
                     .editMenu {
                         display: flex;
                         flex-wrap: nowrap;
                         align-items: center;
                         cursor: pointer;
-    
+
                         &:first-child {
                             margin-bottom: 20px;
                         }
+
                         &:hover {
                             span {
                                 font-weight: 700;
                             }
                         }
+
                         span {
                             margin-left: 10px;
                             font-size: 16px;
@@ -887,6 +1067,7 @@ bodyClick.recordPage = () => {
                     }
                 }
             }
+
             .header {
                 position: relative;
                 height: 40px;
@@ -901,6 +1082,7 @@ bodyClick.recordPage = () => {
                     background: rgba(0, 0, 0, 0.1);
                     filter: drop-shadow(0px 1px 3px rgba(0, 0, 0, 0.06));
                 }
+
                 .tit {
                     min-width: 84px;
                     height: 40px;
@@ -917,20 +1099,27 @@ bodyClick.recordPage = () => {
                     }
                 }
             }
+
             .content {
                 height: 404px;
                 padding: 16px 20px 0 20px;
                 overflow-y: auto;
-                .info, .smallInfo {
+
+                .info,
+                .smallInfo {
                     position: relative;
                     user-select: none;
-                    .label, .smallLabel {
+
+                    .label,
+                    .smallLabel {
                         display: inline-block;
                         vertical-align: middle;
                         color: rgba(0, 0, 0, 0.40);
                         font-size: 14px;
                     }
-                    .value, .smallValue {
+
+                    .value,
+                    .smallValue {
                         display: inline-block;
                         vertical-align: middle;
                         font-size: 14px;
@@ -938,20 +1127,24 @@ bodyClick.recordPage = () => {
                         white-space: nowrap;
                         overflow: hidden;
                         text-overflow: ellipsis;
-                        color: rgba(0,0,0,0.6);
+                        color: rgba(0, 0, 0, 0.6);
+
                         &.disabled {
                             color: rgba(0, 0, 0, 0.25);
                         }
+
                         &.various {
                             display: block;
                             width: 100%;
                         }
+
                         input {
                             color: rgba(0, 0, 0, 0.60);
                             background-color: unset;
                             border: 0;
                             border-bottom: 1px solid rgba(0, 0, 0, 0.80);
                         }
+
                         select {
                             color: rgba(0, 0, 0, 0.60);
                             background-color: unset;
@@ -960,6 +1153,7 @@ bodyClick.recordPage = () => {
                             cursor: pointer;
                         }
                     }
+
                     .tagsWrapper {
                         width: 100%;
                         white-space: nowrap;
@@ -967,6 +1161,7 @@ bodyClick.recordPage = () => {
                         text-overflow: ellipsis;
                         height: 20px;
                         cursor: pointer;
+
                         .tag {
                             display: inline-block;
                             height: 20px;
@@ -977,15 +1172,16 @@ bodyClick.recordPage = () => {
                             margin-right: 8px;
                             text-align: center;
                             font-weight: 500;
-                            color: rgba(0,0,0,0.6);
+                            color: rgba(0, 0, 0, 0.6);
                         }
                     }
+
                     .copy {
                         position: absolute;
                         top: 65%;
                         right: 0;
                         transform: translateY(-50%);
-                        color: rgba(0,0,0,0.4);
+                        color: rgba(0, 0, 0, 0.4);
                         cursor: pointer;
 
                         svg {
@@ -1002,7 +1198,7 @@ bodyClick.recordPage = () => {
                             font-size: 12px;
                             font-weight: 400;
                             color: rgba(0, 0, 0, 0.5);
-                            background-color: rgba(250,250,250,0.9);
+                            background-color: rgba(250, 250, 250, 0.9);
                             border-radius: 4px;
                             padding: 4px;
                             content: "Copied";
@@ -1015,24 +1211,29 @@ bodyClick.recordPage = () => {
                         }
                     }
                 }
+
                 .info {
                     position: relative;
                     margin-bottom: 12px;
-                    
+
                     .label {
                         width: 150px;
                         font-weight: 700;
                     }
+
                     .value {
                         width: calc(100% - 150px);
 
-                        input, select {
+                        input,
+                        select {
                             width: calc(100% - 20px);
                         }
                     }
+
                     &:nth-child(8) {
                         margin-bottom: 42px;
                     }
+
                     .que {
                         position: absolute;
                         left: 148px;
@@ -1043,10 +1244,11 @@ bodyClick.recordPage = () => {
                         cursor: pointer;
                     }
                 }
+
                 .hidden {
                     position: absolute;
                     background-color: #FAFAFA;
-                    border: 1px solid rgba(0,0,0,0.15);
+                    border: 1px solid rgba(0, 0, 0, 0.15);
                     filter: drop-shadow(8px 12px 36px rgba(0, 0, 0, 0.10));
                     border-radius: 8px;
                     z-index: 10;
@@ -1059,6 +1261,7 @@ bodyClick.recordPage = () => {
                         padding: 20px;
                         font-weight: 700;
                     }
+
                     &.tags {
                         width: 270px;
                         left: 45%;
@@ -1066,6 +1269,7 @@ bodyClick.recordPage = () => {
                         padding: 16px;
                         display: flex;
                         flex-wrap: wrap;
+
                         .tag {
                             height: 20px;
                             border-radius: 4px;
@@ -1075,31 +1279,38 @@ bodyClick.recordPage = () => {
                             margin: 4px 4px;
                             text-align: center;
                             font-weight: 500;
-                            color: rgba(0,0,0,0.6);
+                            color: rgba(0, 0, 0, 0.6);
                         }
                     }
                 }
+
                 .smallInfo {
                     margin-top: 12px;
+
                     .smallLabel {
                         width: 140px;
                         font-weight: 400;
                         margin-left: 10px;
                     }
+
                     .smallValue {
                         width: calc(100% - 140px);
 
-                        input, select {
+                        input,
+                        select {
                             width: calc(100% - 30px);
                         }
                     }
+
                     .typeValue {
                         width: calc(100% - 30px);
                         border-bottom: 1px solid rgba(0, 0, 0, 0.80);
+
                         input {
                             width: calc(100% - 95px) !important;
                             border-bottom: 0 !important;
                         }
+
                         select {
                             width: 84px !important;
                             border-bottom: 0 !important;
@@ -1108,6 +1319,7 @@ bodyClick.recordPage = () => {
                         }
                     }
                 }
+
                 .row {
                     position: relative;
                     padding: 0 20px;
@@ -1124,26 +1336,32 @@ bodyClick.recordPage = () => {
                     &:first-child {
                         margin-top: -12px;
                     }
+
                     &:nth-child(2n) {
                         background: rgba(0, 0, 0, 0.05);
                     }
+
                     &.empty:hover {
                         cursor: default;
                     }
+
                     &.boolean:hover {
                         color: rgba(0, 0, 0, 0.40);
                         font-weight: 500;
                         cursor: default;
                     }
+
                     &.file:hover {
                         .download {
                             display: block;
                         }
                     }
+
                     &:hover {
                         color: rgba(0, 0, 0, 0.80);
                         font-weight: 700;
                     }
+
                     .download {
                         position: absolute;
                         right: 12px;
@@ -1152,6 +1370,7 @@ bodyClick.recordPage = () => {
                         display: none;
                     }
                 }
+
                 .rowEdit {
                     position: relative;
                     padding-left: 20px;
@@ -1163,6 +1382,7 @@ bodyClick.recordPage = () => {
                     display: flex;
                     flex-wrap: nowrap;
                     align-items: center;
+
                     .minus {
                         position: absolute;
                         left: -8px;
@@ -1173,20 +1393,26 @@ bodyClick.recordPage = () => {
                         color: rgba(0, 0, 0, 0.60);
                         cursor: pointer;
                     }
-                    .type, .key, .context {
+
+                    .type,
+                    .key,
+                    .context {
                         position: relative;
                         border: 0;
                         background-color: unset;
                     }
+
                     .type {
                         width: 84px;
                         margin-right: 20px;
                     }
+
                     .key {
                         width: 84px;
                         margin-right: 20px;
                         border-bottom: 1px solid rgba(0, 0, 0, 0.80);
                     }
+
                     .context {
                         width: calc(100% - 208px);
                         border-bottom: 1px solid rgba(0, 0, 0, 0.80);
@@ -1197,6 +1423,7 @@ bodyClick.recordPage = () => {
                             font-weight: 500;
                             border-bottom: 0;
                         }
+
                         &.fileUpload {
                             color: #293FE6;
                             font-size: 14px;
@@ -1204,9 +1431,11 @@ bodyClick.recordPage = () => {
                             border-bottom: 0;
                             cursor: pointer;
                         }
+
                         &.click {
                             cursor: pointer;
                         }
+
                         .overflow {
                             width: 100%;
                             white-space: nowrap;
@@ -1215,13 +1444,16 @@ bodyClick.recordPage = () => {
                             display: block;
                         }
                     }
+
                     select {
                         cursor: pointer;
                     }
+
                     input {
                         color: rgba(0, 0, 0, 0.60);
                     }
                 }
+
                 .data {
                     margin-right: 20px;
                     display: inline-block;
@@ -1229,13 +1461,16 @@ bodyClick.recordPage = () => {
                     &:first-child {
                         width: 84px;
                     }
+
                     &:nth-child(2) {
                         width: 84px;
                     }
+
                     &:last-child {
                         width: calc(100% - 208px);
                         margin-right: 0;
                     }
+
                     .overflow {
                         width: 100%;
                         white-space: nowrap;
@@ -1244,6 +1479,7 @@ bodyClick.recordPage = () => {
                         display: block;
                     }
                 }
+
                 .addDataRow {
                     display: flex;
                     flex-wrap: nowrap;
@@ -1263,6 +1499,7 @@ bodyClick.recordPage = () => {
                         margin-left: 8px;
                     }
                 }
+
                 .noData {
                     position: absolute;
                     left: 75%;
@@ -1271,7 +1508,8 @@ bodyClick.recordPage = () => {
                     text-align: center;
                     font-size: 28px;
                     font-weight: 700;
-                    color: rgba(0,0,0,0.4);
+                    color: rgba(0, 0, 0, 0.4);
+
                     .big {
                         width: 52px;
                         height: 52px;
@@ -1281,6 +1519,7 @@ bodyClick.recordPage = () => {
                 }
             }
         }
+
         .createForm {
             .header {
                 .tit {
@@ -1289,6 +1528,7 @@ bodyClick.recordPage = () => {
                     font-weight: 700;
                 }
             }
+
             .content {
                 .info {
                     padding-right: 2px;
@@ -1299,6 +1539,7 @@ bodyClick.recordPage = () => {
                 }
             }
         }
+
         .noSelect {
             min-height: 100px;
             text-align: center;
@@ -1308,21 +1549,27 @@ bodyClick.recordPage = () => {
             font-weight: 500;
         }
     }
+
     .tableHeader {
         display: flex;
         flex-wrap: nowrap;
         justify-content: space-between;
+
         .actions {
             position: relative;
             display: flex;
             flex-wrap: nowrap;
             align-items: center;
-            .refresh, .menu {
+
+            .refresh,
+            .menu {
                 margin-right: 20px;
             }
+
             .refresh {
                 color: #293FE6;
             }
+
             .dropDown {
                 display: flex;
                 align-items: center;
@@ -1330,6 +1577,7 @@ bodyClick.recordPage = () => {
                 font-weight: 500;
                 margin-right: 20px;
             }
+
             .filterWrap {
                 position: absolute;
                 left: 0;
@@ -1341,6 +1589,7 @@ bodyClick.recordPage = () => {
                 box-shadow: 8px 12px 36px 0px rgba(0, 0, 0, 0.10);
                 z-index: 10;
                 user-select: none;
+
                 .filter {
                     display: flex;
                     align-items: center;
@@ -1350,6 +1599,7 @@ bodyClick.recordPage = () => {
                     &:last-child {
                         margin-bottom: 0;
                     }
+
                     input {
                         width: 20px;
                         height: 20px;
@@ -1357,8 +1607,10 @@ bodyClick.recordPage = () => {
                     }
                 }
             }
+
             .recordSettingWrap {
                 position: relative;
+
                 .nest {
                     position: absolute;
                     width: 134px;
@@ -1372,22 +1624,25 @@ bodyClick.recordPage = () => {
                     box-shadow: 8px 12px 36px 0px rgba(0, 0, 0, 0.10);
                     z-index: 10;
                     cursor: pointer;
-                    
+
                     .setting {
                         display: flex;
                         align-items: center;
                         user-select: none;
+
                         &:hover {
                             span {
                                 font-weight: 700;
                             }
                         }
+
                         span {
                             margin-left: 14px;
                         }
                     }
                 }
             }
+
             .create {
                 height: 32px;
                 padding: 0px 12px;
@@ -1401,30 +1656,36 @@ bodyClick.recordPage = () => {
                 cursor: pointer;
             }
         }
+
         .pagenator {
             display: flex;
             flex-wrap: nowrap;
             align-items: center;
+
             .prevPage {
                 margin-right: 20px;
             }
+
             svg {
                 cursor: pointer;
             }
         }
     }
+
     .tableWrap {
         position: relative;
         min-height: 660px;
         margin: 40px 0;
 
-        .noRecords, .noRecordsFound {
+        .noRecords,
+        .noRecordsFound {
             position: absolute;
             left: 50%;
             top: 50%;
-            transform: translate(-50%,-50%);
+            transform: translate(-50%, -50%);
             text-align: center;
             color: rgba(0, 0, 0, 0.40);
+
             .tit {
                 display: flex;
                 flex-wrap: nowrap;
@@ -1435,25 +1696,30 @@ bodyClick.recordPage = () => {
                     margin-right: 12px;
                 }
             }
+
             h2 {
                 font-size: 28px;
                 font-weight: 700;
             }
+
             p {
                 font-size: 20px;
                 font-weight: 500;
                 margin-top: 28px;
             }
         }
+
         table {
             min-width: 100%;
             border-collapse: collapse;
             // table-layout: auto;
             // width: 100%;
             table-layout: fixed;
+
             .featureWrap {
                 position: relative;
                 width: 100%;
+
                 .feature {
                     display: inline-block;
                     height: 24px;
@@ -1468,39 +1734,47 @@ bodyClick.recordPage = () => {
                     &.active {
                         opacity: 1;
                     }
+
                     &:first-child {
                         background: #FCA642;
                     }
+
                     &:nth-child(2) {
                         background: #52D687;
                     }
+
                     &:last-child {
                         background: #B881FF;
                         margin-right: 0;
                     }
                 }
             }
+
             tr {
                 height: 60px;
                 border-bottom: 1px solid rgba(0, 0, 0, 0.10);
                 border-radius: 8px;
-                filter: drop-shadow(0px 1px 3px rgba(0, 0, 0, 0.06));  
+                filter: drop-shadow(0px 1px 3px rgba(0, 0, 0, 0.06));
                 // cursor: pointer;
                 overflow: hidden;
 
                 &.active {
                     background-color: rgba(41, 63, 230, 0.05);
                 }
+
                 &:hover {
                     background-color: rgba(41, 63, 230, 0.05);
                 }
             }
+
             td {
                 position: relative;
+
                 .previewWrap {
                     position: absolute;
                     left: 0;
                     top: -33px;
+
                     .preview {
                         position: relative;
                         height: 44px;
@@ -1523,24 +1797,30 @@ bodyClick.recordPage = () => {
                             border-left: 20px solid #fafafa;
                             rotate: -45deg;
                         }
+
                         &.active {
                             display: block;
                         }
+
                         &.fir {
                             left: 10%;
                         }
+
                         &.sec {
                             left: 50%;
                         }
+
                         &.last {
                             left: 90%;
                         }
+
                         div {
                             width: 150px;
                             line-height: 44px;
                             white-space: nowrap;
                             overflow: hidden;
                             display: none;
+
                             &.active {
                                 display: block;
                             }
@@ -1548,10 +1828,13 @@ bodyClick.recordPage = () => {
                     }
                 }
             }
-            td, th {
+
+            td,
+            th {
                 &.center {
                     text-align: center;
                 }
+
                 .overflow {
                     width: 90px;
                     white-space: nowrap;
@@ -1560,6 +1843,7 @@ bodyClick.recordPage = () => {
                     display: block;
                 }
             }
+
             thead {
                 color: rgba(0, 0, 0, 0.40);
                 font-weight: 700;
@@ -1571,10 +1855,12 @@ bodyClick.recordPage = () => {
                     }
                 }
             }
+
             tbody {
                 color: rgba(0, 0, 0, 0.80);
                 font-weight: 400;
             }
+
             input {
                 width: 20px;
                 height: 20px;

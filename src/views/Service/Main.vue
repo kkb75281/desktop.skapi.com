@@ -85,7 +85,7 @@ template(v-if='currentService')
 <script setup>
 import { ref } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
-import { services, serviceFetching, currentService, storageInfo, serviceUsers } from '@/data.js';
+import { services, serviceFetching, currentService, storageInfo, serviceUsers, serviceRecords } from '@/data.js';
 import { skapi, account, bodyClick } from '@/main.js';
 
 currentService.value = null;
@@ -106,7 +106,14 @@ let logout = async () => {
     account.value = null;
     services.value = [];
     storageInfo.value = {};
-    serviceUsers = {};
+
+    for (let k in serviceUsers) {
+        delete serviceUsers[k];
+    }
+
+    for (let k in serviceRecords) {
+        delete serviceRecords[k];
+    }
 
     await skapi.logout();
 
