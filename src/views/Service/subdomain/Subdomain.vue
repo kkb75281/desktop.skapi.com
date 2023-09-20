@@ -45,13 +45,13 @@
                 span /
             .filesButtonWrap
                 .material-symbols-outlined.mid.clickable cached
-                .material-symbols-outlined.mid.clickable(:class='{"nonClickable": !fileList.length}' @click.stop="showEdit = !showEdit") more_vert
+                .material-symbols-outlined.mid.clickable(:class='{"nonClickable": !checkedFiles.length}' @click.stop="showEdit = !showEdit") more_vert
                 .editMenuWrap(v-if="showEdit" @click.stop)
                     .nest
-                        .editMenu(@click="recordInfoEdit = true; showEdit = false;")
+                        .editMenu(@click="downloadFiles")
                             .material-symbols-outlined.mid download
                             span download   
-                        .editMenu(@click="recordDelete")
+                        .editMenu(@click="showDeleteFile = true; showEdit = false;")
                             .material-symbols-outlined.mid delete
                             span delete
                 .customFile 
@@ -76,7 +76,7 @@
                 .fileWrapper
                     .file(v-for="(file, index) in fileList")
                         .customCheckBox
-                            input(type="checkbox" v-bind:id="index")
+                            input(type="checkbox" :id="index" @change='trackSelectedFiles')
                             label(:for="index")
                                 .material-symbols-outlined.mid.check check
                         .material-symbols-outlined.mid.type(v-if="file.type == 'folder'") folder
@@ -89,6 +89,7 @@
                         .pathWrapper
                             .path {{ file.name }}
 UploadFileList(v-if="fileList.length && showUploadFileList" :fileList = "fileList" @close="showUploadFileList = false;")
+DeleteFileOverlay(v-if="showDeleteFile" :checkedFiles="checkedFiles" @close="showDeleteFile = false;")
 </template>
 
 <script setup>
@@ -96,7 +97,8 @@ import { inject, ref } from 'vue';
 import { useRoute } from 'vue-router';
 import { skapi, account, bodyClick } from '@/main.js';
 import { services } from '@/data.js';
-import UploadFileList from '@/components/UploadFileList.vue'
+import UploadFileList from '@/views/service/subdomain/UploadFileList.vue';
+import DeleteFileOverlay from '@/views/service/subdomain/DeleteFileOverlay.vue';
 
 let route = useRoute();
 let currnetPath = route.path.split('/')[2];
@@ -104,9 +106,11 @@ let currentService = services.value.find(service => service.service === currnetP
 let showUploadFileList = ref(false);
 let modifySudomain = ref(false);
 let showEdit = ref(false);
+let showDeleteFile = ref(false);
 let inputSubdomain = ref('');
 let errorFile = ref('');
 let fileList = ref([]);
+let checkedFiles = ref([]);
 let showFileName = (e) => {
     let file = e.target.value.split('\\')[2];
     fileName.value = file;
@@ -171,6 +175,16 @@ let addFiles = async(files) => {
             fileList.value.push(file);
         }
     }
+}
+let trackSelectedFiles = () => {
+    let checkboxes = document.querySelectorAll('input[type="checkbox"]');
+    let checked = [];
+    checkboxes.forEach((checkbox) => {
+        if (checkbox.checked) {
+            checked.push(checkbox.value);
+        }
+    })
+    checkedFiles.value = checked;
 }
 bodyClick.recordPage = () => {
     showEdit.value = false;

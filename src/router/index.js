@@ -10,7 +10,7 @@ import Service from '@/views/service/Service.vue'
 import Users from '@/views/service/users/Users.vue'
 import Records from '@/views/service/records/Records.vue'
 import Mail from '@/views/service/Mail.vue'
-import Subdomain from '@/views/service/Subdomain.vue'
+import Subdomain from '@/views/service/subdomain/Subdomain.vue'
 
 const router = createRouter({
   scrollBehavior(to, from, savedPosition) {
