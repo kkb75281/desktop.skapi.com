@@ -60,7 +60,7 @@
                 .tit index.html 
                 .code
                     pre
-                        code
+                        code.language-js
                             |&lt;!DOCTYPE html&gt;
                             |&lt;head&gt;
                             |&lt;script src="https://cdn.jsdelivr.net/npm/skapi-js@latest/dist/skapi.js"&gt;&lt;/script&gt;
@@ -84,7 +84,9 @@
             router-link(to="/signup") Sign-up
 </template>
 
-<script setup></script>
+<script setup>
+hljs.highlightAll();
+</script>
 
 <style lang="less" scoped>
 #lending {

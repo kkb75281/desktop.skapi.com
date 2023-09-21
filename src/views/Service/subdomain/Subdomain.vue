@@ -47,7 +47,7 @@
                 .material-symbols-outlined.big.clickable hard_drive
                 span /
             .filesButtonWrap
-                .material-symbols-outlined.mid.clickable cached
+                .material-symbols-outlined.mid.refresh.clickable cached
                 .material-symbols-outlined.mid.clickable(:class='{"nonClickable": !checkedFiles.length}' @click.stop="showEdit = !showEdit") more_vert
                 .editMenuWrap(v-if="showEdit" @click.stop)
                     .nest
@@ -402,6 +402,9 @@ bodyClick.recordPage = () => {
                 .mid {
                     &:nth-child(2) {
                         margin: 0 25px;
+                    }
+                    &.refresh {
+                        color: #293FE6;
                     }
                 }
                 .editMenuWrap {
