@@ -2,7 +2,7 @@
 .containerWrap
     .container
         h2 Subdomain
-        template(v-if="currentService.subdomain")
+        template(v-if="!currentService.subdomain")
             .buttonWrap 
                 .refresh.clickable
                     .material-symbols-outlined.mid cached
