@@ -8,7 +8,7 @@
                 a(href="https://docs.skapi.com" target="_blank") Documentation
             li
                 router-link(to="/dashboard") Dashboard
-            li.account(@click.stop="accountInfo = !accountInfo") R
+            li.account(@click.stop="accountInfo = !accountInfo") {{ account.email.charAt(0).toUpperCase() }}
         ul(v-else)
             li 
                 a(href="https://docs.skapi.com" target="_blank") Documentation
@@ -83,13 +83,14 @@ let logout = async () => {
                     color: #293FE6;
                     text-decoration: none;
                     font-size: 20px;
-                    font-weight: 700;
                     cursor: pointer;
 
                     &.signup {
                         color: #fff;
-                        padding: 8px 12px;
+                        padding: 8px 20px;
                         border-radius: 8px;
+                        font-size: 16px;
+                        font-weight: 700;
                         background: #293FE6;
                     }
                 }
@@ -120,7 +121,7 @@ let logout = async () => {
     .prof {
         position: absolute;
         right: 40px;
-        top: 93px;
+        top: 70px;
         width: 265px;
         padding: 20px 20px 0;
         overflow: hidden;
