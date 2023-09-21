@@ -122,21 +122,22 @@ let logout = async () => {
 
 let getCurrentService = () => {
     currentService.value = services.value.find(service => service.service === route.path.split('/')[2]);
+    if (currentService.value) {
+        if (storageInfo.value[currentService.value.service]) {
+            return;
+        }
+        skapi.storageInformation(currentService.value.service).then(i => {
+            // get storage info
+            storageInfo.value[currentService.value.service] = i;
+        });
+    }
+    else {
+        router.replace({ path: '/dashboard' });
+    }
 }
 
 if (serviceFetching.value instanceof Promise) {
-    serviceFetching.value.then(getCurrentService).then(_ => {
-        if (currentService.value) {
-            skapi.storageInformation(currentService.value.service).then(i => {
-                // get storage info
-                storageInfo.value[currentService.value.service] = i;
-            });
-        }
-        else {
-            // no such service
-            router.replace({ path: '/dashboard' });
-        }
-    })
+    serviceFetching.value.then(getCurrentService);
 }
 else {
     getCurrentService()
