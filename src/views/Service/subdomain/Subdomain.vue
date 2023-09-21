@@ -15,7 +15,8 @@
                     .tit Subdomain
                     template(v-if="modifySudomain")
                         form.modifyForm(style="margin-top: 8px")
-                            input#modifySudomain(type="text" :placeholder="`${currentService.subdomain}`" :value='inputSubdomain' @input="(e) => inputSubdomain = e.target.value")
+                            .input
+                                input#modifySudomain(type="text" :placeholder="`${currentService.subdomain}`" :value='inputSubdomain' @input="(e) => inputSubdomain = e.target.value")
                             .btnWrap
                                 button.cancel(type="button" @click="modifySudomain = false;") Cancel
                                 button.save(type="submit") Save
@@ -311,37 +312,41 @@ bodyClick.recordPage = () => {
                     }
                 }
                 .modifyForm {
-                    position: relative;
                     display: flex;
                     flex-wrap: nowrap;
+                    justify-content: space-between;
                     height: 44px;
                     
-                    &::before {
-                        position: absolute;
-                        content: '';
+                    .input {
                         width: 65%;
-                        height: 100%;
-                        border-radius: 8px;
-                        background: rgba(0, 0, 0, 0.05);
-                        z-index: -1;
-                    }
-                    &::after {
-                        position: absolute;
-                        content: '.skapi.com';
-                        left: 47%;
-                        top: 50%;
-                        transform: translateY(-50%);
-                        font-size: 16px;
-                        font-weight: 400;
-                    }
-                    input {
-                        border: 0;
-                        width: 65%;
-                        height: 44px;
-                        padding: 13px 115px 13px 13px;
-                        background-color: unset;
-                        font-size: 16px;
-                        font-weight: 400;
+                        position: relative;
+                        &::before {
+                            position: absolute;
+                            content: '';
+                            width: 100%;
+                            height: 100%;
+                            border-radius: 8px;
+                            background: rgba(0, 0, 0, 0.05);
+                            z-index: -1;
+                        }
+                        &::after {
+                            position: absolute;
+                            content: '.skapi.com';
+                            right: 13px;
+                            top: 50%;
+                            transform: translateY(-50%);
+                            font-size: 16px;
+                            font-weight: 400;
+                        }
+                        input {
+                            border: 0;
+                            width: calc(100% - 87px);
+                            padding: 13px;
+                            height: 44px;
+                            background-color: unset;
+                            font-size: 16px;
+                            font-weight: 400;
+                        }
                     }
                     .btnWrap {
                         width: 35%;
@@ -606,6 +611,25 @@ bodyClick.recordPage = () => {
                     font-weight: 700;
                     background: #293FE6;
                     box-shadow: 0px -1px 1px 0px rgba(0, 0, 0, 0.15) inset;
+                }
+            }
+        }
+    }
+}
+
+@media (max-width: 1240px) {
+    .containerWrap {
+        .container {
+            .settingWrap {
+                .setting {
+                    .modifyForm {
+                        .input {
+                            width: calc(100% - 160px);
+                        }
+                        .btnWrap {
+                            width: 42%;
+                        }
+                    }   
                 }
             }
         }
