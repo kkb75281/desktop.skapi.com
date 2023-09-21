@@ -1,6 +1,7 @@
 <template lang="pug">
 .containerWrap
-    .container
+    // search form
+    .container    
         form
             .searchForm
                 .selectBar
@@ -54,10 +55,14 @@
                 .buttonWrap 
                     input.clear(type="reset" value="Clear filter" @click="clearSearchFilter")
                     button.search(type="submit") Search
+
+    // record view/edit/list
     .container 
+        // view/edit record
         .viewRecord
+            // view / edit
             form.recordForm(v-if="selectedRecord" @submit.prevent="saveRecordData")
-                // edit record
+                // record settings
                 .recordInfo 
                     .header
                         .tit Record Information
@@ -79,18 +84,21 @@
                             .label Updated
                             .value(:class="{ disabled: recordInfoEdit }" style="width: calc(100% - 170px);") {{ new Date(selectedRecord.updated).toLocaleString() }}
                         .info 
-                            .label Table name 
-                            .value 
-                                input(v-if="recordInfoEdit" type="text" :value="selectedRecord.table.name" :placeholder="`${selectedRecord.table.name}`" @input="(e) => {selectedRecord.table.name = e.target.value; }")
-                                template(v-else) {{ selectedRecord.table.name }}
-                        .info 
-                            .label Access group 
-                            .value 
-                                select(v-if="recordInfoEdit" :value="selectedRecord.table.access_group === 'private' ? 'private' : selectedRecord.table.access_group.toString()" @change="(e) => selectedRecord.table.access_group = e.target.value === 'private' ? 'private' : parseInt(e.target.value)")
-                                    option(value="0") Public
-                                    option(value="1") Authorized
-                                    option(value="private") Private
-                                template(v-else) {{ selectedRecord.table.access_group == 'private' ? 'Private' : selectedRecord.table.access_group ? 'Authorized' : 'Public' }}
+                            .label Table
+                            .value.various
+                                .smallInfo 
+                                    .smallLabel Name
+                                    .smallValue 
+                                        input(v-if="recordInfoEdit" type="text" :value="selectedRecord.table.name" placeholder="(Required)" @input="(e) => {selectedRecord.table.name = e.target.value; }" required)
+                                        template(v-else) {{ selectedRecord.table.name }}
+                                .smallInfo 
+                                    .smallLabel Access Group
+                                    .smallValue 
+                                        select(v-if="recordInfoEdit" :value="selectedRecord.table.access_group === 'private' ? 'private' : selectedRecord.table.access_group.toString()" @change="(e) => selectedRecord.table.access_group = e.target.value === 'private' ? 'private' : parseInt(e.target.value)")
+                                            option(value="0") Public
+                                            option(value="1") Authorized
+                                            option(value="private") Private
+                                        template(v-else) {{ selectedRecord.table.access_group == 'private' ? 'Private' : selectedRecord.table.access_group ? 'Authorized' : 'Public' }}
 
                         .hidden.userID(v-if="hiddenUserID" @click.stop) {{ selectedRecord.user_id }}
                         .info
@@ -99,32 +107,41 @@
                                 .smallInfo 
                                     .smallLabel Name 
                                     .smallValue 
-                                        input(v-if="recordInfoEdit" type="text" :value="selectedRecord?.index?.name || ''" :placeholder="`${selectedRecord?.index?.name || ''}`" @input="(e)=> {if(!selectedRecord.index){selectedRecord.index={}} selectedRecord.index.name = e.target.value;}")
+                                        input(v-if="recordInfoEdit" type="text" :value="selectedRecord?.index?.name || ''" @input="(e)=> {if(!selectedRecord.index){selectedRecord.index={}} selectedRecord.index.name = e.target.value;}")
                                         template(v-else) {{ selectedRecord?.index?.name }}
                                 .smallInfo 
                                     .smallLabel Value 
                                     .smallValue 
-                                        .typeValue(v-if="recordInfoEdit")
+                                        .typeValue(v-if="recordInfoEdit" :class="{ nonClickable: !selectedRecord?.index?.name }" :style='{opacity: selectedRecord?.index?.name ? 1 : 0.5}')
                                             select(
                                                 :value="indexValueType"
-                                                @change="(e) => {indexValueType = e.target.value; selectedRecord.index.value = indexValueType === 'boolean' ? true : '';}")
+                                                @change="handleIndexTypeChange"
+                                            )
                                                 option(value="string") String
                                                 option(value="number") Number
                                                 option(value="boolean") Boolean
-
+                                            select(
+                                                style='width: calc(100% - 84px - 10px) !important'
+                                                v-if="indexValueType === 'boolean'"
+                                                :value="typeof selectedRecord.index.value === 'boolean' ? selectedRecord.index.value.toString() : 'true'"
+                                                @change="(e) => { if (!selectedRecord.index) { selectedRecord.index={}; } selectedRecord.index.value = JSON.parse(e.target.value); }")
+                                                option(value="true") true
+                                                option(value="false") false
                                             input(
-                                                type="text" :value="selectedRecord?.index?.value || ''"
-                                                :placeholder="`${selectedRecord?.index?.value || ''}`"
-                                                @input="(e)=> { if(!selectedRecord.index) { selectedRecord.index={}; } selectedRecord.index.value = e.target.value;}")
-                                        template(v-else) &lt;{{ typeof selectedRecord.index.value }}&gt; {{ selectedRecord.index.value }}
+                                                v-else
+                                                :type="indexValueType === 'string' ? 'text' : 'number'" :value="selectedRecord?.index?.value || ''"
+                                                :placeholder="selectedRecord?.index?.name ? '(Value Required)' : ''"
+                                                @input="(e)=> { if(!selectedRecord.index) { selectedRecord.index={}; } selectedRecord.index.value = e.target.value;}"
+                                                :required="selectedRecord?.index?.name ? true : null")
+                                        template(v-else) {{ typeof selectedRecord.index.value }} | {{ selectedRecord.index.value }}
                             //- .material-symbols-outlined.empty.sml.que help
                         .info 
                             .label Reference 
                             .value.various
                                 .smallInfo 
-                                    .smallLabel Reference
+                                    .smallLabel Reference ID
                                     .smallValue 
-                                        input(v-if="recordInfoEdit" type="text" :value="selectedRecord?.reference?.record_id || ''" :placeholder="`${selectedRecord?.reference?.record_id || ''}`" @input="(e)=> {if(!selectedRecord.reference){selectedRecord.reference={}} selectedRecord.reference.record_id = e.target.value;}")
+                                        input(v-if="recordInfoEdit" type="text" :value="selectedRecord?.reference?.record_id || ''" :placeholder="`${selectedRecord?.reference?.record_id || 'Record ID to reference'}`" @input="(e)=> {if(!selectedRecord.reference){selectedRecord.reference={}} selectedRecord.reference.record_id = e.target.value;}")
                                         template(v-else) {{ selectedRecord.reference?.record_id || 'None' }}
                                 .smallInfo 
                                     .smallLabel Multiple Reference 
@@ -139,7 +156,7 @@
                                 .smallInfo 
                                     .smallLabel Reference Limit
                                     .smallValue 
-                                        input(v-if="recordInfoEdit" type="number" min="1" :value="selectedRecord.reference?.reference_limit === null ? '' : selectedRecord.reference?.reference_limit" placeholder="Infinite" @input="(e) => {if(!selectedRecord.reference){selectedRecord.reference={}} selectedRecord.reference.reference_limit = e.target.value ? parseInt(e.target.value) : null}")
+                                        input(v-if="recordInfoEdit" type="number" min="0" :value="selectedRecord.reference?.reference_limit === null ? '' : selectedRecord.reference?.reference_limit" placeholder="Infinite" @input="(e) => {if(!selectedRecord.reference){selectedRecord.reference={}} selectedRecord.reference.reference_limit = e.target.value ? parseInt(e.target.value) : null}")
                                         template(v-else) {{ selectedRecord.reference.reference_limit === null ? 'Infinite' : selectedRecord.reference.reference_limit }}
                         .info 
                             .label Tags 
@@ -156,6 +173,8 @@
                                         template(v-else) -
                         .hidden.tags(v-if="hiddenTags && selectedRecord?.tags" @click.stop)
                             .tag(v-for="tag in selectedRecord?.tags") {{ tag }}
+
+                // record data
                 .recordData
                     .header
                         .tit Type
@@ -206,6 +225,8 @@
                         .addDataRow(v-if="recordInfoEdit" @click="addField")  
                             .material-symbols-outlined.sml add_circle
                             span Add data
+
+                // edit menu
                 .material-symbols-outlined.mid.menu(v-if="!recordInfoEdit" @click.stop="showEdit = !showEdit") more_vert
                 .editMenuWrap(v-if="showEdit" @click.stop)
                     .nest
@@ -216,12 +237,13 @@
                             .material-symbols-outlined.mid delete
                             span delete  
                 .editBtnWrap(v-if="recordInfoEdit") 
-                    button.cancel(@click="recordInfoEdit = false;") 
+                    button.cancel(@click="recordInfoEdit = false; selectedRecord = serviceRecords[serviceId].list[selectedRecord.record_id]")
                         .material-symbols-outlined.mid close
                     button.save
                         .material-symbols-outlined.mid check
+
+            // create record
             form.createForm(v-else-if="createRecordForm" @submit.prevent="createRecordData")
-                // create record
                 .recordInfo 
                     .header
                         .tit Create Record
@@ -308,7 +330,11 @@
                         .material-symbols-outlined.mid close
                     button.save(type="submit")
                         .material-symbols-outlined.mid check
+
+            // empty
             .noSelect(v-else) No record selected
+
+        // list menu
         .tableHeader 
             .actions 
                 .material-symbols-outlined.mid.refresh.clickable(@click='refresh' :class='{"rotate_animation": fetching }') cached
@@ -322,17 +348,20 @@
             .pagenator 
                 .material-symbols-outlined.sml.prevPage.clickable(:class='{"nonClickable": currentPage === 1 || fetching }' @click='e=>{currentPage--; nextTick(selectNone)}') arrow_back_ios
                 .material-symbols-outlined.sml.nextPage.clickable(:class='{"nonClickable": maxPage <= currentPage && recordPage?.endOfList || fetching }' @click='nextPage') arrow_forward_ios
+
+        // record list
         .tableWrap
-            // records list
             table
                 colgroup
                     col(width="6%")
                     col(width="15%")
-                    col(width="13%")
+                    //- col(width="13%")
                     col(width="13%")
                     col(width="13%")
                     col(width="15%")
                     col(width="25%")
+
+                // colomn name
                 thead
                     tr
                         th(@click.stop)
@@ -341,21 +370,28 @@
                                 label(for="allRecords")
                                     .material-symbols-outlined.mid.check check
                         th Table Name
-                        th Record ID
+                        //- th Record ID
                         th User ID
                         th Uploaded
                         th.center Access Group
                         th.center Indexing
+
+                // record list
                 tbody(v-if="records !== null && records.length")
-                    tr(v-for="(record, index) in records" :key="record.record_id" @click="showRecordInfo(record)" :class="{ active: selectedRecord?.record_id === record.record_id }")
+                    tr(
+                        v-for="(record, index) in records"
+                        :key="record.record_id"
+                        @click="showRecordInfo(record)"
+                        :class="{ active: selectedRecord?.record_id === record.record_id }"
+                    )
                         td(style="text-align:center" @click.stop)
                             .customCheckBox
                                 input(type="checkbox" name="record" :id="record.record_id" @change='trackSelectedRecords' :value="record.record_id")
                                 label(:for="record.record_id")
                                     .material-symbols-outlined.mid.check check
                         td {{ record.table.name }}
-                        td
-                            .overflow {{ record.record_id }}
+                        //- td
+                        //-     .overflow {{ record.record_id }}
                         td
                             .overflow {{ record.user_id }}
                         td {{ timeSince(record.uploaded) }}
@@ -516,11 +552,13 @@ let timeSince = (date) => {
     var interval = seconds / 31536000;
 
     if (interval > 1) {
-        return Math.floor(interval) + " years";
+        let val = Math.floor(interval);
+        return val + " year" + (val > 1 ? 's' : '');
     }
     interval = seconds / 2592000;
     if (interval > 1) {
-        return Math.floor(interval) + " months";
+        let val = Math.floor(interval);
+        return val + " month" + (val > 1 ? 's' : '');
     }
     interval = seconds / 86400;
     if (interval > 1) {
@@ -536,7 +574,26 @@ let timeSince = (date) => {
     }
     return Math.floor(seconds) + " s";
 }
+let handleIndexTypeChange = (e) => {
+    let originalValue = recordPage.list[selectedRecord.value.record_id].index?.value;
+    let valueType = e.target.value;
 
+    if (!selectedRecord.value.index) {
+        selectedRecord.value.index = {};
+    }
+
+    if (valueType === 'boolean') {
+        selectedRecord.value.index.value = typeof originalValue === 'boolean' ? originalValue : true;
+    }
+    else if (valueType === 'number') {
+        selectedRecord.value.index.value = typeof originalValue === 'number' ? originalValue : 0;
+    }
+    else {
+        selectedRecord.value.index.value = typeof originalValue === indexValueType.value ? originalValue : '';
+    }
+
+    indexValueType.value = valueType;
+}
 // record page -end-
 
 let showRecordData = ref(false);
@@ -577,7 +634,7 @@ let records_data = ref([]);
 watch(selectedRecord, (newVal) => {
     records_data.value = [];
     indexValueType.value = typeof newVal?.index?.value === 'undefined' ? 'string' : typeof newVal?.index?.value;
-    
+
     if (newVal) {
         // address records_data
         if (!newVal.data || !Object.keys(newVal.data).length) {
@@ -664,7 +721,8 @@ let dataTrCount = computed(() => {
 });
 let showRecordInfo = (record) => {
     createRecordForm.value = false;
-    selectedRecord.value = selectedRecord?.record_id === record.record_id ? null : record;
+    // copy original data to break object reference
+    selectedRecord.value = selectedRecord?.record_id === record.record_id ? null : JSON.parse(JSON.stringify(record));
     hiddenTags.value = false;
 }
 let viewRecordCheck = () => {
@@ -673,7 +731,7 @@ let viewRecordCheck = () => {
     createRecordForm.value = true;
 }
 let showData = (index, data) => {
-    if (data.type !== 'boolean' && data.type !== 'file') {
+    if (data?.type !== 'boolean' && data?.type !== 'file') {
         if (recordInfoEdit.value) {
             editRecordData.value = data;
             selectedData.value = null;
