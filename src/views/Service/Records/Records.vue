@@ -56,7 +56,7 @@
                     button.search(type="submit") Search
     .container 
         .viewRecord
-            form.recordForm(v-if="selectedRecordForm" @submit.prevent="saveRecordData")
+            form.recordForm(v-if="selectedRecord" @submit.prevent="saveRecordData")
                 .recordInfo 
                     .header
                         .tit Record Information
@@ -73,6 +73,9 @@
                                 .material-symbols-outlined.sml file_copy
                         .info 
                             .label Uploaded
+                            .value(:class="{ disabled: recordInfoEdit }" style="width: calc(100% - 170px);") {{ new Date(selectedRecord.uploaded).toLocaleString() }}
+                        .info 
+                            .label Updated
                             .value(:class="{ disabled: recordInfoEdit }" style="width: calc(100% - 170px);") {{ new Date(selectedRecord.updated).toLocaleString() }}
                         .info 
                             .label Table name 
@@ -89,39 +92,47 @@
 
                         .hidden.userID(v-if="hiddenUserID" @click.stop) {{ selectedRecord.user_id }}
                         .info
-                            .label Reference
+                            .label Index
                             .value.various
                                 .smallInfo 
-                                    .smallLabel Index Name 
+                                    .smallLabel Name 
                                     .smallValue 
-                                        input(v-if="recordInfoEdit" type="text" :value="selectedRecord.index.name" :placeholder="`${selectedRecord.index.name}`" @input="(e)=> {selectedRecord.index.name = e.target.value;}")
-                                        template(v-else) {{ selectedRecord.index.name }}
+                                        input(v-if="recordInfoEdit" type="text" :value="selectedRecord?.index?.name || ''" :placeholder="`${selectedRecord?.index?.name || ''}`" @input="(e)=> {if(!selectedRecord.index){selectedRecord.index={}} selectedRecord.index.name = e.target.value;}")
+                                        template(v-else) {{ selectedRecord?.index?.name }}
                                 .smallInfo 
-                                    .smallLabel Index Value 
+                                    .smallLabel Value 
                                     .smallValue 
                                         .typeValue(v-if="recordInfoEdit")
                                             select(:value="indexValueType" @change="(e) => {indexValueType = e.target.value; selectedRecord.index.value = indexValueType === 'boolean' ? true : '';}")
                                                 option(value="string") String
                                                 option(value="number") Number
                                                 option(value="boolean") Boolean
-                                            input(type="text" :value="selectedRecord.index.value" :placeholder="`${selectedRecord.index.value}`" @input="(e)=> {selectedRecord.index.value = e.target.value;}")
+                                            input(type="text" :value="selectedRecord?.index?.value || ''" :placeholder="`${selectedRecord?.index?.value || ''}`" @input="(e)=> {if(!selectedRecord.index){selectedRecord.index={}} selectedRecord.index.value = e.target.value;}")
                                         template(v-else) &lt;{{ typeof selectedRecord.index.value }}&gt; {{ selectedRecord.index.value }}
-                            .material-symbols-outlined.empty.sml.que help
+                            //- .material-symbols-outlined.empty.sml.que help
                         .info 
-                            .label Reference Setting 
+                            .label Reference 
                             .value.various
+                                .smallInfo 
+                                    .smallLabel Reference
+                                    .smallValue 
+                                        input(v-if="recordInfoEdit" type="text" :value="selectedRecord?.reference?.record_id || ''" :placeholder="`${selectedRecord?.reference?.record_id || ''}`" @input="(e)=> {if(!selectedRecord.reference){selectedRecord.reference={}} selectedRecord.reference.record_id = e.target.value;}")
+                                        template(v-else) {{ selectedRecord.reference?.record_id || 'None' }}
                                 .smallInfo 
                                     .smallLabel Multiple Reference 
                                     .smallValue 
-                                        select(v-if="recordInfoEdit" :value="selectedRecord.reference.allow_multiple_reference" @change="(e) => {selectedRecord.reference.allow_multiple_reference = e.target.value}")
+                                        select(
+                                            v-if="recordInfoEdit"
+                                            :value="selectedRecord?.reference?.allow_multiple_reference"
+                                            @change="(e) => { if (!selectedRecord.reference) { selectedRecord.reference={}; } selectedRecord.reference.allow_multiple_reference = e.target.value; }")
                                             option(value="true") Allowed
                                             option(value="null") Disallowed
-                                        template(v-else) {{ selectedRecord.reference.allow_multiple_reference?'Allowed':'Disallowed' }}
+                                        template(v-else) {{ selectedRecord.reference.allow_multiple_reference ? 'Allowed' : 'Disallowed' }}
                                 .smallInfo 
                                     .smallLabel Reference Limit
                                     .smallValue 
-                                        input(v-if="recordInfoEdit" type="number" min="1" :value="selectedRecord.reference.reference_limit === null ? '' : selectedRecord.reference?.reference_limit" placeholder="Infinite" @input="(e) => selectedRecord.reference.reference_limit = e.target.value ? parseInt(e.target.value) : null")
-                                        template(v-else) {{ selectedRecord.reference.reference_limit }}
+                                        input(v-if="recordInfoEdit" type="number" min="1" :value="selectedRecord.reference?.reference_limit === null ? '' : selectedRecord.reference?.reference_limit" placeholder="Infinite" @input="(e) => {if(!selectedRecord.reference){selectedRecord.reference={}} selectedRecord.reference.reference_limit = e.target.value ? parseInt(e.target.value) : null}")
+                                        template(v-else) {{ selectedRecord.reference.reference_limit === null ? 'Infinite' : selectedRecord.reference.reference_limit }}
                         .info 
                             .label Tags 
                             .value(style="width: calc(100% - 170px);")
@@ -332,7 +343,7 @@
                         th.center Access Group
                         th.center Features
                 tbody(v-if="records !== null && records.length")
-                    tr(v-for="(record, index) in records" :key="index" @click="showRecordInfo(index)" :class="{ active: activeIndex === index }")
+                    tr(v-for="(record, index) in records" :key="record.record_id" @click="showRecordInfo(record)" :class="{ active: selectedRecord?.record_id === record.record_id }")
                         td(style="text-align:center")
                             .customCheckBox
                                 input(type="checkbox" name="record" :id="record.record_id" @change='trackSelectedRecords' :value="record.record_id")
@@ -349,14 +360,15 @@
                             .material-symbols-outlined.mid(v-else) language
                         td.center
                             .featureWrap
+                                // [TIP] you can use css hover for this. ex) .relativePositionedParent:hover > .elToShow { display: block; }
                                 .feature.tag(:class="{'active': record?.tags}" @mouseenter="(e) => showPreview(e, index)" @mouseleave="(e) => hidePreview(e, index)") Tag
                                 .feature.index(:class="{'active': record?.index}" @mouseenter="(e) => showPreview(e, index)" @mouseleave="(e) => hidePreview(e, index)") Index
-                                .feature.ref(:class="{'active': record?.ref}" @mouseenter="(e) => showPreview(e, index)" @mouseleave="(e) => hidePreview(e, index)") Ref
+                                .feature.ref(:class="{'active': record?.reference?.record_id}" @mouseenter="(e) => showPreview(e, index)" @mouseleave="(e) => hidePreview(e, index)") Ref
                             .previewWrap
                                 .preview
-                                    .tag(v-if="record?.tags") {{ record.tags }}
-                                    .index(v-if="record?.index") {{ record.index }}
-                                    .ref(v-if="record?.ref") {{ record.ref }}
+                                    .tag(v-if="record?.tags") {{ record.tags.join(', ') }}
+                                    .index(v-if="record?.index") {{ record.index.name }} : {{ record.index.value }}
+                                    .ref(v-if="record?.reference?.record_id") {{ record.reference.record_id }}
                     tr(v-for="i in trCount" :key="'extra-' + i")
             //- .noRecords(v-if="!records.length")
             //-     h2 No Records
@@ -393,6 +405,8 @@ let recordPage = null;
 let currentPage = ref(1);
 let maxPage = ref(1);
 let fetching = ref(false);
+let selectedRecord = ref(null);
+
 watch(currentPage, (page) => {
     getPage(page);
 });
@@ -412,7 +426,7 @@ let refresh = () => {
     if (fetching.value) {
         return;
     }
-
+    selectedRecord.value = null;
     records.value = null;
     let reserved_index = {
         $uploaded: 'record_id',
@@ -529,10 +543,10 @@ let hiddenTags = ref(false);
 
 let searchText = ref('');
 let recordInfoEdit = ref(false);
-let activeIndex = ref(null);
-let selectedRecordForm = ref(false);
-let selectedRecord = ref(null);
-let currentIndex = -1;
+// let activeIndex = ref(null);
+// let selectedRecordForm = ref(false);
+
+// let currentIndex = -1;
 let createRecordForm = ref(false);
 let createRecord = ref({
     record_id: '',
@@ -565,27 +579,33 @@ let trCount = computed(() => {
 let dataTrCount = computed(() => {
     return Math.max(0, maxTrCount - records_data.value.length);
 });
-let showRecordInfo = (index) => {
+let showRecordInfo = (record) => {
     createRecordForm.value = false;
-    if (currentIndex === index) {
-        selectedRecordForm.value = false;
-        activeIndex.value = null;
-        currentIndex = -1;
-        hiddenTags.value = false;
-    } else {
-        currentIndex = index;
-        activeIndex.value = currentIndex;
-        selectedRecord.value = records.value[currentIndex];
-        selectedRecordForm.value = true;
-        hiddenTags.value = false;
-    }
+    selectedRecord.value = selectedRecord?.record_id === record.record_id ? null : record
+    // if (currentIndex === index) {
+    //     // selectedRecordForm.value = false;
+    //     // selectedRecord.value = null;
+    //     // activeIndex.value = null;
+    //     currentIndex = -1;
+    //     hiddenTags.value = false;
+    // } else {
+    //     currentIndex = index;
+    //     // activeIndex.value = currentIndex;
+    //     selectedRecord.value = records.value[currentIndex];
+    //     // selectedRecordForm.value = true;
+    //     hiddenTags.value = false;
+    // }
+    hiddenTags.value = false;
 }
 let viewRecordCheck = () => {
-    if (selectedRecordForm.value) {
-        selectedRecordForm.value = false;
-        activeIndex.value = null;
-        currentIndex = -1;
-    }
+    selectedRecord.value = null;
+    // if (selectedRecordForm.value) {
+    // if(selectedRecord.value) {
+    //     // selectedRecordForm.value = false;
+    //     selectedRecord.value = null;
+    //     // activeIndex.value = null;
+    //     currentIndex = -1;
+    // }
     dataList.value = [];
     createRecordForm.value = true;
 }
@@ -1230,7 +1250,7 @@ bodyClick.recordPage = () => {
                         }
                     }
 
-                    &:nth-child(8) {
+                    &:last-child {
                         margin-bottom: 42px;
                     }
 
