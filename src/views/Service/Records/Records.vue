@@ -909,7 +909,7 @@ bodyClick.recordPage = () => {
                     display: inline-block;
                     color: rgba(0, 0, 0, 0.40);
                     font-size: 14px;
-                    font-weight: 400;
+                    font-weight: 700;
                     padding-left: 20px;
 
                     &:last-child {
@@ -1114,7 +1114,7 @@ bodyClick.recordPage = () => {
                     height: 40px;
                     border-radius: 4px;
                     font-size: 14px;
-                    color: rgba(0, 0, 0, 0.40);
+                    color: rgba(0, 0, 0, 0.60);
                     font-weight: 500;
                     display: flex;
                     flex-wrap: nowrap;
