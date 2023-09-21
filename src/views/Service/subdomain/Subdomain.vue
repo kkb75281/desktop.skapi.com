@@ -2,7 +2,7 @@
 .containerWrap
     .container
         h2 Subdomain
-        template(v-if="!currentService.subdomain")
+        template(v-if="currentService.subdomain")
             .buttonWrap 
                 .refresh.clickable
                     .material-symbols-outlined.mid cached
@@ -36,9 +36,11 @@
         template(v-else)
             .create 
                 .tit Register Subdomain
-                .input 
-                    input(type="text" placeholder="Name of Subdomain")
-                    button Create
+                form.createForm
+                    .input 
+                        input(type="text" placeholder="Name of Subdomain")
+                    .btn
+                        button(type="submit") Create
     .container(v-if="!currentService.subdomain")
         .filesHeader
             .filesPathWrap
@@ -569,48 +571,56 @@ bodyClick.recordPage = () => {
                 font-weight: 700;
                 margin-bottom: 12px;
             }
-            .input {
-                position: relative;
+            .createForm {
                 height: 44px;
+                display: flex;
+                align-items: center;
                 
-                &::before {
-                    position: absolute;
-                    content: '';
+                .input {
+                    position: relative;
                     width: 600px;
-                    height: 100%;
-                    border-radius: 8px;
-                    background: rgba(0, 0, 0, 0.05);
-                    z-index: -1;
+                    margin-right: 20px;
+
+                    &::before {
+                        position: absolute;
+                        content: '';
+                        width: 100%;
+                        height: 100%;
+                        border-radius: 8px;
+                        background: rgba(0, 0, 0, 0.05);
+                        z-index: -1;
+                    }
+                    &::after {
+                        position: absolute;
+                        content: '.skapi.com';
+                        right: 13px;
+                        top: 50%;
+                        transform: translateY(-50%);
+                        font-size: 16px;
+                        font-weight: 400;
+                    }
+                    input {
+                        border: 0;
+                        width: calc(100% - 85px);
+                        height: 44px;
+                        padding: 13px;
+                        background-color: unset;
+                        font-size: 16px;
+                        font-weight: 400;
+                    }
                 }
-                &::after {
-                    position: absolute;
-                    content: '.skapi.com';
-                    left: 500px;
-                    top: 50%;
-                    transform: translateY(-50%);
-                    font-size: 16px;
-                    font-weight: 400;
-                }
-                input {
-                    border: 0;
-                    width: 480px;
-                    height: 44px;
-                    padding: 13px;
-                    margin-right: 140px;
-                    background-color: unset;
-                    font-size: 16px;
-                    font-weight: 400;
-                }
-                button {
-                    border: 0;
-                    padding: 0 28px;
-                    height: 44px;
-                    border-radius: 8px;
-                    color: #FFF;
-                    font-size: 16px;
-                    font-weight: 700;
-                    background: #293FE6;
-                    box-shadow: 0px -1px 1px 0px rgba(0, 0, 0, 0.15) inset;
+                .btn {
+                    button {
+                        border: 0;
+                        padding: 0 28px;
+                        height: 44px;
+                        border-radius: 8px;
+                        color: #FFF;
+                        font-size: 16px;
+                        font-weight: 700;
+                        background: #293FE6;
+                        box-shadow: 0px -1px 1px 0px rgba(0, 0, 0, 0.15) inset;
+                    }
                 }
             }
         }
