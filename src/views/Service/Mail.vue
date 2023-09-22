@@ -11,22 +11,26 @@
             a(href="https://docs.skapi.com" target="_blank") Documentation
         .email
             .tit 
-                .material-symbols-outlined.sml.clickable file_copy
+                .copy.clickable(@click="copy")
+                    .material-symbols-outlined.sml file_copy
                 span Welcome
             .cont ap22fAA39RwOW0KU6PUH-tp75497d34939ef12f87710de0e7bc66bd@mail.skapi.com
         .email
             .tit 
-                .material-symbols-outlined.sml.clickable file_copy
+                .copy.clickable(@click="copy")
+                    .material-symbols-outlined.sml file_copy
                 span Verification
             .cont ap22fAA39RwOW0KU6PUH-tp75497d34939ef12f87710de0e7bc66bd@mail.skapi.com
         .email
             .tit 
-                .material-symbols-outlined.sml.clickable file_copy 
+                .copy.clickable(@click="copy")
+                    .material-symbols-outlined.sml file_copy
                 span Signup Confirmation
             .cont ap22fAA39RwOW0KU6PUH-tp75497d34939ef12f87710de0e7bc66bd@mail.skapi.com
         .email
             .tit 
-                .material-symbols-outlined.sml.clickable file_copy
+                .copy.clickable(@click="copy")
+                    .material-symbols-outlined.sml file_copy
                 span Newsletter Subscription
             .cont ap22fAA39RwOW0KU6PUH-tp75497d34939ef12f87710de0e7bc66bd@mail.skapi.com
     .container
@@ -40,18 +44,33 @@
             a(href="https://docs.skapi.com" target="_blank") Documentation
         .email
             .tit 
-                .material-symbols-outlined.sml.clickable file_copy
+                .copy.clickable(@click="copy")
+                    .material-symbols-outlined.sml file_copy
                 span Public Newsletter
             .cont ap22fAA39RwOW0KU6PUH-tp75497d34939ef12f87710de0e7bc66bd@mail.skapi.com
         .email
             .tit 
-                .material-symbols-outlined.sml.clickable file_copy 
+                .copy.clickable(@click="copy")
+                    .material-symbols-outlined.sml file_copy 
                 span Service User Newsletter
             .cont ap22fAA39RwOW0KU6PUH-tp75497d34939ef12f87710de0e7bc66bd@mail.skapi.com
 </template>
 
 <script setup>
+let copy = (e) => {
+    let currentTarget = e.currentTarget;
+    let doc = document.createElement('textarea');
+    doc.textContent = currentTarget.parentNode.nextSibling.textContent;
+    document.body.append(doc);
+    doc.select();
+    document.execCommand('copy');
+    doc.remove();
 
+    currentTarget.classList.add('copied');
+    setTimeout(() => {
+        currentTarget.classList.remove('copied');
+    }, 1000);
+}
 </script>
 
 <style lang="less" scoped>
@@ -92,7 +111,6 @@
             .tit {
                 display: flex;
                 flex-wrap: nowrap;
-                align-items: center;
                 color: rgba(0,0,0,0.6);
                 margin-bottom: 12px;
                 font-size: 16px;
@@ -101,6 +119,28 @@
                 span {
                     margin-left: 16px;
                     vertical-align: middle;
+                }
+                .copy {
+                    position: relative;
+                    &::after {
+                        position: absolute;
+                        display: block;
+                        right: 25px;
+                        top: 10px;
+                        transform: translateY(-50%);
+                        text-align: center;
+                        font-size: 14px;
+                        font-weight: 400;
+                        color: rgba(0, 0, 0, 0.5);
+                        padding: 4px;
+                        content: "Copied";
+                        transition: opacity .4s;
+                        opacity: 0;
+                    }
+
+                    &.copied::after {
+                        opacity: 1;
+                    }
                 }
             }
             .cont {

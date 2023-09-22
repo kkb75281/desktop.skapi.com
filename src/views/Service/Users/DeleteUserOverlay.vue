@@ -64,7 +64,7 @@ let deleteUsers = () => {
 
     .title {
         position: relative;
-        color: #293FE6;
+        color: #F04E4E;
         font-size: 20px;
         font-weight: 700;
 

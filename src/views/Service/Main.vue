@@ -134,7 +134,7 @@ else {
 
 <style lang="less" scoped>
 .navSide {
-    position: fixed;
+    position: absolute;
     width: 240px;
     padding-left: 28px;
     left: 0;
@@ -168,7 +168,7 @@ else {
                 content: '';
                 width: 208px;
                 height: 56px;
-                left: -14px;
+                left: -12px;
                 top: 50%;
                 transform: translateY(-50%);
                 border-radius: 8px;

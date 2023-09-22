@@ -361,7 +361,7 @@
     }
     .joinWrap {
         width: 100%;
-        height: 500px;
+        height: max(300px ,39vw);
         margin-top: max(400px, 17vw);
         padding: 0;
         background-image: url(@/assets/img/background.svg);
@@ -475,6 +475,7 @@
             }
         }
         .joinWrap {
+            height: 500px;
             margin-top: 400px;
 
             h2 {
