@@ -1,55 +1,48 @@
 <template lang="pug">
-#recordData(@click="emits('close')")
+#recordData(@click="()=>{if(!editSelectedData) emits('close')}")
     .wrap(@click.stop)
-        template(v-if="selectedData && !editSelectedData")
+        template(v-if="editSelectedData")
+            // edit
+            .header 
+                h4(v-if='selectedData.tags') Tags
+                h4(v-else) {{ selectedData.type }} - {{ selectedData.key }}
+            .content 
+                TagsInput(v-if='selectedData.tags' :editTagsData = "selectedData.tags")
+                textarea#editData(v-else-if="selectedData.hasOwnProperty('context')" :value="selectedData.context" @input="heightControl")
+            .buttonWrap 
+                button.cancel(@click="emits('close')") Cancel
+                button.save Save
+        
+        template(v-else)
+            // view
             .header 
                 h4 {{ selectedData.type }} - {{ selectedData.key }}
-                .editWrap(v-if="selectedData.type == 'json'" @click="edit")
-                    .material-symbols-outlined.mid edit
-                    span edit
+                
+                // i don't see the need below...
+                //- .editWrap(v-if="selectedData.type == 'json'" @click="edit")
+                //-     .material-symbols-outlined.mid edit
+                //-     span edit
+
             .content {{ selectedData.context }}
-        template(v-else-if="editRecordData")
-            .header 
-                h4(v-if="editRecordData.type") {{ editRecordData.type }} - {{ editRecordData.key }}
-                h4(v-else) Tags
-            .content 
-                textarea#editData(v-if="editRecordData.context" :value="editRecordData.context" @input="heightControl")
-                TagsInput(v-else :editTagsData = "editTagsData")
-            .buttonWrap 
-                button.cancel(@click="emits('close')") Cancel
-                button.save Save
-        template(v-else-if="editSelectedData")
-            .header 
-                h4 {{ selectedData.type }} - {{ selectedData.key }}
-            .content 
-                textarea#editData(:value="selectedData.context" @input="heightControl")
-            .buttonWrap 
-                button.cancel(@click="emits('close')") Cancel
-                button.save Save
+
 </template>
 
 <script setup>
 import { nextTick, onMounted, ref } from 'vue';
 import TagsInput from '@/components/TagsInput.vue';
 
-let props = defineProps(['selectedData','editRecordData']);
-let emits = defineEmits(['close']);
-let editSelectedData = ref(false);
-let editTagsData = ref(!props.editRecordData?.type ? props.editRecordData : '');
+let { selectedData } = defineProps(['selectedData']);
+let editSelectedData = selectedData?.edit;
 
-let edit = async() => {
-    editSelectedData.value = true;
-    nextTick(() => {
-        document.getElementById('editData').focus();
-    })
-}
+let emits = defineEmits(['close']);
+
 let heightControl = (e) => {
     e.target.style.height = "auto";
     e.target.style.height = (e.target.scrollHeight) + "px";
 }
 
 onMounted(() => {
-    if(props.editRecordData?.type) {
+    if(editSelectedData) {
         document.getElementById('editData').focus();
     }
 })

@@ -171,7 +171,7 @@
                             .label Tags 
                             .value(style="width: calc(100% - 170px);")
                                 template(v-if="recordInfoEdit")
-                                    .tagsWrapper(@click="showTagData")
+                                    .tagsWrapper(@click="showRecordDataValue = selectedRecord?.tags ? {tag: selectedRecord?.tag, edit: recordInfoEdit} : null")
                                         template(v-if="selectedRecord?.tags")
                                             .tag(v-for="tag in selectedRecord?.tags") {{ tag }}
                                         template(v-else) -
@@ -190,10 +190,14 @@
                         .tit Key Name 
                         .tit Context
                     .content
-                        template(v-if="records_data.length")
+                        .noData(v-if="selectedRecord.data.hasOwnProperty('__is_private__')")
+                            .material-symbols-outlined.big scan_delete
+                            p Data is private
+                        template(v-else-if="records_data.length")
                             template(v-for="(data, index) in records_data" :key="index")
-                                template(v-if="records_data.length && !recordInfoEdit")
-                                    .row(@click="showData(index, data)" :class="{'disabled' : ['boolean', 'number', 'string'].includes(data.type), 'file': data.type == 'file'}")
+                                template(v-if="!recordInfoEdit")
+                                    // no edit
+                                    .row(@click="()=>{if(['string','json'].includes(data.type)) showRecordDataValue = data; }" :class="{'disabled' : ['boolean', 'number', 'string'].includes(data.type), 'file': data.type == 'file'}")
                                         .data {{ data.type }}
                                         .data
                                             .overflow(v-if="data?.key") {{ data.key }}
@@ -202,6 +206,7 @@
                                             .overflow {{ data.context }}
                                         .material-symbols-outlined.sml.download(v-if="data.type == 'file'") download
                                 template(v-else)
+                                    // edit
                                     .rowEdit
                                         .material-symbols-outlined.sml.minus(@click="removeField(index)") do_not_disturb_on
                                         select.type(:value="data.type" @change="(e) => selectType(e, data)")
@@ -212,7 +217,7 @@
                                             option(value="number") Number
                                         input.key(type="text" :value="data.key" :placeholder="`${data.key?data.key:'Key name'}`")
                                         template(v-if="data.type == 'json'")
-                                            .context.click(@click="showData(index, data)")
+                                            .context.click(@click="showRecordDataValue = Object.assign(data, {edit: true})")
                                                 .overflow {{ data.context }}
                                         template(v-else-if="data.type == 'boolean'")
                                             select.context(:value="data.context" @change="(e) => data.context = e.target.value")
@@ -231,7 +236,7 @@
                             .noData(v-if="!recordInfoEdit")
                                 .material-symbols-outlined.big scan_delete
                                 p No data
-                        .addDataRow(v-if="recordInfoEdit" @click="addField")  
+                        .addDataRow(v-if="!selectedRecord.data.hasOwnProperty('__is_private__') && recordInfoEdit" @click="addField")  
                             .material-symbols-outlined.sml add_circle
                             span Add data
 
@@ -252,7 +257,7 @@
                     button.save
                         .material-symbols-outlined.mid(v-if="isSmallScreen") check
                         span(v-else) Save
-            form.createForm(v-else-if="createRecordForm" @submit.prevent="createRecordData")
+            // form.createForm(v-else-if="createRecordForm" @submit.prevent="createRecordData")
                 .recordInfo 
                     .header
                         .tit Create Record
@@ -355,7 +360,7 @@
                         .setting(@click="()=>{showDeleteRecord=true; showRecordSetting=false;}")
                             .material-symbols-outlined.mid delete
                             span delete
-                button.create(@click="viewRecordCheck") create record
+                button.create(@click="selectedRecord = JSON.parse(JSON.stringify(createRecord))") create record
             .pagenator 
                 .material-symbols-outlined.sml.prevPage.clickable(:class='{"nonClickable": currentPage === 1 || fetching }' @click='e=>{currentPage--; nextTick(selectNone)}') arrow_back_ios
                 .material-symbols-outlined.sml.nextPage.clickable(:class='{"nonClickable": maxPage <= currentPage && recordPage?.endOfList || fetching }' @click='nextPage') arrow_forward_ios
@@ -436,7 +441,8 @@
                     .material-symbols-outlined.big search
                     h2 No Records Found
                 p There was no record matching query
-    RecordDataOverlay(v-if="showRecordData" @close="showRecordData = false;" :selectedData="selectedData" :editRecordData="editRecordData")
+    // RecordDataOverlay(v-if="showRecordData" @close="showRecordData = false;" :selectedData="selectedData" :editRecordData="editRecordData")
+    RecordDataOverlay(v-if="showRecordDataValue" @close="showRecordDataValue = null" :selectedData="showRecordDataValue")
     DeleteRecordOverlay(v-if="showDeleteRecord" @close="showDeleteRecord = false;" :checkedRecords='checkedRecords')
 </template>
 
@@ -613,7 +619,8 @@ let handleIndexTypeChange = (e) => {
 }
 // record page -end-
 
-let showRecordData = ref(false);
+// let showRecordData = ref(false);
+let showRecordDataValue = ref(null);
 let showDeleteRecord = ref(false);
 let showRecordSetting = ref(false);
 let showEdit = ref(false);
@@ -622,7 +629,7 @@ let hiddenTags = ref(false);
 let searchText = ref('');
 let recordInfoEdit = ref(false);
 
-let createRecordForm = ref(false);
+// let createRecordForm = ref(false);
 let advancedForm = ref({
     access_group: 0,
     table: undefined,
@@ -635,25 +642,19 @@ let advancedForm = ref({
     tag: undefined,
     reference: undefined
 })
-let createRecord = ref({
+
+let createRecord = {
     table: {
         name: '',
-        access_group: '',
-    },
-    index: {
-        name: '',
-        value: '',
-    },
-    reference: {
-        allow_multiple_reference: '',
-        reference_limit: ''
+        access_group: 0,
     },
     tags: []
-});
-let dataList = ref([]);
+};
+
+// let dataList = ref([]);
 let checkedRecords = ref([]);
-let selectedData = ref(null);
-let editRecordData = ref(null);
+// let selectedData = ref(null);
+// let editRecordData = ref(null);
 let firstInput = ref('');
 let indexValueType = ref('string');
 let selectedOption = ref('table');
@@ -758,36 +759,37 @@ let dataTrCount = computed(() => {
     return Math.max(0, maxTrCount - records_data.value.length);
 });
 let showRecordInfo = (record) => {
-    createRecordForm.value = false;
+    // createRecordForm.value = false;
+    recordInfoEdit.value = false;
     // copy original data to break object reference
     selectedRecord.value = selectedRecord?.record_id === record.record_id ? null : JSON.parse(JSON.stringify(record));
     hiddenTags.value = false;
 }
-let viewRecordCheck = () => {
-    selectedRecord.value = null;
-    dataList.value = [];
-    createRecordForm.value = true;
-}
-let showTagData = () => {
-    if (selectedRecord.value.tags) {
-        editRecordData.value = selectedRecord.value.tags;
-    } else {
-        editRecordData.value = '';
-    }
-    showRecordData.value = true;
-}
-let showData = (index, data) => {
-    if (data?.type !== 'boolean' && data?.type !== 'file') {
-        if (recordInfoEdit.value) {
-            editRecordData.value = data;
-            selectedData.value = null;
-        } else {
-            editRecordData.value = null;
-            selectedData.value = records_data.value[index];
-        }
-        showRecordData.value = true;
-    }
-}
+// let viewRecordCheck = () => {
+//     selectedRecord.value = null;
+//     // dataList.value = [];
+//     // createRecordForm.value = true;
+// }
+// let showTagData = () => {
+//     if (selectedRecord.value.tags) {
+//         editRecordData.value = selectedRecord.value.tags;
+//     } else {
+//         editRecordData.value = '';
+//     }
+//     showRecordData.value = true;
+// }
+// let showData = (index, data) => {
+//     if (data?.type !== 'boolean' && data?.type !== 'file') {
+//         if (recordInfoEdit.value) {
+//             editRecordData.value = data;
+//             selectedData.value = null;
+//         } else {
+//             editRecordData.value = null;
+//             selectedData.value = records_data.value[index];
+//         }
+//         showRecordData.value = true;
+//     }
+// }
 let showHidden = (e) => {
     if (e.currentTarget.classList.contains('tagsWrapper')) {
         if (hiddenTags.value) {
@@ -937,8 +939,14 @@ let showPreview = (e, index) => {
                 child[1].parentNode.classList.add('active');
                 child[1].classList.add('active');
             }
+        } else if (e.target.classList.contains('public')) {
+            child = target.querySelectorAll(".public");
+            if (child.length > 1) {
+                child[1].parentNode.classList.add('active');
+                child[1].classList.add('active');
+            }
         } else {
-            child = target.querySelectorAll(".registered");
+            child = target.querySelectorAll(".authorized");
             if (child.length > 1) {
                 child[1].parentNode.classList.add('active');
                 child[1].classList.add('active');
@@ -978,8 +986,14 @@ let hidePreview = (e, index) => {
                 child[1].parentNode.classList.remove('active');
                 child[1].classList.remove('active');
             }
+        } else if (e.target.classList.contains('public')) {
+            child = target.querySelectorAll(".public");
+            if (child.length > 1) {
+                child[1].parentNode.classList.remove('active');
+                child[1].classList.remove('active');
+            }
         } else {
-            child = target.querySelectorAll(".registered");
+            child = target.querySelectorAll(".authorized");
             if (child.length > 1) {
                 child[1].parentNode.classList.remove('active');
                 child[1].classList.remove('active');
