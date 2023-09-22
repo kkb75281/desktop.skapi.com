@@ -21,7 +21,7 @@
                         .label Access Group
                         .radioFormWrap
                             .customSelect
-                                select
+                                select(name='access_group' @change="e => advancedForm.access_group = e.target.value")
                                     option(value="1") All
                                     option(value="0") Public
                                     option(value="private") Private
@@ -29,29 +29,38 @@
                     .condition 
                         .label Reference ID
                         .textFormWrap
-                            input(type="text" name='reference')
+                            input(type="text" name='reference' @change="e => advancedForm.reference = e.target.value")
                     .condition 
                         .label Subscription
                         .textFormWrap
-                            input(type="text" name='reference')
+                            input(type="text" name='subscription' @change="e => advancedForm.subscription = e.target.value")
                     .condition 
                         .label Tag
                         .textFormWrap
-                            input(type="text" name='reference')
+                            input(type="text" name='tag' @change="e => advancedForm.tag = e.target.value")
                 .right
                     .title Index
                     .condition 
                         .label Name
                         .textFormWrap
-                            input(type="text" name='reference' v-model="firstInput")
+                            input(type="text" name='index_name' v-model="firstInput" @change="e => advancedForm.index_name = e.target.value")
                     .condition 
                         .label(:class="{'disabled': !firstInput}") Value Type
                         .textFormWrap
-                            input(type="text" name='reference' :disabled="!firstInput")
+                            input(type="text" name='index_type' :disabled="!firstInput" @change="e => advancedForm.index_type = e.target.value")
                     .condition 
                         .label(:class="{'disabled': !firstInput}") Index Value
-                        .textFormWrap
-                            input(type="text" name='reference' :disabled="!firstInput")
+                        .textFormWrap.indexValue(:class="{'disabled' : !firstInput}")
+                            input(type="text" name='index_value' :disabled="!firstInput" @change="e => advancedForm.index_value = e.target.value")
+                            .customSelect
+                                select(name="index_condition" :disabled="!firstInput" @change="e => advancedForm.index_condition = e.target.value")
+                                    option(disabled) Condition
+                                    option(value=">=") &gt;=
+                                    option(value=">") &gt;
+                                    option(value="=" selected) =
+                                    option(value="<") &lt;
+                                    option(value="<=") &lt;=
+                                .material-symbols-outlined.mid.selectArrowDown arrow_drop_down
                 .buttonWrap 
                     input.clear(type="reset" value="Clear filter" @click="clearSearchFilter")
                     button.search(type="submit") Search
@@ -111,7 +120,7 @@
                                         template(v-else) {{ selectedRecord?.index?.name }}
                                 .smallInfo 
                                     .smallLabel Value 
-                                    .smallValue 
+                                    .smallValue(:class="{'indexValue' : !recordInfoEdit}")
                                         .typeValue(v-if="recordInfoEdit" :class="{ nonClickable: !selectedRecord?.index?.name }" :style='{opacity: selectedRecord?.index?.name ? 1 : 0.5}')
                                             select(
                                                 :value="indexValueType"
@@ -162,7 +171,7 @@
                             .label Tags 
                             .value(style="width: calc(100% - 170px);")
                                 template(v-if="recordInfoEdit")
-                                    .tagsWrapper(@click="showData")
+                                    .tagsWrapper(@click="showTagData")
                                         template(v-if="selectedRecord?.tags")
                                             .tag(v-for="tag in selectedRecord?.tags") {{ tag }}
                                         template(v-else) -
@@ -184,7 +193,7 @@
                         template(v-if="records_data.length")
                             template(v-for="(data, index) in records_data" :key="index")
                                 template(v-if="records_data.length && !recordInfoEdit")
-                                    .row(@click="showData(index, data)" :class="{'boolean' : data.type == 'boolean', 'file': data.type == 'file'}")
+                                    .row(@click="showData(index, data)" :class="{'disabled' : ['boolean', 'number', 'string'].includes(data.type), 'file': data.type == 'file'}")
                                         .data {{ data.type }}
                                         .data
                                             .overflow(v-if="data?.key") {{ data.key }}
@@ -203,7 +212,7 @@
                                             option(value="number") Number
                                         input.key(type="text" :value="data.key" :placeholder="`${data.key?data.key:'Key name'}`")
                                         template(v-if="data.type == 'json'")
-                                            .context.click(@click="showRecordData(index, data)")
+                                            .context.click(@click="showData(index, data)")
                                                 .overflow {{ data.context }}
                                         template(v-else-if="data.type == 'boolean'")
                                             select.context(:value="data.context" @change="(e) => data.context = e.target.value")
@@ -236,13 +245,13 @@
                         .editMenu(@click="recordDelete")
                             .material-symbols-outlined.mid delete
                             span delete  
-                .editBtnWrap(v-if="recordInfoEdit") 
+                .editBtnWrap(v-if="recordInfoEdit" :class="{'smallver' : isSmallScreen}") 
                     button.cancel(@click="recordInfoEdit = false; selectedRecord = serviceRecords[serviceId].list[selectedRecord.record_id]")
-                        .material-symbols-outlined.mid close
+                        .material-symbols-outlined.mid(v-if="isSmallScreen") close
+                        span(v-else) Cancel
                     button.save
-                        .material-symbols-outlined.mid check
-
-            // create record
+                        .material-symbols-outlined.mid(v-if="isSmallScreen") check
+                        span(v-else) Save
             form.createForm(v-else-if="createRecordForm" @submit.prevent="createRecordData")
                 .recordInfo 
                     .header
@@ -296,7 +305,7 @@
                         .info 
                             .label Tags 
                             .value 
-                                input(type="text" @click="enterTags")
+                                TagsInput(@change="(value) => createRecord.tags = value")
                 .recordData
                     .header
                     .content
@@ -325,11 +334,13 @@
                         .addDataRow(@click="createAddField")  
                             .material-symbols-outlined.sml add_circle
                             span Add data
-                .editBtnWrap
+                .editBtnWrap(:class="{'smallver' : isSmallScreen}")
                     button.cancel(type="button" @click="createRecordForm = false;")
-                        .material-symbols-outlined.mid close
+                        .material-symbols-outlined.mid(v-if="isSmallScreen") close
+                        span(v-else) Cancel
                     button.save(type="submit")
-                        .material-symbols-outlined.mid check
+                        .material-symbols-outlined.mid(v-if="isSmallScreen") check
+                        span(v-else) Save
 
             // empty
             .noSelect(v-else) No record selected
@@ -396,16 +407,22 @@
                             .overflow {{ record.user_id }}
                         td {{ timeSince(record.uploaded) }}
                         td.center
-                            .material-symbols-outlined.mid(v-if="record.table.access_group == 'private'") vpn_key
-                            .material-symbols-outlined.mid(v-else-if="record.table.access_group > 0") person
-                            .material-symbols-outlined.mid(v-else-if="record.table.access_group === 0") language
+                            .accessWrap
+                                .material-symbols-outlined.mid.private(v-if="record.table.access_group == 'private'" @mouseenter="(e) => showPreview(e, index)" @mouseleave="(e) => hidePreview(e, index)") vpn_key
+                                .material-symbols-outlined.mid.authorized(v-else-if="record.table.access_group > 0" @mouseenter="(e) => showPreview(e, index)" @mouseleave="(e) => hidePreview(e, index)") person
+                                .material-symbols-outlined.mid.public(v-else-if="record.table.access_group === 0" @mouseenter="(e) => showPreview(e, index)" @mouseleave="(e) => hidePreview(e, index)") language
+                            .accessPreview
+                                .preview 
+                                    .private(v-if="record.table.access_group == 'private'") Private
+                                    .authorized(v-else-if="record.table.access_group > 0") Authorized
+                                    .public(v-else) Public
                         td.center
                             .featureWrap
                                 // [TIP] you can use css hover for this. ex) .relativePositionedParent:hover > .elToShow { display: block; }
                                 .feature.tag(:class="{'active': record?.tags}" @mouseenter="(e) => showPreview(e, index)" @mouseleave="(e) => hidePreview(e, index)") Tags
                                 .feature.index(:class="{'active': record?.index}" @mouseenter="(e) => showPreview(e, index)" @mouseleave="(e) => hidePreview(e, index)") Index
                                 .feature.ref(:class="{'active': record?.reference?.record_id}" @mouseenter="(e) => showPreview(e, index)" @mouseleave="(e) => hidePreview(e, index)") Ref
-                            .previewWrap
+                            .featurePreview
                                 .preview
                                     .tag(v-if="record?.tags") "{{ record.tags.join('", "') }}"
                                     .index(v-if="record?.index") "{{ record.index.name }}": {{ record.index.value }}
@@ -425,12 +442,12 @@
 
 <script setup>
 import { bodyClick } from '@/main.js';
-import { computed, nextTick, ref, watch } from 'vue';
+import { computed, nextTick, onBeforeMount, onBeforeUnmount, ref, watch } from 'vue';
 import { serviceRecords, currentService } from '@/data.js';
 import { skapi } from '@/main.js'
 import RecordDataOverlay from '@/views/Service/Records/RecordDataOverlay.vue';
 import DeleteRecordOverlay from '@/views/Service/Records/DeleteRecordOverlay.vue';
-// import TagsInput from '@/components/TagsInput.vue';
+import TagsInput from '@/components/TagsInput.vue';
 
 // record page -start-
 
@@ -606,6 +623,18 @@ let searchText = ref('');
 let recordInfoEdit = ref(false);
 
 let createRecordForm = ref(false);
+let advancedForm = ref({
+    access_group: 0,
+    table: undefined,
+    subscription: null,
+    index_type: 'string',
+    index_name: undefined,
+    index_name: undefined,
+    index_value: undefined,
+    index_condition: '=',
+    tag: undefined,
+    reference: undefined
+})
 let createRecord = ref({
     table: {
         name: '',
@@ -628,6 +657,7 @@ let editRecordData = ref(null);
 let firstInput = ref('');
 let indexValueType = ref('string');
 let selectedOption = ref('table');
+let isSmallScreen = ref(window.innerWidth < 1200)
 let maxTrCount = 10;
 
 let records_data = ref([]);
@@ -729,6 +759,14 @@ let viewRecordCheck = () => {
     selectedRecord.value = null;
     dataList.value = [];
     createRecordForm.value = true;
+}
+let showTagData = () => {
+    if(selectedRecord.value.tags) {
+        editRecordData.value = selectedRecord.value.tags;
+    } else {
+        editRecordData.value = '';
+    }
+    showRecordData.value = true;
 }
 let showData = (index, data) => {
     if (data?.type !== 'boolean' && data?.type !== 'file') {
@@ -878,11 +916,23 @@ let showPreview = (e, index) => {
                 child[1].parentNode.classList.add('sec');
                 child[1].classList.add('active');
             }
-        } else {
+        } else if(e.target.classList.contains('ref')) {
             child = target.querySelectorAll(".ref");
             if (child.length > 1) {
                 child[1].parentNode.classList.add('active');
                 child[1].parentNode.classList.add('last');
+                child[1].classList.add('active');
+            }
+        } else if(e.target.classList.contains('private')) {
+            child = target.querySelectorAll(".private");
+            if(child.length > 1) { 
+                child[1].parentNode.classList.add('active');
+                child[1].classList.add('active');
+            }
+        } else {
+            child = target.querySelectorAll(".registered");
+            if(child.length > 1) { 
+                child[1].parentNode.classList.add('active');
                 child[1].classList.add('active');
             }
         }
@@ -907,16 +957,39 @@ let hidePreview = (e, index) => {
                 child[1].parentNode.classList.remove('sec');
                 child[1].classList.remove('active');
             }
-        } else {
+        } else if(e.target.classList.contains('ref')) {
             child = target.querySelectorAll(".ref");
             if (child.length > 1) {
                 child[1].parentNode.classList.remove('active');
                 child[1].parentNode.classList.remove('last');
                 child[1].classList.remove('active');
             }
+        } else if(e.target.classList.contains('private')) {
+            child = target.querySelectorAll(".private");
+            if(child.length > 1) { 
+                child[1].parentNode.classList.remove('active');
+                child[1].classList.remove('active');
+            }
+        } else {
+            child = target.querySelectorAll(".registered");
+            if(child.length > 1) { 
+                child[1].parentNode.classList.remove('active');
+                child[1].classList.remove('active');
+            }
         }
     })
 }
+let handleResize = () => {
+    isSmallScreen.value = window.innerWidth < 1200;
+};
+
+onMounted(() => {
+    window.addEventListener('resize', handleResize);
+});
+onBeforeUnmount(() => {
+    window.removeEventListener('resize', handleResize);
+});
+
 bodyClick.recordPage = () => {
     showRecordSetting.value = false;
     showEdit.value = false;
@@ -1064,9 +1137,51 @@ bodyClick.recordPage = () => {
                 input:disabled {
                     border-bottom: 1px solid rgba(0, 0, 0, 0.10);
                 }
+                &.indexValue {         
+                    position: relative;
+
+                    &::after {
+                        position: absolute;
+                        content: '';
+                        right: 70px;
+                        top: 50%;
+                        transform: translateY(-50%);
+                        width: 1px;
+                        height: 60%;
+                        background-color: #000;
+                    }
+                    &.disabled {
+                        &::after {
+                            background-color: rgba(0, 0, 0, 0.10);
+                        }
+                        .customSelect {
+                            .selectArrowDown {
+                                color: rgba(0, 0, 0, 0.25);
+                            }
+                        }
+                    }
+                    input {
+                        padding-right: 80px;
+                    }
+                    .customSelect {
+                        position: absolute;
+                        right: 0;
+                        top: 45%;
+                        transform: translateY(-50%);
+                        width: 66px;
+                        
+                        select {
+                            border: 0;
+                            padding-left: 20px;
+                            background-color: unset;
+                        }
+                        .selectArrowDown {
+                            right: 0;
+                        }
+                    }
+                }
             }
         }
-
         .buttonWrap {
             text-align: right;
 
@@ -1132,10 +1247,6 @@ bodyClick.recordPage = () => {
                         padding-left: 0;
                     }
                 }
-
-                // .content {
-                //     padding-top: 12px;
-                // }
             }
 
             .menu {
@@ -1149,8 +1260,14 @@ bodyClick.recordPage = () => {
             .editBtnWrap {
                 position: absolute;
                 right: 20px;
-                top: 8px;
-
+                top: 10px;
+                
+                &.smallver {
+                    top: 8px;
+                    .cancel {
+                        margin-right: 6px;
+                    }
+                }
                 button {
                     font-size: 16px;
                     font-weight: 700;
@@ -1160,7 +1277,7 @@ bodyClick.recordPage = () => {
 
                     &.cancel {
                         color: rgba(0, 0, 0, 0.80);
-                        margin-right: 6px;
+                        margin-right: 20px;
                     }
 
                     &.save {
@@ -1365,9 +1482,8 @@ bodyClick.recordPage = () => {
                     .value {
                         width: calc(100% - 150px);
 
-                        input,
-                        select {
-                            width: calc(100% - 20px);
+                        input, select {
+                            width: 100%;
                         }
                     }
 
@@ -1437,14 +1553,15 @@ bodyClick.recordPage = () => {
                     .smallValue {
                         width: calc(100% - 140px);
 
-                        input,
-                        select {
-                            width: calc(100% - 30px);
+                        input, select {
+                            width: 100%;
+                        }
+                        &.indexValue {
+                            width: calc(100% - 200px);
                         }
                     }
-
                     .typeValue {
-                        width: calc(100% - 30px);
+                        width: calc(100% - 10px);
                         border-bottom: 1px solid rgba(0, 0, 0, 0.80);
 
                         input {
@@ -1485,8 +1602,7 @@ bodyClick.recordPage = () => {
                     &.empty:hover {
                         cursor: default;
                     }
-
-                    &.boolean:hover {
+                    &.disabled:hover {
                         color: rgba(0, 0, 0, 0.40);
                         font-weight: 500;
                         cursor: default;
@@ -1910,8 +2026,12 @@ bodyClick.recordPage = () => {
 
             td {
                 position: relative;
-
-                .previewWrap {
+                .accessWrap {
+                    * {
+                        cursor: pointer;
+                    }
+                }
+                .featurePreview, .accessPreview {
                     position: absolute;
                     left: 0;
                     top: -33px;
@@ -1931,7 +2051,7 @@ bodyClick.recordPage = () => {
                         &::after {
                             position: absolute;
                             content: '';
-                            left: 45px;
+                            left: 2vw;
                             top: 50%;
                             border-top: 20px solid transparent;
                             border-right: 20px solid transparent;
@@ -1959,6 +2079,7 @@ bodyClick.recordPage = () => {
                             width: 150px;
                             line-height: 44px;
                             white-space: nowrap;
+                            text-overflow: ellipsis;
                             overflow: hidden;
                             display: none;
 
@@ -1968,10 +2089,18 @@ bodyClick.recordPage = () => {
                         }
                     }
                 }
+                .accessPreview {
+                    .preview {
+                        &::after {
+                            left: 50%;
+                        }
+                        div {
+                            width: 100px;
+                        }
+                    }
+                }
             }
-
-            td,
-            th {
+            td, th {
                 &.center {
                     text-align: center;
                 }

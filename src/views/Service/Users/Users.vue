@@ -154,7 +154,7 @@
                             | Date Created
                             .resizer(@mousedown="mousedown")
                 tbody(v-if="users && users.length")
-                    tr(v-for="(user, index) in users" :key="index")
+                    tr(v-for="(user, index) in users" :key="index" @click="userCheckConfirm(user)")
                         td(style="min-width:20px")
                             .customCheckBox
                                 input(type="checkbox" name="user" :id="user.user_id" @change='trackSelectedUsers' :value="user.user_id")
@@ -389,6 +389,15 @@ let trackSelectedUsers = () => {
         }
     })
     checkedUsers.value = checked;
+}
+let userCheckConfirm = (user) => {
+    let targetInput = document.getElementById(user.user_id);
+    if(targetInput.checked) {
+        targetInput.checked = false;
+    } else {
+        targetInput.checked = true;
+    }
+    trackSelectedUsers();
 }
 let userBlock = async (blockedUsers) => {
     showBlockUser.value = false;
@@ -701,8 +710,9 @@ onMounted(() => {
 
                 .nest {
                     position: absolute;
-                    right: -100px;
+                    right: -120px;
                     bottom: -162px;
+                    width: 144px;
                     padding: 20px;
                     border-radius: 8px;
                     border: 1px solid rgba(0, 0, 0, 0.15);
@@ -719,7 +729,11 @@ onMounted(() => {
                         &:last-child {
                             margin-bottom: 0;
                         }
-
+                        &:hover {
+                            span {
+                                font-weight: 700;
+                            }
+                        }
                         span {
                             margin-left: 12px;
                         }
@@ -857,6 +871,9 @@ onMounted(() => {
             tbody {
                 font-weight: 400;
 
+                tr {
+                    cursor: pointer;
+                }
                 td {
                     position: relative;
                     height: 60px;
