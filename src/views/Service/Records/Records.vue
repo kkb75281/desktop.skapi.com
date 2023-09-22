@@ -442,7 +442,7 @@
 
 <script setup>
 import { bodyClick } from '@/main.js';
-import { computed, nextTick, onBeforeMount, onBeforeUnmount, ref, watch } from 'vue';
+import { computed, nextTick, onBeforeUnmount, onMounted, ref, watch } from 'vue';
 import { serviceRecords, currentService } from '@/data.js';
 import { skapi } from '@/main.js'
 import RecordDataOverlay from '@/views/Service/Records/RecordDataOverlay.vue';
@@ -670,74 +670,82 @@ watch(selectedRecord, (newVal) => {
         if (!newVal.data || !Object.keys(newVal.data).length) {
             return;
         }
-
-        for (let d in newVal.data) {
-            let data = newVal.data[d];
-            switch (typeof data) {
-                case 'object':
-                    if (Array.isArray(data)) {
-                        let nonFile = [];
-                        for (let i of data) {
-                            if (i.__file_id__ && i.filename && i.md5 && i.url) {
-                                // files in array
+        if (newVal.data.hasOwnProperty('__is_private__')) {
+            records_data.value.push({
+                type: 'string',
+                key: '__is_private__',
+                context: ''
+            })
+        }
+        else {
+            for (let d in newVal.data) {
+                let data = newVal.data[d];
+                switch (typeof data) {
+                    case 'object':
+                        if (Array.isArray(data)) {
+                            let nonFile = [];
+                            for (let i of data) {
+                                if (i.__file_id__ && i.filename && i.md5 && i.url) {
+                                    // files in array
+                                    records_data.value.push({
+                                        type: 'file',
+                                        key: d,
+                                        context: i.filename
+                                    });
+                                }
+                                else {
+                                    nonFile.push(i);
+                                }
+                            }
+                            if (nonFile.length) {
+                                // non file in array
+                                records_data.value.push({
+                                    type: 'json',
+                                    key: d,
+                                    context: JSON.stringify(nonFile)
+                                })
+                            }
+                        } else {
+                            if (data.__file_id__ && data.filename && data.md5 && data.url) {
+                                // single file object
                                 records_data.value.push({
                                     type: 'file',
                                     key: d,
-                                    context: i.filename
+                                    context: data.filename
                                 });
                             }
                             else {
-                                nonFile.push(i);
+                                // object
+                                records_data.value.push({
+                                    type: 'json',
+                                    key: d,
+                                    context: JSON.stringify(data)
+                                })
                             }
                         }
-                        if (nonFile.length) {
-                            // non file in array
-                            records_data.value.push({
-                                type: 'json',
-                                key: d,
-                                context: JSON.stringify(nonFile)
-                            })
-                        }
-                    } else {
-                        if (data.__file_id__ && data.filename && data.md5 && data.url) {
-                            // single file object
-                            records_data.value.push({
-                                type: 'file',
-                                key: d,
-                                context: data.filename
-                            });
-                        }
-                        else {
-                            // object
-                            records_data.value.push({
-                                type: 'json',
-                                key: d,
-                                context: JSON.stringify(data)
-                            })
-                        }
-                    }
-                    break;
-                case 'string':
-                    records_data.value.push({
-                        type: 'string',
-                        key: d,
-                        context: data
-                    })
-                    break;
-                case 'boolean':
-                    records_data.value.push({
-                        type: 'boolean',
-                        key: d,
-                        context: data.toString()
-                    })
-                    break;
-                case 'number':
-                    records_data.value.push({
-                        type: 'number',
-                        key: d,
-                        context: data.toString()
-                    })
-                    break;
+                        break;
+                    case 'string':
+                        records_data.value.push({
+                            type: 'string',
+                            key: d,
+                            context: data
+                        })
+                        break;
+                    case 'boolean':
+                        records_data.value.push({
+                            type: 'boolean',
+                            key: d,
+                            context: data.toString()
+                        })
+                        break;
+                    case 'number':
+                        records_data.value.push({
+                            type: 'number',
+                            key: d,
+                            context: data.toString()
+                        })
+                        break;
+                }
             }
         }
     }
@@ -761,7 +769,7 @@ let viewRecordCheck = () => {
     createRecordForm.value = true;
 }
 let showTagData = () => {
-    if(selectedRecord.value.tags) {
+    if (selectedRecord.value.tags) {
         editRecordData.value = selectedRecord.value.tags;
     } else {
         editRecordData.value = '';
@@ -916,22 +924,22 @@ let showPreview = (e, index) => {
                 child[1].parentNode.classList.add('sec');
                 child[1].classList.add('active');
             }
-        } else if(e.target.classList.contains('ref')) {
+        } else if (e.target.classList.contains('ref')) {
             child = target.querySelectorAll(".ref");
             if (child.length > 1) {
                 child[1].parentNode.classList.add('active');
                 child[1].parentNode.classList.add('last');
                 child[1].classList.add('active');
             }
-        } else if(e.target.classList.contains('private')) {
+        } else if (e.target.classList.contains('private')) {
             child = target.querySelectorAll(".private");
-            if(child.length > 1) { 
+            if (child.length > 1) {
                 child[1].parentNode.classList.add('active');
                 child[1].classList.add('active');
             }
         } else {
             child = target.querySelectorAll(".registered");
-            if(child.length > 1) { 
+            if (child.length > 1) {
                 child[1].parentNode.classList.add('active');
                 child[1].classList.add('active');
             }
@@ -957,22 +965,22 @@ let hidePreview = (e, index) => {
                 child[1].parentNode.classList.remove('sec');
                 child[1].classList.remove('active');
             }
-        } else if(e.target.classList.contains('ref')) {
+        } else if (e.target.classList.contains('ref')) {
             child = target.querySelectorAll(".ref");
             if (child.length > 1) {
                 child[1].parentNode.classList.remove('active');
                 child[1].parentNode.classList.remove('last');
                 child[1].classList.remove('active');
             }
-        } else if(e.target.classList.contains('private')) {
+        } else if (e.target.classList.contains('private')) {
             child = target.querySelectorAll(".private");
-            if(child.length > 1) { 
+            if (child.length > 1) {
                 child[1].parentNode.classList.remove('active');
                 child[1].classList.remove('active');
             }
         } else {
             child = target.querySelectorAll(".registered");
-            if(child.length > 1) { 
+            if (child.length > 1) {
                 child[1].parentNode.classList.remove('active');
                 child[1].classList.remove('active');
             }
@@ -1137,7 +1145,8 @@ bodyClick.recordPage = () => {
                 input:disabled {
                     border-bottom: 1px solid rgba(0, 0, 0, 0.10);
                 }
-                &.indexValue {         
+
+                &.indexValue {
                     position: relative;
 
                     &::after {
@@ -1150,31 +1159,36 @@ bodyClick.recordPage = () => {
                         height: 60%;
                         background-color: #000;
                     }
+
                     &.disabled {
                         &::after {
                             background-color: rgba(0, 0, 0, 0.10);
                         }
+
                         .customSelect {
                             .selectArrowDown {
                                 color: rgba(0, 0, 0, 0.25);
                             }
                         }
                     }
+
                     input {
                         padding-right: 80px;
                     }
+
                     .customSelect {
                         position: absolute;
                         right: 0;
                         top: 45%;
                         transform: translateY(-50%);
                         width: 66px;
-                        
+
                         select {
                             border: 0;
                             padding-left: 20px;
                             background-color: unset;
                         }
+
                         .selectArrowDown {
                             right: 0;
                         }
@@ -1182,6 +1196,7 @@ bodyClick.recordPage = () => {
                 }
             }
         }
+
         .buttonWrap {
             text-align: right;
 
@@ -1261,13 +1276,15 @@ bodyClick.recordPage = () => {
                 position: absolute;
                 right: 20px;
                 top: 10px;
-                
+
                 &.smallver {
                     top: 8px;
+
                     .cancel {
                         margin-right: 6px;
                     }
                 }
+
                 button {
                     font-size: 16px;
                     font-weight: 700;
@@ -1482,7 +1499,8 @@ bodyClick.recordPage = () => {
                     .value {
                         width: calc(100% - 150px);
 
-                        input, select {
+                        input,
+                        select {
                             width: 100%;
                         }
                     }
@@ -1547,21 +1565,26 @@ bodyClick.recordPage = () => {
                     .smallLabel {
                         width: 140px;
                         font-weight: 400;
-                        margin-left: 10px;
+                        // margin-left: 10px; // margin-left effects 100% width to overflow the parent
+                        padding-left: 10px;
                     }
 
                     .smallValue {
                         width: calc(100% - 140px);
 
-                        input, select {
+                        input,
+                        select {
                             width: 100%;
                         }
+
                         &.indexValue {
                             width: calc(100% - 200px);
                         }
                     }
+
                     .typeValue {
-                        width: calc(100% - 10px);
+                        // width: calc(100% - 10px);
+                        width: 100%; // <- to compensate margin-left changed to padding-left. (ref: line 1550)
                         border-bottom: 1px solid rgba(0, 0, 0, 0.80);
 
                         input {
@@ -1602,6 +1625,7 @@ bodyClick.recordPage = () => {
                     &.empty:hover {
                         cursor: default;
                     }
+
                     &.disabled:hover {
                         color: rgba(0, 0, 0, 0.40);
                         font-weight: 500;
@@ -2026,12 +2050,15 @@ bodyClick.recordPage = () => {
 
             td {
                 position: relative;
+
                 .accessWrap {
                     * {
                         cursor: pointer;
                     }
                 }
-                .featurePreview, .accessPreview {
+
+                .featurePreview,
+                .accessPreview {
                     position: absolute;
                     left: 0;
                     top: -33px;
@@ -2089,18 +2116,22 @@ bodyClick.recordPage = () => {
                         }
                     }
                 }
+
                 .accessPreview {
                     .preview {
                         &::after {
                             left: 50%;
                         }
+
                         div {
                             width: 100px;
                         }
                     }
                 }
             }
-            td, th {
+
+            td,
+            th {
                 &.center {
                     text-align: center;
                 }

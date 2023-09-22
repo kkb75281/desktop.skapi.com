@@ -35,7 +35,7 @@ import TagsInput from '@/components/TagsInput.vue';
 let props = defineProps(['selectedData','editRecordData']);
 let emits = defineEmits(['close']);
 let editSelectedData = ref(false);
-let editTagsData = ref(!props.editRecordData.type ? props.editRecordData : '');
+let editTagsData = ref(!props.editRecordData?.type ? props.editRecordData : '');
 
 let edit = async() => {
     editSelectedData.value = true;
@@ -49,7 +49,7 @@ let heightControl = (e) => {
 }
 
 onMounted(() => {
-    if(props.editRecordData.type) {
+    if(props.editRecordData?.type) {
         document.getElementById('editData').focus();
     }
 })
