@@ -428,8 +428,8 @@ import { bodyClick } from '@/main.js';
 import { computed, nextTick, ref, watch } from 'vue';
 import { serviceRecords, currentService } from '@/data.js';
 import { skapi } from '@/main.js'
-import RecordDataOverlay from '@/views/service/records/RecordDataOverlay.vue';
-import DeleteRecordOverlay from '@/views/service/records/DeleteRecordOverlay.vue';
+import RecordDataOverlay from '@/views/Service/Records/RecordDataOverlay.vue';
+import DeleteRecordOverlay from '@/views/Service/Records/DeleteRecordOverlay.vue';
 // import TagsInput from '@/components/TagsInput.vue';
 
 // record page -start-
