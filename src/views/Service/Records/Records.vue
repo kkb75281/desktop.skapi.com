@@ -103,7 +103,7 @@
                                         template(v-else) {{ selectedRecord.index.name }}
                                 .smallInfo 
                                     .smallLabel Index Value 
-                                    .smallValue 
+                                    .smallValue(:class="{'indexValue' : !recordInfoEdit}")
                                         .typeValue(v-if="recordInfoEdit")
                                             select(:value="indexValueType" @change="(e) => {indexValueType = e.target.value; selectedRecord.index.value = indexValueType === 'boolean' ? true : '';}")
                                                 option(value="string") String
@@ -136,7 +136,7 @@
                             .label Tags 
                             .value(style="width: calc(100% - 170px);")
                                 template(v-if="recordInfoEdit")
-                                    .tagsWrapper(@click="showData")
+                                    .tagsWrapper(@click="showTagData")
                                         template(v-if="selectedRecord?.tags")
                                             .tag(v-for="tag in selectedRecord?.tags") {{ tag }}
                                         template(v-else) -
@@ -175,7 +175,7 @@
                                             option(value="number") Number
                                         input.key(type="text" :value="data.key" :placeholder="`${data.key?data.key:'Key name'}`")
                                         template(v-if="data.type == 'json'")
-                                            .context.click(@click="showRecordData(index, data)")
+                                            .context.click(@click="showData(index, data)")
                                                 .overflow {{ data.context }}
                                         template(v-else-if="data.type == 'boolean'")
                                             select.context(:value="data.context" @change="(e) => data.context = e.target.value")
@@ -272,7 +272,7 @@
                         .info 
                             .label Tags 
                             .value 
-                                input(type="text" @click="enterTags")
+                                TagsInput(@change="(value) => createRecord.tags = value")
                 .recordData
                     .header
                     .content
@@ -395,7 +395,7 @@ import { computed, nextTick, onBeforeMount, onBeforeUnmount, onMounted, ref } fr
 import { records, records_data } from '@/data.js';
 import RecordDataOverlay from '@/views/service/records/RecordDataOverlay.vue';
 import DeleteRecordOverlay from '@/views/service/records/DeleteRecordOverlay.vue';
-// import TagsInput from '@/components/TagsInput.vue';
+import TagsInput from '@/components/TagsInput.vue';
 
 let showRecordData = ref(false);
 let showDeleteRecord = ref(false);
@@ -478,6 +478,14 @@ let viewRecordCheck = () => {
     }
     dataList.value = [];
     createRecordForm.value = true;
+}
+let showTagData = () => {
+    if(selectedRecord.value.tags) {
+        editRecordData.value = selectedRecord.value.tags;
+    } else {
+        editRecordData.value = '';
+    }
+    showRecordData.value = true;
 }
 let showData = (index, data) => {
     if(data.type == 'json') {
@@ -930,9 +938,6 @@ bodyClick.recordPage = () => {
                         padding-left: 0;
                     }
                 }
-                // .content {
-                //     padding-top: 12px;
-                // }
             }
             .menu {
                 position: absolute;
@@ -1143,7 +1148,7 @@ bodyClick.recordPage = () => {
                         width: calc(100% - 150px);
 
                         input, select {
-                            width: calc(100% - 20px);
+                            width: 100%;
                         }
                     }
                     &:nth-child(8) {
@@ -1206,11 +1211,14 @@ bodyClick.recordPage = () => {
                         width: calc(100% - 140px);
 
                         input, select {
-                            width: calc(100% - 30px);
+                            width: 100%;
+                        }
+                        &.indexValue {
+                            width: calc(100% - 200px);
                         }
                     }
                     .typeValue {
-                        width: calc(100% - 30px);
+                        width: calc(100% - 10px);
                         border-bottom: 1px solid rgba(0, 0, 0, 0.80);
                         input {
                             width: calc(100% - 95px) !important;

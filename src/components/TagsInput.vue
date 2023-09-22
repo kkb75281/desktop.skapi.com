@@ -1,18 +1,18 @@
 <template lang="pug">
 input(type="hidden" :value="tagArray?.join(',')")
-.tagContainer(@click="focusEl" :disabled="props.disabled")
+.tagContainer(:class="{'tagEdit' : editTagsData}" @click="focusEl" :disabled="props.disabled")
     span.tag(v-for="(tag, index) in tagArray" @click.stop="")
         span {{ tag }}
-        .material-symbols-outlined.mid(@click="removeTag(index)") close
+        .material-symbols-outlined.sml.cancel(@click="removeTag(index)") cancel
     .tagInput(v-if="!props.disabled" ref="input" contenteditable="true" tabindex="0" @keydown.enter.space.prevent="addTag" @input="addTag" @keydown.delete="deleteTag" @blur="addTag")  
 .material.error(v-if="inputError")
-  .material-symbols-outlined.mid error
-  span  No special characters are allowed
+.material-symbols-outlined.mid error
+span  No special characters are allowed
 </template>
 <script setup>
-import { ref } from 'vue';
+import { nextTick, ref } from 'vue';
 
-let props = defineProps(['value', 'disabled']);
+let props = defineProps(['value', 'disabled', 'editTagsData']);
 let emits = defineEmits(['change']);
 const inputError = ref(false);
 let tagArray = ref([]);
@@ -49,6 +49,13 @@ let addTag = (e) => {
     input.value.innerHTML = '';
   }
   emits('change', tagArray);
+
+    nextTick(() => {
+        let scrollTarget = document.querySelector('.tagContainer');
+        if(scrollTarget.getBoundingClientRect().width < scrollTarget.scrollWidth) {
+            scrollTarget.scrollLeft = scrollTarget.scrollWidth;
+        }
+    })
 }
 
 let deleteTag = () => {
@@ -83,6 +90,19 @@ let removeTag = (index) => {
     &::-webkit-scrollbar {
         display: none;
     }
+
+    &.tagEdit {
+        max-height: calc(100vh*0.5);
+        border: 0;
+        border-radius: 8px;
+        background-color: rgba(0, 0, 0, 0.05);
+        padding: 12px;
+        flex-wrap: wrap;
+
+        .tag {
+            margin: 3px;
+        }
+    }
 }
 
 .tag {
@@ -99,8 +119,8 @@ let removeTag = (index) => {
     font-size: 14px;
     font-weight: 400;
 
-    svg {
-        width: 16px;
+    .cancel {
+        font-size: 15px;
         margin-left: 4px;
         cursor: pointer;
     }

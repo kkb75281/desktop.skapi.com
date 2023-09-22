@@ -10,9 +10,11 @@
             .content {{ selectedData.context }}
         template(v-else-if="editRecordData")
             .header 
-                h4 {{ editRecordData.type }} - {{ editRecordData.key }}
+                h4(v-if="editRecordData.type") {{ editRecordData.type }} - {{ editRecordData.key }}
+                h4(v-else) Tags
             .content 
-                textarea#editData(:value="editRecordData.context" @input="heightControl")
+                textarea#editData(v-if="editRecordData.context" :value="editRecordData.context" @input="heightControl")
+                TagsInput(v-else :editTagsData = "editTagsData")
             .buttonWrap 
                 button.cancel(@click="emits('close')") Cancel
                 button.save Save
@@ -28,10 +30,12 @@
 
 <script setup>
 import { nextTick, onMounted, ref } from 'vue';
+import TagsInput from '@/components/TagsInput.vue';
 
 let props = defineProps(['selectedData','editRecordData']);
 let emits = defineEmits(['close']);
 let editSelectedData = ref(false);
+let editTagsData = ref(!props.editRecordData.type ? props.editRecordData : '');
 
 let edit = async() => {
     editSelectedData.value = true;
@@ -39,21 +43,13 @@ let edit = async() => {
         document.getElementById('editData').focus();
     })
 }
-let closeDialog = (e) => {
-    let rect = e.target.getBoundingClientRect();
-
-    if (rect.left > e.clientX ||rect.right < e.clientX ||rect.top > e.clientY ||rect.bottom < e.clientY) {
-        e.target.close();
-    } else if (e.target.classList.contains('cancel')){
-        e.target.parentNode.parentNode.close();
-    }
-}
 let heightControl = (e) => {
     e.target.style.height = "auto";
     e.target.style.height = (e.target.scrollHeight) + "px";
 }
+
 onMounted(() => {
-    if(props.editRecordData) {
+    if(props.editRecordData.type) {
         document.getElementById('editData').focus();
     }
 })
