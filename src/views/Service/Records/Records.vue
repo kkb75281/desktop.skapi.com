@@ -615,6 +615,7 @@ let saveRecordData = () => {
             promiseRunning.value = false;
         });
     }).catch(err => {
+        promiseRunning.value = false;
         let errmsg = err.message.charAt(0).toUpperCase() + err.message.slice(1)
         if (err.message.includes('referenc')) {
             document.getElementById('referenceIdInput').setCustomValidity(errmsg)

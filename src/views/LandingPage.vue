@@ -160,10 +160,22 @@ let other = ref(null);
 //     // });
 // });
 
-let section = 0;
-window.addEventListener('wheel', (e) => {
-    e.preventDefault();
-})
+// let section = 0;
+// window.addEventListener('wheel', (e) => {
+//     e.preventDefault();
+//     if(e.deltaY > 0){
+//         section++;
+//     }else if(e.deltaY < 0){
+//         section--;
+//     }
+//     if(section < 0){
+//         section=0;
+//     }else if(page > lastPage){
+//         section = lastPage;
+//     }
+//     console.log(e.deltaY)
+//     wrap.style.top = section * -100 + 'vh';
+// },{passive:false})
 </script>
 
 <style lang="less" scoped>
