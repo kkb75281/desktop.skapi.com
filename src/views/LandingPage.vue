@@ -73,7 +73,7 @@
                 //-             | ');
                 //-             |&lt;/script&gt;
                 //- .code(style="color:#f0f0f0;font-family:Consolas, 'Liberation Mono', Menlo, Courier, monospace !important; position:relative !important;overflow:auto")
-                table.code(style="margin:0;border:none;background-color:#272727;" cellspacing="0" cellpadding="0")
+                table.code(style="margin:0;border:none;background-color:#343434;" cellspacing="0" cellpadding="0")
                     tr
                         td(style="padding:6px;border-right:2px solid #4f4f4f")
                             div(style="margin:0;padding:0;word-break:normal;text-align:right;color:#aaa;font-family:Consolas, 'Liberation Mono', Menlo, Courier, monospace !important;line-height:130%")

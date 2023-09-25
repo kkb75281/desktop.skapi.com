@@ -10,38 +10,49 @@ template(v-if='currentService')
                             button.cancel(type="button" @click="modifyServiceName = false;") Cancel
                             button.save(type="submit") Save
                 template(v-else)
-                    h2 {{ currentService.name }}
-                    .material-symbols-outlined.mid.modify.clickable(@click="inputServiceName = currentService.name; modifyServiceName = true;") edit
-            .toggleWrap(:class="{'active': currentService.active >= 1 }")
-                span Disable/Enable
-                .toggleBg
-                    .toggleBtn(@click="enableDisableToggle")
-        .info
-            .title 
-                h2 Service Information
-            .listWrap 
-                .list(style="width: 100%")
-                    span Service ID
-                    h5 {{ currentService.service }}
-                    .copy.clickable(@click="copy")
-                        .material-symbols-outlined.mid file_copy
-                .list(style="width: 100%")
-                    span Owner ID
-                    h5 {{ currentService.owner }}
-                    .copy.clickable(@click="copy")
-                        .material-symbols-outlined.mid file_copy
-                //- .list(style="width: 50%")
-                //-     span Service Location
-                //-     h5 {{ currentService.created_locale }}
-                .list(style="width: 50%")
-                    span Date Created
-                    h5 {{ new Date(currentService.timestamp).toDateString() }}
-        .info
+                    .name
+                        h2 {{ currentService.name }}
+                        .material-symbols-outlined.mid.modify.clickable(@click="inputServiceName = currentService.name; modifyServiceName = true;") edit
+                    .date 
+                        span Date Created
+                        h5 {{ new Date(currentService.timestamp).toDateString() }}
+                    .toggleWrap(:class="{'active': currentService.active >= 1 }")
+                        span Disable/Enable
+                        .toggleBg
+                            .toggleBtn(@click="enableDisableToggle")
+            .startCode 
+                .colorscripter-code(style="color:#f0f0f0;font-family:monospace !important; position:relative !important;overflow:auto")
+                    table.colorscripter-code-table(style="width:100%;margin:0;padding:28px;border:none;background-color:#434343;border-radius:8px;font-size:16px;" cellspacing="0" cellpadding="0")
+                        tr
+                            td(style="padding:6px;border-right:2px solid #4f4f4f")
+                                div(style="margin:0;padding:0;word-break:normal;text-align:right;color:#aaa;font-family:Consolas, 'Liberation Mono', Menlo, Courier, monospace !important;line-height:130%")
+                                    div(style="line-height:130%") 1
+                            td(style="padding:6px 0;text-align:left")
+                                div(style="margin:0;padding:0;color:#f0f0f0;font-family:Consolas, 'Liberation Mono', Menlo, Courier, monospace !important;line-height:130%")
+                                    div(style="padding:0 6px; white-space:pre; line-height:130%")
+                                        span(style="color:#ff3399") const 
+                                        span skapi 
+                                        span(style="color:#ff3399") = 
+                                        span(style="color:#ff3399") new 
+                                        span Skapi(‘
+                                        span(style="color:#ffd500") ap22fAA39RwOW0KU6PUH
+                                        span ', ' 
+                                        span(style="color:#ffd500") 3dd7a40d-c0be-4489-bf11-e42d0e3458dc
+                                        span ');
+                .copy.clickable(@click="copy")
+                    .material-symbols-outlined.mid file_copy
+            a.question(href="https://docs.skapi.com" target="_blank")
+                .material-symbols-outlined.empty.sml help 
+                span Where do I put this code?
+        .info 
             .title 
                 h2 Security Setting
+                .question
+                    .material-symbols-outlined.empty.sml help 
+                    span Help
             .listWrap
-                .list(style="width: 100%")
-                    span(:class="{ active: modifyCors }") Cors Origin
+                .list
+                    span(:class="{ active: modifyCors }") Cors
                     template(v-if="modifyCors")
                         form.modifyForm(style="margin-top: 8px" @submit.prevent="changeCors")
                             input#modifyCors(type="text" placeholder='https://your.domain.com' :value='inputCors' @input="(e) => {e.target.setCustomValidity(''); inputCors = e.target.value;}")
@@ -50,9 +61,9 @@ template(v-if='currentService')
                                 button.save(type="submit") Save
                     template(v-else)
                         h5 {{ currentService.cors || '*' }}
-                        .material-symbols-outlined.mid.pen.clickable(@click="inputCors = currentService.cors === '*' ? '' : currentService.cors; modifyCors = true;") edit
+                            .material-symbols-outlined.mid.pen.clickable(@click="inputCors = currentService.cors === '*' ? '' : currentService.cors; modifyCors = true;") edit
 
-                .list(style="width: 100%")
+                .list
                     span(:class="{ active: modifyKey }") Secret Key
                     template(v-if="modifyKey")
                         form.modifyForm(style="margin-top: 8px" @submit.prevent="setSecretKey")
@@ -62,10 +73,8 @@ template(v-if='currentService')
                                 button.save(type="submit") Save
                     template(v-else)
                         h5 {{ currentService.api_key || 'No key' }}
-                        .material-symbols-outlined.mid.pen.clickable(@click="inputKey = currentService.api_key; modifyKey = true;") edit
-            .que 
-                .material-symbols-outlined.empty.sml help 
-                span Help
+                            .material-symbols-outlined.mid.pen.clickable(@click="inputKey = currentService.api_key; modifyKey = true;") edit
+
         router-link.info.hover.user.clicked(:to='`/dashboard/${currentService.service}/users`')
             .titleWrap
                 .title 
@@ -169,7 +178,7 @@ let enableDisablePromise = ref(false);
 let copy = (e) => {
     let currentTarget = e.currentTarget;
     let doc = document.createElement('textarea');
-    doc.textContent = currentTarget.previousSibling.textContent;
+    doc.textContent = currentTarget.previousSibling.textContent.slice(1);
     document.body.append(doc);
     doc.select();
     document.execCommand('copy');
@@ -295,28 +304,30 @@ watch(modifyCors, () => {
     flex-wrap: wrap;
 
     .info {
-        width: 100%;
+        width: 49%;
         padding: 40px;
         background-color: #fafafa;
         border-radius: 8px;
         margin-bottom: 2%;
+        margin-right: 2%;
         filter: drop-shadow(8px 12px 36px rgba(0, 0, 0, 0.10));
 
-        &:first-child {
-            display: flex;
-            flex-wrap: nowrap;
-            justify-content: space-between;
-            padding: 28px 40px;
+        &:first-child, &:nth-child(2) {
+            width: 100%;
+            margin-right: 0;
         }
 
-        &:not(:first-child) {
-            width: 49%;
-            margin-right: 2%;
+        &:nth-child(2) {
+            .list {
+                h5 {
+                    height: 44px;
+                    line-height: 44px;
+                }
+            }
         }
 
-        &:nth-child(3),
-        &:nth-child(5),
-        &:nth-child(7) {
+        &:nth-child(4),
+        &:nth-child(6) {
             margin-right: 0;
         }
 
@@ -352,12 +363,45 @@ watch(modifyCors, () => {
         }
 
         .title {
+            width: 100%;
             display: flex;
+            align-items: center;
             flex-wrap: nowrap;
             align-items: center;
 
             h2 {
                 font-size: 24px;
+            }
+
+            .name {
+                display: flex;
+                flex-wrap: nowrap;
+                align-items: center;
+                width: 50%;
+            }
+
+            .date {
+                display: flex;
+                flex-wrap: nowrap;
+                align-items: center;
+
+                span {
+                    color: rgba(0, 0, 0, 0.40);
+                    font-size: 16px;
+                    font-weight: 500;
+                    margin-right: 10px;
+                }
+
+                h5 {
+                    color: rgba(0, 0, 0, 0.60);
+                    font-size: 16px;
+                    font-weight: 700;
+                }
+            }
+
+            .date, .toggleWrap {
+                width: 25%;
+                justify-content: end;
             }
 
             .material-symbols-outlined {
@@ -369,6 +413,65 @@ watch(modifyCors, () => {
                 height: 24px;
                 margin-left: 8px;
                 margin-right: 0;
+            }
+
+            .question {
+                margin: 0;
+                margin-left: 32px;
+                cursor: pointer;
+
+                .material-symbols-outlined {
+                    margin: 0;
+                }
+            }
+        }
+
+        .startCode {
+            position: relative;
+            margin-top: 40px;
+
+            .copy {
+                position: absolute;
+                right: 28px;
+                top: 50%;
+                transform: translateY(-50%);
+                color: #fff;
+
+                &::after {
+                    position: absolute;
+                    display: block;
+                    right: 25px;
+                    top: 50%;
+                    transform: translateY(-50%);
+                    text-align: center;
+                    font-size: 14px;
+                    font-weight: 400;
+                    color: rgba(255, 255, 255, 0.5);
+                    padding: 4px;
+                    content: "Copied";
+                    transition: opacity .4s;
+                    opacity: 0;
+                }
+    
+                &.copied::after {
+                    opacity: 1;
+                }
+            }
+        }
+
+        .question {
+            display: flex;
+            flex-wrap: nowrap;
+            align-items: center;
+            justify-content: flex-end;
+            text-decoration: none;
+            color: rgba(0, 0, 0, 0.40);
+            font-size: 16px;
+            font-weight: 500;
+            margin-top: 20px;
+
+            span {
+                margin-left: 10px;
             }
         }
 
@@ -386,10 +489,11 @@ watch(modifyCors, () => {
             }
 
             .list {
-                position: relative;
+                width: 48%;
                 margin-top: 28px;
 
                 span {
+                    display: block;
                     font-size: 16px;
                     color: rgba(0, 0, 0, 0.4);
 
@@ -400,41 +504,20 @@ watch(modifyCors, () => {
                 }
 
                 h5 {
+                    position: relative;
+                    display: inline-block;
                     font-size: 16px;
                     font-weight: 700;
                     color: rgba(0, 0, 0, 0.6);
                     margin-top: 8px;
-                }
-
-                .copy,
-                .pen {
-                    position: absolute;
-                    right: 0;
-                    top: 50%;
-                    transform: translateY(-50%);
-                }
-
-                .copy {
-                    &::after {
+                    .pen {
                         position: absolute;
-                        display: block;
-                        right: 25px;
+                        right: -50px;
                         top: 50%;
                         transform: translateY(-50%);
-                        text-align: center;
-                        font-size: 14px;
-                        font-weight: 400;
-                        color: rgba(0, 0, 0, 0.5);
-                        padding: 4px;
-                        content: "Copied";
-                        transition: opacity .4s;
-                        opacity: 0;
-                    }
-
-                    &.copied::after {
-                        opacity: 1;
                     }
                 }
+
             }
         }
 
@@ -487,6 +570,7 @@ watch(modifyCors, () => {
 
     input {
         width: max(65%, 280px);
+        height: 44px;
         margin-right: 32px;
         background-color: #EDEDED;
         border: 0;
