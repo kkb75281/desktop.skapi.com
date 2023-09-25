@@ -230,7 +230,7 @@ main {
                     cursor: pointer;
 
                     &:hover {
-                        background: rgba(41, 63, 230, 0.05);
+                        background: #F5F7FF;
                     }
 
                     a {

@@ -344,8 +344,8 @@ watch(modifyCors, () => {
 
             &:hover {
                 cursor: pointer;
-                background-color: rgba(41, 63, 230, 0.05);
-                filter: drop-shadow(8px 12px 36px rgba(255, 255, 255, 0.30));
+                background-color: #F5F7FF;
+                // filter: drop-shadow(8px 12px 36px rgba(255, 255, 255, 0.30));
             }
         }
 
