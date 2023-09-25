@@ -22,8 +22,9 @@
                         .radioFormWrap
                             .customSelect
                                 select(name='access_group' @change="e => advancedForm.access_group = e.target.value")
-                                    option(value="1") All
+                                    option(value="null") All
                                     option(value="0") Public
+                                    option(value="1") Authorized
                                     option(value="private") Private
                                 .material-symbols-outlined.mid.selectArrowDown arrow_drop_down
                     .condition 
@@ -99,13 +100,13 @@
 
                         .info 
                             .label Permission
-                            .value 
-                                select(v-if="recordInfoEdit && selectedRecord?.record_id && selectedRecord.user_id !== account.user_id" :value="selectedRecord.readonly.toString()" @change="(e) => selectedRecord.readonly = JSON.parse(e.target.value)")
+                            .value(v-if="recordInfoEdit && selectedRecord?.record_id && selectedRecord.user_id !== account.user_id")
+                                select(@change="(e) => selectedRecord.readonly = JSON.parse(e.target.value)" :value="selectedRecord.readonly.toString()")
                                     option(value="false") Read/Write
                                     option(value="true") Read Only
-
+                            .value(v-else  :class="{ disabled: recordInfoEdit }")
                                 // admin can't upload readonly because its meaningless
-                                template(v-else) {{ selectedRecord.readonly ? 'Read Only' : 'Read/Write' }}
+                                | {{ selectedRecord.readonly ? 'Read Only' : 'Read/Write' }}
                         .info
                             .label Table
                             .value.various
@@ -174,9 +175,9 @@
                                 .smallInfo 
                                     .smallLabel Multiple Reference 
                                     .smallValue 
-                                        select(v-if="recordInfoEdit" :value="JSON.stringify(selectedRecord.reference.allow_multiple_reference)" @change="(e) => {selectedRecord.reference.allow_multiple_reference = e.target.value ? JSON.parse(e.target.value) : null}")
+                                        select(v-if="recordInfoEdit" :value="JSON.stringify(selectedRecord.reference.allow_multiple_reference)" @change="(e) => {selectedRecord.reference.allow_multiple_reference = e.target.value ? JSON.parse(e.target.value) : false}")
                                             option(value="true") Allowed
-                                            option(value="null") Not Allowed
+                                            option(value="false") Not Allowed
                                         template(v-else) {{ selectedRecord.reference.allow_multiple_reference ? 'Allowed' : 'Not Allowed' }}
                                 .smallInfo 
                                     .smallLabel Reference Limit
@@ -564,6 +565,7 @@ let saveRecordData = () => {
         tags: selectedRecord.value.tags
     };
 
+    console.log({record_params})
     let data = {};
 
     if (record_params.table.subscription) {
