@@ -7,7 +7,7 @@ main
         .wrapper(v-if="!serviceFetching")
             // service 로딩이 완료 되면 표시
             .boxWrap
-                .box.btn(v-if="!create" @click="createService")
+                .box.btn(v-if="!create" @click="createService" :class="{'disabled' : !account.email_verified}")
                     .material-symbols-outlined.mid add
                     span Create Service
                 .box.create(v-if="create")
@@ -52,7 +52,8 @@ main
 <script setup>
 import { services, serviceFetching } from '@/data.js';
 import { nextTick, ref } from 'vue';
-import { skapi } from '@/main.js'
+import { skapi, account } from '@/main.js'
+
 let create = ref(false);
 let createService = () => {
     create.value = true;
@@ -88,19 +89,6 @@ main {
     position: relative;
     margin-top: 68px;
     padding: 0 40px;
-
-    // &::before {
-    //     position: absolute;
-    //     content: '';
-    //     left: 0;
-    //     top: 80px;
-    //     width: 100%;
-    //     height: calc(100vh - 208px);
-    //     background-color: #fafafa;
-    //     filter: drop-shadow(8px 12px 36px rgba(0, 0, 0, 0.10));
-    //     border-radius: 8px 8px 0 0;
-    //     z-index: -1;
-    // }
 
     .title {
         width: 1200px;
@@ -156,6 +144,11 @@ main {
                     margin-right: 0;
                 }
 
+                &.disabled {
+                    opacity: 0.5;
+                    user-select: none;
+                }
+                
                 &.btn {
                     background: rgba(41, 63, 230, 0.05);
                     display: flex;
