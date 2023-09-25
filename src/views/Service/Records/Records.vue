@@ -169,7 +169,7 @@
                                 .smallInfo 
                                     .smallLabel Reference ID
                                     .smallValue 
-                                        input#referenceIdInput(v-if="recordInfoEdit" type="text" :value="selectedRecord.reference?.record_id || ''" placeholder="Record ID to reference (optional)" @input="(e) => selectedRecord.reference.record_id = e.target.value || null")
+                                        input#referenceIdInput(v-if="recordInfoEdit" type="text" :value="selectedRecord.reference?.record_id || ''" placeholder="Record ID to reference (optional)" @input="(e) => {selectedRecord.reference.record_id = e.target.value || null; e.target.setCustomValidity('')}")
                                         template(v-else) {{ selectedRecord.reference.record_id || 'None' }}
                                 .smallInfo 
                                     .smallLabel Multiple Reference 
@@ -186,7 +186,7 @@
                         .info 
                             .label Tags 
                             .value(style="width: calc(100% - 170px);")
-                                .tagsWrapper#tagsWrapper(@click.stop="e=>{if(recordInfoEdit) editTags=selectedRecord.tags; else if(ellipsisCheck('tagsWrapper')) hiddenTags=true;}")
+                                .tagsWrapper#tagsWrapper(@click.stop="e=>{if(recordInfoEdit) editTags=(()=>{if(!selectedRecord?.tags) {selectedRecord.tags = []} return selectedRecord.tags;})(); else if(ellipsisCheck('tagsWrapper')) hiddenTags=true;}")
                                     template(v-if="selectedRecord?.tags?.length")
                                         .tag(v-for="tag in selectedRecord?.tags") {{ tag }}
                                     template(v-else) {{ recordInfoEdit ? 'Add Tags' : '-'}}
@@ -550,12 +550,13 @@ let saveRecordData = () => {
         reference: selectedRecord.value.reference,
         tags: selectedRecord.value.tags
     };
+
     let data = {};
 
     if (record_params.table.subscription) {
         delete record_params.table.subscription;
     }
-    if (!record_params.index.name) {
+    if (!record_params.index?.name) {
         record_params.index = null;
     }
 
@@ -595,16 +596,15 @@ let saveRecordData = () => {
         }
     }
 
-    document.getElementById('referenceIdInput').setCustomValidity('')
-
     skapi.postRecord(data, record_params).then(res => {
+        console.log(res);
+        recordInfoEdit.value = false;
         recordPage.insertItems([res]).then(_ => {
             getPage(currentPage.value);
-            recordInfoEdit.value = false;
         });
     }).catch(err => {
         let errmsg = err.message.charAt(0).toUpperCase() + err.message.slice(1)
-        if(err.message.includes('referenc')) {
+        if (err.message.includes('referenc')) {
             document.getElementById('referenceIdInput').setCustomValidity(errmsg)
             document.getElementById('referenceIdInput').reportValidity()
         }
