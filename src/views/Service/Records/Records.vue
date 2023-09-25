@@ -112,7 +112,7 @@
                                 .smallInfo 
                                     .smallLabel Name 
                                     .smallValue 
-                                        input(v-if="recordInfoEdit" type="text" pattern="[a-zA-Z0-9]+" title="Table name should only be alphanumeric." :value="selectedRecord.table.name" placeholder="(Required)" @input="(e) => { selectedRecord.table.name = e.target.value; }" required)
+                                        input(v-if="recordInfoEdit" type="text" pattern="[a-zA-Z0-9\[\]\\^_`]+" title="Table name should only be alphanumeric." :value="selectedRecord.table.name" placeholder="(Required)" @input="(e) => { selectedRecord.table.name = e.target.value; }" required)
                                         template(v-else) {{ selectedRecord.table.name }}
                                 .smallInfo 
                                     .smallLabel Access Group
@@ -134,7 +134,7 @@
                                 .smallInfo 
                                     .smallLabel Name 
                                     .smallValue 
-                                        input(v-if="recordInfoEdit" type="text" :value="selectedRecord.index?.name || ''" pattern="[_a-zA-Z0-9]+" title="Index name should only be alphanumeric." placeholder="No Index" @input="(e)=> { if (!selectedRecord.index) { selectedRecord.index={}; } selectedRecord.index.name = e.target.value; }")
+                                        input(v-if="recordInfoEdit" type="text" :value="selectedRecord.index?.name || ''" pattern="[a-zA-Z0-9\[\]\\^_`]+" title="Index name should only be alphanumeric." placeholder="No Index" @input="(e)=> { if (!selectedRecord.index) { selectedRecord.index={}; } selectedRecord.index.name = e.target.value; }")
                                         template(v-else) {{ selectedRecord.index?.name || 'No Index' }}
                                 .smallInfo 
                                     .smallLabel Value 
