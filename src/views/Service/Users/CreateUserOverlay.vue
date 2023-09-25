@@ -150,6 +150,7 @@ let createUser = () => {
         }
 
         .bottom {
+            height: 44px;
             display: flex;
             align-items: center;
             justify-content: space-between;
@@ -167,7 +168,7 @@ let createUser = () => {
 
             .login {
                 padding: 0 28px;
-                height: 44px;
+                height: 100%;
                 border-radius: 8px;
                 border: 2px solid #293FE6;
 

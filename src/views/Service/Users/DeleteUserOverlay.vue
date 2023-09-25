@@ -94,6 +94,7 @@ let deleteUsers = () => {
     }
 
     .buttonWrap {
+        height: 44px;
         display: flex;
         flex-wrap: nowrap;
         justify-content: space-between;
@@ -111,6 +112,7 @@ let deleteUsers = () => {
         }
 
         .disable {
+            height: 100%;
             border-radius: 8px;
             border: 2px solid #293FE6;
             padding: 10px 28px;
