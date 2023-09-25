@@ -29,7 +29,7 @@ watch(selectedRecord, (newVal) => {
                         if (Array.isArray(data)) {
                             let nonFile = [];
                             for (let i of data) {
-                                if (i.__file_id__ && i.filename && i.md5 && i.url) {
+                                if (i?.__file_id__ && i?.filename && i?.md5 && i?.url) {
                                     // files in array
                                     records_data.value.push({
                                         type: 'file',
@@ -52,7 +52,7 @@ watch(selectedRecord, (newVal) => {
                                 })
                             }
                         } else {
-                            if (data.__file_id__ && data.filename && data.md5 && data.url) {
+                            if (data?.__file_id__ && data?.filename && data?.md5 && data?.url) {
                                 // single file object
                                 records_data.value.push({
                                     type: 'file',
