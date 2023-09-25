@@ -565,7 +565,6 @@ let saveRecordData = () => {
         tags: selectedRecord.value.tags
     };
 
-    console.log({record_params})
     let data = {};
 
     if (record_params.table.subscription) {
