@@ -85,7 +85,8 @@ template(v-if='currentService')
 <script setup>
 import { ref } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
-import { services, serviceFetching, currentService, storageInfo, serviceUsers, serviceRecords } from '@/data.js';
+import { services, serviceFetching, currentService, storageInfo, serviceUsers } from '@/data.js';
+import { serviceRecords } from '@/views/Service/Records/RecordFetch.js';
 import { skapi, account, bodyClick } from '@/main.js';
 
 currentService.value = null;
