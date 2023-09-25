@@ -13,7 +13,7 @@ main
                 .box.create(v-if="create")
                     form(@submit.prevent="addService")
                         h3 Create a new service
-                        input#serviceName(type="text" @input='e=>newServiceName=e.target.value' placeholder="Name of Service")
+                        input#serviceName(type="text" @input='e=>newServiceName=e.target.value' placeholder="Name of Service" required)
                         .buttons
                             template(v-if="promiseRunning")
                                 img.loading(src="@/assets/img/loading.png")

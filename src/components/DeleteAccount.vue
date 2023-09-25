@@ -60,7 +60,7 @@
                     .material.error(v-if="disableError")
                         .material-symbols-outlined.mid error
                         span {{ disableError }}
-                    .buttonWrap 
+                    .buttonWrap(:class="{'running' : promiseRunning}")
                         template(v-if="promiseRunning")
                             img.loading(src="@/assets/img/loading.png")
                         template(v-else)
@@ -269,12 +269,15 @@ let closeWindow = () => {
 
         .buttonWrap {
             width: 100%;
-            height: 44px;
             margin-top: 52px;
             display: flex;
             flex-wrap: nowrap;
+            align-items: center;
             justify-content: space-between;
 
+            &.running {
+                height: 44px;
+            }
             &.block {
                 display: block;
 

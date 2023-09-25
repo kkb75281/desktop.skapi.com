@@ -1,5 +1,5 @@
 <template lang="pug">
-.navBar
+.navBar(:class="{'fixed' : route.name == 'home'}")
     router-link(to="/")
         img.logo(src="@/assets/img/logo/logo.png")
     .menu
@@ -64,6 +64,15 @@ let logout = async () => {
     flex-wrap: nowrap;
     align-items: center;
     justify-content: space-between;
+
+    &.fixed {
+        position: fixed;
+        left: 0;
+        top: 0;
+        z-index: 9999999;
+        background-color: #f0f0f0;
+        box-shadow: 8px 12px 36px 0px rgba(0, 0, 0, 0.10);
+    }
 
     .logo {
         width: 120px;

@@ -1,6 +1,6 @@
 <template lang="pug">
-#lending
-    section#intro
+#lending(ref="lending")
+    section#intro(ref="intro")
         .introWrap 
             img.introLogo(src="@/assets/img/logo/logo.svg")
             .point
@@ -16,7 +16,7 @@
             a(href='https://docs.skapi.com' target="_blank") 
                 span Get Started
                 .material-symbols-outlined.big arrow_forward
-    section#other
+    section#other(ref="other")
         .packageWrap 
             .title Skapi provides everything in one package
             p No more figuring out how to setup, or deploy each of your backend resources.
@@ -143,26 +143,49 @@
 </template>
 
 <script setup>
+import { nextTick, onMounted, ref } from 'vue';
+
+let lending = ref(null);
+let intro = ref(null);
+let other = ref(null);
+
+// onMounted(() => {
+//     console.log(lending.scrollHeight)
+//     // window.addEventListener('scroll', () => {
+//     //     if (scrollY >= 20) {
+//     //         lending.value.style.transform = 'translateY(-100vh)';
+//     //     } else {
+//     //         lending.value.style.transform = 'translateY(0)';
+//     //     }
+//     // });
+// });
+
+let section = 0;
+window.addEventListener('wheel', (e) => {
+    e.preventDefault();
+})
 </script>
 
 <style lang="less" scoped>
 #lending {
-    overflow: auto;
-    scroll-snap-type: y mandatory;
+    transition: transform 2s ease;
 }
+// .wrap {
+    // }
+    
 #intro {
     width: 100vw;
-    height: calc(100vh - 60px);
+    height: 100vh;
     background-image: url(@/assets/img/background.svg);
     background-size: cover;
-    scroll-snap-align: start;
     position: relative;
+    z-index: 9;
 
     .introWrap {
         position: absolute;
         left: 50%;
         top: 50%;
-        transform: translate(-50%,-50%);
+        transform: translate(-50%, -50%);
 
         .introLogo {
             width: max(173px, 11.5vw);
@@ -171,7 +194,7 @@
 
         .point {
             color: #fff;
-            font-size: max(40px ,3vw);
+            font-size: max(40px, 3vw);
             font-weight: 500;
             line-height: max(70px, 5vw);
             margin-bottom: max(28px, 2.6vw);
@@ -194,7 +217,7 @@
 
         .code {
             width: max(516px, 35vw);
-            height: max(38px ,2.4vw);
+            height: max(38px, 2.4vw);
             border-radius: 8px;
             border: 1px solid rgba(255, 255, 255, 0.10);
             background: #434343;
@@ -231,7 +254,7 @@
             padding-right: 20px;
             border-radius: 0 30px 30px 0;
             cursor: pointer;
-            
+
             span {
                 font-size: max(16px, 1vw);
                 font-weight: 700;
@@ -240,31 +263,36 @@
         }
     }
 }
+
 #other {
     width: 100%;
     height: 100%;
-    scroll-snap-align: start;
+    // margin-top: -50vh;
 
-    > div {
+    >div {
         width: max(1130px, 62vw);
         margin: 0 auto;
         padding-top: max(400px, 17vw);
     }
+
     .title {
         color: #262626;
         font-size: max(36px, 1.5vw);
         font-weight: 700;
         margin-bottom: max(22px, 1.2vw);
     }
+
     p {
         color: #000;
         font-size: max(24px, 1.2vw);
         font-weight: 400;
         margin-bottom: max(52px, 1.8vw);
     }
+
     .cardWrap {
         display: flex;
         flex-wrap: wrap;
+
         .card {
             width: 23.5%;
             height: max(317px, 17vw);
@@ -277,12 +305,13 @@
             filter: drop-shadow(8px 12px 36px rgba(0, 0, 0, 0.10));
             display: flex;
             flex-wrap: wrap;
-            flex-direction:column;
+            flex-direction: column;
             justify-content: space-between;
 
             &:nth-child(4n+4) {
                 margin-right: 0;
             }
+
             img {
                 height: max(108px, 5.5vw);
                 object-fit: contain;
@@ -290,12 +319,14 @@
                 margin-top: max(-10px, -0.5vw);
                 margin-left: max(-10px, -0.5vw);
             }
+
             .tit {
                 width: 100%;
                 color: #262626;
                 font-size: max(24px, 1.2vw);
                 font-weight: 500;
             }
+
             .desc {
                 width: 100%;
                 color: #262626;
@@ -305,6 +336,7 @@
             }
         }
     }
+
     .htmlCode {
         .tit {
             color: #000;
@@ -312,6 +344,7 @@
             font-weight: 700;
             margin-bottom: 10px;
         }
+
         .code {
             width: 100%;
             border-radius: 8px;
@@ -319,8 +352,8 @@
             background: #434343;
             padding: 30px 10px;
             font-size: 20px;
-            font-family:Consolas, 'Liberation Mono', Menlo, Courier, monospace !important;
-            
+            font-family: Consolas, 'Liberation Mono', Menlo, Courier, monospace !important;
+
             // code {
             //     color: #FFF;
             //     font-size: 20px;
@@ -329,6 +362,7 @@
             // }
         }
     }
+
     .docWrap {
         display: flex;
         flex-wrap: nowrap;
@@ -341,8 +375,9 @@
                 color: rgba(0, 0, 0, 0.80);
                 font-size: max(48px, 2.5vw);
                 font-weight: 700;
-                line-height: 64px; 
+                line-height: 64px;
             }
+
             a {
                 color: #293FE6;
                 font-size: max(28px, 1.2vw);
@@ -350,6 +385,7 @@
                 text-decoration-line: underline;
             }
         }
+
         .right {
             width: 60%;
 
@@ -359,9 +395,10 @@
             }
         }
     }
+
     .joinWrap {
         width: 100%;
-        height: max(300px ,39vw);
+        height: max(300px, 39vw);
         margin-top: max(400px, 17vw);
         padding: 0;
         background-image: url(@/assets/img/background.svg);
@@ -369,7 +406,7 @@
         display: flex;
         flex-wrap: wrap;
         align-items: center;
-        flex-direction:column;
+        flex-direction: column;
         justify-content: center;
         color: #FFF;
         text-align: center;
@@ -380,12 +417,14 @@
             font-weight: 700;
             margin-bottom: max(17px, 0.8vw);
         }
+
         h3 {
             width: 100%;
             font-size: max(32px, 1.4vw);
             font-weight: 500;
             margin-bottom: max(36px, 1.6vw);
         }
+
         a {
             padding: 12px 28px;
             border-radius: 8px;
@@ -397,6 +436,7 @@
         }
     }
 }
+
 
 @media (min-width:2200px) {
     #intro {
@@ -432,19 +472,23 @@
             }
         }
     }
+
     #other {
-        > div {
+        >div {
             width: 1416px;
             padding-top: 400px;
         }
+
         .title {
             font-size: 36px;
             margin-bottom: 24px;
         }
+
         p {
             font-size: 28px;
             margin-bottom: 42px;
         }
+
         .cardWrap {
             .card {
                 height: 400px;
@@ -455,25 +499,30 @@
                     margin-top: -12px;
                     margin-left: -12px;
                 }
+
                 .tit {
                     font-size: 28px;
                 }
+
                 .desc {
                     font-size: 24px;
                     line-height: 32px;
                 }
             }
         }
+
         .docWrap {
             .left {
                 .title {
                     font-size: 60px;
                 }
+
                 a {
                     font-size: 28px;
                 }
             }
         }
+
         .joinWrap {
             height: 500px;
             margin-top: 400px;
@@ -482,10 +531,12 @@
                 font-size: 60px;
                 margin-bottom: 17px;
             }
+
             h3 {
                 font-size: 32px;
                 margin-bottom: 36px;
             }
+
             a {
                 font-size: 20px;
             }

@@ -1,4 +1,5 @@
 <template lang="pug">
+EmailCaution(v-if="!account.email_verified")
 NavBar(v-if="showNavBar")
 router-view
 </template>
@@ -6,7 +7,9 @@ router-view
 <script setup>
 import { onMounted, ref, watch } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
+import { account } from '@/main.js';
 import NavBar from '@/components/NavBar.vue';
+import EmailCaution from '@/components/EmailCaution.vue';
 
 let route = useRoute();
 let router = useRouter();

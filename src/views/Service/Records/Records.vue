@@ -196,9 +196,10 @@
                 // right panel of record info
                 .recordData
                     .header
-                        .tit Type
-                        .tit Key Name 
-                        .tit Context
+                        template(v-if="!recordInfoEdit")
+                            .tit Type
+                            .tit Key Name 
+                            .tit Context
                     .content
                         .noData(v-if="selectedRecord.data && selectedRecord.data.hasOwnProperty('__is_private__')")
                             .material-symbols-outlined.big lock
@@ -281,12 +282,15 @@
 
                 // buttons (edit)
                 .editBtnWrap(v-if="recordInfoEdit" :class="{'smallver' : isSmallScreen}") 
-                    button.cancel(type='button' @click="()=>{recordInfoEdit = false; selectedRecord = recordPage.list[selectedRecord.record_id] ? JSON.parse(JSON.stringify(recordPage.list[selectedRecord.record_id])) : null; }") 
-                        .material-symbols-outlined.mid(v-if="isSmallScreen") close
-                        span(v-else) Cancel
-                    button.save
-                        .material-symbols-outlined.mid(v-if="isSmallScreen") check
-                        span(v-else) Save
+                    template(v-if="promiseRunning")
+                        img.loading(src="@/assets/img/loading.png" style="width:20px;height:20px;")
+                    template(v-else)
+                        button.cancel(type='button' @click="()=>{recordInfoEdit = false; selectedRecord = recordPage.list[selectedRecord.record_id] ? JSON.parse(JSON.stringify(recordPage.list[selectedRecord.record_id])) : null; }") 
+                            .material-symbols-outlined.mid(v-if="isSmallScreen") close
+                            span(v-else) Cancel
+                        button.save
+                            .material-symbols-outlined.mid(v-if="isSmallScreen") check
+                            span(v-else) Save
 
             .noSelect(v-else) No record selected
 
@@ -309,13 +313,13 @@
         .tableWrap
             table
                 colgroup
-                    col(width="6%")
-                    col(width="15%")
-                    col(width="13%")
-                    col(width="13%")
-                    col(width="13%")
-                    col(width="15%")
-                    col(width="25%")
+                    col(width="8%")
+                    col(width="12%")
+                    col(width="18%")
+                    col(width="20%")
+                    col(width="8%")
+                    col(width="14%")
+                    col(width="20%")
                 thead
                     tr
                         th
@@ -326,13 +330,13 @@
                         th Table Name
                         th Record ID
                         th User ID
-                        th Date
+                        th.center Date
                         th.center Access Group
                         th.center Features
                 tbody(v-if="records && records.length")
                     //tr(v-for="(record, index) in records" :key="index" @click="()=>{recordInfoEdit=false;selectedRecord = JSON.parse(JSON.stringify(record))}" :class="{ active: activeIndex === index }")
                     tr(v-for="record in records" @click="()=>{ recordInfoEdit=false; if(selectedRecord?.record_id === record.record_id) selectedRecord = null; else selectedRecord = JSON.parse(JSON.stringify(record)) }" :class="{ active: selectedRecord?.record_id === record.record_id }")
-                        td(@click.stop style="text-align:center")
+                        td(@click.stop style="text-align:center;")
                             .customCheckBox
                                 input(type="checkbox" name="record" :id="record.record_id" @change='trackSelectedRecords' :value="record.record_id")
                                 label(:for="record.record_id")
@@ -341,8 +345,8 @@
                         td
                             .overflow {{ record.record_id }}
                         td
-                            .overflow {{ record.user_id }}
-                        td {{ timeSince(record.uploaded) }}
+                            .overflow.userId {{ record.user_id }}
+                        td.center {{ timeSince(record.uploaded) }}
                         td.center
                             .accessWrap
                                 .hoverWrap(v-if="record.table.access_group == 'private'")
@@ -358,20 +362,26 @@
                         // indexes
                         td
                             .featureWrap_v2
-                                .hoverWrap(v-if='record?.tags?.length' style='display: inline-block')
-                                    .feature.tag Tag
-                                    .hoverPreview(style="--pos-r: 0; --arr-r:0; max-width: 25vw")
-                                        // .tagsWrapper_ext - reference style section below
-                                        .tagsWrapper_ext
-                                            .tag(v-for='t in record.tags') {{ t }}
-                                .hoverWrap(v-if='record?.index' style='display: inline-block')
-                                    .feature.index Index
-                                    .hoverPreview(style="--pos-r: 0; --arr-r:0")
-                                        span(style='white-space: nowrap') {{ record.index.name }} | {{ record.index.value }}
-                                .hoverWrap(v-if='record?.reference?.record_id' style='display: inline-block')
-                                    .feature.ref Ref
-                                    .hoverPreview(style="--pos-r: 0; --arr-r:0")
-                                        span(style='white-space: nowrap') {{ record?.reference?.record_id }}
+                                .hoverWrap
+                                    template(v-if='record?.tags?.length' style='display: inline-block')
+                                        .feature.tag Tag
+                                        .hoverPreview(style="--pos-r: 0; --arr-r:0; max-width: 25vw")
+                                            // .tagsWrapper_ext - reference style section below
+                                            .tagsWrapper_ext
+                                                .tag(v-for='t in record.tags') {{ t }}
+                                    .empty(v-else)
+                                .hoverWrap
+                                    template(v-if='record?.index' style='display: inline-block')
+                                        .feature.index Index
+                                        .hoverPreview(style="--pos-r: 0; --arr-r:0")
+                                            span(style='white-space: nowrap') {{ record.index.name }} | {{ record.index.value }}
+                                    .empty(v-else)
+                                .hoverWrap
+                                    template(v-if='record?.reference?.record_id' style='display: inline-block')
+                                        .feature.ref Ref
+                                        .hoverPreview(style="--pos-r: 0; --arr-r:0")
+                                            span(style='white-space: nowrap') {{ record?.reference?.record_id }}
+                                    .empty(v-else)
 
                     tr(v-for="i in trCount" :key="'extra-' + i")
 
@@ -397,6 +407,7 @@ import { selectedRecord, records_data, indexValueType } from './RecordEdit';
 import { launch, serviceRecords, getPage, records, selectNone, recordPage, currentPage, maxPage, fetching, refresh, nextPage, timeSince } from './RecordFetch';
 
 launch();
+let promiseRunning = ref(false);
 let showRecordDataValue = ref(null);
 let showRecordData = ref(false);
 let showDeleteRecord = ref(null);
@@ -541,6 +552,7 @@ let selectType = (e, data) => {
     }
 }
 let saveRecordData = () => {
+    promiseRunning.value = true;
     let record_params = {
         service: currentService.value.service,
         record_id: selectedRecord.value.record_id,
@@ -600,6 +612,7 @@ let saveRecordData = () => {
         recordInfoEdit.value = false;
         recordPage.insertItems([res]).then(_ => {
             getPage(currentPage.value);
+            promiseRunning.value = false;
         });
     }).catch(err => {
         let errmsg = err.message.charAt(0).toUpperCase() + err.message.slice(1)
@@ -1721,14 +1734,24 @@ let handleIndexTypeChange = (e) => {
             .featureWrap_v2 {
                 position: relative;
                 width: 100%;
+                display: flex;
+                flex-wrap: nowrap;
 
+                .hoverWrap {
+                    width: 31%;
+                    margin-right: 3%;
+
+                    &:last-child {
+                        margin-right: 0;
+                    }
+                }
                 .feature {
-                    display: inline-block;
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
                     height: 24px;
-                    padding: 2px 12px;
                     border-radius: 4px;
                     box-shadow: 0px -1px 1px 0px rgba(0, 0, 0, 0.15) inset;
-                    margin-right: 8px;
                     color: #fff;
                     cursor: pointer;
 
@@ -1744,6 +1767,9 @@ let handleIndexTypeChange = (e) => {
                         background: #B881FF;
                         margin-right: 0;
                     }
+                }
+                .empty {
+                    width: 100%;
                 }
             }
 
@@ -1848,16 +1874,24 @@ let handleIndexTypeChange = (e) => {
 
             td,
             th {
+                &:first-child {
+                    padding-left: 20px;
+                }
+
                 &.center {
                     text-align: center;
                 }
 
                 .overflow {
-                    width: 90px;
+                    width: 180px;
                     white-space: nowrap;
                     overflow: hidden;
                     text-overflow: ellipsis;
                     display: block;
+
+                    &.userId {
+                        width: 210px;
+                    }
                 }
             }
 
