@@ -193,12 +193,15 @@ main {
                         }
 
                         .buttons {
+                            height: 44px;
                             display: flex;
+                            align-items: center;
                             justify-content: space-between;
 
                             button {
+                                height: 100%;
                                 border: 0;
-                                padding: 14px 28px;
+                                padding: 0 28px;
                                 border-radius: 8px;
                                 font-size: 16px;
                                 font-weight: 700;
