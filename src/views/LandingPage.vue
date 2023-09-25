@@ -143,48 +143,76 @@
 </template>
 
 <script setup>
-import { nextTick, onMounted, ref } from 'vue';
+import { nextTick, onBeforeUnmount, onMounted, ref } from 'vue';
 
 let lending = ref(null);
 let intro = ref(null);
 let other = ref(null);
 
+onMounted(() => {
+    window.addEventListener('scroll', () => {
+        if (scrollY >= 20) {
+            lending.value.style.transform = 'translateY(-100vh)';
+        } else {
+            lending.value.style.transform = 'translateY(0)';
+        }
+    });
+});
+
+// let page = ref(0);
+
 // onMounted(() => {
-//     console.log(lending.scrollHeight)
-//     // window.addEventListener('scroll', () => {
-//     //     if (scrollY >= 20) {
-//     //         lending.value.style.transform = 'translateY(-100vh)';
-//     //     } else {
-//     //         lending.value.style.transform = 'translateY(0)';
-//     //     }
-//     // });
+//     window.addEventListener('wheel', handleScroll, { passive: false });
 // });
 
-// let section = 0;
-// window.addEventListener('wheel', (e) => {
+// onBeforeUnmount(() => {
+//     window.removeEventListener('wheel', handleScroll);
+// });
+
+// function handleScroll(e) {
 //     e.preventDefault();
-//     if(e.deltaY > 0){
-//         section++;
-//     }else if(e.deltaY < 0){
-//         section--;
-//     }
-//     if(section < 0){
-//         section=0;
-//     }else if(page > lastPage){
-//         section = lastPage;
-//     }
-//     console.log(e.deltaY)
-//     wrap.style.top = section * -100 + 'vh';
-// },{passive:false})
+    //   if (e.deltaY > 0) {
+    //     page.value++;
+    //   } else if (e.deltaY < 0) {
+    //     page.value--;
+    //   }
+    //   if (page.value < 0) {
+    //     page.value = 0;
+    //     lending.value.style.top = -100 + 'vh';
+    //   } else if (page.value > 1) {
+    //     page.value = 1;
+    //     lending.value.style.top = 'calc(' + -200 + 'vh' + e.deltaY + ')';
+    //   }
+    // if (e.deltaY > 0) {
+    //     page.value++;
+    // } else {
+    //     page.value--;
+    // }
+    // if (page.value < 0) {
+    //     page.value = 0;
+    //     lending.value.style.top = 0 + 'vh';
+    // } else if (page.value > 1) {
+    //     page.value = 1;
+    //     lending.value.style.top = -100 + 'vh';
+    // }
+
+    // if (lending.value.style.top == '-100vh') {
+    //     console.log(e.deltaY, lending.value.style.top)
+    //     if (e.deltaY > 0) {
+    //         lending.value.style.top += e.deltaY;
+    //     } else {
+    //         lending.value.style.top -= e.deltaY;
+    //     }
+    // }
+// }
 </script>
 
 <style lang="less" scoped>
 #lending {
+    position: relative;
     transition: transform 2s ease;
 }
-// .wrap {
-    // }
-    
+
 #intro {
     width: 100vw;
     height: 100vh;

@@ -1,6 +1,7 @@
 <template lang="pug">
+EmailCaution(v-if="!account.email_verified")
 template(v-if='currentService')
-    .navSide
+    .navSide(:class="{'caution' : !account.email_verified}")
         router-link.logo(to="/")
             img(src="@/assets/img/logo/symbol-logo.png")
         .menuList 
@@ -88,6 +89,7 @@ import { useRoute, useRouter } from 'vue-router';
 import { services, serviceFetching, currentService, storageInfo, serviceUsers } from '@/data.js';
 import { serviceRecords } from '@/views/Service/Records/RecordFetch.js';
 import { skapi, account, bodyClick } from '@/main.js';
+import EmailCaution from '@/components/EmailCaution.vue';
 
 currentService.value = null;
 
@@ -155,6 +157,9 @@ else {
     top: 0;
     z-index: 9999;
 
+    &.caution {
+        padding-top: 52px;
+    }
     .logo {
         height: 72px;
         display: flex;
