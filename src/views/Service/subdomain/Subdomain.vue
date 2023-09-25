@@ -100,8 +100,8 @@ import { inject, ref } from 'vue';
 import { useRoute } from 'vue-router';
 import { skapi, account, bodyClick } from '@/main.js';
 import { services } from '@/data.js';
-import UploadFileList from '@/views/service/subdomain/UploadFileList.vue';
-import DeleteFileOverlay from '@/views/service/subdomain/DeleteFileOverlay.vue';
+import UploadFileList from '@/views/Service/subdomain/UploadFileList.vue';
+import DeleteFileOverlay from '@/views/Service/subdomain/DeleteFileOverlay.vue';
 
 let route = useRoute();
 let currnetPath = route.path.split('/')[2];

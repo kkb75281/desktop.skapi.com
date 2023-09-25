@@ -85,7 +85,8 @@ template(v-if='currentService')
 <script setup>
 import { ref } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
-import { services, serviceFetching, currentService, storageInfo } from '@/data.js';
+import { services, serviceFetching, currentService, storageInfo, serviceUsers } from '@/data.js';
+import { serviceRecords } from '@/views/Service/Records/RecordFetch.js';
 import { skapi, account, bodyClick } from '@/main.js';
 
 currentService.value = null;
@@ -104,27 +105,40 @@ let navigateToPage = () => {
 let logout = async () => {
     accountInfo.value = false;
     account.value = null;
+    services.value = [];
+    storageInfo.value = {};
+
+    for (let k in serviceUsers) {
+        delete serviceUsers[k];
+    }
+
+    for (let k in serviceRecords) {
+        delete serviceRecords[k];
+    }
+
     await skapi.logout();
+
     router.push({ path: '/' });
 }
 
 let getCurrentService = () => {
     currentService.value = services.value.find(service => service.service === route.path.split('/')[2]);
+    if (currentService.value) {
+        if (storageInfo.value[currentService.value.service]) {
+            return;
+        }
+        skapi.storageInformation(currentService.value.service).then(i => {
+            // get storage info
+            storageInfo.value[currentService.value.service] = i;
+        });
+    }
+    else {
+        router.replace({ path: '/dashboard' });
+    }
 }
 
 if (serviceFetching.value instanceof Promise) {
-    serviceFetching.value.then(getCurrentService).then(_ => {
-        if (currentService.value) {
-            skapi.storageInformation(currentService.value.service).then(i => {
-                // get storage info
-                storageInfo.value[currentService.value.service] = i;
-            });
-        }
-        else {
-            // no such service
-            router.replace({ path: '/dashboard' });
-        }
-    })
+    serviceFetching.value.then(getCurrentService);
 }
 else {
     getCurrentService()

@@ -5,12 +5,12 @@ import Login from '@/views/Login.vue'
 import Dashboard from '@/views/DashboardView.vue'
 import LandingPage from '@/views/LandingPage.vue'
 import AccountSettings from '@/views/AccountSettings.vue'
-import ServiceMain from '@/views/service/Main.vue'
-import Service from '@/views/service/Service.vue'
-import Users from '@/views/service/users/Users.vue'
-import Records from '@/views/service/records/Records.vue'
-import Mail from '@/views/service/Mail.vue'
-import Subdomain from '@/views/service/subdomain/Subdomain.vue'
+import ServiceMain from '@/views/Service/Main.vue'
+import Service from '@/views/Service/Service.vue'
+import Users from '@/views/Service/Users/Users.vue'
+import Records from '@/views/Service/Records/Records.vue'
+import Mail from '@/views/Service/Mail.vue'
+import Subdomain from '@/views/Service/subdomain/Subdomain.vue'
 
 const router = createRouter({
   scrollBehavior(to, from, savedPosition) {
