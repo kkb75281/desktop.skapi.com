@@ -500,19 +500,32 @@ let trCount = computed(() => {
 let prevX, prevW, nextW = 0;
 let prevCol, nextCol = null;
 let mouseMoveHandler = function (e) {
-    let ths = document.getElementsByTagName('th');
-    let thsArr = Array.from(ths);
+    // let ths = document.getElementsByTagName('th');
+    // let thsArr = Array.from(ths);
+    // let dx = e.clientX - prevX;
+    // let widthSum = 0;
+
+    // thsArr.forEach((e) => {
+    //     widthSum += e.offsetWidth - 2;
+    // });
+
+    // if ((widthSum < window.innerWidth || dx < 0) && (prevW + dx > 200 && nextW - dx > 200)) {
+    //     prevCol.style.width = `${prevW + dx}px`;
+    //     nextCol.style.width = `${nextW - dx}px`;
+    // }
     let dx = e.clientX - prevX;
-    let widthSum = 0;
 
-    thsArr.forEach((e) => {
-        widthSum += e.offsetWidth - 2;
-    });
+    // 현재 이동 중인 컬럼의 너비 변경
+    let newPrevWidth = prevW + dx;
 
-    if ((widthSum < window.innerWidth || dx < 0) && (prevW + dx > 200 && nextW - dx > 200)) {
-        prevCol.style.width = `${prevW + dx}px`;
-        nextCol.style.width = `${nextW - dx}px`;
+    // 최소 너비
+    const minColumnWidth = 100;
+    if (newPrevWidth < minColumnWidth) {
+        return;
     }
+
+    // 현재 이동 중인 컬럼만 위치 이동
+    prevCol.style.width = `${newPrevWidth}px`;
 };
 
 let mousedown = function (e) {
