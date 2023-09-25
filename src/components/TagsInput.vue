@@ -6,11 +6,11 @@ input(type="hidden" :value="tagArray?.join(',')")
         .material-symbols-outlined.sml.cancel(@click="removeTag(index)") cancel
     .tagInput(v-if="!props.disabled" ref="input" contenteditable="true" tabindex="0" @keydown.enter.space.prevent="addTag" @input="addTag" @keydown.delete="deleteTag" @blur="addTag")  
 .material.error(v-if="inputError")
-.material-symbols-outlined.mid error
-span  No special characters are allowed
+  .material-symbols-outlined.mid error
+  span  No special characters are allowed
 </template>
 <script setup>
-import { nextTick, ref } from 'vue';
+import { nextTick, onMounted, ref } from 'vue';
 
 let props = defineProps(['value', 'disabled', 'editTagsData']);
 let emits = defineEmits(['change']);
@@ -32,7 +32,9 @@ let focusEl = () => {
 let tagIsValid = (string) => {
   return !(/[.`!@#$%^&*()_+\-=\[\]{};':"\\|,<>\/?~\[ \]]/.test(string));
 }
-
+onMounted(() => {
+    input.value.focus();
+})
 let addTag = (e) => {
   let string = input.value.innerHTML.replace('&nbsp;', '');
 
@@ -48,7 +50,7 @@ let addTag = (e) => {
     tagArray.value.push(string);
     input.value.innerHTML = '';
   }
-  emits('change', tagArray);
+  emits('change', tagArray.value);
 
     nextTick(() => {
         let scrollTarget = document.querySelector('.tagContainer');
@@ -64,13 +66,13 @@ let deleteTag = () => {
     tagArray.value.pop();
   }
 
-  emits('change', tagArray);
+  emits('change', tagArray.value);
 }
 
 let removeTag = (index) => {
   if(props.disabled) return false;
   tagArray.value.splice(index, 1);
-  emits('change', tagArray);
+  emits('change', tagArray.value);
 }
 
 </script>
@@ -135,4 +137,5 @@ let removeTag = (index) => {
     outline: none;
   }
 }
+
 </style>

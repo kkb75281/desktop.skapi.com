@@ -1,6 +1,7 @@
 <template lang="pug">
 .containerWrap
     .container
+        // search form
         form
             .searchForm
                 .selectBar
@@ -64,264 +65,247 @@
                     input.clear(type="reset" value="Clear filter" @click="clearSearchFilter")
                     button.search(type="submit") Search
     .container 
+        // view / edit record / create record
         .viewRecord
-            form.recordForm(v-if="selectedRecordForm" @submit.prevent="saveRecordData")
+            // view | edit | create record
+            form(:class='{recordForm: selectedRecord?.record_id, createForm: !selectedRecord?.record_id}' v-if="selectedRecord" @submit.prevent="saveRecordData")
+                // left panel of record info
                 .recordInfo 
                     .header
-                        .tit Record Information
+                        .tit {{ selectedRecord?.record_id ? 'Record Information' : 'Create Record' }}
                     .content
+                        template(v-if='selectedRecord?.record_id')
+                            .info 
+                                .label Record ID 
+                                .value(:class="{ disabled: recordInfoEdit }" :value="selectedRecord.record_id" style="width: calc(100% - 170px);") {{ selectedRecord.record_id }}
+                                .copy(v-if="!recordInfoEdit" @click="copy")
+                                    .material-symbols-outlined.sml file_copy
+
+                            .info 
+                                .label User ID 
+                                .value(:class="{ disabled: recordInfoEdit }" :value="selectedRecord.user_id" style="position:relative;overflow: visible;width: calc(100% - 200px); cursor: pointer")
+                                    span#userId(@click.stop="()=>{if(ellipsisCheck('userId')) hiddenUserID=true}" style='width:100%;display:inline-block;white-space: nowrap;overflow: hidden;text-overflow: ellipsis;') {{ selectedRecord.user_id }}
+                                    .hidden.userID(v-if="hiddenUserID" @click.stop style='top: 100%;left: -5rem;') {{ selectedRecord.user_id }}
+                                .copy(v-if="!recordInfoEdit" @click="copy")
+                                    .material-symbols-outlined.sml file_copy
+
+                            .info 
+                                .label Uploaded
+                                .value(:class="{ disabled: recordInfoEdit }") {{ new Date(selectedRecord.uploaded).toLocaleString() }}
+
+                            .info 
+                                .label Updated
+                                .value(:class="{ disabled: recordInfoEdit }") {{ new Date(selectedRecord.updated).toLocaleString() }}
+
                         .info 
-                            .label Record ID 
-                            .value(:class="{ disabled: recordInfoEdit }" :value="selectedRecord.record_id" style="width: calc(100% - 170px);") {{ selectedRecord.record_id }}
-                            .copy(v-if="!recordInfoEdit" @click="copy")
-                                .material-symbols-outlined.sml file_copy
-                        .info 
-                            .label Table name 
+                            .label Permission
                             .value 
-                                input(v-if="recordInfoEdit" type="text" :value="selectedRecord.table.name" :placeholder="`${selectedRecord.table.name}`" @input="(e) => {selectedRecord.table.name = e.target.value; }")
-                                template(v-else) {{ selectedRecord.table.name }}
-                        .info 
-                            .label Access group 
-                            .value 
-                                select(v-if="recordInfoEdit" :value="selectedRecord.table.access_group" @change="(e) => selectedRecord.table.access_group = e.target.value")
-                                    option(value="0") Public
-                                    option(value="1") Registered
-                                template(v-else) {{ selectedRecord.table.access_group == 'private' ? 'Private' : selectedRecord.table.access_group ? 'Registered' : 'Public' }}
-                        .info 
-                            .label User ID 
-                            .value(:class="{ disabled: recordInfoEdit }" :value="selectedRecord.user_id" @click.stop="showHidden" style="width: calc(100% - 200px); cursor: pointer") {{ selectedRecord.user_id }}
-                            .copy(v-if="!recordInfoEdit" @click="copy")
-                                .material-symbols-outlined.sml file_copy
-                        .hidden.userID(v-if="hiddenUserID" @click.stop) {{ selectedRecord.user_id }}
+                                select(v-if="recordInfoEdit && selectedRecord?.record_id && selectedRecord.user_id !== account.user_id" :value="selectedRecord.readonly.toString()" @change="(e) => selectedRecord.readonly = JSON.parse(e.target.value)")
+                                    option(value="false") Read/Write
+                                    option(value="true") Read Only
+
+                                // admin can't upload readonly because its meaningless
+                                template(v-else) {{ selectedRecord.readonly ? 'Read Only' : 'Read/Write' }}
                         .info
+                            .label Table
+                            .value.various
+                                .smallInfo 
+                                    .smallLabel Name 
+                                    .smallValue 
+                                        input(v-if="recordInfoEdit" type="text" pattern="[a-zA-Z0-9]+" title="Table name should only be alphanumeric." :value="selectedRecord.table.name" placeholder="(Required)" @input="(e) => { selectedRecord.table.name = e.target.value; }" required)
+                                        template(v-else) {{ selectedRecord.table.name }}
+                                .smallInfo 
+                                    .smallLabel Access Group
+                                    .smallValue 
+                                        select(v-if="recordInfoEdit && selectedRecord.table.access_group !== 'private'" :value="selectedRecord.table.access_group" @change="(e) => selectedRecord.table.access_group = parseInt(e.target.value)")
+                                            option(value="0") Public
+                                            option(value="1") Authorized
+                                        template(v-else) {{ selectedRecord.table.access_group == 'private' ? 'Private' : selectedRecord.table.access_group === 0 ? 'Public' : 'Authorized' }}
+                                .smallInfo 
+                                    .smallLabel Subscription Group
+                                    .smallValue 
+                                        input(:style='{opacity: !selectedRecord.user_id || selectedRecord.user_id === account.user_id ? 0.5 : 1}' :disabled="!selectedRecord.user_id || selectedRecord.user_id === account.user_id || null" :class="{nonClickable: !selectedRecord.user_id || selectedRecord.user_id === account.user_id}" v-if="recordInfoEdit" type="number" min='0' max='99' :value="selectedRecord.table?.subscription_group || ''" placeholder="None" @input="(e) => {selectedRecord.table.subscription_group = e.target.value ? parseInt(e.target.value) : null }")
+
+                                        // admin can't upload subscription group because its meaningless
+                                        template(v-else) {{ selectedRecord.table?.subscription_group || 'None' }}
+                        .info
+                            .label Index
+                            .value.various
+                                .smallInfo 
+                                    .smallLabel Name 
+                                    .smallValue 
+                                        input(v-if="recordInfoEdit" type="text" :value="selectedRecord.index?.name || ''" pattern="[_a-zA-Z0-9]+" title="Index name should only be alphanumeric." placeholder="No Index" @input="(e)=> { if (!selectedRecord.index) { selectedRecord.index={}; } selectedRecord.index.name = e.target.value; }")
+                                        template(v-else) {{ selectedRecord.index?.name || 'No Index' }}
+                                .smallInfo 
+                                    .smallLabel Value 
+                                    .smallValue(:class="{'indexValue' : !recordInfoEdit}")
+                                        .typeValue(v-if="recordInfoEdit" :class="{ nonClickable: !selectedRecord?.index?.name }" :style='{opacity: selectedRecord?.index?.name ? 1 : 0.5}')
+                                            select(:value="indexValueType" @change="handleIndexTypeChange")
+                                                option(value="string") String
+                                                option(value="number") Number
+                                                option(value="boolean") Boolean 
+
+                                            select(
+                                                v-if="indexValueType === 'boolean'"
+                                                :value="selectedRecord.index?.value.toString()"
+                                                @change="(e) => { if (!selectedRecord.index) { selectedRecord.index={}; } selectedRecord.index.value = JSON.parse(e.target.value); }"
+                                            )
+                                                option(value="true") true
+                                                option(value="false") false
+
+                                            input(
+                                                v-else 
+                                                :type="indexValueType === 'string' ? 'text' : 'number'" :value="selectedRecord.index?.value"
+                                                placeholder="(Value Required)"
+                                                @input="(e)=> { if(!selectedRecord.index) { selectedRecord.index={}; } selectedRecord.index.value = indexValueType === 'number' ? parseInt(e.target.value) : e.target.value; }"
+                                                :required="selectedRecord?.index?.name ? true : null"
+                                            )
+                                        template(v-else-if='!selectedRecord.index?.name') No Index
+                                        template(v-else) {{ typeof selectedRecord.index.value }} | {{ selectedRecord.index.value }}
+
+                        .info 
                             .label Reference
                             .value.various
                                 .smallInfo 
-                                    .smallLabel Index Name 
+                                    .smallLabel Reference ID
                                     .smallValue 
-                                        input(v-if="recordInfoEdit" type="text" :value="selectedRecord.index.name" :placeholder="`${selectedRecord.index.name}`" @input="(e)=> {selectedRecord.index.name = e.target.value;}")
-                                        template(v-else) {{ selectedRecord.index.name }}
-                                .smallInfo 
-                                    .smallLabel Index Value 
-                                    .smallValue(:class="{'indexValue' : !recordInfoEdit}")
-                                        .typeValue(v-if="recordInfoEdit")
-                                            select(:value="indexValueType" @change="(e) => {indexValueType = e.target.value; selectedRecord.index.value = indexValueType === 'boolean' ? true : '';}")
-                                                option(value="string") String
-                                                option(value="number") Number
-                                                option(value="boolean") Boolean
-                                            input(type="text" :value="selectedRecord.index.value" :placeholder="`${selectedRecord.index.value}`" @input="(e)=> {selectedRecord.index.value = e.target.value;}")
-                                        template(v-else) {{ selectedRecord.index.value }}
-                                    .copy(v-if="!recordInfoEdit" @click="copy")
-                                        .material-symbols-outlined.sml file_copy
-                                .smallInfo 
-                                    .smallLabel Upload Datetime 
-                                    .smallValue(:class="{ disabled: recordInfoEdit }" :value="selectedRecord.updated") {{ selectedRecord.updated }}
-                            .material-symbols-outlined.empty.sml.que help
-                        .info 
-                            .label Reference Setting 
-                            .value.various
+                                        input#referenceIdInput(v-if="recordInfoEdit" type="text" :value="selectedRecord.reference?.record_id || ''" placeholder="Record ID to reference (optional)" @input="(e) => selectedRecord.reference.record_id = e.target.value || null")
+                                        template(v-else) {{ selectedRecord.reference.record_id || 'None' }}
                                 .smallInfo 
                                     .smallLabel Multiple Reference 
                                     .smallValue 
-                                        select(v-if="recordInfoEdit" :value="selectedRecord.reference.allow_multiple_reference" @change="(e) => {selectedRecord.reference.allow_multiple_reference = e.target.value}")
+                                        select(v-if="recordInfoEdit" :value="JSON.stringify(selectedRecord.reference.allow_multiple_reference)" @change="(e) => {selectedRecord.reference.allow_multiple_reference = e.target.value ? JSON.parse(e.target.value) : null}")
                                             option(value="true") Allowed
-                                            option(value="null") Disallowed
-                                        template(v-else) {{ selectedRecord.reference.allow_multiple_reference?'Allowed':'Disallowed' }}
+                                            option(value="null") Not Allowed
+                                        template(v-else) {{ selectedRecord.reference.allow_multiple_reference ? 'Allowed' : 'Not Allowed' }}
                                 .smallInfo 
                                     .smallLabel Reference Limit
                                     .smallValue 
-                                        input(v-if="recordInfoEdit" type="number" min="1" :value="selectedRecord.reference.reference_limit === null ? '' : selectedRecord.reference?.reference_limit" placeholder="Infinite" @input="(e) => selectedRecord.reference.reference_limit = e.target.value ? parseInt(e.target.value) : null")
-                                        template(v-else) {{ selectedRecord.reference.reference_limit }}
+                                        input(v-if="recordInfoEdit" type="number" min="0" :value="selectedRecord.reference.reference_limit === null ? '' : selectedRecord.reference?.reference_limit" placeholder="Infinite" @input="(e) => selectedRecord.reference.reference_limit = e.target.value ? parseInt(e.target.value) : null")
+                                        template(v-else) {{ selectedRecord.reference.reference_limit || 'Infinite' }}
                         .info 
                             .label Tags 
                             .value(style="width: calc(100% - 170px);")
-                                template(v-if="recordInfoEdit")
-                                    .tagsWrapper(@click="showTagData")
-                                        template(v-if="selectedRecord?.tags")
-                                            .tag(v-for="tag in selectedRecord?.tags") {{ tag }}
-                                        template(v-else) -
-                                template(v-else)
-                                    .tagsWrapper(@click.stop="showHidden")
-                                        template(v-if="selectedRecord?.tags")
-                                            .tag(v-for="tag in selectedRecord?.tags") {{ tag }}
-                                        template(v-else) -
+                                .tagsWrapper#tagsWrapper(@click.stop="e=>{if(recordInfoEdit) editTags=selectedRecord.tags; else if(ellipsisCheck('tagsWrapper')) hiddenTags=true;}")
+                                    template(v-if="selectedRecord?.tags?.length")
+                                        .tag(v-for="tag in selectedRecord?.tags") {{ tag }}
+                                    template(v-else) {{ recordInfoEdit ? 'Add Tags' : '-'}}
                         .hidden.tags(v-if="hiddenTags && selectedRecord?.tags" @click.stop)
                             .tag(v-for="tag in selectedRecord?.tags") {{ tag }}
+
+                // right panel of record info
                 .recordData
                     .header
                         .tit Type
                         .tit Key Name 
                         .tit Context
                     .content
-                        template(v-if="records_data.length")
-                            template(v-for="(data, index) in records_data" :key="index")
+                        .noData(v-if="selectedRecord.data && selectedRecord.data.hasOwnProperty('__is_private__')")
+                            .material-symbols-outlined.big lock
+                            p Private Data
+
+                        template(v-else-if="records_data.length")
+
+                            template(v-for="(data, index) in records_data" :key="index")    
                                 template(v-if="records_data.length && !recordInfoEdit")
-                                    .row(@click="showData(index, data)" :class="{'disabled' : ['boolean', 'number', 'string'].includes(data.type), 'file': data.type == 'file'}")
+                                    .row(@click="()=>{ if(data.type === 'file') data.download(); else if((data.type === 'json' || data.type === 'string') && ellipsisCheck('data-context-' + index)) showRecordDataValue=data}" :class="{'disabled' : ['boolean', 'number', 'string'].includes(data.type), 'file': data.type == 'file'}")
                                         .data {{ data.type }}
                                         .data
                                             .overflow(v-if="data?.key") {{ data.key }}
                                             .overflow(v-else) -
                                         .data 
-                                            .overflow {{ data.context }}
+                                            .overflow(:id='"data-context-" + index') {{ data.context }}
                                         .material-symbols-outlined.sml.download(v-if="data.type == 'file'") download
+
                                 template(v-else)
                                     .rowEdit
-                                        .material-symbols-outlined.sml.minus(@click="removeField(index)") do_not_disturb_on
-                                        select.type(:value="data.type" @change="(e) => selectType(e, data)")
+                                        .material-symbols-outlined.sml.minus(@click="records_data.splice(index, 1)") do_not_disturb_on
+
+                                        select.type(:value="data.type" @change="(e) => selectType(e, data)" :disabled="selectedRecord.record_id && data.type === 'file' && data.context || null")
+                                            // on edit, record file data cannot be changed. only delete is allowed
                                             option(value="json") JSON
                                             option(value="string") String
                                             option(value="boolean") Boolean
                                             option(value="file") File
                                             option(value="number") Number
-                                        input.key(type="text" :value="data.key" :placeholder="`${data.key?data.key:'Key name'}`")
+
+                                        // on edit, record file data cannot be changed. only delete is allowed
+                                        div(v-if='selectedRecord.record_id && data.type === "file" && data.context' style='opacity:0.5; width: 84px;margin-right: 20px;') {{ data.key }}
+
+                                        input.key(v-else type="text" v-model="data.key" placeholder="Key name" required)
+
                                         template(v-if="data.type == 'json'")
-                                            .context.click(@click="showData(index, data)")
+                                            .context.click(@click="showRecordDataValue=Object.assign(data, {edit:true})")
                                                 .overflow {{ data.context }}
+
                                         template(v-else-if="data.type == 'boolean'")
-                                            select.context(:value="data.context" @change="(e) => data.context = e.target.value")
+                                            select.context(:value="data.context === 'true' ? data.context : 'false'" @change="(e) => data.context = e.target.value")
                                                 option(value="true") true
                                                 option(value="false") false
-                                        template(v-else-if="data.type == 'file'") 
-                                            template(v-if="data.context === ''")
-                                                .context.fileUpload Choose a file OR Drag and drop
-                                            template(v-else)
-                                                .context.disabled {{ data.context }}
+
+                                        template(v-else-if="data.type == 'file'")
+                                            template(v-if='selectedRecord.record_id && data.type === "file" && data.context')
+                                                // on edit, record file data cannot be changed. only delete is allowed
+                                                div(style='width: calc(100% - 208px);')
+                                                    span(style='opacity: 0.5') {{ data.context }}
+                                                    .material-symbols-outlined.sml(@click='data.download()' style='float: right; cursor: pointer;' v-if="data.type == 'file'") download
+
+                                            template(v-else-if="data.context === ''")
+                                                .context.fileUpload Choose a file
+
                                         template(v-else)
-                                            input.context(type="text" :value="data.context" :placeholder="`${data.context}`")
+                                            input.context(:type="data.type === 'number' ? 'number' : 'text'" v-model="data.context" :placeholder="`<${data.type}> Value`")
+
                             template(v-if="!recordInfoEdit" v-for="i in dataTrCount" :key="'extra-' + i")
                                 .row.empty
-                        template(v-else)
-                            .noData(v-if="!recordInfoEdit")
-                                .material-symbols-outlined.big scan_delete
-                                p No data
-                        .addDataRow(v-if="recordInfoEdit" @click="addField")  
+
+                        .noData(v-else-if="!recordInfoEdit")
+                            .material-symbols-outlined.big scan_delete
+                            p No data
+
+                        .addDataRow(v-if="!(selectedRecord.data && selectedRecord.data.hasOwnProperty('__is_private__')) && recordInfoEdit" @click="addField")  
                             .material-symbols-outlined.sml add_circle
                             span Add data
+
+                // right panel top right menu
                 .material-symbols-outlined.mid.menu(v-if="!recordInfoEdit" @click.stop="showEdit = !showEdit") more_vert
+                // drop down menu (no edit)
                 .editMenuWrap(v-if="showEdit" @click.stop)
                     .nest
                         .editMenu(@click="recordInfoEdit = true; showEdit = false;")
                             .material-symbols-outlined.mid edit
                             span edit   
-                        .editMenu(@click="recordDelete")
+                        .editMenu(@click="recordDelete(selectedRecord.record_id); showEdit = false;")
                             .material-symbols-outlined.mid delete
                             span delete  
+
+                // buttons (edit)
                 .editBtnWrap(v-if="recordInfoEdit" :class="{'smallver' : isSmallScreen}") 
-                    button.cancel(@click="recordInfoEdit = false;") 
+                    button.cancel(type='button' @click="()=>{recordInfoEdit = false; selectedRecord = recordPage.list[selectedRecord.record_id] ? JSON.parse(JSON.stringify(recordPage.list[selectedRecord.record_id])) : null; }") 
                         .material-symbols-outlined.mid(v-if="isSmallScreen") close
                         span(v-else) Cancel
                     button.save
                         .material-symbols-outlined.mid(v-if="isSmallScreen") check
                         span(v-else) Save
-            form.createForm(v-else-if="createRecordForm" @submit.prevent="createRecordData")
-                .recordInfo 
-                    .header
-                        .tit Create Record
-                    .content
-                        .info 
-                            .label Record ID 
-                            .value
-                                input(type="text" @input="(e) => {validateTableName(e); createRecord.record_id = e.target.value; }")
-                        .info 
-                            .label Table name 
-                            .value 
-                                input(type="text" @input="(e) => {validateTableName(e); createRecord.table.name = e.target.value; }" required)
-                        .info 
-                            .label Access group 
-                            .value 
-                                select(value="0" @change="(e) => createRecord.table.access_group = e.target.value")
-                                    option(value="0") Public
-                                    option(value="1") Registered
-                        .info 
-                            .label User ID 
-                            .value
-                                input(type="text" @input="(e) => {validateTableName(e); createRecord.user_id = e.target.value; }")
-                        .info(style="padding-right:0")
-                            .label Reference
-                            .value.various
-                                .smallInfo 
-                                    .smallLabel Index Name 
-                                    .smallValue 
-                                        input(
-                                            type="text" 
-                                            @input="(e)=> {validateTableName(e); createRecord.index.name = e.target.value;}" 
-                                            :required="createRecord.index.value !== '' ? true : null"
-                                        )
-                                .smallInfo 
-                                    .smallLabel Index Value 
-                                    .smallValue 
-                                        .typeValue
-                                            select(value="string" @change="(e) => {indexValueType = e.target.value; createRecord.index.value = indexValueType === 'boolean' ? true : '';}")
-                                                option(value="string") String
-                                                option(value="number") Number
-                                                option(value="boolean") Boolean
-                                            input(type="text" @input="(e)=> {validateTableName(e); createRecord.index.value = e.target.value;}")
-                        .info 
-                            .label Reference Setting 
-                            .value.various
-                                .smallInfo 
-                                    .smallLabel Multiple Reference 
-                                    .smallValue 
-                                        select(@change="(e) => {createRecord.reference.allow_multiple_reference = e.target.value}")
-                                            option(value="true") Allowed
-                                            option(value="null") Disallowed
-                                .smallInfo 
-                                    .smallLabel Reference Limit
-                                    .smallValue 
-                                        input(type="number" min="1" placeholder="Infinite" @input="(e) => {validateTableName(e); createRecord.reference.reference_limit = e.target.value ? parseInt(e.target.value) : null}")
-                        .info 
-                            .label Tags 
-                            .value 
-                                TagsInput(@change="(value) => createRecord.tags = value")
-                .recordData
-                    .header
-                    .content
-                        .dataRow
-                            .rowEdit(v-for="(data, index) in dataList" :key="index")
-                                .material-symbols-outlined.sml.minus(@click="removeField(index)") do_not_disturb_on
-                                select.type(:value="data.type" @change="(e) => selectType(e, data)")
-                                    option(value="json") JSON
-                                    option(value="string") String
-                                    option(value="boolean") Boolean
-                                    option(value="file") File
-                                    option(value="number") Number
-                                input.key(type="text" :value="data.key" :placeholder="`${data.key?data.key:'Key name'}`")
-                                template(v-if="data.type == 'boolean'")
-                                    select.context(:value="data.context" @change="(e) => data.context = e.target.value")
-                                        option(value="true") true
-                                        option(value="false") false
-                                template(v-else-if="data.type == 'file'")
-                                    template(v-if="data.context === ''")
-                                        input#file.inputfile(type="file" name="file" style="display:none;")
-                                        label.context.fileUpload(for="file") Choose a file
-                                    template(v-else)
-                                        .context.disabled {{ data.context }}
-                                template(v-else)
-                                    input.context(type="text" :value="data.context" :placeholder="`${data.context}`")
-                        .addDataRow(@click="createAddField")  
-                            .material-symbols-outlined.sml add_circle
-                            span Add data
-                .editBtnWrap(:class="{'smallver' : isSmallScreen}")
-                    button.cancel(type="button" @click="createRecordForm = false;")
-                        .material-symbols-outlined.mid(v-if="isSmallScreen") close
-                        span(v-else) Cancel
-                    button.save(type="submit")
-                        .material-symbols-outlined.mid(v-if="isSmallScreen") check
-                        span(v-else) Save
+
             .noSelect(v-else) No record selected
+
+        // top menu of record list
         .tableHeader 
             .actions 
-                .material-symbols-outlined.mid.refresh.clickable cached
+                .material-symbols-outlined.mid.refresh.clickable(@click='refresh' :class='{"rotate_animation": fetching }') cached
                 .material-symbols-outlined.mid.menu.clickable(:class='{"nonClickable": !checkedRecords.length}' @click.stop="showRecordSetting = !showRecordSetting") more_vert
                 .recordSettingWrap(v-if="showRecordSetting" @click.stop)
                     .nest
-                        .setting(@click="()=>{showDeleteRecord=true; showRecordSetting=false;}")
+                        .setting(@click="()=>{recordDelete(); showRecordSetting=false;}")
                             .material-symbols-outlined.mid delete
                             span delete
-                button.create(@click="viewRecordCheck") create record
+                button.create(@click="()=>{ selectedRecord = JSON.parse(JSON.stringify(createRecordTemplate)); recordInfoEdit=true; }") create record
             .pagenator 
-                .material-symbols-outlined.sml.prevPage.clickable arrow_back_ios
-                .material-symbols-outlined.sml.nextPage.clickable arrow_forward_ios
+                .material-symbols-outlined.sml.prevPage.clickable(:class='{"nonClickable": currentPage === 1 || fetching }' @click='nextPage(false)') arrow_back_ios
+                .material-symbols-outlined.sml.nextPage.clickable(:class='{"nonClickable": maxPage <= currentPage && recordPage?.endOfList || fetching }' @click='nextPage') arrow_forward_ios
+
+        // record list
         .tableWrap
             table
                 colgroup
@@ -345,9 +329,10 @@
                         th Date
                         th.center Access Group
                         th.center Features
-                tbody(v-if="records.length")
-                    tr(v-for="(record, index) in records" :key="index" @click="showRecordInfo(index)" :class="{ active: activeIndex === index }")
-                        td(style="text-align:center")
+                tbody(v-if="records && records.length")
+                    //tr(v-for="(record, index) in records" :key="index" @click="()=>{recordInfoEdit=false;selectedRecord = JSON.parse(JSON.stringify(record))}" :class="{ active: activeIndex === index }")
+                    tr(v-for="record in records" @click="()=>{ recordInfoEdit=false; if(selectedRecord?.record_id === record.record_id) selectedRecord = null; else selectedRecord = JSON.parse(JSON.stringify(record)) }" :class="{ active: selectedRecord?.record_id === record.record_id }")
+                        td(@click.stop style="text-align:center")
                             .customCheckBox
                                 input(type="checkbox" name="record" :id="record.record_id" @change='trackSelectedRecords' :value="record.record_id")
                                 label(:for="record.record_id")
@@ -357,60 +342,71 @@
                             .overflow {{ record.record_id }}
                         td
                             .overflow {{ record.user_id }}
-                        td {{ record.uploaded }}
+                        td {{ timeSince(record.uploaded) }}
                         td.center
                             .accessWrap
-                                .material-symbols-outlined.mid.private(v-if="record.table.access_group == 'private'" @mouseenter="(e) => showPreview(e, index)" @mouseleave="(e) => hidePreview(e, index)") vpn_key
-                                .material-symbols-outlined.mid.registered(v-else @mouseenter="(e) => showPreview(e, index)" @mouseleave="(e) => hidePreview(e, index)") language
-                            .accessPreview
-                                .preview 
-                                    .private(v-if="record.table.access_group == 'private'") private
-                                    .registered(v-else) registered
-                        td.center
-                            .featureWrap
-                                .feature.tag(:class="{'active': record?.tags}" @mouseenter="(e) => showPreview(e, index)" @mouseleave="(e) => hidePreview(e, index)") Tag
-                                .feature.index(:class="{'active': record?.index}" @mouseenter="(e) => showPreview(e, index)" @mouseleave="(e) => hidePreview(e, index)") Index
-                                .feature.ref(:class="{'active': record?.ref}" @mouseenter="(e) => showPreview(e, index)" @mouseleave="(e) => hidePreview(e, index)") Ref
-                            .featurePreview
-                                .preview
-                                    .tag(v-if="record?.tags") {{ record.tags }}
-                                    .index(v-if="record?.index") {{ record.index }}
-                                    .ref(v-if="record?.ref") {{ record.ref }}
+                                .hoverWrap(v-if="record.table.access_group == 'private'")
+                                    .material-symbols-outlined.mid(v-if="record.table.access_group == 'private'") vpn_key
+                                    .hoverPreview(style="--pos-l:45px; --arr-l:25px") Private
+                                .hoverWrap(v-else-if="record.table.access_group > 0")
+                                    .material-symbols-outlined.mid person
+                                    .hoverPreview(style="--pos-l:30px; --arr-l:40px") Authorized
+                                .hoverWrap(v-else-if="record.table.access_group == 0")
+                                    .material-symbols-outlined.mid language
+                                    .hoverPreview(style="--pos-l:45px; --arr-l:25px") Public
+
+                        // indexes
+                        td
+                            .featureWrap_v2
+                                .hoverWrap(v-if='record?.tags?.length' style='display: inline-block')
+                                    .feature.tag Tag
+                                    .hoverPreview(style="--pos-r: 0; --arr-r:0; max-width: 25vw")
+                                        // .tagsWrapper_ext - reference style section below
+                                        .tagsWrapper_ext
+                                            .tag(v-for='t in record.tags') {{ t }}
+                                .hoverWrap(v-if='record?.index' style='display: inline-block')
+                                    .feature.index Index
+                                    .hoverPreview(style="--pos-r: 0; --arr-r:0")
+                                        span(style='white-space: nowrap') {{ record.index.name }} | {{ record.index.value }}
+                                .hoverWrap(v-if='record?.reference?.record_id' style='display: inline-block')
+                                    .feature.ref Ref
+                                    .hoverPreview(style="--pos-r: 0; --arr-r:0")
+                                        span(style='white-space: nowrap') {{ record?.reference?.record_id }}
+
                     tr(v-for="i in trCount" :key="'extra-' + i")
-            //- .noRecords(v-if="!records.length")
-            //-     h2 No Records
-            //-     p List of records will show when there is data
-            .noRecordsFound(v-if="!records.length")
+
+            .noRecordsFound(v-if="records && !records.length")
                 .tit 
                     .material-symbols-outlined.big search
                     h2 No Records Found
-                p There was no record matching query
-    RecordDataOverlay(v-if="showRecordData" @close="showRecordData = false;" :selectedData="selectedData" :editRecordData="editRecordData")
-    DeleteRecordOverlay(v-if="showDeleteRecord" @close="showDeleteRecord = false;" :checkedRecords='checkedRecords')
+                p There was no record matching query 
+    TagEditor(v-if="editTags" @close="editTags = null" :tags="editTags")
+    RecordDataOverlay(v-if="showRecordDataValue" @close="showRecordDataValue = null" :selectedData="showRecordDataValue" @save="saveRecordDataValue")
+    DeleteRecordOverlay(v-if="showDeleteRecord" @close="showDeleteRecord = null;" :toDelete="showDeleteRecord")
 </template>
 
 <script setup>
 import { bodyClick } from '@/main.js';
 import { computed, nextTick, onBeforeMount, onBeforeUnmount, onMounted, ref } from 'vue';
-import { records, records_data } from '@/data.js';
-import RecordDataOverlay from '@/views/service/records/RecordDataOverlay.vue';
-import DeleteRecordOverlay from '@/views/service/records/DeleteRecordOverlay.vue';
-import TagsInput from '@/components/TagsInput.vue';
+import RecordDataOverlay from '@/views/Service/Records/RecordDataOverlay.vue';
+import DeleteRecordOverlay from '@/views/Service/Records/DeleteRecordOverlay.vue';
+import TagEditor from './TagEditor.vue';
+import { account, skapi } from '../../../main';
+import { currentService } from '@/data.js';
+import { selectedRecord, records_data, indexValueType } from './RecordEdit';
+import { launch, serviceRecords, getPage, records, selectNone, recordPage, currentPage, maxPage, fetching, refresh, nextPage, timeSince } from './RecordFetch';
 
+launch();
+let showRecordDataValue = ref(null);
 let showRecordData = ref(false);
-let showDeleteRecord = ref(false);
+let showDeleteRecord = ref(null);
 let showRecordSetting = ref(false);
 let showEdit = ref(false);
 let hiddenUserID = ref(false);
 let hiddenTags = ref(false);
-
+let editTags = ref(null);
 let searchText = ref('');
 let recordInfoEdit = ref(false);
-let activeIndex = ref(null);
-let selectedRecordForm = ref(false);
-let selectedRecord = ref(null);
-let currentIndex = -1;
-let createRecordForm = ref(false);
 let advancedForm = ref({
     access_group: 0,
     table: undefined,
@@ -422,29 +418,27 @@ let advancedForm = ref({
     index_condition: '=',
     tag: undefined,
     reference: undefined
-})
-let createRecord = ref({
-    record_id: '',
+});
+let createRecordTemplate = {
     table: {
         name: '',
-        access_group: '',
+        access_group: 0,
     },
-    user_id: '',
     index: {
         name: '',
         value: '',
     },
     reference: {
-        allow_multiple_reference: '',
-        reference_limit: ''
-    }
-});
+        allow_multiple_reference: true,
+        reference_limit: null
+    },
+    tags: [],
+    readonly: false
+};
 let dataList = ref([]);
 let checkedRecords = ref([]);
 let selectedData = ref(null);
-let editRecordData = ref(null);
 let firstInput = ref('');
-let indexValueType = ref('string');
 let selectedOption = ref('table');
 let isSmallScreen = ref(window.innerWidth < 1200)
 let maxTrCount = 10;
@@ -455,67 +449,12 @@ let trCount = computed(() => {
 let dataTrCount = computed(() => {
     return Math.max(0, maxTrCount - records_data.value.length);
 });
-let showRecordInfo = (index) => {
-    createRecordForm.value = false;
-    if(currentIndex === index) {
-        selectedRecordForm.value = false;
-        activeIndex.value = null;
-        currentIndex = -1;
-        hiddenTags.value = false;
-    } else {
-        currentIndex = index;
-        activeIndex.value = currentIndex;
-        selectedRecord.value = records.value[currentIndex];
-        selectedRecordForm.value = true;
-        hiddenTags.value = false;
+
+let saveRecordDataValue = d => {
+    for (let key in d) {
+        showRecordDataValue.value[key] = d[key];
     }
-}
-let viewRecordCheck = () => {
-    if(selectedRecordForm.value) {
-        selectedRecordForm.value = false;
-        activeIndex.value = null;
-        currentIndex = -1;
-    }
-    dataList.value = [];
-    createRecordForm.value = true;
-}
-let showTagData = () => {
-    if(selectedRecord.value.tags) {
-        editRecordData.value = selectedRecord.value.tags;
-    } else {
-        editRecordData.value = '';
-    }
-    showRecordData.value = true;
-}
-let showData = (index, data) => {
-    if(data.type == 'json') {
-        if(recordInfoEdit.value) {
-            editRecordData.value = data;
-            selectedData.value = null;
-        } else {
-            editRecordData.value = null;
-            selectedData.value = records_data.value[index];
-        }
-        showRecordData.value = true;
-    }
-} 
-let showHidden = (e) => {
-    if(e.currentTarget.classList.contains('tagsWrapper')) {
-        if(hiddenTags.value) {
-            hiddenTags.value = false;
-        } else {
-            hiddenTags.value = true;
-        }
-    } else {
-        if(hiddenUserID.value) {
-            hiddenUserID.value = false;
-        } else {
-            hiddenUserID.value = true;
-        }
-    }
-}
-let editWindow = (e) => {
-    console.log(e.target)
+    showRecordDataValue.value = null;
 }
 let copy = (e) => {
     let doc = document.createElement('textarea');
@@ -555,30 +494,29 @@ let trackSelectedRecords = () => {
 }
 
 let validateTableName = (event) => {
-	let regex = /^[\p{L}\d\s.]+$/u;
+    let regex = /^[\p{L}\d\s.]+$/u;
 
-	let isValid = event.target.value.match(regex) ? true : false;
-	if (isValid) {
+    let isValid = event.target.value.match(regex) ? true : false;
+    if (isValid) {
         event.target.setCustomValidity('');
     } else {
-		event.target.setCustomValidity('Can not contain special characters other than period and spaces');
-		event.target.reportValidity();
-	}
+        event.target.setCustomValidity('Can not contain special characters other than period and spaces');
+        event.target.reportValidity();
+    }
 };
 
 // recordData edit
 let addField = () => {
-	records_data.value.push({ type: 'string', key: '', context: '' });
-    console.log(records_data.value)
+    records_data.value.push({ type: 'string', key: '', context: '' });
     nextTick(() => {
         let scrollTarget = document.querySelector('.recordData .content');
-        if(scrollTarget.getBoundingClientRect().height < scrollTarget.scrollHeight) {
+        if (scrollTarget.getBoundingClientRect().height < scrollTarget.scrollHeight) {
             scrollTarget.scrollTop = scrollTarget.getBoundingClientRect().height + 30;
         }
     })
 };
 let removeField = (index) => {
-    if(createRecordForm.value) {
+    if (createRecordForm.value) {
         dataList.value.splice(index, 1);
     } else {
         records_data.value.splice(index, 1);
@@ -586,12 +524,94 @@ let removeField = (index) => {
 };
 let selectType = (e, data) => {
     data.type = e.target.value;
-    if(data.type == 'file'){
+    if (data.type === 'string') {
         data.context = '';
+    }
+    else if (data.type === 'number') {
+        data.context = '0';
+    }
+    else if (data.type === 'boolean') {
+        data.context = 'false';
+    }
+    else if (data.type === 'file') {
+        data.context = '';
+    }
+    else if (data.type === 'json') {
+        data.context = 'null';
     }
 }
 let saveRecordData = () => {
-    console.log(selectedRecord.value)
+    let record_params = {
+        service: currentService.value.service,
+        record_id: selectedRecord.value.record_id,
+        readonly: selectedRecord.value.readonly,
+        table: selectedRecord.value.table,
+        index: selectedRecord.value.index,
+        reference: selectedRecord.value.reference,
+        tags: selectedRecord.value.tags
+    };
+    let data = {};
+
+    if (record_params.table.subscription) {
+        delete record_params.table.subscription;
+    }
+    if (!record_params.index.name) {
+        record_params.index = null;
+    }
+
+    // build record data
+    let rec_data = records_data.value;
+    if (!rec_data.length) {
+        data = null;
+    }
+    else {
+        let makeArray = (key, data, value) => {
+            if (data[key]) {
+                if (Array.isArray(data[key])) {
+                    data[key].push(value);
+                }
+                else {
+                    data[key] = [data[key], value];
+                }
+            }
+            else {
+                data[key] = value;
+            }
+        }
+
+        for (let d of rec_data) {
+            if (d.type === 'string') {
+                makeArray(d.key, data, d.context);
+            }
+            else if (d.type === 'number') {
+                makeArray(d.key, data, d.context.includes('.') ? parseFloat(d.context) : parseInt(d.context));
+            }
+            else if (d.type === 'boolean' || d.type === 'json') {
+                makeArray(d.key, data, JSON.parse(d.context));
+            }
+            else if (d.type === 'file') {
+                makeArray(d.key, data, d.fileData);
+            }
+        }
+    }
+
+    document.getElementById('referenceIdInput').setCustomValidity('')
+
+    skapi.postRecord(data, record_params).then(res => {
+        recordPage.insertItems([res]).then(_ => {
+            getPage(currentPage.value);
+            recordInfoEdit.value = false;
+        });
+    }).catch(err => {
+        let errmsg = err.message.charAt(0).toUpperCase() + err.message.slice(1)
+        if(err.message.includes('referenc')) {
+            document.getElementById('referenceIdInput').setCustomValidity(errmsg)
+            document.getElementById('referenceIdInput').reportValidity()
+        }
+        else {
+            alert(errmsg)
+        }
+    });
 }
 
 // create Record
@@ -602,103 +622,29 @@ let createAddField = () => {
         context: ""
     });
 }
-let createRecordData = () => {
-    console.log(selectedRecord.value)
-}
 
 // delete Record
-let recordDelete = () => {
-    showDeleteRecord.value = true;
-    // records.value.splice(currentIndex, 1); 
-    // selectedRecordForm.value = false;
-    // activeIndex.value = null;
-    // currentIndex = -1;
-    // showEdit.value = false;
+let recordDelete = (id) => {
+    id = id ? [id] : checkedRecords.value;
+    console.log({ id })
+    let recDelete = async () => {
+        skapi.deleteRecords({
+            service: currentService.value.service,
+            record_id: id
+        });
+        for (let i of id) {
+            if (id === selectedRecord.value.record_id) {
+                selectedRecord.value = null;
+            }
+            await recordPage.deleteItem(i);
+        }
+        selectNone();
+        getPage(currentPage.value);
+    }
+
+    showDeleteRecord.value = { cb: recDelete, count: id.length };
 }
 
-let showPreview = (e, index) => {
-    nextTick(() => {
-        let tr = document.querySelectorAll('table tbody tr');
-        let target = tr[index];
-        let child;
-
-        if(e.target.classList.contains('tag')) {
-            child = target.querySelectorAll(".tag");
-            if(child.length > 1) { 
-                child[1].parentNode.classList.add('active');
-                child[1].parentNode.classList.add('fir');
-                child[1].classList.add('active');
-            }
-        } else if(e.target.classList.contains('index')) {
-            child = target.querySelectorAll(".index");
-            if(child.length > 1) { 
-                child[1].parentNode.classList.add('active');
-                child[1].parentNode.classList.add('sec');
-                child[1].classList.add('active');
-            }
-        } else if(e.target.classList.contains('ref')) {
-            child = target.querySelectorAll(".ref");
-            if(child.length > 1) { 
-                child[1].parentNode.classList.add('active');
-                child[1].parentNode.classList.add('last');
-                child[1].classList.add('active');
-            }
-        } else if(e.target.classList.contains('private')) {
-            child = target.querySelectorAll(".private");
-            if(child.length > 1) { 
-                child[1].parentNode.classList.add('active');
-                child[1].classList.add('active');
-            }
-        } else {
-            child = target.querySelectorAll(".registered");
-            if(child.length > 1) { 
-                child[1].parentNode.classList.add('active');
-                child[1].classList.add('active');
-            }
-        }
-    })
-}
-let hidePreview = (e, index) => {
-    nextTick(() => {
-        let tr = document.querySelectorAll('table tbody tr');
-        let target = tr[index];
-        let child;
-        if(e.target.classList.contains('tag')) {
-            child = target.querySelectorAll(".tag");
-            if(child.length > 1) { 
-                child[1].parentNode.classList.remove('active');
-                child[1].parentNode.classList.remove('fir');
-                child[1].classList.remove('active');
-            }
-        } else if(e.target.classList.contains('index')) {
-            child = target.querySelectorAll(".index");
-            if(child.length > 1) { 
-                child[1].parentNode.classList.remove('active');
-                child[1].parentNode.classList.remove('sec');
-                child[1].classList.remove('active');
-            }
-        } else if(e.target.classList.contains('ref')) {
-            child = target.querySelectorAll(".ref");
-            if(child.length > 1) { 
-                child[1].parentNode.classList.remove('active');
-                child[1].parentNode.classList.remove('last');
-                child[1].classList.remove('active');
-            }
-        } else if(e.target.classList.contains('private')) {
-            child = target.querySelectorAll(".private");
-            if(child.length > 1) { 
-                child[1].parentNode.classList.remove('active');
-                child[1].classList.remove('active');
-            }
-        } else {
-            child = target.querySelectorAll(".registered");
-            if(child.length > 1) { 
-                child[1].parentNode.classList.remove('active');
-                child[1].classList.remove('active');
-            }
-        }
-    })
-}
 let handleResize = () => {
     isSmallScreen.value = window.innerWidth < 1200;
 };
@@ -716,12 +662,38 @@ bodyClick.recordPage = () => {
     hiddenTags.value = false;
     hiddenUserID.value = false;
 }
+
+let ellipsisCheck = (id) => {
+    let e = document.getElementById(id);
+    return e.offsetWidth < e.scrollWidth;
+}
+let handleIndexTypeChange = (e) => {
+    let originalValue = recordPage.list[selectedRecord.value.record_id].index?.value;
+    let valueType = e.target.value;
+
+    if (!selectedRecord.value.index) {
+        selectedRecord.value.index = {};
+    }
+
+    if (valueType === 'boolean') {
+        selectedRecord.value.index.value = typeof originalValue === 'boolean' ? originalValue : true;
+    }
+    else if (valueType === 'number') {
+        selectedRecord.value.index.value = typeof originalValue === 'number' ? originalValue : 0;
+    }
+    else {
+        selectedRecord.value.index.value = typeof originalValue === valueType ? originalValue : '';
+    }
+
+    indexValueType.value = valueType;
+}
 </script>
 
 <style lang="less" scoped>
 .containerWrap {
     display: flex;
     flex-wrap: wrap;
+
     .container {
         width: 100%;
         padding: 28px 40px;
@@ -730,13 +702,15 @@ bodyClick.recordPage = () => {
         margin-bottom: 2%;
         filter: drop-shadow(8px 12px 36px rgba(0, 0, 0, 0.10));
     }
+
     .searchForm {
         display: flex;
         flex-wrap: nowrap;
+
         .selectBar {
             width: 200px;
             margin-right: 20px;
-            
+
             select {
                 height: 44px;
                 background: rgba(0, 0, 0, 0.05);
@@ -746,10 +720,11 @@ bodyClick.recordPage = () => {
                 color: rgba(0, 0, 0, 0.80);
             }
         }
+
         .searchBar {
             position: relative;
             width: calc(100% - 220px);
-            
+
             input {
                 width: 100%;
                 height: 44px;
@@ -760,12 +735,14 @@ bodyClick.recordPage = () => {
                 padding-left: 50px;
                 font-weight: 400;
             }
+
             .search {
                 position: absolute;
                 left: 16px;
                 top: 10px;
-                color: rgba(0,0,0,0.4);
+                color: rgba(0, 0, 0, 0.4);
             }
+
             .delete {
                 position: absolute;
                 right: 16px;
@@ -774,6 +751,7 @@ bodyClick.recordPage = () => {
             }
         }
     }
+
     .advancedForm {
         margin-top: 30px;
 
@@ -782,9 +760,11 @@ bodyClick.recordPage = () => {
             margin-right: 4%;
             display: inline-block;
         }
+
         .right {
             width: 48%;
             display: inline-block;
+
             .title {
                 color: rgba(0, 0, 0, 0.80);
                 font-size: 14px;
@@ -792,15 +772,20 @@ bodyClick.recordPage = () => {
                 margin-bottom: 20px;
             }
         }
+
         .condition {
             margin-bottom: 20px;
 
             &:last-child {
                 margin-bottom: 28px;
             }
-            .label, .radioFormWrap, .radio {
+
+            .label,
+            .radioFormWrap,
+            .radio {
                 display: inline-block;
             }
+
             .label {
                 width: 90px;
                 color: rgba(0, 0, 0, 0.80);
@@ -812,6 +797,7 @@ bodyClick.recordPage = () => {
                     color: rgba(0, 0, 0, 0.25);
                 }
             }
+
             .radioFormWrap {
                 select {
                     width: 110px;
@@ -822,12 +808,15 @@ bodyClick.recordPage = () => {
                     font-weight: 700;
                 }
             }
+
             .radio {
                 margin-right: 20px;
             }
+
             .textFormWrap {
                 width: calc(100% - 124px);
                 display: inline-block;
+
                 input {
                     position: relative;
                     width: 100%;
@@ -835,10 +824,12 @@ bodyClick.recordPage = () => {
                     border-bottom: 1px solid rgba(0, 0, 0, 0.80);
                     background-color: unset;
                 }
+
                 input:disabled {
                     border-bottom: 1px solid rgba(0, 0, 0, 0.10);
                 }
-                &.indexValue {         
+
+                &.indexValue {
                     position: relative;
 
                     &::after {
@@ -851,31 +842,36 @@ bodyClick.recordPage = () => {
                         height: 60%;
                         background-color: #000;
                     }
+
                     &.disabled {
                         &::after {
                             background-color: rgba(0, 0, 0, 0.10);
                         }
+
                         .customSelect {
                             .selectArrowDown {
                                 color: rgba(0, 0, 0, 0.25);
                             }
                         }
                     }
+
                     input {
                         padding-right: 80px;
                     }
+
                     .customSelect {
                         position: absolute;
                         right: 0;
                         top: 45%;
                         transform: translateY(-50%);
                         width: 66px;
-                        
+
                         select {
                             border: 0;
                             padding-left: 20px;
                             background-color: unset;
                         }
+
                         .selectArrowDown {
                             right: 0;
                         }
@@ -883,8 +879,10 @@ bodyClick.recordPage = () => {
                 }
             }
         }
+
         .buttonWrap {
             text-align: right;
+
             * {
                 padding: 12px 28px;
                 border: 0;
@@ -894,9 +892,11 @@ bodyClick.recordPage = () => {
                 background-color: unset;
                 cursor: pointer;
             }
+
             .clear {
                 color: #293FE6;
             }
+
             .search {
                 color: #fff;
                 background-color: #293FE6;
@@ -904,12 +904,15 @@ bodyClick.recordPage = () => {
             }
         }
     }
+
     .viewRecord {
         width: 100%;
         border-radius: 8px;
         border: 1px solid rgba(0, 0, 0, 0.10);
         margin-bottom: 40px;
-        .recordForm, .createForm {
+
+        .recordForm,
+        .createForm {
             position: relative;
             display: flex;
             flex-wrap: nowrap;
@@ -925,55 +928,67 @@ bodyClick.recordPage = () => {
                 background: rgba(0, 0, 0, 0.1);
                 filter: drop-shadow(0px 1px 3px rgba(0, 0, 0, 0.06));
             }
-            .recordInfo, .recordData {
+
+            .recordInfo,
+            .recordData {
                 width: 50%;
                 overflow: hidden;
                 padding-bottom: 20px;
             }
+
             .recordData {
                 .header {
                     padding-left: 40px;
+
                     .tit {
                         min-width: 84px;
                         padding-left: 0;
                     }
                 }
             }
+
             .menu {
                 position: absolute;
                 right: 14px;
                 top: 7.5px;
-                color: rgba(0,0,0,0.6);
+                color: rgba(0, 0, 0, 0.6);
                 cursor: pointer;
             }
+
             .editBtnWrap {
                 position: absolute;
                 right: 20px;
                 top: 10px;
-                
+
                 &.smallver {
                     top: 8px;
+
                     .cancel {
                         margin-right: 6px;
                     }
                 }
+
                 button {
                     font-size: 16px;
                     font-weight: 700;
                     border: 0;
                     background-color: unset;
                     cursor: pointer;
+
                     &.cancel {
                         color: rgba(0, 0, 0, 0.80);
                         margin-right: 20px;
                     }
+
                     &.save {
                         color: #293FE6;
                     }
                 }
             }
+
             .editMenuWrap {
                 position: relative;
+
                 .nest {
                     position: absolute;
                     right: 20px;
@@ -985,21 +1000,23 @@ bodyClick.recordPage = () => {
                     padding: 20px;
                     width: 134px;
                     z-index: 2;
-                    
+
                     .editMenu {
                         display: flex;
                         flex-wrap: nowrap;
                         align-items: center;
                         cursor: pointer;
-    
+
                         &:first-child {
                             margin-bottom: 20px;
                         }
+
                         &:hover {
                             span {
                                 font-weight: 700;
                             }
                         }
+
                         span {
                             margin-left: 10px;
                             font-size: 16px;
@@ -1008,6 +1025,7 @@ bodyClick.recordPage = () => {
                     }
                 }
             }
+
             .header {
                 position: relative;
                 height: 40px;
@@ -1022,6 +1040,7 @@ bodyClick.recordPage = () => {
                     background: rgba(0, 0, 0, 0.1);
                     filter: drop-shadow(0px 1px 3px rgba(0, 0, 0, 0.06));
                 }
+
                 .tit {
                     min-width: 84px;
                     height: 40px;
@@ -1038,20 +1057,27 @@ bodyClick.recordPage = () => {
                     }
                 }
             }
+
             .content {
                 height: 404px;
                 padding: 16px 20px 0 20px;
                 overflow-y: auto;
-                .info, .smallInfo {
+
+                .info,
+                .smallInfo {
                     position: relative;
                     user-select: none;
-                    .label, .smallLabel {
+
+                    .label,
+                    .smallLabel {
                         display: inline-block;
                         vertical-align: middle;
                         color: rgba(0, 0, 0, 0.40);
                         font-size: 14px;
                     }
-                    .value, .smallValue {
+
+                    .value,
+                    .smallValue {
                         display: inline-block;
                         vertical-align: middle;
                         font-size: 14px;
@@ -1059,20 +1085,25 @@ bodyClick.recordPage = () => {
                         white-space: nowrap;
                         overflow: hidden;
                         text-overflow: ellipsis;
-                        color: rgba(0,0,0,0.6);
+                        color: rgba(0, 0, 0, 0.6);
+
                         &.disabled {
                             color: rgba(0, 0, 0, 0.25);
                         }
+
                         &.various {
                             display: block;
                             width: 100%;
                         }
+
                         input {
                             color: rgba(0, 0, 0, 0.60);
                             background-color: unset;
                             border: 0;
                             border-bottom: 1px solid rgba(0, 0, 0, 0.80);
+                            padding: 1px 4px;
                         }
+
                         select {
                             color: rgba(0, 0, 0, 0.60);
                             background-color: unset;
@@ -1081,6 +1112,7 @@ bodyClick.recordPage = () => {
                             cursor: pointer;
                         }
                     }
+
                     .tagsWrapper {
                         width: 100%;
                         white-space: nowrap;
@@ -1088,6 +1120,7 @@ bodyClick.recordPage = () => {
                         text-overflow: ellipsis;
                         height: 20px;
                         cursor: pointer;
+
                         .tag {
                             display: inline-block;
                             height: 20px;
@@ -1098,15 +1131,16 @@ bodyClick.recordPage = () => {
                             margin-right: 8px;
                             text-align: center;
                             font-weight: 500;
-                            color: rgba(0,0,0,0.6);
+                            color: rgba(0, 0, 0, 0.6);
                         }
                     }
+
                     .copy {
                         position: absolute;
                         top: 65%;
                         right: 0;
                         transform: translateY(-50%);
-                        color: rgba(0,0,0,0.4);
+                        color: rgba(0, 0, 0, 0.4);
                         cursor: pointer;
 
                         svg {
@@ -1123,7 +1157,7 @@ bodyClick.recordPage = () => {
                             font-size: 12px;
                             font-weight: 400;
                             color: rgba(0, 0, 0, 0.5);
-                            background-color: rgba(250,250,250,0.9);
+                            background-color: rgba(250, 250, 250, 0.9);
                             border-radius: 4px;
                             padding: 4px;
                             content: "Copied";
@@ -1136,24 +1170,29 @@ bodyClick.recordPage = () => {
                         }
                     }
                 }
+
                 .info {
                     position: relative;
                     margin-bottom: 12px;
-                    
+
                     .label {
                         width: 150px;
                         font-weight: 700;
                     }
+
                     .value {
                         width: calc(100% - 150px);
 
-                        input, select {
+                        input,
+                        select {
                             width: 100%;
                         }
                     }
+
                     &:nth-child(8) {
                         margin-bottom: 42px;
                     }
+
                     .que {
                         position: absolute;
                         left: 148px;
@@ -1164,10 +1203,11 @@ bodyClick.recordPage = () => {
                         cursor: pointer;
                     }
                 }
+
                 .hidden {
                     position: absolute;
                     background-color: #FAFAFA;
-                    border: 1px solid rgba(0,0,0,0.15);
+                    border: 1px solid rgba(0, 0, 0, 0.15);
                     filter: drop-shadow(8px 12px 36px rgba(0, 0, 0, 0.10));
                     border-radius: 8px;
                     z-index: 10;
@@ -1180,6 +1220,7 @@ bodyClick.recordPage = () => {
                         padding: 20px;
                         font-weight: 700;
                     }
+
                     &.tags {
                         width: 270px;
                         left: 45%;
@@ -1187,6 +1228,7 @@ bodyClick.recordPage = () => {
                         padding: 16px;
                         display: flex;
                         flex-wrap: wrap;
+
                         .tag {
                             height: 20px;
                             border-radius: 4px;
@@ -1196,42 +1238,56 @@ bodyClick.recordPage = () => {
                             margin: 4px 4px;
                             text-align: center;
                             font-weight: 500;
-                            color: rgba(0,0,0,0.6);
+                            color: rgba(0, 0, 0, 0.6);
                         }
                     }
                 }
+
                 .smallInfo {
                     margin-top: 12px;
+
                     .smallLabel {
                         width: 140px;
                         font-weight: 400;
-                        margin-left: 10px;
+                        // margin-left: 10px;
+                        padding-left: 10px;
                     }
+
                     .smallValue {
                         width: calc(100% - 140px);
+                        padding-left: 10px;
 
-                        input, select {
+                        input,
+                        select {
                             width: 100%;
                         }
+
                         &.indexValue {
                             width: calc(100% - 200px);
                         }
                     }
+
                     .typeValue {
-                        width: calc(100% - 10px);
+                        // width: calc(100% - 10px);
                         border-bottom: 1px solid rgba(0, 0, 0, 0.80);
-                        input {
-                            width: calc(100% - 95px) !important;
-                            border-bottom: 0 !important;
-                        }
+
+                        input,
                         select {
-                            width: 84px !important;
-                            border-bottom: 0 !important;
-                            margin-right: 10px !important;
+                            width: calc(100% - 95px) !important;
+                            border-bottom: 0;
+                        }
+
+                        select {
+                            &:first-child {
+                                width: 84px !important;
+                                margin-right: 10px;
+                            }
+
                             cursor: pointer;
                         }
                     }
                 }
+
                 .row {
                     position: relative;
                     padding: 0 20px;
@@ -1248,26 +1304,32 @@ bodyClick.recordPage = () => {
                     &:first-child {
                         margin-top: -12px;
                     }
+
                     &:nth-child(2n) {
                         background: rgba(0, 0, 0, 0.05);
                     }
+
                     &.empty:hover {
                         cursor: default;
                     }
+
                     &.disabled:hover {
                         color: rgba(0, 0, 0, 0.40);
                         font-weight: 500;
                         cursor: default;
                     }
+
                     &.file:hover {
                         .download {
                             display: block;
                         }
                     }
+
                     &:hover {
                         color: rgba(0, 0, 0, 0.80);
                         font-weight: 700;
                     }
+
                     .download {
                         position: absolute;
                         right: 12px;
@@ -1276,6 +1338,7 @@ bodyClick.recordPage = () => {
                         display: none;
                     }
                 }
+
                 .rowEdit {
                     position: relative;
                     padding-left: 20px;
@@ -1286,7 +1349,8 @@ bodyClick.recordPage = () => {
                     font-weight: 500;
                     display: flex;
                     flex-wrap: nowrap;
-                    align-items: center;
+                    // align-items: center;
+
                     .minus {
                         position: absolute;
                         left: -8px;
@@ -1297,23 +1361,31 @@ bodyClick.recordPage = () => {
                         color: rgba(0, 0, 0, 0.60);
                         cursor: pointer;
                     }
-                    .type, .key, .context {
+
+                    .type,
+                    .key,
+                    .context {
                         position: relative;
                         border: 0;
                         background-color: unset;
                     }
+
                     .type {
                         width: 84px;
                         margin-right: 20px;
                     }
+
                     .key {
                         width: 84px;
                         margin-right: 20px;
                         border-bottom: 1px solid rgba(0, 0, 0, 0.80);
+                        padding: 1px 4px;
                     }
+
                     .context {
                         width: calc(100% - 208px);
                         border-bottom: 1px solid rgba(0, 0, 0, 0.80);
+                        padding: 1px 4px;
 
                         &.disabled {
                             color: rgba(0, 0, 0, 0.25);
@@ -1321,6 +1393,7 @@ bodyClick.recordPage = () => {
                             font-weight: 500;
                             border-bottom: 0;
                         }
+
                         &.fileUpload {
                             color: #293FE6;
                             font-size: 14px;
@@ -1328,9 +1401,11 @@ bodyClick.recordPage = () => {
                             border-bottom: 0;
                             cursor: pointer;
                         }
+
                         &.click {
                             cursor: pointer;
                         }
+
                         .overflow {
                             width: 100%;
                             white-space: nowrap;
@@ -1339,13 +1414,16 @@ bodyClick.recordPage = () => {
                             display: block;
                         }
                     }
+
                     select {
                         cursor: pointer;
                     }
+
                     input {
                         color: rgba(0, 0, 0, 0.60);
                     }
                 }
+
                 .data {
                     margin-right: 20px;
                     display: inline-block;
@@ -1353,13 +1431,16 @@ bodyClick.recordPage = () => {
                     &:first-child {
                         width: 84px;
                     }
+
                     &:nth-child(2) {
                         width: 84px;
                     }
+
                     &:last-child {
                         width: calc(100% - 208px);
                         margin-right: 0;
                     }
+
                     .overflow {
                         width: 100%;
                         white-space: nowrap;
@@ -1368,6 +1449,7 @@ bodyClick.recordPage = () => {
                         display: block;
                     }
                 }
+
                 .addDataRow {
                     display: flex;
                     flex-wrap: nowrap;
@@ -1387,6 +1469,7 @@ bodyClick.recordPage = () => {
                         margin-left: 8px;
                     }
                 }
+
                 .noData {
                     position: absolute;
                     left: 75%;
@@ -1395,7 +1478,8 @@ bodyClick.recordPage = () => {
                     text-align: center;
                     font-size: 28px;
                     font-weight: 700;
-                    color: rgba(0,0,0,0.4);
+                    color: rgba(0, 0, 0, 0.4);
+
                     .big {
                         width: 52px;
                         height: 52px;
@@ -1405,6 +1489,7 @@ bodyClick.recordPage = () => {
                 }
             }
         }
+
         .createForm {
             .header {
                 .tit {
@@ -1413,6 +1498,7 @@ bodyClick.recordPage = () => {
                     font-weight: 700;
                 }
             }
+
             .content {
                 .info {
                     padding-right: 2px;
@@ -1423,6 +1509,7 @@ bodyClick.recordPage = () => {
                 }
             }
         }
+
         .noSelect {
             min-height: 100px;
             text-align: center;
@@ -1432,21 +1519,27 @@ bodyClick.recordPage = () => {
             font-weight: 500;
         }
     }
+
     .tableHeader {
         display: flex;
         flex-wrap: nowrap;
         justify-content: space-between;
+
         .actions {
             position: relative;
             display: flex;
             flex-wrap: nowrap;
             align-items: center;
-            .refresh, .menu {
+
+            .refresh,
+            .menu {
                 margin-right: 20px;
             }
+
             .refresh {
                 color: #293FE6;
             }
+
             .dropDown {
                 display: flex;
                 align-items: center;
@@ -1454,6 +1547,7 @@ bodyClick.recordPage = () => {
                 font-weight: 500;
                 margin-right: 20px;
             }
+
             .filterWrap {
                 position: absolute;
                 left: 0;
@@ -1465,6 +1559,7 @@ bodyClick.recordPage = () => {
                 box-shadow: 8px 12px 36px 0px rgba(0, 0, 0, 0.10);
                 z-index: 10;
                 user-select: none;
+
                 .filter {
                     display: flex;
                     align-items: center;
@@ -1474,6 +1569,7 @@ bodyClick.recordPage = () => {
                     &:last-child {
                         margin-bottom: 0;
                     }
+
                     input {
                         width: 20px;
                         height: 20px;
@@ -1481,8 +1577,10 @@ bodyClick.recordPage = () => {
                     }
                 }
             }
+
             .recordSettingWrap {
                 position: relative;
+
                 .nest {
                     position: absolute;
                     width: 134px;
@@ -1496,22 +1594,25 @@ bodyClick.recordPage = () => {
                     box-shadow: 8px 12px 36px 0px rgba(0, 0, 0, 0.10);
                     z-index: 10;
                     cursor: pointer;
-                    
+
                     .setting {
                         display: flex;
                         align-items: center;
                         user-select: none;
+
                         &:hover {
                             span {
                                 font-weight: 700;
                             }
                         }
+
                         span {
                             margin-left: 14px;
                         }
                     }
                 }
             }
+
             .create {
                 height: 32px;
                 padding: 0px 12px;
@@ -1525,30 +1626,36 @@ bodyClick.recordPage = () => {
                 cursor: pointer;
             }
         }
+
         .pagenator {
             display: flex;
             flex-wrap: nowrap;
             align-items: center;
+
             .prevPage {
                 margin-right: 20px;
             }
+
             svg {
                 cursor: pointer;
             }
         }
     }
+
     .tableWrap {
         position: relative;
         min-height: 660px;
         margin: 40px 0;
 
-        .noRecords, .noRecordsFound {
+        .noRecords,
+        .noRecordsFound {
             position: absolute;
             left: 50%;
             top: 50%;
-            transform: translate(-50%,-50%);
+            transform: translate(-50%, -50%);
             text-align: center;
             color: rgba(0, 0, 0, 0.40);
+
             .tit {
                 display: flex;
                 flex-wrap: nowrap;
@@ -1559,25 +1666,30 @@ bodyClick.recordPage = () => {
                     margin-right: 12px;
                 }
             }
+
             h2 {
                 font-size: 28px;
                 font-weight: 700;
             }
+
             p {
                 font-size: 20px;
                 font-weight: 500;
                 margin-top: 28px;
             }
         }
+
         table {
             min-width: 100%;
             border-collapse: collapse;
             // table-layout: auto;
             // width: 100%;
             table-layout: fixed;
+
             .featureWrap {
                 position: relative;
                 width: 100%;
+
                 .feature {
                     display: inline-block;
                     height: 24px;
@@ -1592,44 +1704,83 @@ bodyClick.recordPage = () => {
                     &.active {
                         opacity: 1;
                     }
+
                     &:first-child {
                         background: #FCA642;
                     }
+
                     &:nth-child(2) {
                         background: #52D687;
                     }
+
                     &:last-child {
                         background: #B881FF;
                         margin-right: 0;
                     }
                 }
             }
+
+            .featureWrap_v2 {
+                position: relative;
+                width: 100%;
+
+                .feature {
+                    display: inline-block;
+                    height: 24px;
+                    padding: 2px 12px;
+                    border-radius: 4px;
+                    box-shadow: 0px -1px 1px 0px rgba(0, 0, 0, 0.15) inset;
+                    margin-right: 8px;
+                    color: #fff;
+                    cursor: pointer;
+
+                    &.tag {
+                        background: #FCA642;
+                    }
+
+                    &.index {
+                        background: #52D687;
+                    }
+
+                    &.ref {
+                        background: #B881FF;
+                        margin-right: 0;
+                    }
+                }
+            }
+
             tr {
                 height: 60px;
                 border-bottom: 1px solid rgba(0, 0, 0, 0.10);
                 border-radius: 8px;
-                filter: drop-shadow(0px 1px 3px rgba(0, 0, 0, 0.06));  
+                filter: drop-shadow(0px 1px 3px rgba(0, 0, 0, 0.06));
                 // cursor: pointer;
                 overflow: hidden;
 
                 &.active {
                     background-color: rgba(41, 63, 230, 0.05);
                 }
+
                 &:hover {
                     background-color: rgba(41, 63, 230, 0.05);
                 }
             }
+
             td {
                 position: relative;
+
                 .accessWrap {
                     * {
                         cursor: pointer;
                     }
                 }
-                .featurePreview, .accessPreview {
+
+                .featurePreview,
+                .accessPreview {
                     position: absolute;
                     left: 0;
                     top: -33px;
+
                     .preview {
                         position: relative;
                         height: 44px;
@@ -1652,18 +1803,23 @@ bodyClick.recordPage = () => {
                             border-left: 20px solid #fafafa;
                             rotate: -45deg;
                         }
+
                         &.active {
                             display: block;
                         }
+
                         &.fir {
                             left: 10%;
                         }
+
                         &.sec {
                             left: 50%;
                         }
+
                         &.last {
                             left: 90%;
                         }
+
                         div {
                             width: 150px;
                             line-height: 44px;
@@ -1671,27 +1827,33 @@ bodyClick.recordPage = () => {
                             text-overflow: ellipsis;
                             overflow: hidden;
                             display: none;
+
                             &.active {
                                 display: block;
                             }
                         }
                     }
                 }
+
                 .accessPreview {
                     .preview {
                         &::after {
                             left: 50%;
                         }
+
                         div {
                             width: 100px;
                         }
                     }
                 }
             }
-            td, th {
+
+            td,
+            th {
                 &.center {
                     text-align: center;
                 }
+
                 .overflow {
                     width: 90px;
                     white-space: nowrap;
@@ -1700,6 +1862,7 @@ bodyClick.recordPage = () => {
                     display: block;
                 }
             }
+
             thead {
                 color: rgba(0, 0, 0, 0.40);
                 font-weight: 700;
@@ -1711,16 +1874,40 @@ bodyClick.recordPage = () => {
                     }
                 }
             }
+
             tbody {
                 color: rgba(0, 0, 0, 0.80);
                 font-weight: 400;
             }
+
             input {
                 width: 20px;
                 height: 20px;
                 margin-left: 20px;
             }
         }
+    }
+}
+
+.tagsWrapper_ext {
+    width: 100%;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    height: 20px;
+    cursor: pointer;
+
+    .tag {
+        display: inline-block;
+        height: 20px;
+        border-radius: 4px;
+        background: rgba(0, 0, 0, 0.05);
+        box-shadow: 0px -1px 1px 0px rgba(0, 0, 0, 0.15) inset;
+        padding: 2px 8px;
+        margin-right: 8px;
+        text-align: center;
+        font-weight: 500;
+        color: rgba(0, 0, 0, 0.6);
     }
 }
 </style>

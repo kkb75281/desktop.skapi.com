@@ -99,7 +99,7 @@ changeSuccess(:showSuccess="showSuccess")
 <script setup>
 import { onMounted, ref } from 'vue';
 import { skapi } from '@/main.js';
-import changeSuccess from '@/components/changeSuccess.vue';
+import changeSuccess from '@/components/ChangeSuccess.vue';
 
 let step = ref(1);
 let email = '';

@@ -1,67 +1,34 @@
 <template lang="pug">
-#recordData(@click="()=>{if(!editSelectedData) emits('close')}")
+#recordData
     .wrap(@click.stop)
-        template(v-if="editSelectedData")
-            // edit
-            .header 
-                h4(v-if='dataCopy.tags') Tags
-                h4(v-else) {{ dataCopy.type }} - {{ dataCopy.key }}
-            .content 
-                textarea#editData(@input="e=>heightControl(e.target)" v-model='dataCopy.context' spellcheck="false" :style='displayFontType()')
-            .buttonWrap 
-                button.cancel(@click="emits('close')") Cancel
-                button.save(@click='()=>{console.log({dataCopy});emits("save", dataCopy);}') Save
-
-        template(v-else)
-            // view
-            .header 
-                h4 {{ selectedData.type }} - {{ selectedData.key }}
-
-                // i don't see the need below...
-                //- .editWrap(v-if="selectedData.type == 'json'" @click="edit")
-                //-     .material-symbols-outlined.mid edit
-                //-     span edit
-
-            .content(:style='displayFontType()') {{ selectedData.context }}
+        // edit
+        .header 
+            h4 Tags
+        .content 
+            TagsInput(:editTagsData = "true" :value='dataCopy' @change='e=>dataCopy=e')
+        .buttonWrap 
+            button.cancel(@click="emits('close')") Cancel
+            button.save(@click='()=>{save(); emits("close")}') Save
 
 </template>
 
 <script setup>
-import { onMounted} from 'vue';
+import TagsInput from '@/components/TagsInput.vue';
 
-let { selectedData } = defineProps(['selectedData']);
+let { tags } = defineProps(['tags']);
 
+let dataCopy = tags ? JSON.parse(JSON.stringify(tags)) : null;
 
-let editSelectedData = selectedData?.edit;
-let dataCopy = editSelectedData ? JSON.parse(JSON.stringify(selectedData)) : null;
-console.log({selectedData})
-let emits = defineEmits(['close', 'save']);
+let emits = defineEmits(['close']);
 
-let displayFontType = () => {
-    switch (selectedData.type) {
-        case 'json':
-            return { 'font-family': 'monospace', 'white-space': 'pre', 'overflow-x': 'auto' };
-        default:
-            return null;
-    }
+let save = ()=>{
+    // remove all items in tags
+    tags.splice(0, tags.length);
+    // add all items in dataCopy
+    dataCopy.forEach((item) => {
+        tags.push(item);
+    })
 }
-
-let heightControl = (e) => {
-    e.style.height = "auto";
-    e.style.height = (e.scrollHeight + (selectedData.type === 'json' ? 16 : 0)) + "px";
-}
-
-onMounted(() => {
-    if (editSelectedData && !selectedData.tags) {
-        let editor = document.getElementById('editData');
-
-        if (selectedData.context) {
-            heightControl(editor);
-        }
-
-        editor.focus();
-    }
-})
 </script>
 
 <style lang="less" scoped>

@@ -93,7 +93,7 @@
                     //-     span Group
                     .filter 
                         .customCheckBox
-                            input#timestamp(type="checkbox" :checked="filterOptions.timestamp" @change="filterOptions.timestamp = !filterOptions.group")
+                            input#timestamp(type="checkbox" :checked="filterOptions.timestamp" @change="filterOptions.timestamp = !filterOptions.timestamp")
                             label(for="timestamp")
                                 .material-symbols-outlined.mid.check check
                         span Date Created
@@ -198,7 +198,7 @@
 import { bodyClick } from '@/main.js';
 import { currentService, serviceUsers } from '@/data.js';
 import { skapi } from '@/main.js';
-import { computed, nextTick, onMounted, ref, watch } from 'vue';
+import { computed, nextTick, onMounted, onUnmounted, ref, watch } from 'vue';
 import Countries from '@/skapi-extensions/js/countries.js';
 import Calendar from '@/components/Calendar.vue';
 import LocaleSelector from '@/components/LocaleSelector.vue';
@@ -233,6 +233,13 @@ let defaultFetchParams = {
 
 let fetchParams = defaultFetchParams
 
+onUnmounted(() => {
+    if (fetchParams.searchFor !== 'timestamp' || fetchParams?.condition !== '<=') {
+        // remove list if it's not defaultParams
+        delete serviceUsers[serviceId];
+    }
+});
+
 let getPage = (p) => {
     let res = userPage.getPage(p);
     userPage.maxPage = res.maxPage;
@@ -241,6 +248,10 @@ let getPage = (p) => {
 }
 
 let refresh = () => {
+    if (fetching.value) {
+        return;
+    }
+
     users.value = null;
     serviceUsers[serviceId] = new Pager(worker, {
         id: 'user_id',
@@ -270,7 +281,7 @@ let refresh = () => {
 }
 
 if (!serviceUsers?.[serviceId]) {
-    refresh('desc');
+    refresh();
 }
 else {
     userPage = serviceUsers[serviceId];
@@ -351,8 +362,8 @@ let filterOptions = ref({
     // group: false,
     locale: false,
     timestamp: false
-})
-let maxTrCount = 10;
+});
+
 let selectAll = (e) => {
     let checkboxes = document.querySelectorAll('input[type="checkbox"]');
     checkboxes.forEach((checkbox) => {
@@ -461,10 +472,22 @@ let searchUsers = (e) => {
     else if (searchTarget === 'timestamp' || searchTarget === 'birthdate') {
         let dates = search.split('~');
 
-        let startDate = dates[0].trim();
-        startDate = startDate ? new Date(dates[0].trim()).getTime() : 0;
-        let endDate = dates[1].trim();
-        endDate = endDate ? new Date(dates[1].trim()).getTime() : 0;
+        let startDate = 0;
+        if (dates?.[0]) {
+            startDate = startDate ? new Date(dates[0].trim()).getTime() : 0;
+            if(isNaN(startDate)) {
+                startDate = 0;
+            }
+        }
+
+        let endDate = new Date().getTime();
+        if (dates?.[1]) {
+            endDate = dates[1].trim();
+            endDate = endDate ? new Date(endDate).getTime() : new Date().getTime();
+            if(isNaN(endDate)) {
+                endDate = new Date().getTime();
+            }
+        }
 
         fetchParams = {
             service: serviceId,
@@ -472,6 +495,7 @@ let searchUsers = (e) => {
             value: startDate,
             range: endDate
         }
+
         refresh();
     }
     else if (searchTarget === 'user_id') {
@@ -492,9 +516,6 @@ let searchUsers = (e) => {
         refresh();
     }
 }
-let trCount = computed(() => {
-    // return Math.max(0, maxTrCount - users.value.length);
-});
 
 // table resize
 let prevX, prevW, nextW = 0;

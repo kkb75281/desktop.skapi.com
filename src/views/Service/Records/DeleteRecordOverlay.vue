@@ -3,15 +3,15 @@
     .wrap(@click.stop)
         .title Delete Record
         p 
-            | You sure want to delete the record?
+            | You sure want to delete {{ toDelete.count > 1 ? toDelete.count + ' records' : 'the record'}}?
             br
             | This process cannot be undone.
         .buttonWrap 
-            template(v-if="promiseRunning")
-                img.loading(src="@/assets/img/loading.png")
-            template(v-else)
-                button.cancel(@click="emits('close')") Cancel
-                button.disable(@click="deleteRecords") Delete
+            //- template(v-if="promiseRunning")
+            //-     img.loading(src="@/assets/img/loading.png")
+            //- template(v-else)
+            button.cancel(@click="emits('close')") Cancel
+            button.disable(@click="toDelete.cb();emits('close')") Delete
 </template>
 
 <script setup>
@@ -20,12 +20,9 @@ import { currentService } from '@/data.js';
 import { ref } from 'vue';
 
 let emits = defineEmits(['close']);
-let props = defineProps(['checkedRecords']);
-let promiseRunning = ref(false);
+let {toDelete} = defineProps(['toDelete']);
+// let promiseRunning = ref(false);
 
-let deleteRecords = () => {
-    console.log(props.checkedRecords)
-}
 </script>
 
 <style lang="less" scoped>
