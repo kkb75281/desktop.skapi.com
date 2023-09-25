@@ -56,10 +56,14 @@ import { skapi, account } from '@/main.js'
 
 let create = ref(false);
 let createService = () => {
-    create.value = true;
-    nextTick(() => {
-        document.getElementById('serviceName').focus();
-    })
+    if(!account.email_verified) {
+        create.value = false;
+    } else {
+        create.value = true;
+        nextTick(() => {
+            document.getElementById('serviceName').focus();
+        });
+    }
 }
 let newServiceName = '';
 let promiseRunning = ref(false);
@@ -147,6 +151,7 @@ main {
                 &.disabled {
                     opacity: 0.5;
                     user-select: none;
+                    cursor: default !important;
                 }
                 
                 &.btn {
