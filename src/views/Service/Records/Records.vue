@@ -680,7 +680,7 @@ let ellipsisCheck = (id) => {
     return e.offsetWidth < e.scrollWidth;
 }
 let handleIndexTypeChange = (e) => {
-    let originalValue = recordPage.list[selectedRecord.value.record_id].index?.value;
+    let originalValue = recordPage.list[selectedRecord.value.record_id]?.index?.value;
     let valueType = e.target.value;
 
     if (!selectedRecord.value.index) {
