@@ -60,7 +60,6 @@ export let refresh = () => {
     skapi.getRecords(fetchParams || {
         service: currentService.value.service
     }, { limit: 50 }).then(u => {
-        console.log({ u })
         if (u.endOfList) {
             recordPage.endOfList = true;
         }

@@ -597,7 +597,6 @@ let saveRecordData = () => {
     }
 
     skapi.postRecord(data, record_params).then(res => {
-        console.log(res);
         recordInfoEdit.value = false;
         recordPage.insertItems([res]).then(_ => {
             getPage(currentPage.value);
@@ -626,7 +625,6 @@ let createAddField = () => {
 // delete Record
 let recordDelete = (id) => {
     id = id ? [id] : checkedRecords.value;
-    console.log({ id })
     let recDelete = async () => {
         skapi.deleteRecords({
             service: currentService.value.service,
