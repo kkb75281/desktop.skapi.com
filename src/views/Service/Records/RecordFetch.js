@@ -3,6 +3,7 @@ import { currentService } from '@/data.js';
 import Pager from '@/skapi-extensions/js/pager.js';
 import { ref, watch, nextTick } from 'vue';
 import { skapi } from '@/main.js';
+import { selectedRecord } from './RecordEdit';
 
 export let serviceRecords = {};
 

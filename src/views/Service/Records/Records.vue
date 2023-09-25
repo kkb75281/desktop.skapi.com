@@ -406,6 +406,7 @@ import { currentService } from '@/data.js';
 import { selectedRecord, records_data, indexValueType } from './RecordEdit';
 import { launch, serviceRecords, getPage, records, selectNone, recordPage, currentPage, maxPage, fetching, refresh, nextPage, timeSince } from './RecordFetch';
 
+selectedRecord.value = null;
 launch();
 let promiseRunning = ref(false);
 let showRecordDataValue = ref(null);
