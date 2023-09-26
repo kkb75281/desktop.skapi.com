@@ -463,13 +463,14 @@ watch(modifyCors, () => {
                 &::after {
                     position: absolute;
                     display: block;
-                    right: 25px;
+                    right: 30px;
                     top: 50%;
                     transform: translateY(-50%);
                     text-align: center;
                     font-size: 14px;
                     font-weight: 400;
-                    color: rgba(255, 255, 255, 0.5);
+                    background: rgba(255, 255, 255, 0.6);
+                    color: #343434;
                     padding: 4px;
                     content: "Copied";
                     transition: opacity .4s;
