@@ -300,13 +300,13 @@
         .tableHeader 
             .actions 
                 .material-symbols-outlined.mid.refresh.clickable(@click='refresh' :class='{"rotate_animation": fetching }') cached
-                .material-symbols-outlined.mid.menu.clickable(:class='{"nonClickable": !checkedRecords.length}' @click.stop="showRecordSetting = !showRecordSetting") more_vert
+                .material-symbols-outlined.mid.menu.clickable(:class='{"nonClickable": !checkedRecords.length || !account.email_verified}' @click.stop="!account.email_verified ? false : showRecordSetting = !showRecordSetting") more_vert
                 .recordSettingWrap(v-if="showRecordSetting" @click.stop)
                     .nest
                         .setting(@click="()=>{recordDelete(); showRecordSetting=false;}")
                             .material-symbols-outlined.mid delete
                             span delete
-                button.create(@click="()=>{ selectedRecord = JSON.parse(JSON.stringify(createRecordTemplate)); recordInfoEdit=true; }") create record
+                button.create(:class="{'nonClickable' : !account.email_verified}" @click="()=>{ !account.email_verified ? false : selectedRecord = JSON.parse(JSON.stringify(createRecordTemplate)); recordInfoEdit=true; }") create record
             .pagenator 
                 .material-symbols-outlined.sml.prevPage.clickable(:class='{"nonClickable": currentPage === 1 || fetching }' @click='nextPage(false)') arrow_back_ios
                 .material-symbols-outlined.sml.nextPage.clickable(:class='{"nonClickable": maxPage <= currentPage && recordPage?.endOfList || fetching }' @click='nextPage') arrow_forward_ios
