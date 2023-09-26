@@ -73,7 +73,7 @@
                 .recordInfo 
                     .header
                         .tit {{ selectedRecord?.record_id ? 'Record Information' : 'Create Record' }}
-                    .content
+                    .content(:class="{'disabled' : promiseRunning}")
                         template(v-if='selectedRecord?.record_id')
                             .info 
                                 .label Record ID 
@@ -112,12 +112,12 @@
                                 .smallInfo 
                                     .smallLabel Name 
                                     .smallValue 
-                                        input(v-if="recordInfoEdit" type="text" pattern="[a-zA-Z0-9]+" title="Table name should only be alphanumeric." :value="selectedRecord.table.name" placeholder="(Required)" @input="(e) => { selectedRecord.table.name = e.target.value; }" required)
+                                        input(v-if="recordInfoEdit" type="text" pattern="[a-zA-Z0-9]+" title="Table name should only be alphanumeric." :value="selectedRecord.table.name" placeholder="(Required)" @input="(e) => { selectedRecord.table.name = e.target.value; }" :disabled="promiseRunning" required)
                                         template(v-else) {{ selectedRecord.table.name }}
                                 .smallInfo 
                                     .smallLabel Access Group
                                     .smallValue 
-                                        select(v-if="recordInfoEdit && selectedRecord.table.access_group !== 'private'" :value="selectedRecord.table.access_group" @change="(e) => selectedRecord.table.access_group = parseInt(e.target.value)")
+                                        select(v-if="recordInfoEdit && selectedRecord.table.access_group !== 'private'" :value="selectedRecord.table.access_group" @change="(e) => selectedRecord.table.access_group = parseInt(e.target.value)" :disabled="promiseRunning")
                                             option(value="0") Public
                                             option(value="1") Authorized
                                         template(v-else) {{ selectedRecord.table.access_group == 'private' ? 'Private' : selectedRecord.table.access_group === 0 ? 'Public' : 'Authorized' }}
@@ -134,13 +134,13 @@
                                 .smallInfo 
                                     .smallLabel Name 
                                     .smallValue 
-                                        input(v-if="recordInfoEdit" type="text" :value="selectedRecord.index?.name || ''" pattern="[_a-zA-Z0-9]+" title="Index name should only be alphanumeric." placeholder="No Index" @input="(e)=> { if (!selectedRecord.index) { selectedRecord.index={}; } selectedRecord.index.name = e.target.value; }")
+                                        input(v-if="recordInfoEdit" type="text" :value="selectedRecord.index?.name || ''" pattern="[_a-zA-Z0-9]+" title="Index name should only be alphanumeric." placeholder="No Index" @input="(e)=> { if (!selectedRecord.index) { selectedRecord.index={}; } selectedRecord.index.name = e.target.value; }" :disabled="promiseRunning")
                                         template(v-else) {{ selectedRecord.index?.name || 'No Index' }}
                                 .smallInfo 
                                     .smallLabel Value 
                                     .smallValue(:class="{'indexValue' : !recordInfoEdit}")
                                         .typeValue(v-if="recordInfoEdit" :class="{ nonClickable: !selectedRecord?.index?.name }" :style='{opacity: selectedRecord?.index?.name ? 1 : 0.5}')
-                                            select(:value="indexValueType" @change="handleIndexTypeChange")
+                                            select(:value="indexValueType" @change="handleIndexTypeChange" :disabled="promiseRunning")
                                                 option(value="string") String
                                                 option(value="number") Number
                                                 option(value="boolean") Boolean 
@@ -149,6 +149,7 @@
                                                 v-if="indexValueType === 'boolean'"
                                                 :value="selectedRecord.index?.value.toString()"
                                                 @change="(e) => { if (!selectedRecord.index) { selectedRecord.index={}; } selectedRecord.index.value = JSON.parse(e.target.value); }"
+                                                :disabled="promiseRunning"
                                             )
                                                 option(value="true") true
                                                 option(value="false") false
@@ -159,6 +160,7 @@
                                                 placeholder="(Value Required)"
                                                 @input="(e)=> { if(!selectedRecord.index) { selectedRecord.index={}; } selectedRecord.index.value = indexValueType === 'number' ? parseInt(e.target.value) : e.target.value; }"
                                                 :required="selectedRecord?.index?.name ? true : null"
+                                                :disabled="promiseRunning"
                                             )
                                         template(v-else-if='!selectedRecord.index?.name') No Index
                                         template(v-else) {{ typeof selectedRecord.index.value }} | {{ selectedRecord.index.value }}
@@ -169,24 +171,24 @@
                                 .smallInfo 
                                     .smallLabel Reference ID
                                     .smallValue 
-                                        input#referenceIdInput(v-if="recordInfoEdit" type="text" :value="selectedRecord.reference?.record_id || ''" placeholder="Record ID to reference (optional)" @input="(e) => {selectedRecord.reference.record_id = e.target.value || null; e.target.setCustomValidity('')}")
+                                        input#referenceIdInput(v-if="recordInfoEdit" type="text" :value="selectedRecord.reference?.record_id || ''" placeholder="Record ID to reference (optional)" @input="(e) => {selectedRecord.reference.record_id = e.target.value || null; e.target.setCustomValidity('')}" :disabled="promiseRunning")
                                         template(v-else) {{ selectedRecord.reference.record_id || 'None' }}
                                 .smallInfo 
                                     .smallLabel Multiple Reference 
                                     .smallValue 
-                                        select(v-if="recordInfoEdit" :value="JSON.stringify(selectedRecord.reference.allow_multiple_reference)" @change="(e) => {selectedRecord.reference.allow_multiple_reference = e.target.value ? JSON.parse(e.target.value) : null}")
+                                        select(v-if="recordInfoEdit" :value="JSON.stringify(selectedRecord.reference.allow_multiple_reference)" @change="(e) => {selectedRecord.reference.allow_multiple_reference = e.target.value ? JSON.parse(e.target.value) : null}" :disabled="promiseRunning")
                                             option(value="true") Allowed
                                             option(value="null") Not Allowed
                                         template(v-else) {{ selectedRecord.reference.allow_multiple_reference ? 'Allowed' : 'Not Allowed' }}
                                 .smallInfo 
                                     .smallLabel Reference Limit
                                     .smallValue 
-                                        input(v-if="recordInfoEdit" type="number" min="0" :value="selectedRecord.reference.reference_limit === null ? '' : selectedRecord.reference?.reference_limit" placeholder="Infinite" @input="(e) => selectedRecord.reference.reference_limit = e.target.value ? parseInt(e.target.value) : null")
+                                        input(v-if="recordInfoEdit" type="number" min="0" :value="selectedRecord.reference.reference_limit === null ? '' : selectedRecord.reference?.reference_limit" placeholder="Infinite" @input="(e) => selectedRecord.reference.reference_limit = e.target.value ? parseInt(e.target.value) : null" :disabled="promiseRunning")
                                         template(v-else) {{ selectedRecord.reference.reference_limit || 'Infinite' }}
                         .info 
                             .label Tags 
                             .value(style="width: calc(100% - 170px);")
-                                .tagsWrapper#tagsWrapper(@click.stop="e=>{if(recordInfoEdit) editTags=(()=>{if(!selectedRecord?.tags) {selectedRecord.tags = []} return selectedRecord.tags;})(); else if(ellipsisCheck('tagsWrapper')) hiddenTags=true;}")
+                                .tagsWrapper#tagsWrapper(@click.stop="e=>{if(recordInfoEdit && !promiseRunning) editTags=(()=>{if(!selectedRecord?.tags) {selectedRecord.tags = []} return selectedRecord.tags;})(); else if(ellipsisCheck('tagsWrapper')) hiddenTags=true;}")
                                     template(v-if="selectedRecord?.tags?.length")
                                         .tag(v-for="tag in selectedRecord?.tags") {{ tag }}
                                     template(v-else) {{ recordInfoEdit ? 'Add Tags' : '-'}}
@@ -196,11 +198,11 @@
                 // right panel of record info
                 .recordData
                     .header
-                        template(v-if="!recordInfoEdit")
+                        template(v-if="!recordInfoEdit && selectedRecord?.record_id")
                             .tit Type
                             .tit Key Name 
                             .tit Context
-                    .content
+                    .content(:class="{'disabled' : promiseRunning}")
                         .noData(v-if="selectedRecord.data && selectedRecord.data.hasOwnProperty('__is_private__')")
                             .material-symbols-outlined.big lock
                             p Private Data
@@ -220,9 +222,9 @@
 
                                 template(v-else)
                                     .rowEdit
-                                        .material-symbols-outlined.sml.minus(@click="records_data.splice(index, 1)") do_not_disturb_on
+                                        .material-symbols-outlined.sml.minus(@click="promiseRunning ? false : records_data.splice(index, 1)") do_not_disturb_on
 
-                                        select.type(:value="data.type" @change="(e) => selectType(e, data)" :disabled="selectedRecord.record_id && data.type === 'file' && data.context || null")
+                                        select.type(:value="data.type" @change="(e) => selectType(e, data)" :disabled="promiseRunning || selectedRecord.record_id && data.type === 'file' && data.context || null")
                                             // on edit, record file data cannot be changed. only delete is allowed
                                             option(value="json") JSON
                                             option(value="string") String
@@ -233,14 +235,14 @@
                                         // on edit, record file data cannot be changed. only delete is allowed
                                         div(v-if='selectedRecord.record_id && data.type === "file" && data.context' style='opacity:0.5; width: 84px;margin-right: 20px;') {{ data.key }}
 
-                                        input.key(v-else type="text" v-model="data.key" placeholder="Key name" required)
+                                        input.key(v-else type="text" v-model="data.key" placeholder="Key name" :disabled="promiseRunning" required)
 
                                         template(v-if="data.type == 'json'")
                                             .context.click(@click="showRecordDataValue=Object.assign(data, {edit:true})")
                                                 .overflow {{ data.context }}
 
                                         template(v-else-if="data.type == 'boolean'")
-                                            select.context(:value="data.context === 'true' ? data.context : 'false'" @change="(e) => data.context = e.target.value")
+                                            select.context(:value="data.context === 'true' ? data.context : 'false'" @change="(e) => data.context = e.target.value" :disabled="promiseRunning")
                                                 option(value="true") true
                                                 option(value="false") false
 
@@ -255,7 +257,7 @@
                                                 .context.fileUpload Choose a file
 
                                         template(v-else)
-                                            input.context(:type="data.type === 'number' ? 'number' : 'text'" v-model="data.context" :placeholder="`<${data.type}> Value`")
+                                            input.context(:type="data.type === 'number' ? 'number' : 'text'" v-model="data.context" :placeholder="`<${data.type}> Value`" :disabled="promiseRunning")
 
                             template(v-if="!recordInfoEdit" v-for="i in dataTrCount" :key="'extra-' + i")
                                 .row.empty
@@ -518,6 +520,9 @@ let validateTableName = (event) => {
 
 // recordData edit
 let addField = () => {
+    if(promiseRunning) {
+        return false;
+    }
     records_data.value.push({ type: 'string', key: '', context: '' });
     nextTick(() => {
         let scrollTarget = document.querySelector('.recordData .content');
@@ -946,6 +951,12 @@ let handleIndexTypeChange = (e) => {
                 width: 50%;
                 overflow: hidden;
                 padding-bottom: 20px;
+
+                .content {
+                    &.disabled {
+                        opacity: 0.5;
+                    }
+                }
             }
 
             .recordData {
