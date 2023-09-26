@@ -32,7 +32,7 @@ main(v-if='account')
                 .row
                     .tit Verify Email
                     .cont
-                        .material(v-if="account.email_verified")
+                        .material.verified(v-if="account.email_verified")
                             .material-symbols-outlined.sml check_circle
                             span Verified
                         .material(v-else)
@@ -333,11 +333,9 @@ main {
                     }
 
                     .material {
-                        &:first-child {
+                        color: rgba(255, 141, 59, 1);
+                        &.verified {
                             color: rgba(90, 216, 88, 1);
-                        }
-                        &:last-child {
-                            color: rgba(255, 141, 59, 1);
                         }
                     }
 
