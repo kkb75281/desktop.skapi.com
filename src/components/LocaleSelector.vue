@@ -39,7 +39,6 @@ const handleCountryClick = (key) => {
 
     .name {
       flex: 1;
-      user-select: none;
       text-overflow: ellipsis;
       overflow: hidden;
       white-space: nowrap;

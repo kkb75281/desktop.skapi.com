@@ -236,7 +236,6 @@ let validateNewPassword = () => {
 
         .input {
             margin-bottom: 16px;
-            user-select: none;
 
             label {
                 display: block;

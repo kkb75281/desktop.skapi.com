@@ -1,6 +1,6 @@
 <template lang="pug">
 #lending(ref="lending")
-    section#intro(ref="intro")
+    section#intro(ref="intro" @wheel="handleMouseWheel")
         .introWrap 
             img.introLogo(src="@/assets/img/logo/logo.svg")
             .point
@@ -73,7 +73,7 @@
                 //-             | ');
                 //-             |&lt;/script&gt;
                 //- .code(style="color:#f0f0f0;font-family:Consolas, 'Liberation Mono', Menlo, Courier, monospace !important; position:relative !important;overflow:auto")
-                table.code(style="margin:0;border:none;background-color:#272727;" cellspacing="0" cellpadding="0")
+                table.code(style="margin:0;border:none;background-color:#343434;" cellspacing="0" cellpadding="0")
                     tr
                         td(style="padding:6px;border-right:2px solid #4f4f4f")
                             div(style="margin:0;padding:0;word-break:normal;text-align:right;color:#aaa;font-family:Consolas, 'Liberation Mono', Menlo, Courier, monospace !important;line-height:130%")
@@ -140,6 +140,7 @@
             h2 Skapi is on deta 
             h3 Try it while it's free!
             router-link(to="/signup") Sign-up
+            //- button(@click="moveToTopSmooth") Smooth
 </template>
 
 <script setup>
@@ -148,75 +149,46 @@ import { nextTick, onBeforeUnmount, onMounted, ref } from 'vue';
 let lending = ref(null);
 let intro = ref(null);
 let other = ref(null);
+let hasScrolled = false;
 
-let scrollEvent = () => {
-    if (scrollY >= 20) {
-        lending.value.style.transform = 'translateY(-100vh)';
-    } else {
-        lending.value.style.transform = 'translateY(0)';
+let moveToTopSmooth = function() {
+    other.value.scrollIntoView({ behavior: 'smooth' });
+};
+
+let handleScroll = function (e) {
+    if(!hasScrolled && e.deltaY > 0) {
+        smoothScroll({yPos: window.innerHeight, duration: 500});
+        hasScrolled = true;
+    } else if(hasScrolled && e.deltaY < 0 && document.documentElement.scrollTop < other.value.offsetTop) {
+        smoothScroll({yPos: 0, duration: 500});
+        hasScrolled = false;
     }
+
+    // ios 크롬 사파리에서 behavior: 'smooth' 기능 안됨..
+    // if (!hasScrolled && document.documentElement.scrollTop >= 20) {
+    //     // console.log('Scroll condition met. Scrolling to #other');
+    //     other.value.scrollIntoView({ behavior: 'smooth' });
+    //     hasScrolled = true;
+    // } 
+    // if (hasScrolled && document.documentElement.scrollTop < 20) {
+    //     // console.log('Scroll condition reset.');
+    //     hasScrolled = false;
+    // }
 }
 
 onMounted(() => {
-    window.addEventListener('scroll', scrollEvent);
-});
-
-onBeforeUnmount(() => {
-    window.removeEventListener('scroll', scrollEvent)
+    window.addEventListener('mousewheel', handleScroll);
 })
-
-// let page = ref(0);
-
-// onMounted(() => {
-//     window.addEventListener('wheel', handleScroll, { passive: false });
-// });
-
-// onBeforeUnmount(() => {
-//     window.removeEventListener('wheel', handleScroll);
-// });
-
-// function handleScroll(e) {
-//     e.preventDefault();
-//   if (e.deltaY > 0) {
-//     page.value++;
-//   } else if (e.deltaY < 0) {
-//     page.value--;
-//   }
-//   if (page.value < 0) {
-//     page.value = 0;
-//     lending.value.style.top = -100 + 'vh';
-//   } else if (page.value > 1) {
-//     page.value = 1;
-//     lending.value.style.top = 'calc(' + -200 + 'vh' + e.deltaY + ')';
-//   }
-// if (e.deltaY > 0) {
-//     page.value++;
-// } else {
-//     page.value--;
-// }
-// if (page.value < 0) {
-//     page.value = 0;
-//     lending.value.style.top = 0 + 'vh';
-// } else if (page.value > 1) {
-//     page.value = 1;
-//     lending.value.style.top = -100 + 'vh';
-// }
-
-// if (lending.value.style.top == '-100vh') {
-//     console.log(e.deltaY, lending.value.style.top)
-//     if (e.deltaY > 0) {
-//         lending.value.style.top += e.deltaY;
-//     } else {
-//         lending.value.style.top -= e.deltaY;
-//     }
-// }
-// }
+onBeforeUnmount(() => {
+    window.removeEventListener('mousewheel', handleScroll);
+})
 </script>
 
 <style lang="less" scoped>
 #lending {
-    position: relative;
-    transition: transform 2s ease;
+    // position: relative;
+    // transition: transform 2s ease;
+    // scroll-behavior: smooth;
 }
 
 #intro {

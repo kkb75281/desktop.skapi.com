@@ -7,7 +7,7 @@ main
         .wrapper(v-if="!serviceFetching")
             // service 로딩이 완료 되면 표시
             .boxWrap
-                .box.btn(v-if="!create" @click="createService" :class="{'disabled' : !account.email_verified}")
+                .box.btn(v-if="!create" @click="createService" :class="{'nonClickable' : !account.email_verified}")
                     .material-symbols-outlined.mid add
                     span Create Service
                 .box.create(v-if="create")
@@ -56,10 +56,14 @@ import { skapi, account } from '@/main.js'
 
 let create = ref(false);
 let createService = () => {
-    create.value = true;
-    nextTick(() => {
-        document.getElementById('serviceName').focus();
-    })
+    if(!account.email_verified) {
+        create.value = false;
+    } else {
+        create.value = true;
+        nextTick(() => {
+            document.getElementById('serviceName').focus();
+        });
+    }
 }
 let newServiceName = '';
 let promiseRunning = ref(false);
@@ -143,11 +147,6 @@ main {
                 &:nth-child(3n+3) {
                     margin-right: 0;
                 }
-
-                &.disabled {
-                    opacity: 0.5;
-                    user-select: none;
-                }
                 
                 &.btn {
                     background: rgba(41, 63, 230, 0.05);
@@ -225,7 +224,7 @@ main {
                     cursor: pointer;
 
                     &:hover {
-                        background: rgba(41, 63, 230, 0.05);
+                        background: #F5F7FF;
                     }
 
                     a {

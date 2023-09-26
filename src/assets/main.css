@@ -3,6 +3,7 @@
   padding: 0;
   box-sizing: border-box;
   font-family: "Radio Canada", sans-serif;
+  user-select: none;
 }
 
 body {
@@ -14,6 +15,10 @@ body {
 
 body.fa {
   background-color: #fafafa;
+}
+
+.userSelect {
+    user-select: auto !important;
 }
 
 /* error */
@@ -184,7 +189,8 @@ form .error span {
 
 .nonClickable {
   cursor: default !important;
-  color: rgba(0, 0, 0, 0.3) !important;
+  /* color: rgba(0, 0, 0, 0.3) !important; */
+  opacity: 0.5 !important;
   pointer-events: none !important;
 }
 
@@ -231,6 +237,9 @@ form .error span {
   background-color: #eee;
   transition: all 1s;
   cursor: pointer;
+}
+.toggleWrap .toggleBg.nonClickable .toggleBtn {
+    cursor: default;
 }
 
 .hoverWrap {

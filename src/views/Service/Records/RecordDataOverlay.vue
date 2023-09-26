@@ -97,18 +97,6 @@ onMounted(() => {
         padding: 20px;
         border-bottom: 1px solid rgba(0, 0, 0, 0.10);
         box-shadow: 0px 1px 3px 0px rgba(0, 0, 0, 0.06);
-
-        // .editWrap {
-        //     display: flex;
-        //     flex-wrap: nowrap;
-        //     align-items: center;
-        //     user-select: none;
-        //     cursor: pointer;
-
-        //     span {
-        //         margin-left: 8px;
-        //     }
-        // }
     }
 
     .content {
@@ -143,7 +131,6 @@ onMounted(() => {
             color: #293FE6;
             font-size: 16px;
             font-weight: 700;
-            user-select: none;
             cursor: pointer;
 
             &.cancel {

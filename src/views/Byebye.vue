@@ -61,7 +61,6 @@
         font-weight: 700;
         color: #293FE6;
         text-decoration: none;
-        user-select: none;
         cursor: pointer;
     }
 }
