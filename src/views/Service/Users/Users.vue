@@ -110,7 +110,7 @@
                         .setting(@click="()=>{showDeleteUser = true; showUserSetting = false;}")
                             .material-symbols-outlined.mid delete
                             span delete
-                button.create(:class="{'unVerified' : !account.email_verified}" @click="!account.email_verified ? false : createUserShow=true" style='margin-left:1rem') Create User
+                button.create(:class="{'nonClickable' : !account.email_verified}" @click="!account.email_verified ? false : createUserShow=true" style='margin-left:1rem') Create User
             .pagenator 
                 .material-symbols-outlined.sml.prevPage.clickable(:class='{"nonClickable": currentPage === 1 || fetching }' @click='e=>{currentPage--; nextTick(selectNone)}') arrow_back_ios
                 .material-symbols-outlined.sml.nextPage.clickable(:class='{"nonClickable": maxPage <= currentPage && userPage?.endOfList || fetching }' @click='nextPage') arrow_forward_ios

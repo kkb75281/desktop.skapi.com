@@ -7,7 +7,7 @@ main
         .wrapper(v-if="!serviceFetching")
             // service 로딩이 완료 되면 표시
             .boxWrap
-                .box.btn(v-if="!create" @click="createService" :class="{'unVerified' : !account.email_verified}")
+                .box.btn(v-if="!create" @click="createService" :class="{'nonClickable' : !account.email_verified}")
                     .material-symbols-outlined.mid add
                     span Create Service
                 .box.create(v-if="create")
