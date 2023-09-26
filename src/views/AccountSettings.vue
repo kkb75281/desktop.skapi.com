@@ -7,7 +7,7 @@ main(v-if='account')
             .accountWrap 
                 // info 변수를 정의하는 경우가 없는것같습니다. info의 역활은?
                 .account(@click="info = true" :class="{'active': info}") Account info
-                .account(@click="openDeleteAccount = true" :class="{'red': !info}") Delete Account
+                .account(:class="{'red': !info, 'nonClickable' : !account.email_verified}" @click="!account.email_verified ? false : openDeleteAccount = true") Delete Account
             .accountCont(v-if="info")    
                 .row
                     .tit Email
@@ -28,7 +28,7 @@ main(v-if='account')
                                         button.cancel(type="button" @click="changeEmail = false;") Cancel
                                         button.save(type="submit") Save
                         template(v-else) {{ account.email }}
-                    .btn(v-if="!changeEmail" @click="email=account.email; changeEmail = true;") Change email
+                    .btn(:class="{'nonClickable' : !account.email_verified}" v-if="!changeEmail" @click="!account.email_verified ? false : email=account.email; changeEmail = true;") Change email
                 .row
                     .tit Verify Email
                     .cont
@@ -38,11 +38,11 @@ main(v-if='account')
                         .material(v-else)
                             .material-symbols-outlined.sml error
                             span Unverified
-                    .btn(type="button" v-if="!account.email_verified" @click="verifyEmail") Verify email
+                    .btn(v-if="!account.email_verified" @click="verifyEmail") Verify email
                 .row
                     .tit Subscription
                     .cont 
-                        .customCheckBox(:style='{opacity: disableNewsletterCheckbox ? ".5" : "1"}')
+                        .customCheckBox(:class="{'nonClickable' : !account.email_verified}" :style='{opacity: disableNewsletterCheckbox ? ".5" : "1"}')
                             // !(account.email_verified || false) <- account.email_verified 가 undefined 인 경우도 있어서
                             // 사용자 email이 인증이 안되었을시 뉴스레터를 구독할수없습니다.
                             input#subscribeCheckbox(
@@ -59,7 +59,7 @@ main(v-if='account')
                         .material.verified
                             .material-symbols-outlined.sml check_circle
                             span Password successfully changed
-                    .btn(type="button" @click="openChangePassword = true;") Change Password
+                    .btn(:class="{'nonClickable' : !account.email_verified}" @click="!account.email_verified ? false : openChangePassword = true;") Change Password
 ChangePassword(v-if="openChangePassword" @close="(e)=>{ if (e === 'success') { passwordChanged = true } openChangePassword=false; }")
 VerifyEmail(v-if="openVerifyEmail" @close="openVerifyEmail=false")
 DeleteAccount(v-if="openDeleteAccount" @close="openDeleteAccount=false")

@@ -17,6 +17,10 @@ body.fa {
   background-color: #fafafa;
 }
 
+.userSelect {
+    user-select: auto !important;
+}
+
 /* error */
 .material {
   display: flex;
