@@ -2,12 +2,12 @@
 .containerWrap
     .container
         h2 Subdomain
-        template(v-if="!currentService.subdomain")
+        template(v-if="currentService.subdomain")
             .buttonWrap 
-                .refresh.clickable
+                .refresh.clickable(:class="{'nonClickable' : !account.email_verified}")
                     .material-symbols-outlined.mid cached
                     span Refrech CDN
-                .delete.clickable
+                .delete.clickable(:class="{'nonClickable' : !account.email_verified}")
                     .material-symbols-outlined.mid delete
                     span Delete
             .settingWrap 
@@ -23,11 +23,11 @@
                     template(v-else)
                         .cont
                             h5 subdomain name here
-                            .material-symbols-outlined.mid.btn(@click="modifySudomain = true;") edit
+                            .material-symbols-outlined.mid.btn.clickable(:class="{'nonClickable' : !account.email_verified}" @click="!account.email_verified ? false : modifySudomain = true;") edit
                 .setting
                     .tit 404 file
                     .cont 
-                        .customFile 
+                        .customFile(:class="{'nonClickable' : !account.email_verified}")
                             input#fileName(value="Upload a file")
                             label.uploadBtn.btn(for="file404")
                                 .material-symbols-outlined.mid upload
@@ -35,20 +35,20 @@
                             input#file404(hidden type="file" @change="showFileName")
         template(v-else)
             .create 
-                .tit Register Subdomain
+                h3.tit Register Subdomain
                 form.createForm
                     .input 
                         input(type="text" placeholder="Name of Subdomain")
-                    .btn
+                    .btn(:class="{'nonClickable' : !account.email_verified}")
                         button(type="submit") Create
-    .container(v-if="!currentService.subdomain")
+    .container(v-if="currentService.subdomain")
         .filesHeader
             .filesPathWrap
                 .material-symbols-outlined.big.clickable hard_drive
                 span /
             .filesButtonWrap
                 .material-symbols-outlined.mid.refresh.clickable cached
-                .material-symbols-outlined.mid.clickable(:class='{"nonClickable": !checkedFiles.length}' @click.stop="showEdit = !showEdit") more_vert
+                .material-symbols-outlined.mid.clickable(:class='{"nonClickable": !checkedFiles.length || !account.email_verified}' @click.stop="!account.email_verified ? false : showEdit = !showEdit") more_vert
                 .editMenuWrap(v-if="showEdit" @click.stop)
                     .nest
                         .editMenu(@click="downloadFiles")
@@ -57,7 +57,7 @@
                         .editMenu(@click="showDeleteFile = true; showEdit = false;")
                             .material-symbols-outlined.mid delete
                             span delete
-                .customFile 
+                .customFile(:class="{'nonClickable' : !account.email_verified}")
                     label.uploadBtn.btn(for="files")
                         .material-symbols-outlined.mid upload
                         span Upload
