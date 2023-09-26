@@ -16,6 +16,13 @@ body.fa {
   background-color: #fafafa;
 }
 
+/* unverified */
+.unVerified {
+    opacity: 0.5;
+    user-select: none;
+    cursor: default !important;
+}
+
 /* error */
 .material {
   display: flex;
@@ -231,6 +238,9 @@ form .error span {
   background-color: #eee;
   transition: all 1s;
   cursor: pointer;
+}
+.toggleWrap .toggleBg.unVerified .toggleBtn {
+    cursor: default;
 }
 
 .hoverWrap {

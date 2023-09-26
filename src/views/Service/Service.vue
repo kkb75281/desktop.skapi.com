@@ -3,23 +3,23 @@ template(v-if='currentService')
     .infoWrap
         .info
             .title 
-                template(v-if="modifyServiceName")
-                    form.modifyForm(@submit.prevent="changeServiceName")
-                        input#modifyServiceName(type="text" placeholder="Service name" :value='inputServiceName' @input="(e) => inputServiceName = e.target.value" required)
-                        .buttonWrap
-                            button.cancel(type="button" @click="modifyServiceName = false;") Cancel
-                            button.save(type="submit") Save
-                template(v-else)
-                    .name
+                .name
+                    template(v-if="modifyServiceName")
+                        form.modifyForm(@submit.prevent="changeServiceName")
+                            input#modifyServiceName(type="text" placeholder="Service name" :value='inputServiceName' @input="(e) => inputServiceName = e.target.value" required)
+                            .buttonWrap
+                                button.cancel(type="button" @click="modifyServiceName = false;") Cancel
+                                button.save(type="submit") Save
+                    template(v-else)
                         h2 {{ currentService.name }}
-                        .material-symbols-outlined.mid.modify.clickable(@click="inputServiceName = currentService.name; modifyServiceName = true;") edit
-                    .date 
-                        span Date Created
-                        h5 {{ new Date(currentService.timestamp).toDateString() }}
-                    .toggleWrap(:class="{'active': currentService.active >= 1 }")
-                        span Disable/Enable
-                        .toggleBg
-                            .toggleBtn(@click="enableDisableToggle")
+                        .material-symbols-outlined.mid.modify.clickable(:class="{'unVerified' : !account.email_verified}" @click="editServiceName") edit
+                .date 
+                    span Date Created
+                    h5 {{ new Date(currentService.timestamp).toDateString() }}
+                .toggleWrap(:class="{'active': currentService.active >= 1}")
+                    span Disable/Enable
+                    .toggleBg(:class="{'unVerified' : !account.email_verified}")
+                        .toggleBtn(@click="enableDisableToggle")
             .startCode 
                 .colorscripter-code(style="color:#f0f0f0;font-family:monospace !important; position:relative !important;overflow:auto")
                     table.colorscripter-code-table(style="width:100%;margin:0;padding:28px;border:none;background-color:#434343;border-radius:8px;font-size:16px;" cellspacing="0" cellpadding="0")
@@ -61,7 +61,7 @@ template(v-if='currentService')
                                 button.save(type="submit") Save
                     template(v-else)
                         h5 {{ currentService.cors || '*' }}
-                            .material-symbols-outlined.mid.pen.clickable(@click="inputCors = currentService.cors === '*' ? '' : currentService.cors; modifyCors = true;") edit
+                            .material-symbols-outlined.mid.pen.clickable(:class="{'unVerified' : !account.email_verified}" @click="editCors") edit
 
                 .list
                     span(:class="{ active: modifyKey }") Secret Key
@@ -73,7 +73,7 @@ template(v-if='currentService')
                                 button.save(type="submit") Save
                     template(v-else)
                         h5 {{ currentService.api_key || 'No key' }}
-                            .material-symbols-outlined.mid.pen.clickable(@click="inputKey = currentService.api_key; modifyKey = true;") edit
+                            .material-symbols-outlined.mid.pen.clickable(:class="{'unVerified' : !account.email_verified}" @click="editKey") edit
 
         router-link.info.hover.user.clicked(:to='`/dashboard/${currentService.service}/users`')
             .titleWrap
@@ -120,8 +120,8 @@ template(v-if='currentService')
                 .list
                     span Host storage used
                     h5 {{ convertToMb(storageInfo?.[currentService.service]?.host) }}
-    .deleteWrap
-        .deleteInner(@click="openDeleteService = true;")
+    .deleteWrap(:class="{'unVerified' : !account.email_verified}")
+        .deleteInner(@click="!account.email_verified ? false : openDeleteService = true;")
             .material-symbols-outlined.mid delete
             span Delete Service
     DisableServiceOverlay(v-if="openDisableService" @close="disableService")
@@ -133,7 +133,7 @@ template(v-if='currentService')
 import { nextTick, ref, watch } from 'vue';
 import { useRouter } from 'vue-router';
 import { currentService, storageInfo } from '@/data.js';
-import { skapi } from '@/main.js';
+import { skapi, account } from '@/main.js';
 import DisableServiceOverlay from '@/views/Service/Records/DisableServiceOverlay.vue';
 import DeleteService from '@/components/DeleteService.vue';
 
@@ -175,6 +175,28 @@ let enableDisablePromise = ref(false);
 //         }
 //     }, 200);
 // }
+let editServiceName = () => {
+    if(account.email_verified) {
+        inputServiceName = currentService.value.name; 
+        modifyServiceName.value = true;
+    } else {
+        return false;
+    }
+}
+let editCors = () => {
+    if(account.email_verified) {
+        inputCors = currentService.value.cors === '*' ? '' : currentService.value.cors; modifyCors.value = true;
+    } else {
+        return false;
+    }
+}
+let editKey = () => {
+    if(account.email_verified) {
+        inputKey = currentService.value.api_key; modifyKey.value = true;
+    } else {
+        return false;
+    }
+}
 let copy = (e) => {
     let currentTarget = e.currentTarget;
     let doc = document.createElement('textarea');
@@ -242,7 +264,7 @@ let setSecretKey = () => {
     modifyKey.value = false;
 }
 let enableDisableToggle = () => {
-    if (enableDisablePromise.value) {
+    if (enableDisablePromise.value || !account.email_verified) {
         return;
     }
     if (currentService.value.active === 0) {
@@ -378,6 +400,7 @@ watch(modifyCors, () => {
                 flex-wrap: nowrap;
                 align-items: center;
                 width: 50%;
+                height: 44px;
             }
 
             .date {
@@ -564,14 +587,15 @@ watch(modifyCors, () => {
 }
 
 .modifyForm {
+    width: 100%;
     display: flex;
     flex-wrap: nowrap;
-    // gap: 12px;
+    justify-content: space-between;
 
     input {
-        width: max(65%, 280px);
+        width: 55%;
+        margin-right: 3%;
         height: 44px;
-        margin-right: 32px;
         background-color: #EDEDED;
         border: 0;
         padding: 12px 20px;
@@ -582,13 +606,12 @@ watch(modifyCors, () => {
     }
 
     .buttonWrap {
-        // width: 35%;
+        width: 42%;
         display: flex;
         flex-wrap: nowrap;
-        align-items: center;
-        justify-content: end;
 
         button {
+            height: 44px;
             border: 2px solid #293FE6;
             border-radius: 8px;
             padding: 6px 12px;
@@ -599,12 +622,30 @@ watch(modifyCors, () => {
             &.cancel {
                 background-color: unset;
                 color: #293FE6;
-                margin-right: 12px;
+                margin-right: 10px;
             }
 
             &.save {
                 background-color: #293FE6;
                 color: #fff;
+            }
+        }
+    }
+}
+
+@media (max-width: 1150px) {
+    .infoWrap {
+        .info {
+            .title {
+                .name {
+                    width: 45%;
+                }
+                .date {
+                    width: 30%;
+                }
+                .toggleWrap {
+                    width: 25%;
+                }
             }
         }
     }

@@ -32,10 +32,10 @@ main(v-if='account')
                 .row
                     .tit Verify Email
                     .cont
-                        .material.verified(v-if="account.email_verified")
+                        .material(v-if="account.email_verified")
                             .material-symbols-outlined.sml check_circle
                             span Verified
-                        .material.unVerified(v-else)
+                        .material(v-else)
                             .material-symbols-outlined.sml error
                             span Unverified
                     .btn(type="button" v-if="!account.email_verified" @click="verifyEmail") Verify email
@@ -332,12 +332,13 @@ main {
                         }
                     }
 
-                    .verified {
-                        color: rgba(90, 216, 88, 1);
-                    }
-
-                    .unVerified {
-                        color: rgba(255, 141, 59, 1);
+                    .material {
+                        &:first-child {
+                            color: rgba(90, 216, 88, 1);
+                        }
+                        &:last-child {
+                            color: rgba(255, 141, 59, 1);
+                        }
                     }
 
                     form {
