@@ -56,13 +56,13 @@ import { skapi, account } from '@/main.js'
 
 let create = ref(false);
 let createService = () => {
-    if(!account.email_verified) {
-        create.value = false;
-    } else {
+    if(account.value.email_verified) {
         create.value = true;
         nextTick(() => {
             document.getElementById('serviceName').focus();
         });
+    } else {
+        return false;
     }
 }
 let newServiceName = '';

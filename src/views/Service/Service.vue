@@ -176,7 +176,7 @@ let enableDisablePromise = ref(false);
 //     }, 200);
 // }
 let editServiceName = () => {
-    if(account.email_verified) {
+    if(account.value.email_verified) {
         inputServiceName = currentService.value.name; 
         modifyServiceName.value = true;
     } else {
@@ -184,14 +184,14 @@ let editServiceName = () => {
     }
 }
 let editCors = () => {
-    if(account.email_verified) {
+    if(account.value.email_verified) {
         inputCors = currentService.value.cors === '*' ? '' : currentService.value.cors; modifyCors.value = true;
     } else {
         return false;
     }
 }
 let editKey = () => {
-    if(account.email_verified) {
+    if(account.value.email_verified) {
         inputKey = currentService.value.api_key; modifyKey.value = true;
     } else {
         return false;
@@ -264,7 +264,7 @@ let setSecretKey = () => {
     modifyKey.value = false;
 }
 let enableDisableToggle = () => {
-    if (enableDisablePromise.value || !account.email_verified) {
+    if (enableDisablePromise.value || !account.value.email_verified) {
         return;
     }
     if (currentService.value.active === 0) {
