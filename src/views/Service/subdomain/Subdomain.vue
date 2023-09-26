@@ -2,7 +2,7 @@
 .containerWrap
     .container
         h2 Subdomain
-        template(v-if="!currentService.subdomain")
+        template(v-if="currentService.subdomain")
             .buttonWrap 
                 .refresh.clickable(:class="{'nonClickable' : !account.email_verified}")
                     .material-symbols-outlined.mid cached
@@ -41,7 +41,7 @@
                         input(type="text" placeholder="Name of Subdomain")
                     .btn(:class="{'nonClickable' : !account.email_verified}")
                         button(type="submit") Create
-    .container(v-if="!currentService.subdomain")
+    .container(v-if="currentService.subdomain")
         .filesHeader
             .filesPathWrap
                 .material-symbols-outlined.big.clickable hard_drive
