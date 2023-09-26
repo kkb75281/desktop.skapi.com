@@ -149,15 +149,21 @@ let lending = ref(null);
 let intro = ref(null);
 let other = ref(null);
 
+let scrollEvent = () => {
+    if (scrollY >= 20) {
+        lending.value.style.transform = 'translateY(-100vh)';
+    } else {
+        lending.value.style.transform = 'translateY(0)';
+    }
+}
+
 onMounted(() => {
-    window.addEventListener('scroll', () => {
-        if (scrollY >= 20) {
-            lending.value.style.transform = 'translateY(-100vh)';
-        } else {
-            lending.value.style.transform = 'translateY(0)';
-        }
-    });
+    window.addEventListener('scroll', scrollEvent);
 });
+
+onBeforeUnmount(() => {
+    window.removeEventListener('scroll', scrollEvent)
+})
 
 // let page = ref(0);
 
@@ -171,39 +177,39 @@ onMounted(() => {
 
 // function handleScroll(e) {
 //     e.preventDefault();
-    //   if (e.deltaY > 0) {
-    //     page.value++;
-    //   } else if (e.deltaY < 0) {
-    //     page.value--;
-    //   }
-    //   if (page.value < 0) {
-    //     page.value = 0;
-    //     lending.value.style.top = -100 + 'vh';
-    //   } else if (page.value > 1) {
-    //     page.value = 1;
-    //     lending.value.style.top = 'calc(' + -200 + 'vh' + e.deltaY + ')';
-    //   }
-    // if (e.deltaY > 0) {
-    //     page.value++;
-    // } else {
-    //     page.value--;
-    // }
-    // if (page.value < 0) {
-    //     page.value = 0;
-    //     lending.value.style.top = 0 + 'vh';
-    // } else if (page.value > 1) {
-    //     page.value = 1;
-    //     lending.value.style.top = -100 + 'vh';
-    // }
+//   if (e.deltaY > 0) {
+//     page.value++;
+//   } else if (e.deltaY < 0) {
+//     page.value--;
+//   }
+//   if (page.value < 0) {
+//     page.value = 0;
+//     lending.value.style.top = -100 + 'vh';
+//   } else if (page.value > 1) {
+//     page.value = 1;
+//     lending.value.style.top = 'calc(' + -200 + 'vh' + e.deltaY + ')';
+//   }
+// if (e.deltaY > 0) {
+//     page.value++;
+// } else {
+//     page.value--;
+// }
+// if (page.value < 0) {
+//     page.value = 0;
+//     lending.value.style.top = 0 + 'vh';
+// } else if (page.value > 1) {
+//     page.value = 1;
+//     lending.value.style.top = -100 + 'vh';
+// }
 
-    // if (lending.value.style.top == '-100vh') {
-    //     console.log(e.deltaY, lending.value.style.top)
-    //     if (e.deltaY > 0) {
-    //         lending.value.style.top += e.deltaY;
-    //     } else {
-    //         lending.value.style.top -= e.deltaY;
-    //     }
-    // }
+// if (lending.value.style.top == '-100vh') {
+//     console.log(e.deltaY, lending.value.style.top)
+//     if (e.deltaY > 0) {
+//         lending.value.style.top += e.deltaY;
+//     } else {
+//         lending.value.style.top -= e.deltaY;
+//     }
+// }
 // }
 </script>
 

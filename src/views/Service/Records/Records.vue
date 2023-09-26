@@ -30,11 +30,13 @@
                     .condition 
                         .label Reference ID
                         .textFormWrap
-                            input(type="text" name='reference' @change="e => advancedForm.reference = e.target.value")
+                            input(type="text" name='reference' @change="e => advancedForm.reference = e.target.value" placeholder='Referenced Record ID')
                     .condition 
                         .label Subscription
-                        .textFormWrap
-                            input(type="text" name='subscription' @change="e => advancedForm.subscription = e.target.value")
+                        .textFormWrap.indexValue
+                            input(type="text" name='subscription' @change="e => advancedForm.subscription = e.target.value" placeholder="Subscription ID")
+                            .customSelect 
+                                input(:disabled="!advancedForm.subscription" style='padding-right:0;border-bottom:none' name='subscription_group' type="number" min='0' max='99' placeholder='0~99' @change="e => advancedForm.subscription_group = e.target.value")
                     .condition 
                         .label Tag
                         .textFormWrap
@@ -42,17 +44,17 @@
                 .right
                     .title Index
                     .condition 
-                        .label Name
+                        .label Index Name
                         .textFormWrap
                             input(type="text" name='index_name' v-model="firstInput" @change="e => advancedForm.index_name = e.target.value")
-                    .condition 
-                        .label(:class="{'disabled': !firstInput}") Value Type
-                        .textFormWrap
-                            input(type="text" name='index_type' :disabled="!firstInput" @change="e => advancedForm.index_type = e.target.value")
+                    //- .condition 
+                    //-     .label(:class="{'disabled': !firstInput}") Value Type
+                    //-     .textFormWrap
+                    //-         input(type="text" name='index_type' :disabled="!firstInput" @change="e => advancedForm.index_type = e.target.value")
                     .condition 
                         .label(:class="{'disabled': !firstInput}") Index Value
                         .textFormWrap.indexValue(:class="{'disabled' : !firstInput}")
-                            input(type="text" name='index_value' :disabled="!firstInput" @change="e => advancedForm.index_value = e.target.value")
+                            input(type="text" name='index_value' :required='!firstInput || null' :disabled="!firstInput" placeholder='for value strings, do ex) "1234" | "false"... etc' @change="e => advancedForm.index_value = e.target.value")
                             .customSelect
                                 select(name="index_condition" :disabled="!firstInput" @change="e => advancedForm.index_condition = e.target.value")
                                     option(disabled) Condition
@@ -61,7 +63,13 @@
                                     option(value="=" selected) =
                                     option(value="<") &lt;
                                     option(value="<=") &lt;=
+                                    option(value="~") ~
                                 .material-symbols-outlined.mid.selectArrowDown arrow_drop_down
+                    .condition 
+                        .label(:class="{'disabled': advancedForm.index_condition !== '~'}") Index Range
+                        .textFormWrap(:class="{'disabled' : advancedForm.index_condition !== '~'}")
+                            input(type="text" name='index_range' placeholder='From index value ~ to:' :disabled="advancedForm.index_condition !== '~'" @change="e => advancedForm.index_range = e.target.value")
+                                        
                 .buttonWrap 
                     input.clear(type="reset" value="Clear filter" @click="clearSearchFilter")
                     button.search(type="submit") Search
@@ -485,6 +493,7 @@ let copy = (e) => {
 
 let clearSearchFilter = () => {
     firstInput.value = '';
+    advancedForm.value.index_condition = '=';
 }
 
 let selectAll = (e) => {
@@ -647,7 +656,7 @@ let recordDelete = (id) => {
             record_id: id
         });
         for (let i of id) {
-            if (id === selectedRecord.value.record_id) {
+            if (i === selectedRecord.value.record_id) {
                 selectedRecord.value = null;
             }
             await recordPage.deleteItem(i);
@@ -837,6 +846,7 @@ let handleIndexTypeChange = (e) => {
                     border: 0;
                     border-bottom: 1px solid rgba(0, 0, 0, 0.80);
                     background-color: unset;
+                    padding: 1px 4px;
                 }
 
                 input:disabled {
