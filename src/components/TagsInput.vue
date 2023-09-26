@@ -30,7 +30,7 @@ let focusEl = () => {
 }
 
 let tagIsValid = (string) => {
-  if (/[\[\]\\^_`]/.test(s)) {
+  if (/[\[\]\\^_`]/.test(string)) {
     return string;
   }
 

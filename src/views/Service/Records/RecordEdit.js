@@ -4,12 +4,24 @@ import { skapi } from "../../../main";
 export let selectedRecord = ref(null);
 export let records_data = ref([]);
 export let indexValueType = ref('string');
+export let binToRemove = ref([]);
 
 watch(selectedRecord, (newVal) => {
     records_data.value = [];
+    binToRemove.value = [];
     indexValueType.value = typeof newVal?.index?.value === 'undefined' ? 'string' : typeof newVal?.index?.value;
 
     if (newVal) {
+        if (newVal.bin) {
+            for(let b of newVal.bin) {
+                records_data.value.push({
+                    type: 'file',
+                    key: 'Binary',
+                    context: b,
+                    download: () => skapi.getFile(b, {dataType: 'download'})
+                })
+            }
+        }
         // address records_data
         if (!newVal.data || !Object.keys(newVal.data).length) {
             return;
