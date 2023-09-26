@@ -176,7 +176,7 @@ let enableDisablePromise = ref(false);
 //     }, 200);
 // }
 let editServiceName = () => {
-    if(account.email_verified) {
+    if(account.value.email_verified) {
         inputServiceName = currentService.value.name; 
         modifyServiceName.value = true;
     } else {
@@ -184,14 +184,14 @@ let editServiceName = () => {
     }
 }
 let editCors = () => {
-    if(account.email_verified) {
+    if(account.value.email_verified) {
         inputCors = currentService.value.cors === '*' ? '' : currentService.value.cors; modifyCors.value = true;
     } else {
         return false;
     }
 }
 let editKey = () => {
-    if(account.email_verified) {
+    if(account.value.email_verified) {
         inputKey = currentService.value.api_key; modifyKey.value = true;
     } else {
         return false;
@@ -264,7 +264,7 @@ let setSecretKey = () => {
     modifyKey.value = false;
 }
 let enableDisableToggle = () => {
-    if (enableDisablePromise.value || !account.email_verified) {
+    if (enableDisablePromise.value || !account.value.email_verified) {
         return;
     }
     if (currentService.value.active === 0) {
@@ -463,13 +463,14 @@ watch(modifyCors, () => {
                 &::after {
                     position: absolute;
                     display: block;
-                    right: 25px;
+                    right: 30px;
                     top: 50%;
                     transform: translateY(-50%);
                     text-align: center;
                     font-size: 14px;
                     font-weight: 400;
-                    color: rgba(255, 255, 255, 0.5);
+                    background: rgba(255, 255, 255, 0.6);
+                    color: #343434;
                     padding: 4px;
                     content: "Copied";
                     transition: opacity .4s;
