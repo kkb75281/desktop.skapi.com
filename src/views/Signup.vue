@@ -302,7 +302,6 @@ let signup = () => {
     form {
         .input {
             margin-bottom: 16px;
-            user-select: none;
 
             .label {
                 display: block;
@@ -358,7 +357,6 @@ let signup = () => {
                 font-size: 16px;
                 font-weight: 400;
                 text-decoration: none;
-                user-select: none;
             }
         }
         .bottom {

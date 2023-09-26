@@ -133,7 +133,6 @@ dialog {
         font-weight: 700;
 
         .editWrap {
-            user-select: none;
             cursor: pointer;
         }
     }
@@ -175,7 +174,6 @@ dialog {
         }
         .input {
             margin-bottom: 16px;
-            user-select: none;
 
             label {
                 display: block;
@@ -215,7 +213,6 @@ dialog {
                 color: #293FE6;
                 font-size: 16px;
                 font-weight: 700;
-                user-select: none;
                 cursor: pointer;
 
                 &.yes {

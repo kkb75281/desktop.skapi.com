@@ -2,7 +2,7 @@
 .containerWrap
     .container
         h2 Subdomain
-        template(v-if="currentService.subdomain")
+        template(v-if="!currentService.subdomain")
             .buttonWrap 
                 .refresh.clickable(:class="{'nonClickable' : !account.email_verified}")
                     .material-symbols-outlined.mid cached
@@ -12,7 +12,7 @@
                     span Delete
             .settingWrap 
                 .setting
-                    .tit Subdomain
+                    h5.tit Subdomain
                     template(v-if="modifySudomain")
                         form.modifyForm(style="margin-top: 8px")
                             .input
@@ -25,7 +25,7 @@
                             h5 subdomain name here
                             .material-symbols-outlined.mid.btn.clickable(:class="{'nonClickable' : !account.email_verified}" @click="!account.email_verified ? false : modifySudomain = true;") edit
                 .setting
-                    .tit 404 file
+                    h5.tit 404 file
                     .cont 
                         .customFile(:class="{'nonClickable' : !account.email_verified}")
                             input#fileName(value="Upload a file")
@@ -41,7 +41,7 @@
                         input(type="text" placeholder="Name of Subdomain")
                     .btn(:class="{'nonClickable' : !account.email_verified}")
                         button(type="submit") Create
-    .container(v-if="currentService.subdomain")
+    .container(v-if="!currentService.subdomain")
         .filesHeader
             .filesPathWrap
                 .material-symbols-outlined.big.clickable hard_drive
@@ -225,6 +225,7 @@ bodyClick.recordPage = () => {
                 display: flex;
                 flex-wrap: nowrap;
                 align-items: center;
+
                 span {
                     font-size: 16px;
                     font-weight: 700;
@@ -301,9 +302,6 @@ bodyClick.recordPage = () => {
                             font-size: 16px;
                             color: rgba(0,0,0,0.4);
                         }
-                        // input[type="file"] {
-                        //     display: none;
-                        // }
                     }
                     .btn {
                         position: absolute;

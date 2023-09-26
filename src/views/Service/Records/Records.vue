@@ -1089,7 +1089,6 @@ let handleIndexTypeChange = (e) => {
                 .info,
                 .smallInfo {
                     position: relative;
-                    user-select: none;
 
                     .label,
                     .smallLabel {
@@ -1581,7 +1580,6 @@ let handleIndexTypeChange = (e) => {
                 background: #FAFAFA;
                 box-shadow: 8px 12px 36px 0px rgba(0, 0, 0, 0.10);
                 z-index: 10;
-                user-select: none;
 
                 .filter {
                     display: flex;
@@ -1621,7 +1619,6 @@ let handleIndexTypeChange = (e) => {
                     .setting {
                         display: flex;
                         align-items: center;
-                        user-select: none;
 
                         &:hover {
                             span {
@@ -1645,7 +1642,6 @@ let handleIndexTypeChange = (e) => {
                 font-size: 16px;
                 font-weight: 700;
                 background-color: unset;
-                user-select: none;
                 cursor: pointer;
             }
         }

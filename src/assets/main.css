@@ -3,6 +3,7 @@
   padding: 0;
   box-sizing: border-box;
   font-family: "Radio Canada", sans-serif;
+  user-select: none;
 }
 
 body {
@@ -14,11 +15,6 @@ body {
 
 body.fa {
   background-color: #fafafa;
-}
-
-h1, h2, h3, h4, h5, h6,
-button, input {
-    user-select: none;
 }
 
 /* error */

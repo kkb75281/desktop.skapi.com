@@ -714,7 +714,6 @@ onMounted(() => {
                 font-size: 16px;
                 font-weight: 700;
                 background-color: unset;
-                user-select: none;
                 cursor: pointer;
             }
 
@@ -865,7 +864,6 @@ onMounted(() => {
                             height: 20px;
                             background-color: rgba(0, 0, 0, 0.1);
                             cursor: col-resize;
-                            user-select: none;
 
                             &.contrast {
                                 background-color: #fff !important;

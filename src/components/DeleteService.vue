@@ -142,7 +142,6 @@ let deleteService = async () => {
             font-weight: 700;
             width: 100px;
             height: 44px;
-            user-select: none;
             cursor: pointer;
 
             &.cancel {

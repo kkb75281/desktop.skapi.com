@@ -128,7 +128,6 @@ let createUser = () => {
 
         .input {
             margin-bottom: 16px;
-            user-select: none;
 
             .label {
                 display: block;
@@ -162,7 +161,6 @@ let createUser = () => {
                 color: #293FE6;
                 font-size: 16px;
                 font-weight: 700;
-                user-select: none;
                 cursor: pointer;
             }
 
@@ -171,23 +169,11 @@ let createUser = () => {
                 height: 100%;
                 border-radius: 8px;
                 border: 2px solid #293FE6;
-
                 background-color: unset;
                 color: #293FE6;
                 font-size: 16px;
                 font-weight: 700;
-                user-select: none;
                 cursor: pointer;
-
-                // border-radius: 8px;
-                // background: #293FE6;
-                // box-shadow: 0px -1px 1px 0px rgba(0, 0, 0, 0.15) inset;
-                // border: 0;
-                // padding: 12px 28px;
-                // color: #fff;
-                // font-size: 16px;
-                // font-weight: 700;
-                // cursor: pointer;
             }
         }
     }
