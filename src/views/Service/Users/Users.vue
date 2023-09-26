@@ -98,7 +98,7 @@
                                 .material-symbols-outlined.mid.check check
                         span Date Created
                 .material-symbols-outlined.mid.refresh.clickable(@click='refresh' :class='{"rotate_animation": fetching }') cached
-                .material-symbols-outlined.mid.menu.clickable(:class='{"nonClickable": !checkedUsers.length}' @click.stop="showUserSetting = !showUserSetting") more_vert
+                .material-symbols-outlined.mid.menu.clickable(:class='{"nonClickable": !checkedUsers.length || !account.email_verified}' @click.stop="!account.email_verified ? false : showUserSetting = !showUserSetting") more_vert
                 .userSettingWrap(v-if="showUserSetting" @click.stop)
                     .nest
                         .setting(@click="()=>{showBlockUser=true; showUserSetting=false;}")
@@ -110,7 +110,7 @@
                         .setting(@click="()=>{showDeleteUser = true; showUserSetting = false;}")
                             .material-symbols-outlined.mid delete
                             span delete
-                button.create(@click="createUserShow=true" style='margin-left:1rem') Create User
+                button.create(:class="{'unVerified' : !account.email_verified}" @click="!account.email_verified ? false : createUserShow=true" style='margin-left:1rem') Create User
             .pagenator 
                 .material-symbols-outlined.sml.prevPage.clickable(:class='{"nonClickable": currentPage === 1 || fetching }' @click='e=>{currentPage--; nextTick(selectNone)}') arrow_back_ios
                 .material-symbols-outlined.sml.nextPage.clickable(:class='{"nonClickable": maxPage <= currentPage && userPage?.endOfList || fetching }' @click='nextPage') arrow_forward_ios
@@ -197,7 +197,7 @@
 <script setup>
 import { bodyClick } from '@/main.js';
 import { currentService, serviceUsers } from '@/data.js';
-import { skapi } from '@/main.js';
+import { skapi, account } from '@/main.js';
 import { computed, nextTick, onMounted, onUnmounted, ref, watch } from 'vue';
 import Countries from '@/skapi-extensions/js/countries.js';
 import Calendar from '@/components/Calendar.vue';
