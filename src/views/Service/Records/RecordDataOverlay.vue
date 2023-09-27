@@ -7,10 +7,13 @@
                 h4(v-if='dataCopy.tags') Tags
                 h4(v-else) {{ dataCopy.type }} - {{ dataCopy.key }}
             .content 
-                textarea#editData(@input="e=>heightControl(e.target)" v-model='dataCopy.context' spellcheck="false" :style='displayFontType()')
+                textarea#editData(:value='dataCopy.context' @input='inputData' spellcheck="false" :style='displayFontType()')
+                .material.error(v-if="error")
+                    .material-symbols-outlined.mid error
+                    span {{ error }}
             .buttonWrap 
                 button.cancel(@click="emits('close')") Cancel
-                button.save(@click='()=>{console.log({dataCopy});emits("save", dataCopy);}') Save
+                button.save(@click='()=>{if(error) return; emits("save", dataCopy);}') Save
 
         template(v-else)
             // view
@@ -27,14 +30,14 @@
 </template>
 
 <script setup>
-import { onMounted} from 'vue';
+import { onMounted, ref } from 'vue';
 
 let { selectedData } = defineProps(['selectedData']);
 
-
 let editSelectedData = selectedData?.edit;
 let dataCopy = editSelectedData ? JSON.parse(JSON.stringify(selectedData)) : null;
-console.log({selectedData})
+let error = ref('');
+
 let emits = defineEmits(['close', 'save']);
 
 let displayFontType = () => {
@@ -50,7 +53,18 @@ let heightControl = (e) => {
     e.style.height = "auto";
     e.style.height = (e.scrollHeight + (selectedData.type === 'json' ? 16 : 0)) + "px";
 }
-
+let inputData = e=>{
+    heightControl(e.target)
+    error.value = '';
+    dataCopy.context = e.target.value;
+    if(dataCopy.type === 'json'){
+        try{
+            JSON.parse(dataCopy.context);
+        }catch(e){
+            error.value = 'Invalid JSON';
+        }
+    }
+}
 onMounted(() => {
     if (editSelectedData && !selectedData.tags) {
         let editor = document.getElementById('editData');

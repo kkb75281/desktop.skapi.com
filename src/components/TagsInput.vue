@@ -30,6 +30,10 @@ let focusEl = () => {
 }
 
 let tagIsValid = (string) => {
+  if (/[\[\]\\^_`]/.test(string)) {
+    return string;
+  }
+
   return !(/[.`!@#$%^&*()_+\-=\[\]{};':"\\|,<>\/?~\[ \]]/.test(string));
 }
 onMounted(() => {

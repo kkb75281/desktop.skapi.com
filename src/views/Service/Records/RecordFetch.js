@@ -3,6 +3,7 @@ import { currentService } from '@/data.js';
 import Pager from '@/skapi-extensions/js/pager.js';
 import { ref, watch, nextTick } from 'vue';
 import { skapi } from '@/main.js';
+import { selectedRecord } from './RecordEdit';
 
 export let serviceRecords = {};
 
@@ -24,7 +25,7 @@ watch(currentPage, (page) => {
 
 let defaultFetchParams = null;
 
-let fetchParams = defaultFetchParams
+export let fetchParams = defaultFetchParams
 
 export let getPage = (p) => {
     let res = recordPage.getPage(p);
@@ -33,10 +34,18 @@ export let getPage = (p) => {
     maxPage.value = res.maxPage;
 }
 
-export let refresh = () => {
+export let refresh = (params) => {
     if (fetching.value) {
         return;
     }
+
+    if (params) {
+        fetchParams = params;
+    }
+    else {
+        fetchParams = defaultFetchParams;
+    }
+
     records.value = null;
     let reserved_index = {
         $uploaded: 'record_id',
@@ -45,12 +54,21 @@ export let refresh = () => {
         $user_id: 'record_id'
     }
 
-    let targetIndex = fetchParams?.index && fetchParams.index in reserved_index ? reserved_index[fetchParams.index] : fetchParams?.index || 'record_id';
+    let targetIndex = 'record_id';
+
+    if (fetchParams?.index?.name) {
+        if (reserved_index[fetchParams.index.name]) {
+            targetIndex = reserved_index[fetchParams.index.name];
+        }
+        else {
+            targetIndex = 'index.value';
+        }
+    }
 
     serviceRecords[currentService.value.service] = new Pager(worker, {
         id: 'record_id',
         sortBy: targetIndex,
-        order: fetchParams === null || fetchParams?.condition?.includes('<') ? 'desc' : 'asc',
+        order: fetchParams === null || fetchParams?.index?.condition?.includes('<') ? 'desc' : 'asc',
         resultsPerPage: 10
     })
 
@@ -71,6 +89,7 @@ export let refresh = () => {
             else {
                 currentPage.value = 1;
             }
+        }).finally(() => {
             fetching.value = false;
         });
     });

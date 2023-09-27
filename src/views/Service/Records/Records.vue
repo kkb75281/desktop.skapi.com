@@ -2,65 +2,76 @@
 .containerWrap
     .container
         // search form
-        form
+        form(@submit.prevent='searchRecords')
             .searchForm
                 .selectBar
                     .customSelect
-                        select(v-model="selectedOption")
-                            option(value="table") Table Name
-                            option(value="user") User ID
-                            option(value="record") Record ID
+                        select(v-model="advancedForm.selectedOption")
+                            option(value="Table") Table Name
+                            option(value="User") User ID
+                            option(value="Record ID") Record ID
                         .material-symbols-outlined.mid.selectArrowDown arrow_drop_down
                 .searchBar
                     .material-symbols-outlined.mid.search search
-                    input(placeholder="Search Record" v-model="searchText")
-                    .material-symbols-outlined.mid.delete(v-if="searchText" @click="searchText = ''") close
-            .advancedForm(v-if="selectedOption === 'table'")
+                    input(ref='mainSearchInput' :placeholder="'Search by ' + advancedForm.selectedOption" v-model="advancedForm.searchText" :required='searchIsRequired')
+                    .material-symbols-outlined.mid.delete(v-if="advancedForm.searchText" @click="e=>{advancedForm.searchText = ''; mainSearchInput.focus()}") close
+            .advancedForm(v-if="advancedForm.selectedOption === 'Table'")
                 .left 
                     .condition
                         .label Access Group
                         .radioFormWrap
                             .customSelect
-                                select(name='access_group' @change="e => advancedForm.access_group = e.target.value")
-                                    option(value="1") All
+                                select(name='access_group' v-model="advancedForm.table.access_group" style='width:114px;padding-left:4px;')
                                     option(value="0") Public
+                                    option(value="1") Authorized
                                     option(value="private") Private
                                 .material-symbols-outlined.mid.selectArrowDown arrow_drop_down
+
+                    .condition 
+                        .label Subscription
+                        .textFormWrap.indexValue
+                            input(type="text" pattern='[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}' title='Subscription ID should be the user\'s ID' name='subscription' v-model="advancedForm.table.subscription.user_id" placeholder="Subscription ID")
+                            .customSelect 
+                                input(:required="advancedForm.table.subscription.user_id || null" style='padding-right:0;border-bottom:none' name='subscription_group' type="number" min='0' max='99' placeholder='Group' v-model='advancedForm.table.subscription.group')
+
                     .condition 
                         .label Reference ID
                         .textFormWrap
-                            input(type="text" name='reference' @change="e => advancedForm.reference = e.target.value")
-                    .condition 
-                        .label Subscription
-                        .textFormWrap
-                            input(type="text" name='subscription' @change="e => advancedForm.subscription = e.target.value")
+                            input(type="text" name='reference' v-model="advancedForm.reference" placeholder='Referenced Record ID | Uploaders User ID')
+
                     .condition 
                         .label Tag
                         .textFormWrap
-                            input(type="text" name='tag' @change="e => advancedForm.tag = e.target.value")
+                            input(type="text" name='tag' v-model="advancedForm.tag")
                 .right
                     .title Index
                     .condition 
-                        .label Name
+                        .label Index Name
                         .textFormWrap
-                            input(type="text" name='index_name' v-model="firstInput" @change="e => advancedForm.index_name = e.target.value")
+                            input(type="text" name='index_name' v-model="advancedForm.index.name")
+                    //- .condition 
+                    //-     .label(:class="{'disabled': !firstInput}") Value Type
+                    //-     .textFormWrap
+                    //-         input(type="text" name='index_type' :disabled="!firstInput" @change="e => advancedForm.index_type = e.target.value")
                     .condition 
-                        .label(:class="{'disabled': !firstInput}") Value Type
-                        .textFormWrap
-                            input(type="text" name='index_type' :disabled="!firstInput" @change="e => advancedForm.index_type = e.target.value")
-                    .condition 
-                        .label(:class="{'disabled': !firstInput}") Index Value
-                        .textFormWrap.indexValue(:class="{'disabled' : !firstInput}")
-                            input(type="text" name='index_value' :disabled="!firstInput" @change="e => advancedForm.index_value = e.target.value")
+                        .label(:class="{'disabled': !advancedForm.index.name}") Index Value
+                        .textFormWrap.indexValue(:class="{'disabled' : !advancedForm.index.name}")
+                            input(type="text" name='index_value' :required='advancedForm.index.name || null' :disabled="!advancedForm.index.name" placeholder='for strings, do "1234" | "false"' v-model='advancedForm.index.value')
                             .customSelect
-                                select(name="index_condition" :disabled="!firstInput" @change="e => advancedForm.index_condition = e.target.value")
+                                select(name="index_condition" :disabled="!advancedForm.index.name" v-model="advancedForm.index.condition")
                                     option(disabled) Condition
                                     option(value=">=") &gt;=
                                     option(value=">") &gt;
                                     option(value="=" selected) =
                                     option(value="<") &lt;
                                     option(value="<=") &lt;=
+                                    option(value="~") ~
                                 .material-symbols-outlined.mid.selectArrowDown arrow_drop_down
+                    .condition 
+                        .label(:class="{'disabled': advancedForm.index.condition !== '~'}") Index Range
+                        .textFormWrap(:class="{'disabled' : advancedForm.index.condition !== '~'}")
+                            input(type="text" name='index_range' placeholder='From index value ~ to:' :disabled="advancedForm.index.condition !== '~'" @change="e => advancedForm.index.range = e.target.value")
+
                 .buttonWrap 
                     input.clear(type="reset" value="Clear filter" @click="clearSearchFilter")
                     button.search(type="submit") Search
@@ -99,20 +110,20 @@
 
                         .info 
                             .label Permission
-                            .value 
-                                select(v-if="recordInfoEdit && selectedRecord?.record_id && selectedRecord.user_id !== account.user_id" :value="selectedRecord.readonly.toString()" @change="(e) => selectedRecord.readonly = JSON.parse(e.target.value)")
+                            .value(v-if="recordInfoEdit && selectedRecord?.record_id && selectedRecord.user_id !== account.user_id")
+                                select(@change="(e) => selectedRecord.readonly = JSON.parse(e.target.value)" :value="selectedRecord.readonly.toString()")
                                     option(value="false") Read/Write
                                     option(value="true") Read Only
-
+                            .value(v-else  :class="{ disabled: recordInfoEdit }")
                                 // admin can't upload readonly because its meaningless
-                                template(v-else) {{ selectedRecord.readonly ? 'Read Only' : 'Read/Write' }}
+                                | {{ selectedRecord.readonly ? 'Read Only' : 'Read/Write' }}
                         .info
                             .label Table
                             .value.various
                                 .smallInfo 
                                     .smallLabel Name 
                                     .smallValue 
-                                        input(v-if="recordInfoEdit" type="text" pattern="[a-zA-Z0-9]+" title="Table name should only be alphanumeric." :value="selectedRecord.table.name" placeholder="(Required)" @input="(e) => { selectedRecord.table.name = e.target.value; }" :disabled="promiseRunning" required)
+                                        input(v-if="recordInfoEdit" type="text" pattern="[a-zA-Z0-9\[\]\\^_`]+" title="Table name should only be alphanumeric." :value="selectedRecord.table.name" placeholder="(Required)" @input="(e) => { selectedRecord.table.name = e.target.value; }" :disabled="promiseRunning" required)
                                         template(v-else) {{ selectedRecord.table.name }}
                                 .smallInfo 
                                     .smallLabel Access Group
@@ -124,7 +135,7 @@
                                 .smallInfo 
                                     .smallLabel Subscription Group
                                     .smallValue 
-                                        input(:style='{opacity: !selectedRecord.user_id || selectedRecord.user_id === account.user_id ? 0.5 : 1}' :disabled="!selectedRecord.user_id || selectedRecord.user_id === account.user_id || null" :class="{nonClickable: !selectedRecord.user_id || selectedRecord.user_id === account.user_id}" v-if="recordInfoEdit" type="number" min='0' max='99' :value="selectedRecord.table?.subscription_group || ''" placeholder="None" @input="(e) => {selectedRecord.table.subscription_group = e.target.value ? parseInt(e.target.value) : null }")
+                                        input(:style='{opacity: !selectedRecord.user_id || selectedRecord.user_id === account.user_id ? 0.5 : 1}' :disabled="!selectedRecord.user_id || selectedRecord.user_id === account.user_id || null" :class="{nonClickable: !selectedRecord.user_id || selectedRecord.user_id === account.user_id}" v-if="recordInfoEdit" type="number" min='0' max='99' :value="selectedRecord.table?.subscription_group || ''" :placeholder="!selectedRecord.user_id || selectedRecord.user_id === account.user_id ? 'Admin cannot have subscription table' : 'None'" @input="(e) => {selectedRecord.table.subscription_group = e.target.value ? parseInt(e.target.value) : null }")
 
                                         // admin can't upload subscription group because its meaningless
                                         template(v-else) {{ selectedRecord.table?.subscription_group || 'None' }}
@@ -134,7 +145,7 @@
                                 .smallInfo 
                                     .smallLabel Name 
                                     .smallValue 
-                                        input(v-if="recordInfoEdit" type="text" :value="selectedRecord.index?.name || ''" pattern="[_a-zA-Z0-9]+" title="Index name should only be alphanumeric." placeholder="No Index" @input="(e)=> { if (!selectedRecord.index) { selectedRecord.index={}; } selectedRecord.index.name = e.target.value; }" :disabled="promiseRunning")
+                                        input(v-if="recordInfoEdit" type="text" :value="selectedRecord.index?.name || ''" pattern="[a-zA-Z0-9\[\]\\^_`]+" title="Index name should only be alphanumeric." placeholder="No Index" @input="(e)=> { if (!selectedRecord.index) { selectedRecord.index={}; } selectedRecord.index.name = e.target.value; }" :disabled="promiseRunning")
                                         template(v-else) {{ selectedRecord.index?.name || 'No Index' }}
                                 .smallInfo 
                                     .smallLabel Value 
@@ -173,18 +184,22 @@
                                     .smallValue 
                                         input#referenceIdInput(v-if="recordInfoEdit" type="text" :value="selectedRecord.reference?.record_id || ''" placeholder="Record ID to reference (optional)" @input="(e) => {selectedRecord.reference.record_id = e.target.value || null; e.target.setCustomValidity('')}" :disabled="promiseRunning")
                                         template(v-else) {{ selectedRecord.reference.record_id || 'None' }}
+                                    .copy(v-if="!recordInfoEdit && selectedRecord.reference.record_id" @click="copy")
+                                        .material-symbols-outlined.sml file_copy
+
                                 .smallInfo 
                                     .smallLabel Multiple Reference 
                                     .smallValue 
-                                        select(v-if="recordInfoEdit" :value="JSON.stringify(selectedRecord.reference.allow_multiple_reference)" @change="(e) => {selectedRecord.reference.allow_multiple_reference = e.target.value ? JSON.parse(e.target.value) : null}" :disabled="promiseRunning")
+                                        select(v-if="recordInfoEdit" :value="JSON.stringify(selectedRecord.reference.allow_multiple_reference)" @change="(e) => {selectedRecord.reference.allow_multiple_reference = e.target.value ? JSON.parse(e.target.value) : false}" :disabled="promiseRunning")
                                             option(value="true") Allowed
-                                            option(value="null") Not Allowed
+                                            option(value="false") Not Allowed
                                         template(v-else) {{ selectedRecord.reference.allow_multiple_reference ? 'Allowed' : 'Not Allowed' }}
                                 .smallInfo 
                                     .smallLabel Reference Limit
                                     .smallValue 
                                         input(v-if="recordInfoEdit" type="number" min="0" :value="selectedRecord.reference.reference_limit === null ? '' : selectedRecord.reference?.reference_limit" placeholder="Infinite" @input="(e) => selectedRecord.reference.reference_limit = e.target.value ? parseInt(e.target.value) : null" :disabled="promiseRunning")
                                         template(v-else) {{ selectedRecord.reference.reference_limit || 'Infinite' }}
+
                         .info 
                             .label Tags 
                             .value(style="width: calc(100% - 170px);")
@@ -222,7 +237,7 @@
 
                                 template(v-else)
                                     .rowEdit
-                                        .material-symbols-outlined.sml.minus(@click="promiseRunning ? false : records_data.splice(index, 1)") do_not_disturb_on
+                                        .material-symbols-outlined.sml.minus(@click="e=>removeData(index)") do_not_disturb_on
 
                                         select.type(:value="data.type" @change="(e) => selectType(e, data)" :disabled="promiseRunning || selectedRecord.record_id && data.type === 'file' && data.context || null")
                                             // on edit, record file data cannot be changed. only delete is allowed
@@ -247,14 +262,15 @@
                                                 option(value="false") false
 
                                         template(v-else-if="data.type == 'file'")
-                                            template(v-if='selectedRecord.record_id && data.type === "file" && data.context')
+                                            template(v-if='selectedRecord.record_id && data.type === "file" && typeof data.context === "string" && data.context')
                                                 // on edit, record file data cannot be changed. only delete is allowed
                                                 div(style='width: calc(100% - 208px);')
-                                                    span(style='opacity: 0.5') {{ data.context }}
+                                                    span(style='vertical-align: middle;display: inline-block;white-space: nowrap;width: calc(100% - 35px);overflow: hidden;text-overflow: ellipsis;opacity: 0.5') {{ data.context }}
                                                     .material-symbols-outlined.sml(@click='data.download()' style='float: right; cursor: pointer;' v-if="data.type == 'file'") download
 
-                                            template(v-else-if="data.context === ''")
-                                                .context.fileUpload Choose a file
+                                            template(v-else)
+                                                .context.fileUpload(style='white-space: nowrap;overflow: hidden;flex-shrink: 1;text-overflow: ellipsis;' @click='e=>{ e.target.children[0].click() }') {{ data.context ? data.context.name : 'Choose a file' }}
+                                                    input(@click.stop type="file" @change="e=>{ data.context=e.target.files[0] }" required hidden)
 
                                         template(v-else)
                                             input.context(:type="data.type === 'number' ? 'number' : 'text'" v-model="data.context" :placeholder="`<${data.type}> Value`" :disabled="promiseRunning")
@@ -299,7 +315,7 @@
         // top menu of record list
         .tableHeader 
             .actions 
-                .material-symbols-outlined.mid.refresh.clickable(@click='refresh' :class='{"rotate_animation": fetching }') cached
+                .material-symbols-outlined.mid.refresh.clickable(@click='()=>{selectedRecord=null; refresh(fetchParams);}' :class='{"rotate_animation": fetching }') cached
                 .material-symbols-outlined.mid.menu.clickable(:class='{"nonClickable": !checkedRecords.length || !account.email_verified}' @click.stop="!account.email_verified ? false : showRecordSetting = !showRecordSetting") more_vert
                 .recordSettingWrap(v-if="showRecordSetting" @click.stop)
                     .nest
@@ -399,15 +415,16 @@
 
 <script setup>
 import { bodyClick } from '@/main.js';
-import { computed, nextTick, onBeforeMount, onBeforeUnmount, onMounted, ref } from 'vue';
+import { computed, nextTick, onBeforeMount, onBeforeUnmount, onMounted, reactive, ref } from 'vue';
 import RecordDataOverlay from '@/views/Service/Records/RecordDataOverlay.vue';
 import DeleteRecordOverlay from '@/views/Service/Records/DeleteRecordOverlay.vue';
 import TagEditor from './TagEditor.vue';
 import { account, skapi } from '../../../main';
 import { currentService } from '@/data.js';
-import { selectedRecord, records_data, indexValueType } from './RecordEdit';
-import { launch, serviceRecords, getPage, records, selectNone, recordPage, currentPage, maxPage, fetching, refresh, nextPage, timeSince } from './RecordFetch';
+import { selectedRecord, records_data, indexValueType, binToRemove } from './RecordEdit';
+import { launch, serviceRecords, getPage, records, selectNone, recordPage, currentPage, maxPage, fetching, refresh, nextPage, timeSince, fetchParams } from './RecordFetch';
 
+selectedRecord.value = null;
 launch();
 let promiseRunning = ref(false);
 let showRecordDataValue = ref(null);
@@ -418,20 +435,92 @@ let showEdit = ref(false);
 let hiddenUserID = ref(false);
 let hiddenTags = ref(false);
 let editTags = ref(null);
-let searchText = ref('');
+let mainSearchInput = ref(null);
 let recordInfoEdit = ref(false);
-let advancedForm = ref({
-    access_group: 0,
-    table: undefined,
-    subscription: null,
-    index_type: 'string',
-    index_name: undefined,
-    index_name: undefined,
-    index_value: undefined,
-    index_condition: '=',
-    tag: undefined,
-    reference: undefined
+let advancedForm = reactive({
+    selectedOption: 'Table',
+    searchText: '',
+    table: {
+        access_group: 0,
+        subscription: {
+            user_id: '',
+            group: ''
+        },
+    },
+    index: {
+        name: '',
+        value: '',
+        condition: '=',
+        range: ''
+    },
+    tag: '',
+    reference: ''
 });
+let searchIsRequired = computed(() => {
+    return advancedForm.index.name || advancedForm.table.subscription.user_id || advancedForm.tag || advancedForm.reference || null
+});
+
+let searchRecords = () => {
+    selectedRecord.value = null;
+    if (advancedForm.searchText === '') {
+        refresh();
+        return;
+    }
+
+    let params;
+    switch (advancedForm.selectedOption) {
+        case 'User ID':
+            params = {
+                service: currentService.value.service,
+                reference: advancedForm.searchText
+            }
+            break;
+        case 'Record ID':
+            params = {
+                service: currentService.value.service,
+                record_id: advancedForm.searchText
+            }
+            break;
+        case 'Table':
+            params = {
+                service: currentService.value.service,
+                table: {
+                    name: advancedForm.searchText,
+                    access_group: advancedForm.table.access_group === 'private' ? 'private' : parseInt(advancedForm.table.access_group),
+                    subscription: {
+                        user_id: advancedForm.table.subscription.user_id || undefined,
+                        group: advancedForm.table.subscription.group ? parseInt(advancedForm.table.subscription.group) : undefined
+                    }
+                },
+                index: {
+                    name: advancedForm.index.name,
+                    value: (() => {
+                        let val = advancedForm.index.value;
+                        try {
+                            val = JSON.parse(val);
+                        }
+                        catch (err) { }
+                        return val;
+                    })(),
+                    condition: advancedForm.index.condition === '~' ? '=' : advancedForm.index.condition,
+                    range: advancedForm.index.condition === '~' ? advancedForm.index.range : undefined,
+                },
+                tag: advancedForm.tag || undefined,
+                reference: advancedForm.reference || undefined,
+            }
+            if (!params.index.name) {
+                delete params.index;
+            }
+            if (!params.table.subscription.user_id) {
+                delete params.subscription;
+            }
+
+            break;
+    }
+
+    refresh(params);
+}
+
 let createRecordTemplate = {
     table: {
         name: '',
@@ -452,7 +541,6 @@ let dataList = ref([]);
 let checkedRecords = ref([]);
 let selectedData = ref(null);
 let firstInput = ref('');
-let selectedOption = ref('table');
 let isSmallScreen = ref(window.innerWidth < 1200)
 let maxTrCount = 10;
 
@@ -484,7 +572,27 @@ let copy = (e) => {
 }
 
 let clearSearchFilter = () => {
-    firstInput.value = '';
+    let init = {
+        searchText: '',
+        table: {
+            access_group: 0,
+            subscription: {
+                user_id: '',
+                group: ''
+            },
+        },
+        index: {
+            name: '',
+            value: '',
+            condition: '=',
+            range: ''
+        },
+        tag: '',
+        reference: ''
+    };
+    for (let key in init) {
+        advancedForm[key] = init[key];
+    }
 }
 
 let selectAll = (e) => {
@@ -506,21 +614,9 @@ let trackSelectedRecords = () => {
     checkedRecords.value = checked;
 }
 
-let validateTableName = (event) => {
-    let regex = /^[\p{L}\d\s.]+$/u;
-
-    let isValid = event.target.value.match(regex) ? true : false;
-    if (isValid) {
-        event.target.setCustomValidity('');
-    } else {
-        event.target.setCustomValidity('Can not contain special characters other than period and spaces');
-        event.target.reportValidity();
-    }
-};
-
 // recordData edit
 let addField = () => {
-    if(promiseRunning) {
+    if (promiseRunning.value) {
         return false;
     }
     records_data.value.push({ type: 'string', key: '', context: '' });
@@ -531,13 +627,19 @@ let addField = () => {
         }
     })
 };
-let removeField = (index) => {
-    if (createRecordForm.value) {
-        dataList.value.splice(index, 1);
-    } else {
-        records_data.value.splice(index, 1);
+
+let removeData = (index) => {
+    if (promiseRunning.value)
+        return
+
+    let dat = records_data.value[index];
+    if (dat.type === 'file' && typeof dat.context === 'string' && !dat.fileData) {
+        binToRemove.value.push(dat.context);
     }
-};
+
+    records_data.value.splice(index, 1)
+}
+
 let selectType = (e, data) => {
     data.type = e.target.value;
     if (data.type === 'string') {
@@ -556,7 +658,8 @@ let selectType = (e, data) => {
         data.context = 'null';
     }
 }
-let saveRecordData = () => {
+
+let saveRecordData = async () => {
     promiseRunning.value = true;
     let record_params = {
         service: currentService.value.service,
@@ -577,43 +680,72 @@ let saveRecordData = () => {
         record_params.index = null;
     }
 
+    let to_bin = null;
     // build record data
     let rec_data = records_data.value;
     if (!rec_data.length) {
         data = null;
     }
     else {
-        let makeArray = (key, data, value) => {
-            if (data[key]) {
-                if (Array.isArray(data[key])) {
-                    data[key].push(value);
-                }
-                else {
-                    data[key] = [data[key], value];
-                }
-            }
-            else {
-                data[key] = value;
-            }
-        }
+        let form = new FormData();
 
         for (let d of rec_data) {
             if (d.type === 'string') {
-                makeArray(d.key, data, d.context);
+                // add to form
+                form.append(d.key, d.context);
             }
             else if (d.type === 'number') {
-                makeArray(d.key, data, d.context.includes('.') ? parseFloat(d.context) : parseInt(d.context));
+                // data to blob
+                let blob = new Blob([d.context.includes('.') ? parseFloat(d.context) : parseInt(d.context)], { type: "application/json" });
+                // add to form
+                form.append(d.key, blob);
             }
             else if (d.type === 'boolean' || d.type === 'json') {
-                makeArray(d.key, data, JSON.parse(d.context));
+                let blob = new Blob([JSON.parse(d.context)], { type: "application/json" });
+                // add to form
+                form.append(d.key, blob);
             }
             else if (d.type === 'file') {
-                makeArray(d.key, data, d.fileData);
+                if (typeof d.context === 'string') {
+                    if (d.fileData) {
+                        let blob = new Blob([JSON.parse(d.fileData)], { type: "application/json" });
+                        // add to form
+                        form.append(d.key, blob);
+                    }
+                }
+                else {
+                    // 4400000
+                    if (d.context.size > 4400000) {
+                        if (!to_bin) {
+                            to_bin = new FormData();
+                        }
+                        to_bin.append(d.key, d.context);
+                    }
+                    else {
+                        form.append(d.key, d.context);
+                    }
+                }
             }
         }
+
+        data = form;
     }
 
-    skapi.postRecord(data, record_params).then(res => {
+    if (binToRemove.value.length) {
+        await skapi.deleteRecFiles({
+            serviceId: currentService.value.service,
+            endpoints: binToRemove.value
+        });
+    }
+
+    skapi.postRecord(data, record_params).then(async res => {
+        if (to_bin) {
+            await skapi.uploadFiles(to_bin, {
+                service: currentService.value.service,
+                record_id: res.record_id
+            });
+        }
+        selectedRecord.value = res;
         recordInfoEdit.value = false;
         recordPage.insertItems([res]).then(_ => {
             getPage(currentPage.value);
@@ -650,7 +782,7 @@ let recordDelete = (id) => {
             record_id: id
         });
         for (let i of id) {
-            if (id === selectedRecord.value.record_id) {
+            if (selectedRecord.value && i === selectedRecord.value.record_id) {
                 selectedRecord.value = null;
             }
             await recordPage.deleteItem(i);
@@ -684,6 +816,7 @@ let ellipsisCheck = (id) => {
     let e = document.getElementById(id);
     return e.offsetWidth < e.scrollWidth;
 }
+
 let handleIndexTypeChange = (e) => {
     let originalValue = recordPage.list[selectedRecord.value.record_id]?.index?.value;
     let valueType = e.target.value;
@@ -840,6 +973,7 @@ let handleIndexTypeChange = (e) => {
                     border: 0;
                     border-bottom: 1px solid rgba(0, 0, 0, 0.80);
                     background-color: unset;
+                    padding: 1px 4px;
                 }
 
                 input:disabled {
@@ -1450,17 +1584,23 @@ let handleIndexTypeChange = (e) => {
                     margin-right: 20px;
                     display: inline-block;
 
+
+
                     &:first-child {
                         width: 84px;
+                        flex-shrink: 0;
                     }
 
                     &:nth-child(2) {
                         width: 84px;
+                        flex-shrink: 0;
                     }
 
-                    &:last-child {
+                    &:nth-child(3) {
                         width: calc(100% - 208px);
                         margin-right: 0;
+                        flex-shrink: 1;
+                        overflow: hidden;
                     }
 
                     .overflow {
@@ -1753,6 +1893,7 @@ let handleIndexTypeChange = (e) => {
                         margin-right: 0;
                     }
                 }
+
                 .feature {
                     display: flex;
                     align-items: center;
@@ -1776,6 +1917,7 @@ let handleIndexTypeChange = (e) => {
                         margin-right: 0;
                     }
                 }
+
                 .empty {
                     width: 100%;
                 }
