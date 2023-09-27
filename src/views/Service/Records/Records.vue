@@ -13,7 +13,15 @@
                         .material-symbols-outlined.mid.selectArrowDown arrow_drop_down
                 .searchBar
                     .material-symbols-outlined.mid.search search
-                    input(ref='mainSearchInput' :placeholder="'Search by ' + advancedForm.selectedOption" v-model="advancedForm.searchText" :required='searchIsRequired')
+                    input(
+                        ref='mainSearchInput'
+                        :placeholder="'Search by ' + advancedForm.selectedOption"
+                        v-model="advancedForm.searchText"
+                        @input="e=>{e.target.setCustomValidity('');}"
+                        @change="e=>{if(advancedForm.selectedOption !== 'User' && !specialChars(e.target.value, false, true)) { e.target.setCustomValidity('Special characters are not allowed'); e.target.reportValidity(); }}"
+                        :pattern="advancedForm.selectedOption === 'User' ? '[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}' : null"
+                        :required='searchIsRequired'
+                        )
                     .material-symbols-outlined.mid.delete(v-if="advancedForm.searchText" @click="e=>{advancedForm.searchText = ''; mainSearchInput.focus()}") close
             .advancedForm(v-if="advancedForm.selectedOption === 'Table'")
                 .left 
@@ -42,13 +50,15 @@
                     .condition 
                         .label Tag
                         .textFormWrap
-                            input(type="text" name='tag' v-model="advancedForm.tag")
+                            input(type="text" name='tag' @input="e=>{e.target.setCustomValidity(''); advancedForm.tag=e.target.value;}" @change="e=>{if(!specialChars(e.target.value, false, true)) { e.target.setCustomValidity('Special characters are not allowed'); e.target.reportValidity(); }}")
                 .right
                     .title Index
                     .condition 
                         .label Index Name
                         .textFormWrap
-                            input(type="text" name='index_name' v-model="advancedForm.index.name")
+                            input(type="text" name='index_name'
+                            @input="e=>{e.target.setCustomValidity(''); advancedForm.index.name=e.target.value }"
+                            @change="e=>{if(!specialChars(e.target.value, true, false)) { e.target.setCustomValidity('Special characters or spaces are not allowed'); e.target.reportValidity(); }}")
                     //- .condition 
                     //-     .label(:class="{'disabled': !firstInput}") Value Type
                     //-     .textFormWrap
@@ -56,7 +66,7 @@
                     .condition 
                         .label(:class="{'disabled': !advancedForm.index.name}") Index Value
                         .textFormWrap.indexValue(:class="{'disabled' : !advancedForm.index.name}")
-                            input(type="text" name='index_value' :required='advancedForm.index.name || null' :disabled="!advancedForm.index.name" placeholder='for strings, do "1234" | "false"' v-model='advancedForm.index.value')
+                            input#indexValueSearchInput(type="text" name='index_value' :required='advancedForm.index.name || null' :disabled="!advancedForm.index.name" placeholder='for strings, do "1234" | "false"' v-model='advancedForm.index.value')
                             .customSelect
                                 select(name="index_condition" :disabled="!advancedForm.index.name" v-model="advancedForm.index.condition")
                                     option(disabled) Condition
@@ -70,7 +80,7 @@
                     .condition 
                         .label(:class="{'disabled': advancedForm.index.condition !== '~'}") Index Range
                         .textFormWrap(:class="{'disabled' : advancedForm.index.condition !== '~'}")
-                            input(type="text" name='index_range' placeholder='From index value ~ to:' :disabled="advancedForm.index.condition !== '~'" @change="e => advancedForm.index.range = e.target.value")
+                            input#indexRangeSearchInput(type="text" name='index_range' placeholder='From index value ~ to:' :disabled="advancedForm.index.condition !== '~'" @input="e => {e.target.setCustomValidity(''); advancedForm.index.range = e.target.value}")
 
                 .buttonWrap 
                     input.clear(type="reset" value="Clear filter" @click="clearSearchFilter")
@@ -123,7 +133,14 @@
                                 .smallInfo 
                                     .smallLabel Name 
                                     .smallValue 
-                                        input(v-if="recordInfoEdit" type="text" pattern="[a-zA-Z0-9\[\]\\^_`]+" title="Table name should only be alphanumeric." :value="selectedRecord.table.name" placeholder="(Required)" @input="(e) => { selectedRecord.table.name = e.target.value; }" :disabled="promiseRunning" required)
+                                        input(
+                                            v-if="recordInfoEdit" 
+                                            type="text" 
+                                            placeholder="(Required)"
+                                            v-model='selectedRecord.table.name'
+                                            @input="e => e.target.setCustomValidity('')"
+                                            @change="e=>{if(!specialChars(e.target.value, true, true)) { e.target.setCustomValidity('Special characters are not allowed'); e.target.reportValidity(); }}"
+                                            :disabled="promiseRunning" required)
                                         template(v-else) {{ selectedRecord.table.name }}
                                 .smallInfo 
                                     .smallLabel Access Group
@@ -145,7 +162,14 @@
                                 .smallInfo 
                                     .smallLabel Name 
                                     .smallValue 
-                                        input(v-if="recordInfoEdit" type="text" :value="selectedRecord.index?.name || ''" pattern="[a-zA-Z0-9\[\]\\^_`]+" title="Index name should only be alphanumeric." placeholder="No Index" @input="(e)=> { if (!selectedRecord.index) { selectedRecord.index={}; } selectedRecord.index.name = e.target.value; }" :disabled="promiseRunning")
+                                        input(
+                                            v-if="recordInfoEdit"
+                                            type="text"
+                                            :value="selectedRecord.index?.name || ''"
+                                            @change="e=>{if(!specialChars(e.target.value, true, false)) { e.target.setCustomValidity('Special characters or spaces are not allowed'); e.target.reportValidity(); }}"
+                                            placeholder="No Index"
+                                            @input="(e)=> { e.target.setCustomValidity(''); if (!selectedRecord.index) { selectedRecord.index={}; } selectedRecord.index.name = e.target.value; }"
+                                            :disabled="promiseRunning")
                                         template(v-else) {{ selectedRecord.index?.name || 'No Index' }}
                                 .smallInfo 
                                     .smallLabel Value 
@@ -169,7 +193,8 @@
                                                 v-else 
                                                 :type="indexValueType === 'string' ? 'text' : 'number'" :value="selectedRecord.index?.value"
                                                 placeholder="(Value Required)"
-                                                @input="(e)=> { if(!selectedRecord.index) { selectedRecord.index={}; } selectedRecord.index.value = indexValueType === 'number' ? parseInt(e.target.value) : e.target.value; }"
+                                                @input="(e)=> { e.target.setCustomValidity(''); if(!selectedRecord.index) { selectedRecord.index={}; } selectedRecord.index.value = indexValueType === 'number' ? parseInt(e.target.value) : e.target.value; }"
+                                                @change="e=>{if(indexValueType==='string' && !specialChars(e.target.value, false, true)) { e.target.setCustomValidity('Special characters are not allowed'); e.target.reportValidity(); }}"
                                                 :required="selectedRecord?.index?.name ? true : null"
                                                 :disabled="promiseRunning"
                                             )
@@ -421,7 +446,7 @@ import DeleteRecordOverlay from '@/views/Service/Records/DeleteRecordOverlay.vue
 import TagEditor from './TagEditor.vue';
 import { account, skapi } from '../../../main';
 import { currentService } from '@/data.js';
-import { selectedRecord, records_data, indexValueType, binToRemove } from './RecordEdit';
+import { selectedRecord, records_data, indexValueType, binToRemove, specialChars } from './RecordEdit';
 import { launch, serviceRecords, getPage, records, selectNone, recordPage, currentPage, maxPage, fetching, refresh, nextPage, timeSince, fetchParams } from './RecordFetch';
 
 selectedRecord.value = null;
@@ -503,7 +528,14 @@ let searchRecords = () => {
                         return val;
                     })(),
                     condition: advancedForm.index.condition === '~' ? '=' : advancedForm.index.condition,
-                    range: advancedForm.index.condition === '~' ? advancedForm.index.range : undefined,
+                    range: advancedForm.index.condition === '~' ? (() => {
+                        let val = advancedForm.index.range;
+                        try {
+                            val = JSON.parse(val);
+                        }
+                        catch (err) { }
+                        return val;
+                    })() : undefined,
                 },
                 tag: advancedForm.tag || undefined,
                 reference: advancedForm.reference || undefined,
@@ -516,6 +548,25 @@ let searchRecords = () => {
             }
 
             break;
+    }
+
+    if (params.index && params.index.value && typeof params.index.value === 'string' && !specialChars(params.index.value, false, true)) {
+        document.getElementById('indexValueSearchInput').setCustomValidity('Index value should not have special characters.');
+        document.getElementById('indexValueSearchInput').reportValidity();
+        return;
+    }
+
+    // check special chars for range value
+    if (params.index && params.index.range && typeof params.index.range === 'string' && !specialChars(params.index.range, false, true)) {
+        document.getElementById('indexRangeSearchInput').setCustomValidity('Index range should not have special characters.');
+        document.getElementById('indexRangeSearchInput').reportValidity();
+        return;
+    }
+
+    if (params.index && params.index.range && typeof params.index.value !== typeof params.index.range) {
+        document.getElementById('indexRangeSearchInput').setCustomValidity('Range value should be same type as index value.');
+        document.getElementById('indexRangeSearchInput').reportValidity();
+        return;
     }
 
     refresh(params);
@@ -592,6 +643,9 @@ let clearSearchFilter = () => {
     };
     for (let key in init) {
         advancedForm[key] = init[key];
+    }
+    if (fetchParams !== null) {
+        refresh();
     }
 }
 
