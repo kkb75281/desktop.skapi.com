@@ -894,29 +894,30 @@ let handleIndexTypeChange = (e) => {
 }
 
 let handleKeydown = (e) => {
-    e.preventDefault();
+    if(!selectedRecord?.value?.record_id) {return}
+    // if(e.key == 40 || e.key == "ArrowDown" || e.key == 38 || e.key == "ArrowUp") {
+        // e.preventDefault();
+    // }
 
-    let selectedIndex = ''
-
-    for(let i=0; i < records.value.length; i++) {
-        records[i].record_id
-    }
-    console.log(selectedRecord.value.record_id)
+    let selectedIndex = records.value.findIndex(record => record.record_id === selectedRecord.value.record_id);
+    let lastIndex = records.value.length - 1;
 
     if (e.key == 40 || e.key == "ArrowDown") {
-        console.log(records.value)
+        if(selectedIndex < lastIndex) {
+            selectedRecord.value = records.value[selectedIndex + 1];
+        }
     } else if (e.key == 38 || e.key == "ArrowUp") {
-        console.log(records.value)
+        if(selectedIndex > 0) {
+            selectedRecord.value = records.value[selectedIndex - 1];
+        }
     }
 }
 
 // 방향키 select Record
 watch(() => selectedRecord.value, () => {
     if(selectedRecord.value) {
-        console.log('있음');
         document.addEventListener('keydown', handleKeydown);
     } else {
-        console.log('없음');
         document.removeEventListener('keydown', handleKeydown);
     }
 })
@@ -2029,7 +2030,6 @@ watch(() => selectedRecord.value, () => {
                 height: 60px;
                 border-bottom: 1px solid rgba(0, 0, 0, 0.10);
                 border-radius: 8px;
-                box-shadow: 0px 1px 3px rgba(0, 0, 0, 0.06);
                 // cursor: pointer;
                 overflow: hidden;
 
