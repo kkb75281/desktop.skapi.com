@@ -74,6 +74,11 @@ let logout = async () => {
         box-shadow: 8px 12px 36px 0px rgba(0, 0, 0, 0.10);
     }
 
+    :first-child {
+        display: flex;
+        align-items: center;
+    }
+
     .logo {
         width: 120px;
     }
