@@ -618,7 +618,6 @@ watch(modifyCors, () => {
         }
         .buttonWrap {
             width: 45%;
-            justify-content: start;
         }
     }
 
@@ -639,7 +638,6 @@ watch(modifyCors, () => {
         width: max(153px ,32%);
         display: flex;
         align-items: center;
-        justify-content: end;
         flex-wrap: nowrap;
 
         button {

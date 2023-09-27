@@ -28,7 +28,7 @@ main(v-if='account')
                                         button.cancel(type="button" @click="changeEmail = false;") Cancel
                                         button.save(type="submit") Save
                         template(v-else) {{ account.email }}
-                    .btn(:class="{'nonClickable' : !account.email_verified}" v-if="!changeEmail" @click="!account.email_verified ? false : email=account.email; changeEmail = true;") Change email
+                    .btn(v-if="!changeEmail" @click="email=account.email; changeEmail = true;") Change email
                 .row
                     .tit Verify Email
                     .cont

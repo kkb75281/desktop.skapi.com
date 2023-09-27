@@ -139,12 +139,16 @@
         .joinWrap 
             h2 Skapi is on deta 
             h3 Try it while it's free!
-            router-link(to="/signup") Sign-up
+            template(v-if="account")
+                router-link(to="/dashboard") Go to Dashboard
+            template(v-else)
+                router-link(to="/signup") Sign-up
             //- button(@click="moveToTopSmooth") Smooth
 </template>
 
 <script setup>
 import { nextTick, onBeforeUnmount, onMounted, ref } from 'vue';
+import { account } from '@/main.js';
 
 let lending = ref(null);
 let intro = ref(null);
