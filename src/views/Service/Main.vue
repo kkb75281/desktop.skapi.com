@@ -570,4 +570,11 @@ else {
         }
     }
 }
+@media (max-width: 1065px) {
+    .navCont {
+        .navTop {
+            width: 935px;
+        }
+    }
+}
 </style>
