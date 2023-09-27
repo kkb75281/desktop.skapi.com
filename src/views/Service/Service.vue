@@ -57,8 +57,11 @@ template(v-if='currentService')
                         form.modifyForm(style="margin-top: 8px" @submit.prevent="changeCors")
                             input#modifyCors(type="text" placeholder='https://your.domain.com' :value='inputCors' @input="(e) => {e.target.setCustomValidity(''); inputCors = e.target.value;}")
                             .buttonWrap 
-                                button.cancel(type="button" @click="modifyCors = false;") Cancel
-                                button.save(type="submit") Save
+                                template(v-if="promiseRunning")
+                                    img.loading(src="@/assets/img/loading.png")
+                                template(v-else)
+                                    button.cancel(type="button" @click="modifyCors = false;") Cancel
+                                    button.save(type="submit") Save
                     template(v-else)
                         h5 {{ currentService.cors || '*' }}
                             .material-symbols-outlined.mid.pen.clickable(:class="{'nonClickable' : !account.email_verified}" @click="editCors") edit
@@ -69,8 +72,11 @@ template(v-if='currentService')
                         form.modifyForm(style="margin-top: 8px" @submit.prevent="setSecretKey")
                             input#modifyKey(type="text" placeholder="Secret key for external request" :value='inputKey' @input="(e) => inputKey = e.target.value")
                             .buttonWrap 
-                                button.cancel(type="button" @click="modifyKey = false;") Cancel
-                                button.save(type="submit") Save
+                                template(v-if="promiseRunning")
+                                    img.loading(src="@/assets/img/loading.png")
+                                template(v-else)
+                                    button.cancel(type="button" @click="modifyKey = false;") Cancel
+                                    button.save(type="submit") Save
                     template(v-else)
                         h5 {{ currentService.api_key || 'No key' }}
                             .material-symbols-outlined.mid.pen.clickable(:class="{'nonClickable' : !account.email_verified}" @click="editKey") edit
@@ -155,6 +161,7 @@ let inputServiceName = '';
 let inputCors = ref('');
 let inputKey = '';
 let enableDisablePromise = ref(false);
+let promiseRunning = ref(false);
 
 // let clicked = (e) => {
 //     let target = e.currentTarget;
@@ -594,8 +601,7 @@ watch(modifyCors, () => {
     justify-content: space-between;
 
     input {
-        width: 55%;
-        margin-right: 3%;
+        width: 68%;
         height: 44px;
         background-color: #EDEDED;
         border: 0;
@@ -607,8 +613,10 @@ watch(modifyCors, () => {
     }
 
     .buttonWrap {
-        width: 42%;
+        width: 32%;
         display: flex;
+        align-items: center;
+        justify-content: end;
         flex-wrap: nowrap;
 
         button {
