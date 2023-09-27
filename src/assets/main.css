@@ -18,7 +18,7 @@ body.fa {
 }
 
 .userSelect {
-    user-select: auto !important;
+    user-select: text !important;
 }
 
 /* error */
