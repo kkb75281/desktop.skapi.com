@@ -330,7 +330,6 @@ let createdDate = (date) => {
             border-radius: 8px;
             background: rgba(0, 0, 0, 0.05);
             font-size: 16px;
-            font-weight: 700;
             opacity: 0.4;
         }
 
