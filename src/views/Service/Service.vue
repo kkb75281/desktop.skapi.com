@@ -8,8 +8,11 @@ template(v-if='currentService')
                         form.modifyForm(@submit.prevent="changeServiceName")
                             input#modifyServiceName(type="text" placeholder="Service name" :value='inputServiceName' @input="(e) => inputServiceName = e.target.value" required)
                             .buttonWrap
-                                button.cancel(type="button" @click="modifyServiceName = false;") Cancel
-                                button.save(type="submit") Save
+                                template(v-if="promiseRunning")
+                                    img.loading(src="@/assets/img/loading.png")
+                                template(v-else)
+                                    button.cancel(type="button" @click="modifyServiceName = false;") Cancel
+                                    button.save(type="submit") Save
                     template(v-else)
                         h2 {{ currentService.name }}
                         .material-symbols-outlined.mid.modify.clickable(:class="{'nonClickable' : !account.email_verified}" @click="editServiceName") edit
@@ -222,15 +225,23 @@ let copy = (e) => {
 let changeServiceName = () => {
     if (currentService.value.name !== inputServiceName) {
         let previous = currentService.value.name;
+        
+        promiseRunning.value = true;
+
         skapi.updateService(currentService.value.service, {
             name: inputServiceName
+        }).then(() => {
+            promiseRunning.value = false;
+            currentService.value.name = inputServiceName;
+            modifyServiceName.value = false;
         }).catch(err => {
+            promiseRunning.value = false;
             currentService.value.name = previous;
             throw err;
         });
-        currentService.value.name = inputServiceName;
+    } else {
+        return false;
     }
-    modifyServiceName.value = false;
 }
 let changeCors = () => {
     let previous = currentService.value.cors;
@@ -599,6 +610,17 @@ watch(modifyCors, () => {
     display: flex;
     flex-wrap: nowrap;
     justify-content: space-between;
+
+    &:first-child {
+        input {
+            width: 52%;
+            margin-right: 3%;
+        }
+        .buttonWrap {
+            width: 45%;
+            justify-content: start;
+        }
+    }
 
     input {
         width: 68%;
