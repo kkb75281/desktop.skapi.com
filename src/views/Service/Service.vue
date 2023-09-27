@@ -50,7 +50,7 @@ template(v-if='currentService')
         .info 
             .title 
                 h2 Security Setting
-                .question
+                .question.help
                     .material-symbols-outlined.empty.sml help 
                     span Help
             .listWrap
@@ -505,15 +505,17 @@ watch(modifyCors, () => {
             display: flex;
             flex-wrap: nowrap;
             align-items: center;
-            justify-content: flex-end;
             text-decoration: none;
-            color: rgba(0, 0, 0, 0.40);
+            color: #293FE6;
             font-size: 16px;
             font-weight: 500;
             margin-top: 20px;
-
+            
+            &.help {
+                color: rgba(0, 0, 0, 0.40);
+            }
             span {
-                margin-left: 10px;
+                margin-left: 5px;
             }
         }
 
