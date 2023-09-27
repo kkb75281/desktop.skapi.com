@@ -6,6 +6,48 @@ export let records_data = ref([]);
 export let indexValueType = ref('string');
 export let binToRemove = ref([]);
 
+export function specialChars(
+    string,
+    allowPeriods = false,
+    allowWhiteSpace = false,
+    toAllow = []
+) {
+    let checkStr = (s) => {
+        if (typeof s !== 'string') {
+            return false
+        }
+
+        if (!allowWhiteSpace && s.includes(' ')) {
+            return false
+        }
+
+        if (!allowPeriods && s.includes('.')) {
+            return false
+        }
+
+        // allowed special characters: [\]^_`
+        if (/[\[\]\\^_`]/.test(s)) {
+            return true;
+        }
+        
+        if (/[`!@#$%^&*()_+\-=\[\]{};':"\\|,<>\/?~]/.test(s)) {
+            if(toAllow.length) {
+                // loop through each character in string
+                for (let i = 0; i < s.length; i++) {
+                    // check if character is allowed
+                    if (toAllow.includes(s[i])) {
+                        return true;
+                    }
+                }
+            }
+            return false;
+        }
+
+        return true;
+    };
+
+    return checkStr(string);
+}
 watch(selectedRecord, (newVal) => {
     records_data.value = [];
     binToRemove.value = [];
