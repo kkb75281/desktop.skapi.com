@@ -297,6 +297,10 @@ onBeforeUnmount(() => {
         padding-top: max(400px, 17vw);
     }
 
+    .packageWrap {
+        padding-top: max(240px, 11vw);
+    }
+
     .title {
         color: #262626;
         font-size: max(36px, 1.5vw);
@@ -420,9 +424,8 @@ onBeforeUnmount(() => {
 
     .joinWrap {
         width: 100%;
-        height: max(300px, 39vw);
         margin-top: max(400px, 17vw);
-        padding: 0;
+        padding: 100px 0;
         background-image: url(@/assets/img/background.svg);
         background-size: cover;
         display: flex;
@@ -546,7 +549,6 @@ onBeforeUnmount(() => {
         }
 
         .joinWrap {
-            height: 500px;
             margin-top: 400px;
 
             h2 {
