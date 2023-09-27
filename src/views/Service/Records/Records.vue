@@ -384,7 +384,8 @@
                                 input(type="checkbox" name="record" :id="record.record_id" @change='trackSelectedRecords' :value="record.record_id")
                                 label(:for="record.record_id")
                                     .material-symbols-outlined.mid.check check
-                        td {{ record.table.name }}
+                        td
+                            .overflow.userSelect.name {{ record.table.name }}
                         td
                             .overflow.userSelect {{ record.record_id }}
                         td
@@ -1543,7 +1544,7 @@ let handleIndexTypeChange = (e) => {
 
                     .download {
                         position: absolute;
-                        right: 12px;
+                        right: 3px;
                         top: 50%;
                         transform: translateY(-50%);
                         display: none;
@@ -2094,6 +2095,9 @@ let handleIndexTypeChange = (e) => {
                     text-overflow: ellipsis;
                     display: block;
 
+                    &.name {
+                        width: 90px;
+                    }
                     &.userId {
                         width: 210px;
                     }
