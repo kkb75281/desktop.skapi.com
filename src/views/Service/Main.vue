@@ -213,7 +213,7 @@ else {
             }
 
             &:first-child {
-                margin-bottom: 72px;
+                margin-bottom: 66px;
             }
 
             svg {

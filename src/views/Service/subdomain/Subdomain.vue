@@ -561,11 +561,14 @@ bodyClick.recordPage = () => {
             }
         }
         .create {
+            position: relative;
             width: 100%;
             padding: 28px;
             border-radius: 8px;
-            border: 4px solid #A5AFFF;
+            background-color: #fff;
             filter: drop-shadow(0px 2px 4px rgba(0, 0, 0, 0.10));
+            border: 1px solid rgba(0, 0, 0, 0.15);
+
             .tit {
                 color: #293FE6;
                 font-size: 20px;

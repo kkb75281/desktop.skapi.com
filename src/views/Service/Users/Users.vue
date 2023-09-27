@@ -825,8 +825,8 @@ onMounted(() => {
                     th {
                         position: relative;
                         color: rgba(0, 0, 0, 0.40);
-                        font-size: 16px;
-                        font-weight: 700;
+                        font-size: 14px;
+                        font-weight: 500;
                         padding-left: 20px;
 
                         &::after {
