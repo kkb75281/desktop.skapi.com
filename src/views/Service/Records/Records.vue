@@ -1100,6 +1100,7 @@ let handleIndexTypeChange = (e) => {
                     .tit {
                         min-width: 84px;
                         padding-left: 0;
+                        font-weight: 400;
                     }
                 }
             }
