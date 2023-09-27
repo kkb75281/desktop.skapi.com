@@ -386,9 +386,9 @@
                                     .material-symbols-outlined.mid.check check
                         td {{ record.table.name }}
                         td
-                            .overflow {{ record.record_id }}
+                            .overflow.userSelect {{ record.record_id }}
                         td
-                            .overflow.userId {{ record.user_id }}
+                            .overflow.userSelect.userId {{ record.user_id }}
                         td.center {{ timeSince(record.uploaded) }}
                         td.center
                             .accessWrap
@@ -2119,6 +2119,10 @@ let handleIndexTypeChange = (e) => {
             tbody {
                 color: rgba(0, 0, 0, 0.80);
                 font-weight: 400;
+
+                tr {
+                    cursor: pointer;
+                }
             }
 
             input {
