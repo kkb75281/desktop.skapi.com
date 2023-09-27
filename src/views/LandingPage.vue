@@ -8,7 +8,25 @@
                 | =&gt;
                 br
                 | Full Backend Service
-            .code const skapi = new Skapi('service_id', 'owner_id');
+            //- .code const skapi = new Skapi('service_id', 'owner_id');
+            .code(style="color:#f0f0f0;font-family:Consolas, 'Liberation Mono', Menlo, Courier, monospace !important; position:relative !important;overflow:auto")
+                table(style="margin:0;padding:0;border:none;background-color:#434343;border-radius:4px;" cellspacing="0" cellpadding="0")
+                    tr
+                        td(style="padding:6px;border-right:2px solid #4f4f4f")
+                            div(style="margin:0;padding:0;word-break:normal;text-align:right;color:#aaa;font-family:Consolas, 'Liberation Mono', Menlo, Courier, monospace !important;line-height:130%")
+                                div(style="line-height:130%") 1
+                        td(style="padding:6px 0;text-align:left")
+                            div(style="margin:0;padding:0;color:#f0f0f0;font-family:Consolas, 'Liberation Mono', Menlo, Courier, monospace !important;line-height:130%")
+                                div(style="padding:0 6px; white-space:pre; line-height:130%")
+                                    span(style="color:#ff3399") const 
+                                    span skapi 
+                                    span(style="color:#ff3399") = 
+                                    span(style="color:#ff3399") new 
+                                    span Skapi( 
+                                    span(style="color:#ffd500") 'SERVICE_ID' 
+                                    span ,
+                                    span(style="color:#ffd500") 'OWNERS_ID' 
+                                    span );
             p
                 | Skapi is a backend API service specifically designed for 
                 br
@@ -159,7 +177,7 @@ let moveToTopSmooth = function() {
     other.value.scrollIntoView({ behavior: 'smooth' });
 };
 
-let handleScroll = function (e) {
+let handleMousewheel = function (e) {
     if(!hasScrolled && e.deltaY > 0) {
         smoothScroll({yPos: window.innerHeight, duration: 500});
         hasScrolled = true;
@@ -181,10 +199,10 @@ let handleScroll = function (e) {
 }
 
 onMounted(() => {
-    window.addEventListener('mousewheel', handleScroll);
+    window.addEventListener('mousewheel', handleMousewheel);
 })
 onBeforeUnmount(() => {
-    window.removeEventListener('mousewheel', handleScroll);
+    window.removeEventListener('mousewheel', handleMousewheel);
 })
 </script>
 
@@ -328,7 +346,7 @@ onBeforeUnmount(() => {
             border-radius: 8px;
             background-color: #FAFAFA;
             border: 1px solid rgba(0, 0, 0, 0.15);
-            filter: drop-shadow(8px 12px 36px rgba(0, 0, 0, 0.10));
+            box-shadow: 8px 12px 36px rgba(0, 0, 0, 0.10);
             display: flex;
             flex-wrap: wrap;
             flex-direction: column;

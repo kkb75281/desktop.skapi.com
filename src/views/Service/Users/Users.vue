@@ -596,7 +596,8 @@ onMounted(() => {
         background-color: #fafafa;
         border-radius: 8px;
         margin-bottom: 2%;
-        filter: drop-shadow(8px 12px 36px rgba(0, 0, 0, 0.10));
+        // box-shadow: 8px 12px 36px rgba(0, 0, 0, 0.10);
+        box-shadow: 8px 12px 36px rgba(0, 0, 0, 0.10);
     }
 
     form {

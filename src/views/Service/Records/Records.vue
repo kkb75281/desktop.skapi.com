@@ -441,7 +441,7 @@
 
 <script setup>
 import { bodyClick } from '@/main.js';
-import { computed, nextTick, onBeforeMount, onBeforeUnmount, onMounted, reactive, ref } from 'vue';
+import { computed, nextTick, onBeforeMount, onBeforeUnmount, onMounted, reactive, ref, watch } from 'vue';
 import RecordDataOverlay from '@/views/Service/Records/RecordDataOverlay.vue';
 import DeleteRecordOverlay from '@/views/Service/Records/DeleteRecordOverlay.vue';
 import TagEditor from './TagEditor.vue';
@@ -892,6 +892,34 @@ let handleIndexTypeChange = (e) => {
 
     indexValueType.value = valueType;
 }
+
+let handleKeydown = (e) => {
+    e.preventDefault();
+
+    let selectedIndex = ''
+
+    for(let i=0; i < records.value.length; i++) {
+        records[i].record_id
+    }
+    console.log(selectedRecord.value.record_id)
+
+    if (e.key == 40 || e.key == "ArrowDown") {
+        console.log(records.value)
+    } else if (e.key == 38 || e.key == "ArrowUp") {
+        console.log(records.value)
+    }
+}
+
+// 방향키 select Record
+watch(() => selectedRecord.value, () => {
+    if(selectedRecord.value) {
+        console.log('있음');
+        document.addEventListener('keydown', handleKeydown);
+    } else {
+        console.log('없음');
+        document.removeEventListener('keydown', handleKeydown);
+    }
+})
 </script>
 
 <style lang="less" scoped>
@@ -905,7 +933,7 @@ let handleIndexTypeChange = (e) => {
         background-color: #fafafa;
         border-radius: 8px;
         margin-bottom: 2%;
-        filter: drop-shadow(8px 12px 36px rgba(0, 0, 0, 0.10));
+        box-shadow: 8px 12px 36px rgba(0, 0, 0, 0.10);
     }
 
     .searchForm {
@@ -1150,7 +1178,7 @@ let handleIndexTypeChange = (e) => {
                 height: calc(100% - 40px);
                 transform: translateX(-50%);
                 background: rgba(0, 0, 0, 0.1);
-                filter: drop-shadow(0px 1px 3px rgba(0, 0, 0, 0.06));
+                box-shadow: 0px 1px 3px rgba(0, 0, 0, 0.06);
             }
 
             .recordInfo,
@@ -1269,7 +1297,7 @@ let handleIndexTypeChange = (e) => {
                     width: 100%;
                     height: 1px;
                     background: rgba(0, 0, 0, 0.1);
-                    filter: drop-shadow(0px 1px 3px rgba(0, 0, 0, 0.06));
+                    box-shadow: 0px 1px 3px rgba(0, 0, 0, 0.06);
                 }
 
                 .tit {
@@ -1438,7 +1466,7 @@ let handleIndexTypeChange = (e) => {
                     position: absolute;
                     background-color: #FAFAFA;
                     border: 1px solid rgba(0, 0, 0, 0.15);
-                    filter: drop-shadow(8px 12px 36px rgba(0, 0, 0, 0.10));
+                    box-shadow: 8px 12px 36px rgba(0, 0, 0, 0.10);
                     border-radius: 8px;
                     z-index: 10;
                     font-size: 14px;
@@ -2001,7 +2029,7 @@ let handleIndexTypeChange = (e) => {
                 height: 60px;
                 border-bottom: 1px solid rgba(0, 0, 0, 0.10);
                 border-radius: 8px;
-                filter: drop-shadow(0px 1px 3px rgba(0, 0, 0, 0.06));
+                box-shadow: 0px 1px 3px rgba(0, 0, 0, 0.06);
                 // cursor: pointer;
                 overflow: hidden;
 
@@ -2034,7 +2062,7 @@ let handleIndexTypeChange = (e) => {
                         height: 44px;
                         background-color: #fafafa;
                         border-radius: 8px;
-                        filter: drop-shadow(1px 2px 2px rgba(0, 0, 0, 0.25));
+                        box-shadow: 1px 2px 2px rgba(0, 0, 0, 0.25);
                         color: rgba(0, 0, 0, 0.60);
                         font-size: 14px;
                         padding: 0 12px;

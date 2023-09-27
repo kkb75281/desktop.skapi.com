@@ -310,7 +310,7 @@ let createdDate = (date) => {
             top: 0;
             left: 0;
             background: rgba(0, 0, 0, 0.10);
-            filter: drop-shadow(0px 1px 3px rgba(0, 0, 0, 0.06));
+            box-shadow: 0px 1px 3px rgba(0, 0, 0, 0.06);
         }
 
         &.active {

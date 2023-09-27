@@ -206,7 +206,7 @@ bodyClick.recordPage = () => {
         background-color: #fafafa;
         border-radius: 8px;
         margin-bottom: 2%;
-        filter: drop-shadow(8px 12px 36px rgba(0, 0, 0, 0.10));
+        box-shadow: 8px 12px 36px rgba(0, 0, 0, 0.10);
 
         h2 {
             font-size: 24px;
@@ -566,7 +566,7 @@ bodyClick.recordPage = () => {
             padding: 28px;
             border-radius: 8px;
             background-color: #fff;
-            filter: drop-shadow(0px 2px 4px rgba(0, 0, 0, 0.10));
+            box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.10);
             border: 1px solid rgba(0, 0, 0, 0.15);
 
             .tit {

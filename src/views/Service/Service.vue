@@ -350,7 +350,7 @@ watch(modifyCors, () => {
         border-radius: 8px;
         margin-bottom: 2%;
         margin-right: 2%;
-        filter: drop-shadow(8px 12px 36px rgba(0, 0, 0, 0.10));
+        box-shadow: 8px 12px 36px rgba(0, 0, 0, 0.10);
 
         &:first-child, &:nth-child(2) {
             width: 100%;
