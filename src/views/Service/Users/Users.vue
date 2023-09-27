@@ -167,13 +167,13 @@
                             .material-symbols-outlined.mid.enable(v-if="user.group > 0") check_circle
                             .material-symbols-outlined.mid.disable(v-else) cancel
                         td(v-if="filterOptions.userID") 
-                            .overflow {{ user.user_id }}
+                            .overflow.userSelect {{ user.user_id }}
                         td(v-if="filterOptions.name")
-                            .overflow {{ user.name }}
+                            .overflow.userSelect {{ user.name }}
                         td(v-if="filterOptions.email")
-                            .overflow {{ user.email }}
+                            .overflow.userSelect {{ user.email }}
                         td(v-if="filterOptions.address") 
-                            .overflow {{ user.address }}
+                            .overflow.userSelect {{ user.address }}
                         td(v-if="filterOptions.gender")
                             .overflow {{ user.gender }}
                         td(v-if="filterOptions.locale")

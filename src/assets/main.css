@@ -19,6 +19,7 @@ body.fa {
 
 .userSelect {
     user-select: text !important;
+    cursor: text !important;
 }
 
 /* error */
