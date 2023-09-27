@@ -17,6 +17,14 @@ body.fa {
   background-color: #fafafa;
 }
 
+input, textarea {
+  color: rgba(0,0,0,0.8) !important;
+}
+
+input::placeholder, textarea::placeholder {
+  color: rgba(0,0,0,0.4) !important;
+}
+
 .userSelect {
     user-select: text !important;
     cursor: text !important;
