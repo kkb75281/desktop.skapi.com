@@ -65,8 +65,7 @@
                     //-         input(type="text" name='index_type' :disabled="!firstInput" @change="e => advancedForm.index_type = e.target.value")
                     .condition 
                         .label(:class="{'disabled': !advancedForm.index.name}") Index Value
-                        .textFormWrap.indexValue(:class="{'disabled' : !advancedForm.index.name}")
-                            input#indexValueSearchInput(type="text" name='index_value' :required='advancedForm.index.name || null' :disabled="!advancedForm.index.name" placeholder='for strings, do "1234" | "false"' v-model='advancedForm.index.value')
+                        .textFormWrap.indexValue.leftSelect(:class="{'disabled' : !advancedForm.index.name}")
                             .customSelect
                                 select(name="index_condition" :disabled="!advancedForm.index.name" v-model="advancedForm.index.condition")
                                     option(disabled) Condition
@@ -77,10 +76,11 @@
                                     option(value="<=") &lt;=
                                     option(value="~") ~
                                 .material-symbols-outlined.mid.selectArrowDown arrow_drop_down
+                            input#indexValueSearchInput(type="text" name='index_value' :required='advancedForm.index.name || null' :disabled="!advancedForm.index.name" placeholder='for strings, do "1234" | "false"' v-model='advancedForm.index.value')
                     .condition 
-                        .label(:class="{'disabled': advancedForm.index.condition !== '~'}") Index Range
-                        .textFormWrap(:class="{'disabled' : advancedForm.index.condition !== '~'}")
-                            input#indexRangeSearchInput(type="text" name='index_range' placeholder='From index value ~ to:' :disabled="advancedForm.index.condition !== '~'" @input="e => {e.target.setCustomValidity(''); advancedForm.index.range = e.target.value}")
+                        .label(:class="{'disabled': advancedForm.index.condition !== '~' || !advancedForm.index.name}") Index Range
+                        .textFormWrap(:class="{'disabled' : advancedForm.index.condition !== '~' || !advancedForm.index.name}")
+                            input#indexRangeSearchInput(type="text" name='index_range' placeholder='From index value ~ to:' :disabled="advancedForm.index.condition !== '~' || !advancedForm.index.name" @input="e => {e.target.setCustomValidity(''); advancedForm.index.range = e.target.value}")
 
                 .buttonWrap 
                     input.clear(type="reset" value="Clear filter" @click="clearSearchFilter")
@@ -1047,6 +1047,24 @@ let handleIndexTypeChange = (e) => {
                         width: 1px;
                         height: 60%;
                         background-color: #000;
+                    }
+
+                    &.leftSelect {
+                        border-bottom: 1px solid rgba(0,0,0,0.8);
+                        &::after {
+                            left: 70px;
+                        }
+                        &.disabled {
+                            border-bottom: 1px solid rgba(0,0,0,0.1);
+                        }
+                        input {
+                            padding-right: 0;
+                            margin-left: 80px;
+                            border: 0;
+                        }
+                        .customSelect {
+                            left: 0;
+                        }
                     }
 
                     &.disabled {
