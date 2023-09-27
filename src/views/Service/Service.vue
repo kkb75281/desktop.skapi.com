@@ -5,7 +5,7 @@ template(v-if='currentService')
             .title 
                 .name
                     template(v-if="modifyServiceName")
-                        form.modifyForm(@submit.prevent="changeServiceName")
+                        form.modifyForm.first(@submit.prevent="changeServiceName")
                             input#modifyServiceName(type="text" placeholder="Service name" :value='inputServiceName' @input="(e) => inputServiceName = e.target.value" required)
                             .buttonWrap
                                 template(v-if="promiseRunning")
@@ -611,7 +611,7 @@ watch(modifyCors, () => {
     flex-wrap: nowrap;
     justify-content: space-between;
 
-    &:first-child {
+    &.first {
         input {
             width: 52%;
             margin-right: 3%;
@@ -623,8 +623,9 @@ watch(modifyCors, () => {
     }
 
     input {
-        width: 68%;
+        width: max(246px, 65%);
         height: 44px;
+        margin-right: 3%;
         background-color: #EDEDED;
         border: 0;
         padding: 12px 20px;
@@ -635,7 +636,7 @@ watch(modifyCors, () => {
     }
 
     .buttonWrap {
-        width: 32%;
+        width: max(153px ,32%);
         display: flex;
         align-items: center;
         justify-content: end;
