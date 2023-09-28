@@ -264,7 +264,7 @@
                                     .rowEdit
                                         .material-symbols-outlined.sml.minus(@click="e=>removeData(index)") do_not_disturb_on
 
-                                        select.type(:value="data.type" @change="(e) => selectType(e, data)" :disabled="promiseRunning || selectedRecord.record_id && data.type === 'file' && data.context || null")
+                                        select.type(:value="data.type" @change="(e) => selectType(e, data)" :disabled="promiseRunning || selectedRecord.record_id && data.type === 'file' && data.context && data.download || null")
                                             // on edit, record file data cannot be changed. only delete is allowed
                                             option(value="json") JSON
                                             option(value="string") String
@@ -273,7 +273,7 @@
                                             option(value="number") Number
 
                                         // on edit, record file data cannot be changed. only delete is allowed
-                                        div(v-if='selectedRecord.record_id && data.type === "file" && data.context' style='opacity:0.5; width: 84px;margin-right: 20px;') {{ data.key }}
+                                        div(v-if='selectedRecord.record_id && data.type === "file" && data.context && data.download' style='opacity:0.5; width: 84px;margin-right: 20px;') {{ data.key }}
 
                                         input.key(v-else type="text" v-model="data.key" placeholder="Key name" :disabled="promiseRunning" required)
 
@@ -762,7 +762,7 @@ let saveRecordData = async () => {
             else if (d.type === 'file') {
                 if (typeof d.context === 'string') {
                     if (d.fileData) {
-                        let blob = new Blob([JSON.parse(d.fileData)], { type: "application/json" });
+                        let blob = new Blob([JSON.stringify(d.fileData)], { type: "application/json" });
                         // add to form
                         form.append(d.key, blob);
                     }
@@ -786,18 +786,20 @@ let saveRecordData = async () => {
     }
 
     if (binToRemove.value.length) {
-        await skapi.deleteRecFiles({
+        let deleted = await skapi.deleteRecFiles({
             serviceId: currentService.value.service,
             endpoints: binToRemove.value
         });
+        console.log({deleted});
     }
 
     skapi.postRecord(data, record_params).then(async res => {
         if (to_bin) {
-            await skapi.uploadFiles(to_bin, {
+            let { bin_endpoints } = await skapi.uploadFiles(to_bin, {
                 service: currentService.value.service,
                 record_id: res.record_id
             });
+            console.log({bin_endpoints});
         }
         selectedRecord.value = res;
         recordInfoEdit.value = false;
@@ -829,7 +831,15 @@ let createAddField = () => {
 
 // delete Record
 let recordDelete = (id) => {
-    id = id ? [id] : checkedRecords.value;
+    id = id ? [id] : (() => {
+        let ids = [];
+        for (let i of checkedRecords.value) {
+            if (i !== 'allRecords')
+                ids.push(i);
+        }
+        return ids;
+    })();
+
     let recDelete = async () => {
         skapi.deleteRecords({
             service: currentService.value.service,

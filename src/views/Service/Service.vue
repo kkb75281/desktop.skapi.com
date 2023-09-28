@@ -35,9 +35,9 @@ template(v-if='currentService')
                                         span(style="color:#ff3399") = 
                                         span(style="color:#ff3399") new 
                                         span Skapi(‘
-                                        span(style="color:#ffd500") ap22fAA39RwOW0KU6PUH
+                                        span(style="color:#ffd500") {{ currentService.service }}
                                         span ', ' 
-                                        span(style="color:#ffd500") 3dd7a40d-c0be-4489-bf11-e42d0e3458dc
+                                        span(style="color:#ffd500") {{ currentService.owner }}
                                         span ');
                 .copy.clickable(@click="copy")
                     .material-symbols-outlined.mid file_copy
