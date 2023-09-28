@@ -4,7 +4,7 @@ import { skapi } from "../../../main";
 export let selectedRecord = ref(null);
 export let records_data = ref([]);
 export let indexValueType = ref('string');
-export let binToRemove = ref([]);
+export let binToRemove = [];
 
 export function specialChars(
     string,
@@ -50,16 +50,17 @@ export function specialChars(
 }
 watch(selectedRecord, (newVal) => {
     records_data.value = [];
-    binToRemove.value = [];
+    binToRemove = [];
     indexValueType.value = typeof newVal?.index?.value === 'undefined' ? 'string' : typeof newVal?.index?.value;
 
     if (newVal) {
         if (newVal.bin) {
             for(let b of newVal.bin) {
                 records_data.value.push({
-                    type: 'file',
-                    key: 'Binary',
-                    context: b,
+                    type: 'binary',
+                    key: ' ',
+                    context: decodeURIComponent(b.split('/').slice(-1)[0]),
+                    endpoint: b,
                     download: () => skapi.getFile(b, {dataType: 'download'})
                 })
             }

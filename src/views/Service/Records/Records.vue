@@ -59,10 +59,6 @@
                             input(type="text" name='index_name'
                             @input="e=>{e.target.setCustomValidity(''); advancedForm.index.name=e.target.value }"
                             @change="e=>{if(!specialChars(e.target.value, true, false)) { e.target.setCustomValidity('Special characters or spaces are not allowed'); e.target.reportValidity(); }}")
-                    //- .condition 
-                    //-     .label(:class="{'disabled': !firstInput}") Value Type
-                    //-     .textFormWrap
-                    //-         input(type="text" name='index_type' :disabled="!firstInput" @change="e => advancedForm.index_type = e.target.value")
                     .condition 
                         .label(:class="{'disabled': !advancedForm.index.name}") Index Value
                         .textFormWrap.indexValue(:class="{'disabled' : !advancedForm.index.name}")
@@ -152,7 +148,16 @@
                                 .smallInfo 
                                     .smallLabel Subscription Group
                                     .smallValue 
-                                        input(:style='{opacity: !selectedRecord.user_id || selectedRecord.user_id === account.user_id ? 0.5 : 1}' :disabled="!selectedRecord.user_id || selectedRecord.user_id === account.user_id || null" :class="{nonClickable: !selectedRecord.user_id || selectedRecord.user_id === account.user_id}" v-if="recordInfoEdit" type="number" min='0' max='99' :value="selectedRecord.table?.subscription_group || ''" :placeholder="!selectedRecord.user_id || selectedRecord.user_id === account.user_id ? 'Admin cannot have subscription table' : 'None'" @input="(e) => {selectedRecord.table.subscription_group = e.target.value ? parseInt(e.target.value) : null }")
+                                        input(
+                                            v-if="recordInfoEdit" 
+                                            type="number" min='0' max='99'
+                                            :style='{opacity: !selectedRecord.user_id || selectedRecord.user_id === account.user_id ? 0.5 : 1}'
+                                            :disabled="!selectedRecord.user_id || selectedRecord.user_id === account.user_id || null"
+                                            :class="{nonClickable: !selectedRecord.user_id || selectedRecord.user_id === account.user_id}"
+                                            :value="selectedRecord.table?.subscription_group || ''"
+                                            :placeholder="!selectedRecord.user_id || selectedRecord.user_id === account.user_id ? 'Admin cannot have subscription group' : 'None'"
+                                            @input="(e) => {selectedRecord.table.subscription_group = e.target.value ? parseInt(e.target.value) : null }"
+                                        )
 
                                         // admin can't upload subscription group because its meaningless
                                         template(v-else) {{ selectedRecord.table?.subscription_group || 'None' }}
@@ -249,31 +254,34 @@
 
                         template(v-else-if="records_data.length")
 
-                            template(v-for="(data, index) in records_data" :key="index")    
+                            template(v-for="(data, index) in records_data" :key="index")
+                                // data display
                                 template(v-if="records_data.length && !recordInfoEdit")
-                                    .row(@click="()=>{ if(data.type === 'file') data.download(); else if((data.type === 'json' || data.type === 'string') && ellipsisCheck('data-context-' + index)) showRecordDataValue=data}" :class="{'disabled' : ['boolean', 'number', 'string'].includes(data.type), 'file': data.type == 'file'}")
+                                    .row(@click="()=>{ if(data.download) data.download(); else if((data.type === 'json' || data.type === 'string') && ellipsisCheck('data-context-' + index)) showRecordDataValue=data}" :class="{'disabled' : ['boolean', 'number', 'string'].includes(data.type), 'file': data.download}")
                                         .data {{ data.type }}
                                         .data
                                             .overflow(v-if="data?.key") {{ data.key }}
                                             .overflow(v-else) -
                                         .data 
                                             .overflow(:id='"data-context-" + index') {{ data.context }}
-                                        .material-symbols-outlined.sml.download(v-if="data.type == 'file'") download
+                                        .material-symbols-outlined.sml.download(v-if="data.download") download
 
+                                // data edit
                                 template(v-else)
                                     .rowEdit
                                         .material-symbols-outlined.sml.minus(@click="e=>removeData(index)") do_not_disturb_on
 
-                                        select.type(:value="data.type" @change="(e) => selectType(e, data)" :disabled="promiseRunning || selectedRecord.record_id && data.type === 'file' && data.context && data.download || null")
+                                        select.type(:value="data.type" @change="(e) => selectType(e, data)" :disabled="promiseRunning || selectedRecord.record_id && data.download || null")
                                             // on edit, record file data cannot be changed. only delete is allowed
                                             option(value="json") JSON
                                             option(value="string") String
                                             option(value="boolean") Boolean
                                             option(value="file") File
                                             option(value="number") Number
+                                            option(value="binary" v-if='data.type === "binary"') Binary
 
                                         // on edit, record file data cannot be changed. only delete is allowed
-                                        div(v-if='selectedRecord.record_id && data.type === "file" && data.context && data.download' style='opacity:0.5; width: 84px;margin-right: 20px;') {{ data.key }}
+                                        div(v-if='selectedRecord.record_id && data.download' style='opacity:0.5; width: 84px;margin-right: 20px;') {{ data.key }}
 
                                         input.key(v-else type="text" v-model="data.key" placeholder="Key name" :disabled="promiseRunning" required)
 
@@ -377,7 +385,6 @@
                         th.center Access Group
                         th.center Features
                 tbody(v-if="records && records.length")
-                    //tr(v-for="(record, index) in records" :key="index" @click="()=>{recordInfoEdit=false;selectedRecord = JSON.parse(JSON.stringify(record))}" :class="{ active: activeIndex === index }")
                     tr(v-for="record in records" @click="()=>{ recordInfoEdit=false; if(selectedRecord?.record_id === record.record_id) selectedRecord = null; else selectedRecord = JSON.parse(JSON.stringify(record)) }" :class="{ active: selectedRecord?.record_id === record.record_id }")
                         td(@click.stop style="text-align:center;")
                             .customCheckBox
@@ -688,7 +695,7 @@ let removeData = (index) => {
 
     let dat = records_data.value[index];
     if (dat.type === 'file' && typeof dat.context === 'string' && !dat.fileData) {
-        binToRemove.value.push(dat.context);
+        binToRemove.push(dat.endpoint);
     }
 
     records_data.value.splice(index, 1)
@@ -785,22 +792,38 @@ let saveRecordData = async () => {
         data = form;
     }
 
-    if (binToRemove.value.length) {
-        let deleted = await skapi.deleteRecFiles({
+    if (binToRemove.length) {
+        let res = await skapi.deleteRecFiles({
             serviceId: currentService.value.service,
-            endpoints: binToRemove.value
+            endpoints: binToRemove
         });
-        console.log({deleted});
+        for(let r of res) {
+            await recordPage.editItem(r);
+        }
     }
 
+    let progress = e => {
+        console.log(e);
+    }
+
+    record_params.progress = progress;
     skapi.postRecord(data, record_params).then(async res => {
         if (to_bin) {
             let { bin_endpoints } = await skapi.uploadFiles(to_bin, {
                 service: currentService.value.service,
-                record_id: res.record_id
+                record_id: res.record_id,
+                progress
             });
-            console.log({bin_endpoints});
+
+            if (!res.bin) {
+                res.bin = []
+            }
+
+            for (let ep of bin_endpoints[res.record_id]) {
+                res.bin.push(ep);
+            }
         }
+
         selectedRecord.value = res;
         recordInfoEdit.value = false;
         recordPage.insertItems([res]).then(_ => {
