@@ -385,7 +385,7 @@
                         th.center Access Group
                         th.center Features
                 tbody(v-if="records && records.length")
-                    tr(v-for="record in records" @click="()=>{ recordInfoEdit=false; if(selectedRecord?.record_id === record.record_id) selectedRecord = null; else selectedRecord = JSON.parse(JSON.stringify(record)) }" :class="{ active: selectedRecord?.record_id === record.record_id }")
+                    tr(v-for="record in records" @click="()=>{ recordInfoEdit=false; if(selectedRecord?.record_id !== record.record_id) selectedRecord = JSON.parse(JSON.stringify(record)) }" :class="{ active: selectedRecord?.record_id === record.record_id }")
                         td(@click.stop style="text-align:center;")
                             .customCheckBox
                                 input(type="checkbox" name="record" :id="record.record_id" @change='trackSelectedRecords' :value="record.record_id")
@@ -454,7 +454,7 @@ import TagEditor from './TagEditor.vue';
 import { account, skapi } from '../../../main';
 import { currentService } from '@/data.js';
 import { selectedRecord, records_data, indexValueType, binToRemove, specialChars } from './RecordEdit';
-import { launch, serviceRecords, getPage, records, selectNone, recordPage, currentPage, maxPage, fetching, refresh, nextPage, timeSince, fetchParams } from './RecordFetch';
+import { launch, serviceRecords, getPage, records, selectNone, recordPage, currentPage, maxPage, fetching, refresh, nextPage, timeSince, fetchParams, normalizeRecord } from './RecordFetch';
 
 selectedRecord.value = null;
 launch();
@@ -694,7 +694,7 @@ let removeData = (index) => {
         return
 
     let dat = records_data.value[index];
-    if (dat.type === 'file' && typeof dat.context === 'string' && !dat.fileData) {
+    if (dat.type === 'binary') {
         binToRemove.push(dat.endpoint);
     }
 
@@ -797,8 +797,8 @@ let saveRecordData = async () => {
             serviceId: currentService.value.service,
             endpoints: binToRemove
         });
-        for(let r of res) {
-            await recordPage.editItem(r);
+        for (let r of res) {
+            await recordPage.editItem(normalizeRecord(r));
         }
     }
 
@@ -807,7 +807,23 @@ let saveRecordData = async () => {
     }
 
     record_params.progress = progress;
-    skapi.postRecord(data, record_params).then(async res => {
+    let res;
+    try {
+        res = await skapi.postRecord(data, record_params);
+    } catch (err) {
+        promiseRunning.value = false;
+        let errmsg = err.message.charAt(0).toUpperCase() + err.message.slice(1)
+        if (err.message.includes('referenc')) {
+            document.getElementById('referenceIdInput').setCustomValidity(errmsg)
+            document.getElementById('referenceIdInput').reportValidity()
+        }
+        else {
+            alert(errmsg)
+        }
+        return
+    }
+
+    try {
         if (to_bin) {
             let { bin_endpoints } = await skapi.uploadFiles(to_bin, {
                 service: currentService.value.service,
@@ -823,24 +839,22 @@ let saveRecordData = async () => {
                 res.bin.push(ep);
             }
         }
+    } catch (err) {
+        alert(err.message);
+    }
 
-        selectedRecord.value = res;
-        recordInfoEdit.value = false;
-        recordPage.insertItems([res]).then(_ => {
-            getPage(currentPage.value);
-            promiseRunning.value = false;
-        });
-    }).catch(err => {
-        promiseRunning.value = false;
-        let errmsg = err.message.charAt(0).toUpperCase() + err.message.slice(1)
-        if (err.message.includes('referenc')) {
-            document.getElementById('referenceIdInput').setCustomValidity(errmsg)
-            document.getElementById('referenceIdInput').reportValidity()
-        }
-        else {
-            alert(errmsg)
-        }
-    });
+    selectedRecord.value = res;
+    recordInfoEdit.value = false;
+
+    if (record_params.record_id) {
+        await recordPage.editItem(res);
+    }
+    else {
+        await recordPage.insertItems([res]);
+    }
+
+    getPage(currentPage.value);
+    promiseRunning.value = false;
 }
 
 // create Record
