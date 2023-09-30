@@ -18,8 +18,8 @@
                         .material-symbols-outlined.mid error
                         span {{ acknowledgeError }}
                     .buttonWrap.block
-                        button.yes(type="submit") Yes, delete my account
                         button.no(type="button" @click="emits('close')") No, keep my account
+                        button.yes(type="submit") Yes, delete my account
             template(v-if="step === 2")
                 form(@submit.prevent="reasonCheck" action="")
                     p Please tell us why you’re leaving :
@@ -294,10 +294,11 @@ let closeWindow = () => {
 
                 &.yes {
                     border: 0;
-                    margin-bottom: 24px;
+                    color: rgba(240, 78, 78, 1);
                 }
 
                 &.no {
+                    margin-bottom: 28px;
                     padding: 0 28px;
                     height: 44px;
                     border-radius: 8px;

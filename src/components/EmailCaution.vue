@@ -32,4 +32,10 @@
         font-weight: 700;
     }
 }
+
+@media (max-width: 1065px) {
+    #emailCaution {
+        width: 1065px;
+    }
+}
 </style>

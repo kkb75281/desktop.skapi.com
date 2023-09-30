@@ -17,8 +17,18 @@ body.fa {
   background-color: #fafafa;
 }
 
+input, textarea {
+  color: rgba(0,0,0,0.8) !important;
+}
+
+input::placeholder, textarea::placeholder {
+  color: rgba(0,0,0,0.4) !important;
+  font-size: 1em !important;
+}
+
 .userSelect {
-    user-select: auto !important;
+    user-select: text !important;
+    cursor: text !important;
 }
 
 /* error */
@@ -258,7 +268,7 @@ form .error span {
   /* height: 44px; */
   background-color: #fafafa;
   border-radius: 8px;
-  filter: drop-shadow(1px 2px 2px rgba(0, 0, 0, 0.25));
+  box-shadow: 1px 2px 2px rgba(0, 0, 0, 0.25);
   color: rgba(0, 0, 0, 0.60);
   font-size: 14px;
   /* padding: 0 12px; */

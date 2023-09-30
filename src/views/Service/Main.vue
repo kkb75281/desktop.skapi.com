@@ -84,7 +84,7 @@ template(v-if='currentService')
 </template>
 
 <script setup>
-import { ref } from 'vue';
+import { ref, watch } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 import { services, serviceFetching, currentService, storageInfo, serviceUsers } from '@/data.js';
 import { serviceRecords } from '@/views/Service/Records/RecordFetch.js';
@@ -161,7 +161,7 @@ else {
         padding-top: 52px;
     }
     .logo {
-        height: 72px;
+        height: 60px;
         display: flex;
         align-items: center;
         margin-bottom: 56px;
@@ -174,7 +174,7 @@ else {
     .menuList {
         .menu {
             position: relative;
-            padding: 16px 0;
+            padding: 12px 0;
             color: #293FE6;
             display: flex;
             align-items: center;
@@ -213,7 +213,7 @@ else {
             }
 
             &:first-child {
-                margin-bottom: 72px;
+                margin-bottom: 66px;
             }
 
             svg {
@@ -350,7 +350,7 @@ else {
     width: 100%;
 
     .navTop {
-        height: 80px;
+        height: 60px;
         margin-bottom: 56px;
         display: flex;
         flex-wrap: nowrap;
@@ -446,7 +446,7 @@ else {
             background-color: #fafafa;
             color: rgba(0, 0, 0, 0.80);
             border: 1px solid rgba(0, 0, 0, 0.15);
-            filter: drop-shadow(8px 12px 36px rgba(0, 0, 0, 0.10));
+            box-shadow: 8px 12px 36px rgba(0, 0, 0, 0.10);
             border-radius: 8px;
             z-index: 99;
 
@@ -567,6 +567,13 @@ else {
 
         .settingToggle {
             display: none;
+        }
+    }
+}
+@media (max-width: 1065px) {
+    .navCont {
+        .navTop {
+            width: 935px;
         }
     }
 }

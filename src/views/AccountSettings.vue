@@ -28,7 +28,7 @@ main(v-if='account')
                                         button.cancel(type="button" @click="changeEmail = false;") Cancel
                                         button.save(type="submit") Save
                         template(v-else) {{ account.email }}
-                    .btn(:class="{'nonClickable' : !account.email_verified}" v-if="!changeEmail" @click="!account.email_verified ? false : email=account.email; changeEmail = true;") Change email
+                    .btn(v-if="!changeEmail" @click="email=account.email; changeEmail = true;") Change email
                 .row
                     .tit Verify Email
                     .cont
@@ -220,7 +220,7 @@ main {
         width: max(1320px, 100%);
         height: calc(100vh - 208px);
         background-color: #fafafa;
-        filter: drop-shadow(8px 12px 36px rgba(0, 0, 0, 0.10));
+        box-shadow: 8px 12px 36px rgba(0, 0, 0, 0.10);
         border-radius: 8px 8px 0 0;
         z-index: -1;
     }

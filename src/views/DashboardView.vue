@@ -118,7 +118,7 @@ main {
         margin-left: -40px;
         padding: 40px;
         background-color: #fafafa;
-        filter: drop-shadow(8px 12px 36px rgba(0, 0, 0, 0.10));
+        box-shadow: 8px 12px 36px rgba(0, 0, 0, 0.10);
         border-radius: 8px;
     }
     

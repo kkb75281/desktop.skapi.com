@@ -5,11 +5,14 @@ template(v-if='currentService')
             .title 
                 .name
                     template(v-if="modifyServiceName")
-                        form.modifyForm(@submit.prevent="changeServiceName")
+                        form.modifyForm.first(@submit.prevent="changeServiceName")
                             input#modifyServiceName(type="text" placeholder="Service name" :value='inputServiceName' @input="(e) => inputServiceName = e.target.value" required)
                             .buttonWrap
-                                button.cancel(type="button" @click="modifyServiceName = false;") Cancel
-                                button.save(type="submit") Save
+                                template(v-if="promiseRunning")
+                                    img.loading(src="@/assets/img/loading.png")
+                                template(v-else)
+                                    button.cancel(type="button" @click="modifyServiceName = false;") Cancel
+                                    button.save(type="submit") Save
                     template(v-else)
                         h2 {{ currentService.name }}
                         .material-symbols-outlined.mid.modify.clickable(:class="{'nonClickable' : !account.email_verified}" @click="editServiceName") edit
@@ -47,7 +50,7 @@ template(v-if='currentService')
         .info 
             .title 
                 h2 Security Setting
-                .question
+                .question.help
                     .material-symbols-outlined.empty.sml help 
                     span Help
             .listWrap
@@ -223,15 +226,23 @@ let copy = (e) => {
 let changeServiceName = () => {
     if (currentService.value.name !== inputServiceName) {
         let previous = currentService.value.name;
+        
+        promiseRunning.value = true;
+
         skapi.updateService(currentService.value.service, {
             name: inputServiceName
+        }).then(() => {
+            promiseRunning.value = false;
+            currentService.value.name = inputServiceName;
+            modifyServiceName.value = false;
         }).catch(err => {
+            promiseRunning.value = false;
             currentService.value.name = previous;
             throw err;
         });
-        currentService.value.name = inputServiceName;
+    } else {
+        return false;
     }
-    modifyServiceName.value = false;
 }
 let changeCors = () => {
     let corsArr = inputCors.value.split(',');
@@ -348,7 +359,7 @@ watch(modifyCors, () => {
         border-radius: 8px;
         margin-bottom: 2%;
         margin-right: 2%;
-        filter: drop-shadow(8px 12px 36px rgba(0, 0, 0, 0.10));
+        box-shadow: 8px 12px 36px rgba(0, 0, 0, 0.10);
 
         &:first-child,
         &:nth-child(2) {
@@ -505,15 +516,17 @@ watch(modifyCors, () => {
             display: flex;
             flex-wrap: nowrap;
             align-items: center;
-            justify-content: flex-end;
             text-decoration: none;
-            color: rgba(0, 0, 0, 0.40);
+            color: #293FE6;
             font-size: 16px;
             font-weight: 500;
             margin-top: 20px;
-
+            
+            &.help {
+                color: rgba(0, 0, 0, 0.40);
+            }
             span {
-                margin-left: 10px;
+                margin-left: 5px;
             }
         }
 
@@ -612,9 +625,20 @@ watch(modifyCors, () => {
     flex-wrap: nowrap;
     justify-content: space-between;
 
+    &.first {
+        input {
+            width: 52%;
+            margin-right: 3%;
+        }
+        .buttonWrap {
+            width: 45%;
+        }
+    }
+
     input {
-        width: 68%;
+        width: max(246px, 65%);
         height: 44px;
+        margin-right: 3%;
         background-color: #EDEDED;
         border: 0;
         padding: 12px 20px;
@@ -625,10 +649,9 @@ watch(modifyCors, () => {
     }
 
     .buttonWrap {
-        width: 32%;
+        width: max(153px ,32%);
         display: flex;
         align-items: center;
-        justify-content: end;
         flex-wrap: nowrap;
 
         button {

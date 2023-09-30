@@ -167,13 +167,13 @@
                             .material-symbols-outlined.mid.enable(v-if="user.group > 0") check_circle
                             .material-symbols-outlined.mid.disable(v-else) cancel
                         td(v-if="filterOptions.userID") 
-                            .overflow {{ user.user_id }}
+                            .overflow.userSelect {{ user.user_id }}
                         td(v-if="filterOptions.name")
-                            .overflow {{ user.name }}
+                            .overflow.userSelect {{ user.name }}
                         td(v-if="filterOptions.email")
-                            .overflow {{ user.email }}
+                            .overflow.userSelect {{ user.email }}
                         td(v-if="filterOptions.address") 
-                            .overflow {{ user.address }}
+                            .overflow.userSelect {{ user.address }}
                         td(v-if="filterOptions.gender")
                             .overflow {{ user.gender }}
                         td(v-if="filterOptions.locale")
@@ -596,7 +596,8 @@ onMounted(() => {
         background-color: #fafafa;
         border-radius: 8px;
         margin-bottom: 2%;
-        filter: drop-shadow(8px 12px 36px rgba(0, 0, 0, 0.10));
+        // box-shadow: 8px 12px 36px rgba(0, 0, 0, 0.10);
+        box-shadow: 8px 12px 36px rgba(0, 0, 0, 0.10);
     }
 
     form {
@@ -825,8 +826,8 @@ onMounted(() => {
                     th {
                         position: relative;
                         color: rgba(0, 0, 0, 0.40);
-                        font-size: 16px;
-                        font-weight: 700;
+                        font-size: 14px;
+                        font-weight: 500;
                         padding-left: 20px;
 
                         &::after {

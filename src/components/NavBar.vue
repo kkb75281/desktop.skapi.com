@@ -74,6 +74,11 @@ let logout = async () => {
         box-shadow: 8px 12px 36px 0px rgba(0, 0, 0, 0.10);
     }
 
+    :first-child {
+        display: flex;
+        align-items: center;
+    }
+
     .logo {
         width: 120px;
     }
@@ -136,7 +141,8 @@ let logout = async () => {
         background-color: #fafafa;
         color: rgba(0, 0, 0, 0.80);
         border: 1px solid rgba(0, 0, 0, 0.15);
-        filter: drop-shadow(8px 12px 36px rgba(0, 0, 0, 0.10));
+        box-shadow: 8px 12px 36px rgba(0, 0, 0, 0.10);
+
         border-radius: 8px;
         z-index: 99;
 

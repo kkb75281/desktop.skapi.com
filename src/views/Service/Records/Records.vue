@@ -63,7 +63,7 @@
                             @change="e=>{if(!specialChars(e.target.value, true, false, ['$updated','$uploaded','$referenced_count','$user_id'])) { e.target.setCustomValidity('Special characters or spaces are not allowed unless it is a reserved index name: $updated | $uploaded | $referenced_count | $user_id'); e.target.reportValidity(); }}")
                     .condition 
                         .label(:class="{'disabled': !advancedForm.index.name}") Index Value
-                        .textFormWrap.indexValue(:class="{'disabled' : !advancedForm.index.name}")
+                        .textFormWrap.indexValue.leftSelect(:class="{'disabled' : !advancedForm.index.name}")
                             input#indexValueSearchInput(
                                 type="text"
                                 name='index_value'
@@ -84,10 +84,11 @@
                                     option(value="<=") &lt;=
                                     option(value="~") ~
                                 .material-symbols-outlined.mid.selectArrowDown arrow_drop_down
+                            input#indexValueSearchInput(type="text" name='index_value' :required='advancedForm.index.name || null' :disabled="!advancedForm.index.name" placeholder='for strings, do "1234" | "false"' v-model='advancedForm.index.value')
                     .condition 
-                        .label(:class="{'disabled': advancedForm.index.condition !== '~'}") Index Range
-                        .textFormWrap(:class="{'disabled' : advancedForm.index.condition !== '~'}")
-                            input#indexRangeSearchInput(type="text" name='index_range' placeholder='From index value ~ to:' :disabled="advancedForm.index.condition !== '~'" @input="e => {e.target.setCustomValidity(''); advancedForm.index.range = e.target.value}")
+                        .label(:class="{'disabled': advancedForm.index.condition !== '~' || !advancedForm.index.name}") Index Range
+                        .textFormWrap(:class="{'disabled' : advancedForm.index.condition !== '~' || !advancedForm.index.name}")
+                            input#indexRangeSearchInput(type="text" name='index_range' placeholder='From index value ~ to:' :disabled="advancedForm.index.condition !== '~' || !advancedForm.index.name" @input="e => {e.target.setCustomValidity(''); advancedForm.index.range = e.target.value}")
 
                 .buttonWrap 
                     input.clear(type="reset" value="Clear filter" @click="clearSearchFilter")
@@ -476,11 +477,12 @@
                                 input(type="checkbox" name="record" :id="record.record_id" @change='trackSelectedRecords' :value="record.record_id")
                                 label(:for="record.record_id")
                                     .material-symbols-outlined.mid.check check
-                        td {{ record.table.name }}
                         td
-                            .overflow {{ record.record_id }}
+                            .overflow.userSelect.name {{ record.table.name }}
                         td
-                            .overflow.userId {{ record.user_id }}
+                            .overflow.userSelect {{ record.record_id }}
+                        td
+                            .overflow.userSelect.userId {{ record.user_id }}
                         td.center {{ timeSince(record.uploaded) }}
                         td.center
                             .accessWrap
@@ -533,7 +535,7 @@
 
 <script setup>
 import { bodyClick } from '@/main.js';
-import { computed, nextTick, onBeforeMount, onBeforeUnmount, onMounted, reactive, ref } from 'vue';
+import { computed, nextTick, onBeforeMount, onBeforeUnmount, onMounted, reactive, ref, watch } from 'vue';
 import RecordDataOverlay from '@/views/Service/Records/RecordDataOverlay.vue';
 import DeleteRecordOverlay from '@/views/Service/Records/DeleteRecordOverlay.vue';
 import TagEditor from './TagEditor.vue';
@@ -1110,6 +1112,35 @@ let handleIndexTypeChange = (e) => {
 
     indexValueType.value = valueType;
 }
+
+let handleKeydown = (e) => {
+    if(!selectedRecord?.value?.record_id) {return}
+    // if(e.key == 40 || e.key == "ArrowDown" || e.key == 38 || e.key == "ArrowUp") {
+        // e.preventDefault();
+    // }
+
+    let selectedIndex = records.value.findIndex(record => record.record_id === selectedRecord.value.record_id);
+    let lastIndex = records.value.length - 1;
+
+    if (e.key == 40 || e.key == "ArrowDown") {
+        if(selectedIndex < lastIndex) {
+            selectedRecord.value = records.value[selectedIndex + 1];
+        }
+    } else if (e.key == 38 || e.key == "ArrowUp") {
+        if(selectedIndex > 0) {
+            selectedRecord.value = records.value[selectedIndex - 1];
+        }
+    }
+}
+
+// 방향키 select Record
+watch(() => selectedRecord.value, () => {
+    if(selectedRecord.value) {
+        document.addEventListener('keydown', handleKeydown);
+    } else {
+        document.removeEventListener('keydown', handleKeydown);
+    }
+})
 </script>
 
 <style lang="less" scoped>
@@ -1123,7 +1154,7 @@ let handleIndexTypeChange = (e) => {
         background-color: #fafafa;
         border-radius: 8px;
         margin-bottom: 2%;
-        filter: drop-shadow(8px 12px 36px rgba(0, 0, 0, 0.10));
+        box-shadow: 8px 12px 36px rgba(0, 0, 0, 0.10);
     }
 
     .searchForm {
@@ -1267,6 +1298,24 @@ let handleIndexTypeChange = (e) => {
                         background-color: #000;
                     }
 
+                    &.leftSelect {
+                        border-bottom: 1px solid rgba(0,0,0,0.8);
+                        &::after {
+                            left: 70px;
+                        }
+                        &.disabled {
+                            border-bottom: 1px solid rgba(0,0,0,0.1);
+                        }
+                        input {
+                            padding-right: 0;
+                            margin-left: 80px;
+                            border: 0;
+                        }
+                        .customSelect {
+                            left: 0;
+                        }
+                    }
+
                     &.disabled {
                         &::after {
                             background-color: rgba(0, 0, 0, 0.10);
@@ -1385,7 +1434,7 @@ let handleIndexTypeChange = (e) => {
                 height: calc(100% - 40px);
                 transform: translateX(-50%);
                 background: rgba(0, 0, 0, 0.1);
-                filter: drop-shadow(0px 1px 3px rgba(0, 0, 0, 0.06));
+                box-shadow: 0px 1px 3px rgba(0, 0, 0, 0.06);
             }
 
             .recordInfo,
@@ -1408,6 +1457,7 @@ let handleIndexTypeChange = (e) => {
                     .tit {
                         min-width: 84px;
                         padding-left: 0;
+                        font-weight: 400;
                     }
                 }
             }
@@ -1503,7 +1553,7 @@ let handleIndexTypeChange = (e) => {
                     width: 100%;
                     height: 1px;
                     background: rgba(0, 0, 0, 0.1);
-                    filter: drop-shadow(0px 1px 3px rgba(0, 0, 0, 0.06));
+                    box-shadow: 0px 1px 3px rgba(0, 0, 0, 0.06);
                 }
 
                 .tit {
@@ -1672,7 +1722,7 @@ let handleIndexTypeChange = (e) => {
                     position: absolute;
                     background-color: #FAFAFA;
                     border: 1px solid rgba(0, 0, 0, 0.15);
-                    filter: drop-shadow(8px 12px 36px rgba(0, 0, 0, 0.10));
+                    box-shadow: 8px 12px 36px rgba(0, 0, 0, 0.10);
                     border-radius: 8px;
                     z-index: 10;
                     font-size: 14px;
@@ -1796,7 +1846,7 @@ let handleIndexTypeChange = (e) => {
 
                     .download {
                         position: absolute;
-                        right: 12px;
+                        right: 3px;
                         top: 50%;
                         transform: translateY(-50%);
                         display: none;
@@ -2235,7 +2285,6 @@ let handleIndexTypeChange = (e) => {
                 height: 60px;
                 border-bottom: 1px solid rgba(0, 0, 0, 0.10);
                 border-radius: 8px;
-                filter: drop-shadow(0px 1px 3px rgba(0, 0, 0, 0.06));
                 // cursor: pointer;
                 overflow: hidden;
 
@@ -2268,7 +2317,7 @@ let handleIndexTypeChange = (e) => {
                         height: 44px;
                         background-color: #fafafa;
                         border-radius: 8px;
-                        filter: drop-shadow(1px 2px 2px rgba(0, 0, 0, 0.25));
+                        box-shadow: 1px 2px 2px rgba(0, 0, 0, 0.25);
                         color: rgba(0, 0, 0, 0.60);
                         font-size: 14px;
                         padding: 0 12px;
@@ -2347,6 +2396,9 @@ let handleIndexTypeChange = (e) => {
                     text-overflow: ellipsis;
                     display: block;
 
+                    &.name {
+                        width: 90px;
+                    }
                     &.userId {
                         width: 210px;
                     }
@@ -2362,12 +2414,20 @@ let handleIndexTypeChange = (e) => {
                     &:hover {
                         background-color: unset;
                     }
+                    th {
+                        font-size: 14px;
+                        font-weight: 500;
+                    }
                 }
             }
 
             tbody {
                 color: rgba(0, 0, 0, 0.80);
                 font-weight: 400;
+
+                tr {
+                    cursor: pointer;
+                }
             }
 
             input {
