@@ -25,21 +25,15 @@ export function specialChars(
             return false
         }
 
-        // allowed special characters: [\]^_`
-        if (/[\[\]\\^_`]/.test(s)) {
-            return true;
-        }
-        
-        if (/[`!@#$%^&*()_+\-=\[\]{};':"\\|,<>\/?~]/.test(s)) {
-            if(toAllow.length) {
-                // loop through each character in string
-                for (let i = 0; i < s.length; i++) {
-                    // check if character is allowed
-                    if (toAllow.includes(s[i])) {
-                        return true;
-                    }
+        if (toAllow.length) {
+            for (let i of toAllow) {
+                if (i === s) {
+                    return true;
                 }
             }
+        }
+
+        if (/[!@#$%&*()+\-={};':"\|,<>\/?~]/.test(s)) {
             return false;
         }
 
@@ -55,13 +49,13 @@ watch(selectedRecord, (newVal) => {
 
     if (newVal) {
         if (newVal.bin) {
-            for(let b of newVal.bin) {
+            for (let b of newVal.bin) {
                 records_data.value.push({
                     type: 'binary',
                     key: ' ',
                     context: decodeURIComponent(b.split('/').slice(-1)[0]),
                     endpoint: b,
-                    download: () => skapi.getFile(b, {dataType: 'download'})
+                    download: () => skapi.getFile(b, { dataType: 'download' })
                 })
             }
         }
@@ -91,7 +85,7 @@ watch(selectedRecord, (newVal) => {
                                         key: d,
                                         context: i.filename,
                                         fileData: data,
-                                        download: () => skapi.getFile(i.url, {dataType: 'download'})
+                                        download: () => skapi.getFile(i.url, { dataType: 'download' })
                                     });
                                 }
                                 else {
@@ -114,7 +108,7 @@ watch(selectedRecord, (newVal) => {
                                     key: d,
                                     context: data.filename,
                                     fileData: data,
-                                    download: () => skapi.getFile(data.url, {dataType: 'download'})
+                                    download: () => skapi.getFile(data.url, { dataType: 'download' })
                                 });
                             }
                             else {

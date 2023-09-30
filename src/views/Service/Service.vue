@@ -55,9 +55,9 @@ template(v-if='currentService')
                     span(:class="{ active: modifyCors }") Cors
                     template(v-if="modifyCors")
                         form.modifyForm(style="margin-top: 8px" @submit.prevent="changeCors")
-                            input#modifyCors(type="text" placeholder='https://your.domain.com' :value='inputCors' @input="(e) => {e.target.setCustomValidity(''); inputCors = e.target.value;}")
+                            input#modifyCors(:disabled="promiseRunningCors || null" type="text" placeholder='https://your.domain.com' :value='inputCors' @input="(e) => {e.target.setCustomValidity(''); inputCors = e.target.value;}")
                             .buttonWrap 
-                                template(v-if="promiseRunning")
+                                template(v-if="promiseRunningCors")
                                     img.loading(src="@/assets/img/loading.png")
                                 template(v-else)
                                     button.cancel(type="button" @click="modifyCors = false;") Cancel
@@ -70,9 +70,9 @@ template(v-if='currentService')
                     span(:class="{ active: modifyKey }") Secret Key
                     template(v-if="modifyKey")
                         form.modifyForm(style="margin-top: 8px" @submit.prevent="setSecretKey")
-                            input#modifyKey(type="text" placeholder="Secret key for external request" :value='inputKey' @input="(e) => inputKey = e.target.value")
+                            input#modifyKey(:disabled="promiseRunningSecKey || null" type="text" placeholder="Secret key for external request" :value='inputKey' @input="(e) => inputKey = e.target.value")
                             .buttonWrap 
-                                template(v-if="promiseRunning")
+                                template(v-if="promiseRunningSecKey")
                                     img.loading(src="@/assets/img/loading.png")
                                 template(v-else)
                                     button.cancel(type="button" @click="modifyKey = false;") Cancel
@@ -93,8 +93,8 @@ template(v-if='currentService')
         router-link.info.hover.record.clicked(:to='`/dashboard/${currentService.service}/records`')
             .titleWrap
                 .title 
-                    .material-symbols-outlined.big folder_open
-                    h2 Records
+                    .material-symbols-outlined.big database
+                    h2 Database
             .listWrap.noWrap
                 .list
                     span # of database storage Used
@@ -161,7 +161,8 @@ let inputServiceName = '';
 let inputCors = ref('');
 let inputKey = '';
 let enableDisablePromise = ref(false);
-let promiseRunning = ref(false);
+let promiseRunningCors = ref(false);
+let promiseRunningSecKey = ref(false);
 
 // let clicked = (e) => {
 //     let target = e.currentTarget;
@@ -183,22 +184,22 @@ let promiseRunning = ref(false);
 //     }, 200);
 // }
 let editServiceName = () => {
-    if(account.value.email_verified) {
-        inputServiceName = currentService.value.name; 
+    if (account.value.email_verified) {
+        inputServiceName = currentService.value.name;
         modifyServiceName.value = true;
     } else {
         return false;
     }
 }
 let editCors = () => {
-    if(account.value.email_verified) {
-        inputCors = currentService.value.cors === '*' ? '' : currentService.value.cors; modifyCors.value = true;
+    if (account.value.email_verified) {
+        inputCors.value = currentService.value.cors === '*' ? '' : currentService.value.cors; modifyCors.value = true;
     } else {
         return false;
     }
 }
 let editKey = () => {
-    if(account.value.email_verified) {
+    if (account.value.email_verified) {
         inputKey = currentService.value.api_key; modifyKey.value = true;
     } else {
         return false;
@@ -233,30 +234,38 @@ let changeServiceName = () => {
     modifyServiceName.value = false;
 }
 let changeCors = () => {
-    let previous = currentService.value.cors;
     let corsArr = inputCors.value.split(',');
     let corsToUpdate = []
     for (let u of corsArr) {
         u = u.trim().toLowerCase();
-        if (u && skapi.validate.url(u)) {
-            corsToUpdate.push(u);
-        }
-        else {
-            document.getElementById('modifyCors').setCustomValidity('Cors origin should be a valid URL. ex) https://your.domain.com');
-            document.getElementById('modifyCors').reportValidity();
-            return;
+        if (u) {
+            if (skapi.validate.url(u)) {
+                corsToUpdate.push(u);
+            }
+            else {
+                document.getElementById('modifyCors').setCustomValidity('Cors origin should be a valid URL. (Separated with comma) ex) https://your.domain1.com, https://your.domain2.com');
+                document.getElementById('modifyCors').reportValidity();
+                return;
+            }
         }
     }
 
+    promiseRunningCors.value = true;
     corsToUpdate.sort()
     skapi.updateService(currentService.value.service, {
         cors: corsToUpdate.length ? corsToUpdate : ['*']
+    }).then(() => {
+        promiseRunningCors.value = false;
+        modifyCors.value = false;
+        currentService.value.cors = corsToUpdate.join(', ');
     }).catch(err => {
-        currentService.value.cors = previous;
-        throw err;
+        promiseRunningCors.value = false;
+        nextTick(() => {
+            document.getElementById('modifyCors').focus();
+            document.getElementById('modifyCors').setCustomValidity(err.message);
+            document.getElementById('modifyCors').reportValidity();
+        });
     });
-    currentService.value.cors = corsToUpdate.join(', ');
-    modifyCors.value = false;
 }
 let setSecretKey = () => {
     let previous = currentService.value.api_key;
@@ -341,7 +350,8 @@ watch(modifyCors, () => {
         margin-right: 2%;
         filter: drop-shadow(8px 12px 36px rgba(0, 0, 0, 0.10));
 
-        &:first-child, &:nth-child(2) {
+        &:first-child,
+        &:nth-child(2) {
             width: 100%;
             margin-right: 0;
         }
@@ -429,7 +439,8 @@ watch(modifyCors, () => {
                 }
             }
 
-            .date, .toggleWrap {
+            .date,
+            .toggleWrap {
                 width: 25%;
                 justify-content: end;
             }
@@ -483,7 +494,7 @@ watch(modifyCors, () => {
                     transition: opacity .4s;
                     opacity: 0;
                 }
-    
+
                 &.copied::after {
                     opacity: 1;
                 }
@@ -541,6 +552,7 @@ watch(modifyCors, () => {
                     font-weight: 700;
                     color: rgba(0, 0, 0, 0.6);
                     margin-top: 8px;
+
                     .pen {
                         position: absolute;
                         right: -50px;
@@ -649,9 +661,11 @@ watch(modifyCors, () => {
                 .name {
                     width: 45%;
                 }
+
                 .date {
                     width: 30%;
                 }
+
                 .toggleWrap {
                     width: 25%;
                 }

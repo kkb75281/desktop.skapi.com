@@ -3,7 +3,6 @@ import { currentService } from '@/data.js';
 import Pager from '@/skapi-extensions/js/pager.js';
 import { ref, watch, nextTick } from 'vue';
 import { skapi } from '@/main.js';
-import { selectedRecord } from './RecordEdit';
 
 export let serviceRecords = {};
 
@@ -17,6 +16,7 @@ export let recordPage = null;
 export let currentPage = ref(1);
 export let maxPage = ref(1);
 export let fetching = ref(false);
+export let searchInfo = ref(null);
 
 export function normalizeRecord(record) {
     function base_decode(chars) {
@@ -159,6 +159,8 @@ export let getPage = (p) => {
 }
 
 export let refresh = (params) => {
+    searchInfo.value = null;
+
     if (fetching.value) {
         return;
     }

@@ -20,8 +20,9 @@
                         @input="e=>{e.target.setCustomValidity('');}"
                         @change="e=>{if(advancedForm.selectedOption !== 'User' && !specialChars(e.target.value, false, true)) { e.target.setCustomValidity('Special characters are not allowed'); e.target.reportValidity(); }}"
                         :pattern="advancedForm.selectedOption === 'User' ? '[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}' : null"
+                        :title="advancedForm.selectedOption === 'User' ? 'Should be valid user ID' : null"
                         :required='searchIsRequired'
-                        )
+                    )
                     .material-symbols-outlined.mid.delete(v-if="advancedForm.searchText" @click="e=>{advancedForm.searchText = ''; mainSearchInput.focus()}") close
             .advancedForm(v-if="advancedForm.selectedOption === 'Table'")
                 .left 
@@ -37,34 +38,44 @@
 
                     .condition 
                         .label Subscription
-                        .textFormWrap.indexValue
-                            input(type="text" pattern='[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}' title='Subscription ID should be the user\'s ID' name='subscription' v-model="advancedForm.table.subscription.user_id" placeholder="Subscription ID")
-                            .customSelect 
-                                input(:required="advancedForm.table.subscription.user_id || null" style='padding-right:0;border-bottom:none' name='subscription_group' type="number" min='0' max='99' placeholder='Group' v-model='advancedForm.table.subscription.group')
+                        .textFormWrap
+                            input(type="text" pattern='[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}' title='Subscription ID should be the user\'s ID' name='subscription' v-model="advancedForm.table.subscription" placeholder="Subscription ID")
+                            //- .customSelect 
+                            //-     input(:required="advancedForm.table.subscription.user_id || null" style='padding-right:0;border-bottom:none' name='subscription_group' type="number" min='1' max='99' placeholder='Group' v-model='advancedForm.table.subscription.group')
 
                     .condition 
                         .label Reference ID
                         .textFormWrap
-                            input(type="text" name='reference' v-model="advancedForm.reference" placeholder='Referenced Record ID | Uploaders User ID')
+                            input#referenceSearchInput(type="text" name='reference' @input="e=>{e.target.setCustomValidity('');}" v-model="advancedForm.reference" placeholder='Referenced Record ID | Uploaders User ID')
 
                     .condition 
                         .label Tag
                         .textFormWrap
-                            input(type="text" name='tag' @input="e=>{e.target.setCustomValidity(''); advancedForm.tag=e.target.value;}" @change="e=>{if(!specialChars(e.target.value, false, true)) { e.target.setCustomValidity('Special characters are not allowed'); e.target.reportValidity(); }}")
+                            input(type="text" name='tag' placeholder='Tag name' @input="e=>{e.target.setCustomValidity(''); advancedForm.tag=e.target.value;}" @change="e=>{if(!specialChars(e.target.value, false, true)) { e.target.setCustomValidity('Special characters are not allowed'); e.target.reportValidity(); }}")
                 .right
                     .title Index
                     .condition 
                         .label Index Name
                         .textFormWrap
                             input(type="text" name='index_name'
-                            @input="e=>{e.target.setCustomValidity(''); advancedForm.index.name=e.target.value }"
-                            @change="e=>{if(!specialChars(e.target.value, true, false)) { e.target.setCustomValidity('Special characters or spaces are not allowed'); e.target.reportValidity(); }}")
+                            placeholder="Name | $updated | $uploaded | $referenced_count | $user_id"
+                            @input="e=>{e.target.setCustomValidity(''); if(!e.target.value) {advancedForm.index.value = ''; advancedForm.index.range = ''; } advancedForm.index.name=e.target.value; if(advancedForm.index.name === '$user_id') advancedForm.index.condition = '=' }"
+                            @change="e=>{if(!specialChars(e.target.value, true, false, ['$updated','$uploaded','$referenced_count','$user_id'])) { e.target.setCustomValidity('Special characters or spaces are not allowed unless it is a reserved index name: $updated | $uploaded | $referenced_count | $user_id'); e.target.reportValidity(); }}")
                     .condition 
                         .label(:class="{'disabled': !advancedForm.index.name}") Index Value
                         .textFormWrap.indexValue(:class="{'disabled' : !advancedForm.index.name}")
-                            input#indexValueSearchInput(type="text" name='index_value' :required='advancedForm.index.name || null' :disabled="!advancedForm.index.name" placeholder='for strings, do "1234" | "false"' v-model='advancedForm.index.value')
+                            input#indexValueSearchInput(
+                                type="text"
+                                name='index_value'
+                                :required='advancedForm.index.name ? true : null'
+                                :disabled="!advancedForm.index.name"
+                                :title="advancedForm.index.name === '$user_id' ? 'Value should be the user ID' : advancedForm.index.name.includes('$') ? 'Value should be a number' : null"
+                                :pattern="advancedForm.index.name === '$user_id' ? '[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}' : advancedForm.index.name.includes('$') ? '[0-9]' : null"
+
+                                :placeholder='indexValuePlaceholder'
+                                v-model='advancedForm.index.value')
                             .customSelect
-                                select(name="index_condition" :disabled="!advancedForm.index.name" v-model="advancedForm.index.condition")
+                                select(name="index_condition" :disabled="!advancedForm.index.name || advancedForm.index.name === '$user_id'" v-model='advancedForm.index.condition')
                                     option(disabled) Condition
                                     option(value=">=") &gt;=
                                     option(value=">") &gt;
@@ -81,6 +92,7 @@
                 .buttonWrap 
                     input.clear(type="reset" value="Clear filter" @click="clearSearchFilter")
                     button.search(type="submit") Search
+
     .container 
         // view / edit record / create record
         .viewRecord
@@ -136,7 +148,8 @@
                                             v-model='selectedRecord.table.name'
                                             @input="e => e.target.setCustomValidity('')"
                                             @change="e=>{if(!specialChars(e.target.value, true, true)) { e.target.setCustomValidity('Special characters are not allowed'); e.target.reportValidity(); }}"
-                                            :disabled="promiseRunning" required)
+                                            :disabled="promiseRunning" required
+                                        )
                                         template(v-else) {{ selectedRecord.table.name }}
                                 .smallInfo 
                                     .smallLabel Access Group
@@ -146,21 +159,23 @@
                                             option(value="1") Authorized
                                         template(v-else) {{ selectedRecord.table.access_group == 'private' ? 'Private' : selectedRecord.table.access_group === 0 ? 'Public' : 'Authorized' }}
                                 .smallInfo 
-                                    .smallLabel Subscription Group
+                                    .smallLabel Subscription
                                     .smallValue 
-                                        input(
-                                            v-if="recordInfoEdit" 
-                                            type="number" min='0' max='99'
-                                            :style='{opacity: !selectedRecord.user_id || selectedRecord.user_id === account.user_id ? 0.5 : 1}'
-                                            :disabled="!selectedRecord.user_id || selectedRecord.user_id === account.user_id || null"
-                                            :class="{nonClickable: !selectedRecord.user_id || selectedRecord.user_id === account.user_id}"
-                                            :value="selectedRecord.table?.subscription_group || ''"
-                                            :placeholder="!selectedRecord.user_id || selectedRecord.user_id === account.user_id ? 'Admin cannot have subscription group' : 'None'"
-                                            @input="(e) => {selectedRecord.table.subscription_group = e.target.value ? parseInt(e.target.value) : null }"
-                                        )
+                                        template(v-if="recordInfoEdit")
+                                            input#forSubscribers(style='width:unset;vertical-align:middle;' type='checkbox' :checked="selectedRecord.table.subscription ? true : null" @change="(e) => selectedRecord.table.subscription = e.target.checked" :disabled="promiseRunning")
+                                            label(for='forSubscribers' style='margin-left:1em;opacity:0.6') (Only subscribed users can read)
+                                        //- input(
+                                        //-     v-if="recordInfoEdit" 
+                                        //-     type="number" min='1' max='99'
+                                        //-     :style='{opacity: !selectedRecord.user_id || selectedRecord.user_id === account.user_id ? 0.5 : 1}'
+                                        //-     :disabled="!selectedRecord.user_id || selectedRecord.user_id === account.user_id || null"
+                                        //-     :class="{nonClickable: !selectedRecord.user_id || selectedRecord.user_id === account.user_id}"
+                                        //-     :value="selectedRecord.table?.subscription_group || ''"
+                                        //-     :placeholder="!selectedRecord.user_id || selectedRecord.user_id === account.user_id ? 'Admin cannot have subscription group' : 'None'"
+                                        //-     @input="(e) => {selectedRecord.table.subscription_group = e.target.value ? parseInt(e.target.value) : null }"
+                                        //- )
 
-                                        // admin can't upload subscription group because its meaningless
-                                        template(v-else) {{ selectedRecord.table?.subscription_group || 'None' }}
+                                        template(v-else) {{ selectedRecord.table?.subscription ? 'Required' : 'None' }}
                         .info
                             .label Index
                             .value.various
@@ -174,7 +189,8 @@
                                             @change="e=>{if(!specialChars(e.target.value, true, false)) { e.target.setCustomValidity('Special characters or spaces are not allowed'); e.target.reportValidity(); }}"
                                             placeholder="No Index"
                                             @input="(e)=> { e.target.setCustomValidity(''); if (!selectedRecord.index) { selectedRecord.index={}; } selectedRecord.index.name = e.target.value; }"
-                                            :disabled="promiseRunning")
+                                            :disabled="promiseRunning"
+                                        )
                                         template(v-else) {{ selectedRecord.index?.name || 'No Index' }}
                                 .smallInfo 
                                     .smallLabel Value 
@@ -198,7 +214,8 @@
                                                 v-else 
                                                 :type="indexValueType === 'string' ? 'text' : 'number'" :value="selectedRecord.index?.value"
                                                 placeholder="(Value Required)"
-                                                @input="(e)=> { e.target.setCustomValidity(''); if(!selectedRecord.index) { selectedRecord.index={}; } selectedRecord.index.value = indexValueType === 'number' ? parseInt(e.target.value) : e.target.value; }"
+                                                :step="indexValueType === 'string' ? null : '.01'"
+                                                @input="(e)=> { e.target.setCustomValidity(''); if(!selectedRecord.index) { selectedRecord.index={}; } selectedRecord.index.value = indexValueType === 'number' ? e.target.value.includes('.') ? parseFloat(e.target.value) : parseInt(e.target.value) : e.target.value; }"
                                                 @change="e=>{if(indexValueType==='string' && !specialChars(e.target.value, false, true)) { e.target.setCustomValidity('Special characters are not allowed'); e.target.reportValidity(); }}"
                                                 :required="selectedRecord?.index?.name ? true : null"
                                                 :disabled="promiseRunning"
@@ -343,7 +360,75 @@
                             .material-symbols-outlined.mid(v-if="isSmallScreen") check
                             span(v-else) Save
 
-            .noSelect(v-else) No record selected
+            template(v-else)
+                .searchInfo(v-if='searchInfo')
+                    template(v-if='searchInfo.table')
+                        .label Table Information
+                        br
+                        .indent
+                            .label Name:
+                            .data {{ searchInfo.table.table }}
+                            br
+                            .label # of records:
+                            .data {{ searchInfo.table.number_of_records }}
+                    template(v-if='searchInfo.reference')
+                        .label Reference Information
+                        br
+                        .indent
+                            .label Record ID:
+                            .data {{ searchInfo.reference.record_id }}
+                            br
+                            .label # of times referenced:
+                            .data {{ searchInfo.reference.referenced }}
+                            br
+                            .label Reference limit:
+                            .data {{ searchInfo.reference.reference_limit || 'Infinite' }}
+                            br
+                            .label Allows multiple reference:
+                            .data {{ searchInfo.reference.allow_multiple_reference ? 'Yes' : 'No' }}
+                    template(v-if='searchInfo.index')
+                        .label Index Information
+                        br
+                        .indent
+                            .label Name:
+                            .data {{ searchInfo.index.index }}
+                            br
+                            .label # of records:
+                            .data {{ searchInfo.index.number_of_records }}
+                            br
+                            .label # of strings:
+                            .data {{ searchInfo.index.string_count || 0 }}
+                            br
+                            .label # of numbers:
+                            .data {{ searchInfo.index.number_count || 0 }}
+                            br
+                            .indent
+                                .label Sum:
+                                .data {{ searchInfo.index.total_number || 0 }}
+                                br
+                                .label Average:
+                                .data {{ searchInfo.index.average_number || 0 }}
+                            .label # of booleans:
+                            .data {{ searchInfo.index.boolean_count || 0 }}
+                            br
+                            .indent
+                                .label # of true:
+                                .data {{ searchInfo.index.total_bool || 0 }}
+                                br
+                                .label Average rate:
+                                .data {{ searchInfo.index.average_bool || 0 }}
+
+                    template(v-if='searchInfo.tag')
+                        .label Tag Information
+                        br
+                        .indent
+                            .label Name:
+                            .data {{ searchInfo.tag.tag }}
+                            br
+                            .label # of records:
+                            .data {{ searchInfo.tag.number_of_records }}
+
+                .noSelect(v-else) No record selected
 
         // top menu of record list
         .tableHeader 
@@ -385,7 +470,7 @@
                         th.center Access Group
                         th.center Features
                 tbody(v-if="records && records.length")
-                    tr(v-for="record in records" @click="()=>{ recordInfoEdit=false; if(selectedRecord?.record_id !== record.record_id) selectedRecord = JSON.parse(JSON.stringify(record)) }" :class="{ active: selectedRecord?.record_id === record.record_id }")
+                    tr(v-for="record in records" @click="()=>{ recordInfoEdit=false; if(selectedRecord?.record_id === record?.record_id) selectedRecord = null; else if(selectedRecord?.record_id !== record.record_id) selectedRecord = JSON.parse(JSON.stringify(record)) }" :class="{ active: selectedRecord?.record_id === record.record_id }")
                         td(@click.stop style="text-align:center;")
                             .customCheckBox
                                 input(type="checkbox" name="record" :id="record.record_id" @change='trackSelectedRecords' :value="record.record_id")
@@ -439,7 +524,8 @@
                 .tit 
                     .material-symbols-outlined.big search
                     h2 No Records Found
-                p There was no record matching query 
+                p There was no record matching query
+
     TagEditor(v-if="editTags" @close="editTags = null" :tags="editTags")
     RecordDataOverlay(v-if="showRecordDataValue" @close="showRecordDataValue = null" :selectedData="showRecordDataValue" @save="saveRecordDataValue")
     DeleteRecordOverlay(v-if="showDeleteRecord" @close="showDeleteRecord = null;" :toDelete="showDeleteRecord")
@@ -454,7 +540,7 @@ import TagEditor from './TagEditor.vue';
 import { account, skapi } from '../../../main';
 import { currentService } from '@/data.js';
 import { selectedRecord, records_data, indexValueType, binToRemove, specialChars } from './RecordEdit';
-import { launch, serviceRecords, getPage, records, selectNone, recordPage, currentPage, maxPage, fetching, refresh, nextPage, timeSince, fetchParams, normalizeRecord } from './RecordFetch';
+import { searchInfo, launch, serviceRecords, getPage, records, selectNone, recordPage, currentPage, maxPage, fetching, refresh, nextPage, timeSince, fetchParams, normalizeRecord } from './RecordFetch';
 
 selectedRecord.value = null;
 launch();
@@ -474,10 +560,7 @@ let advancedForm = reactive({
     searchText: '',
     table: {
         access_group: 0,
-        subscription: {
-            user_id: '',
-            group: ''
-        },
+        subscription: '',
     },
     index: {
         name: '',
@@ -488,12 +571,28 @@ let advancedForm = reactive({
     tag: '',
     reference: ''
 });
+
+let indexValuePlaceholder = computed(()=>{
+    let n = advancedForm.index.name;
+    if(n==='$user_id') {
+        return 'Uploader\'s ID'    
+    }
+    if(n === '$referenced_count') {
+        return 'Numbers only'
+    }
+    if(n === '$uploaded' || n === '$updated') {
+        return '13 Digit timestamp number'
+    }
+    return 'for strings, do "1234" | "false"'
+})
+
 let searchIsRequired = computed(() => {
-    return advancedForm.index.name || advancedForm.table.subscription.user_id || advancedForm.tag || advancedForm.reference || null
+    return advancedForm.index.name || advancedForm.table.subscription || advancedForm.tag || advancedForm.reference || null
 });
 
 let searchRecords = () => {
     selectedRecord.value = null;
+
     if (advancedForm.searchText === '') {
         refresh();
         return;
@@ -514,15 +613,82 @@ let searchRecords = () => {
             }
             break;
         case 'Table':
+            skapi.getTables({
+                service: currentService.value.service,
+                table: advancedForm.searchText,
+            }).then(t => {
+                if (searchInfo.value === null) {
+                    searchInfo.value = {};
+                }
+                if (t.list.length) {
+                    searchInfo.value.table = t.list[0]
+                }
+            });
+
+            if (advancedForm.index.name && advancedForm.index.name.slice(-1) !== '.' && !advancedForm.index.name.includes('$')) {
+                skapi.getIndexes({
+                    service: currentService.value.service,
+                    table: advancedForm.searchText,
+                    index: advancedForm.index.name
+                }).then(t => {
+
+                    if (t.list.length) {
+                        if (searchInfo.value === null) {
+                            searchInfo.value = {};
+                        }
+                        searchInfo.value.index = t.list[0]
+                    }
+                });
+            }
+
+            if (advancedForm.tag) {
+                skapi.getTags({
+                    service: currentService.value.service,
+                    table: advancedForm.searchText,
+                    tag: advancedForm.tag
+                }).then(t => {
+
+                    if (t.list.length) {
+                        if (searchInfo.value === null) {
+                            searchInfo.value = {};
+                        }
+                        searchInfo.value.tag = t.list[0]
+                    }
+                });
+            }
+
+            if (advancedForm.reference) {
+                if (!advancedForm.reference.includes('-')) {
+                    skapi.getRecords({
+                        service: currentService.value.service,
+                        record_id: advancedForm.reference
+                    }).then(r => {
+                        if (r.list.length) {
+                            if (searchInfo.value === null) {
+                                searchInfo.value = {};
+                            }
+                            searchInfo.value.reference = {
+                                record_id: advancedForm.reference,
+                                referenced: r.list[0].reference.referenced_count,
+                                reference_limit: r.list[0].reference.reference_limit,
+                                allow_multiple_reference: r.list[0].reference.allow_multiple_reference
+                            }
+                        }
+                    }).catch(err => {
+                        if (err.message.includes('not exists')) {
+                            document.getElementById('referenceSearchInput').setCustomValidity('Reference does not exists.');
+                            document.getElementById('referenceSearchInput').reportValidity();
+                        }
+                    });
+                }
+            }
+
             params = {
                 service: currentService.value.service,
                 table: {
                     name: advancedForm.searchText,
                     access_group: advancedForm.table.access_group === 'private' ? 'private' : parseInt(advancedForm.table.access_group),
-                    subscription: {
-                        user_id: advancedForm.table.subscription.user_id || undefined,
-                        group: advancedForm.table.subscription.group ? parseInt(advancedForm.table.subscription.group) : undefined
-                    }
+                    subscription: advancedForm.table.subscription
                 },
                 index: {
                     name: advancedForm.index.name,
@@ -550,31 +716,36 @@ let searchRecords = () => {
             if (!params.index.name) {
                 delete params.index;
             }
-            if (!params.table.subscription.user_id) {
-                delete params.subscription;
+            if (!params.table.subscription) {
+                delete params.table.subscription;
             }
 
             break;
     }
 
-    if (params.index && params.index.value && typeof params.index.value === 'string' && !specialChars(params.index.value, false, true)) {
-        document.getElementById('indexValueSearchInput').setCustomValidity('Index value should not have special characters.');
-        document.getElementById('indexValueSearchInput').reportValidity();
-        return;
+    if (params.index) {
+        if (!params.index.name.includes('$')) {
+            if (typeof params.index.value === 'string' && !specialChars(params.index.value, false, true)) {
+                document.getElementById('indexValueSearchInput').setCustomValidity('Index value should not have special characters.');
+                document.getElementById('indexValueSearchInput').reportValidity();
+                return;
+            }
+
+            if (params.index.range && typeof params.index.value !== typeof params.index.range) {
+                document.getElementById('indexRangeSearchInput').setCustomValidity('Range value should be same type as index value.');
+                document.getElementById('indexRangeSearchInput').reportValidity();
+                return;
+            }
+
+            // check special chars for range value
+            if (params.index.range && typeof params.index.range === 'string' && !specialChars(params.index.range, false, true)) {
+                document.getElementById('indexRangeSearchInput').setCustomValidity('Index range should not have special characters.');
+                document.getElementById('indexRangeSearchInput').reportValidity();
+                return;
+            }
+        }
     }
 
-    // check special chars for range value
-    if (params.index && params.index.range && typeof params.index.range === 'string' && !specialChars(params.index.range, false, true)) {
-        document.getElementById('indexRangeSearchInput').setCustomValidity('Index range should not have special characters.');
-        document.getElementById('indexRangeSearchInput').reportValidity();
-        return;
-    }
-
-    if (params.index && params.index.range && typeof params.index.value !== typeof params.index.range) {
-        document.getElementById('indexRangeSearchInput').setCustomValidity('Range value should be same type as index value.');
-        document.getElementById('indexRangeSearchInput').reportValidity();
-        return;
-    }
 
     refresh(params);
 }
@@ -583,6 +754,7 @@ let createRecordTemplate = {
     table: {
         name: '',
         access_group: 0,
+        subscription: false,
     },
     index: {
         name: '',
@@ -595,6 +767,7 @@ let createRecordTemplate = {
     tags: [],
     readonly: false
 };
+
 let dataList = ref([]);
 let checkedRecords = ref([]);
 let selectedData = ref(null);
@@ -615,6 +788,7 @@ let saveRecordDataValue = d => {
     }
     showRecordDataValue.value = null;
 }
+
 let copy = (e) => {
     let doc = document.createElement('textarea');
     doc.textContent = e.target.parentNode.previousSibling.textContent;
@@ -634,10 +808,7 @@ let clearSearchFilter = () => {
         searchText: '',
         table: {
             access_group: 0,
-            subscription: {
-                user_id: '',
-                group: ''
-            },
+            subscription: '',
         },
         index: {
             name: '',
@@ -734,7 +905,7 @@ let saveRecordData = async () => {
 
     let data = {};
 
-    if (record_params.table.subscription) {
+    if (!record_params.table.subscription) {
         delete record_params.table.subscription;
     }
     if (!record_params.index?.name) {
@@ -810,7 +981,8 @@ let saveRecordData = async () => {
     let res;
     try {
         res = await skapi.postRecord(data, record_params);
-    } catch (err) {
+    }
+    catch (err) {
         promiseRunning.value = false;
         let errmsg = err.message.charAt(0).toUpperCase() + err.message.slice(1)
         if (err.message.includes('referenc')) {
@@ -1163,6 +1335,41 @@ let handleIndexTypeChange = (e) => {
         border: 1px solid rgba(0, 0, 0, 0.10);
         margin-bottom: 40px;
 
+        .searchInfo {
+            padding: 1.5rem;
+            color: rgba(0, 0, 0, 0.80);
+
+            .indent {
+                padding-bottom: .5em;
+                padding-left: 1em;
+
+                .label {
+                    margin-bottom: unset;
+                    margin-top: unset !important;
+                    font-weight: unset;
+                }
+            }
+
+            .label {
+                margin-bottom: .25em;
+                display: inline-block;
+                font-size: 14px;
+                font-weight: 700;
+
+                &:not(:first-child) {
+                    margin-top: 1em;
+                }
+
+                margin-right: 1em;
+
+                &+.data {
+                    display: inline-block;
+                    font-size: 14px;
+                }
+            }
+
+        }
+
         .recordForm,
         .createForm {
             position: relative;
@@ -1446,9 +1653,9 @@ let handleIndexTypeChange = (e) => {
                         }
                     }
 
-                    &:nth-child(8) {
-                        margin-bottom: 42px;
-                    }
+                    // &:nth-child(8) {
+                    //     margin-bottom: 42px;
+                    // }
 
                     .que {
                         position: absolute;

@@ -13,7 +13,7 @@ template(v-if='currentService')
                 p Users
             router-link.menu(:to="`/dashboard/${currentService.service}/records`" :class="{'active': route.name == 'records'}")
                 .material-symbols-outlined.big database
-                p Records
+                p Database
             router-link.menu(:to="`/dashboard/${currentService.service}/mail`" :class="{'active': route.name == 'mail'}")
                 .material-symbols-outlined.big email
                 p Mail
