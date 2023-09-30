@@ -64,16 +64,6 @@
                     .condition 
                         .label(:class="{'disabled': !advancedForm.index.name}") Index Value
                         .textFormWrap.indexValue.leftSelect(:class="{'disabled' : !advancedForm.index.name}")
-                            input#indexValueSearchInput(
-                                type="text"
-                                name='index_value'
-                                :required='advancedForm.index.name ? true : null'
-                                :disabled="!advancedForm.index.name"
-                                :title="advancedForm.index.name === '$user_id' ? 'Value should be the user ID' : advancedForm.index.name.includes('$') ? 'Value should be a number' : null"
-                                :pattern="advancedForm.index.name === '$user_id' ? '[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}' : advancedForm.index.name.includes('$') ? '[0-9]' : null"
-
-                                :placeholder='indexValuePlaceholder'
-                                v-model='advancedForm.index.value')
                             .customSelect
                                 select(name="index_condition" :disabled="!advancedForm.index.name || advancedForm.index.name === '$user_id'" v-model='advancedForm.index.condition')
                                     option(disabled) Condition
@@ -84,7 +74,16 @@
                                     option(value="<=") &lt;=
                                     option(value="~") ~
                                 .material-symbols-outlined.mid.selectArrowDown arrow_drop_down
-                            input#indexValueSearchInput(type="text" name='index_value' :required='advancedForm.index.name || null' :disabled="!advancedForm.index.name" placeholder='for strings, do "1234" | "false"' v-model='advancedForm.index.value')
+                            input#indexValueSearchInput(
+                                type="text"
+                                name='index_value'
+                                :required='advancedForm.index.name ? true : null'
+                                :disabled="!advancedForm.index.name"
+                                :title="advancedForm.index.name === '$user_id' ? 'Value should be the user ID' : advancedForm.index.name.includes('$') ? 'Value should be a number' : null"
+                                :pattern="advancedForm.index.name === '$user_id' ? '[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}' : advancedForm.index.name.includes('$') ? '[0-9]' : null"
+
+                                :placeholder='indexValuePlaceholder'
+                                v-model='advancedForm.index.value')
                     .condition 
                         .label(:class="{'disabled': advancedForm.index.condition !== '~' || !advancedForm.index.name}") Index Range
                         .textFormWrap(:class="{'disabled' : advancedForm.index.condition !== '~' || !advancedForm.index.name}")
