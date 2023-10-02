@@ -129,7 +129,8 @@ select:focus {outline: none;}
   transform: translateY(-50%);
   border-radius: 0;
   user-select: none;
-  z-index: -1;
+  /* z-index: -1; <- this makes the arrow dissappear in the records page */
+  pointer-events: none;
 }
 
 /* checkBox */

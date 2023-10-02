@@ -40,8 +40,6 @@
                         .label Subscription
                         .textFormWrap
                             input(type="text" pattern='[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}' title='Subscription ID should be the user\'s ID' name='subscription' v-model="advancedForm.table.subscription" placeholder="Subscription ID")
-                            //- .customSelect 
-                            //-     input(:required="advancedForm.table.subscription.user_id || null" style='padding-right:0;border-bottom:none' name='subscription_group' type="number" min='1' max='99' placeholder='Group' v-model='advancedForm.table.subscription.group')
 
                     .condition 
                         .label Reference ID
@@ -89,9 +87,14 @@
                         .textFormWrap(:class="{'disabled' : advancedForm.index.condition !== '~' || !advancedForm.index.name}")
                             input#indexRangeSearchInput(type="text" name='index_range' placeholder='From index value ~ to:' :disabled="advancedForm.index.condition !== '~' || !advancedForm.index.name" @input="e => {e.target.setCustomValidity(''); advancedForm.index.range = e.target.value}")
 
-                .buttonWrap 
-                    input.clear(type="reset" value="Clear filter" @click="clearSearchFilter")
-                    button.search(type="submit") Search
+                .buttonWrap(style='min-height:43px')
+                    template(v-if="fetching && advancedForm.searchText")
+                        // the additional div is for alignment
+                        div(style='display: inline-flex;align-items: center;height: 43px;')
+                            img.loading(style='padding:0' src="@/assets/img/loading.png")
+                    template(v-else)
+                        input.clear(type="reset" value="Clear filter" @click="clearSearchFilter")
+                        button.search(type="submit") Search
 
     .container 
         // view / edit record / create record
@@ -164,16 +167,6 @@
                                         template(v-if="recordInfoEdit")
                                             input#forSubscribers(style='width:unset;vertical-align:middle;' type='checkbox' :checked="selectedRecord.table.subscription ? true : null" @change="(e) => selectedRecord.table.subscription = e.target.checked" :disabled="promiseRunning")
                                             label(for='forSubscribers' style='margin-left:1em;opacity:0.6') (Only subscribed users can read)
-                                        //- input(
-                                        //-     v-if="recordInfoEdit" 
-                                        //-     type="number" min='1' max='99'
-                                        //-     :style='{opacity: !selectedRecord.user_id || selectedRecord.user_id === account.user_id ? 0.5 : 1}'
-                                        //-     :disabled="!selectedRecord.user_id || selectedRecord.user_id === account.user_id || null"
-                                        //-     :class="{nonClickable: !selectedRecord.user_id || selectedRecord.user_id === account.user_id}"
-                                        //-     :value="selectedRecord.table?.subscription_group || ''"
-                                        //-     :placeholder="!selectedRecord.user_id || selectedRecord.user_id === account.user_id ? 'Admin cannot have subscription group' : 'None'"
-                                        //-     @input="(e) => {selectedRecord.table.subscription_group = e.target.value ? parseInt(e.target.value) : null }"
-                                        //- )
 
                                         template(v-else) {{ selectedRecord.table?.subscription ? 'Required' : 'None' }}
                         .info
@@ -311,12 +304,12 @@
                                                 option(value="true") true
                                                 option(value="false") false
 
-                                        template(v-else-if="data.type == 'file'")
-                                            template(v-if='selectedRecord.record_id && data.type === "file" && typeof data.context === "string" && data.context')
+                                        template(v-else-if="data.type == 'file' || data.type == 'binary'")
+                                            template(v-if='selectedRecord.record_id && typeof data.context === "string" && data.context')
                                                 // on edit, record file data cannot be changed. only delete is allowed
                                                 div(style='width: calc(100% - 208px);')
                                                     span(style='vertical-align: middle;display: inline-block;white-space: nowrap;width: calc(100% - 35px);overflow: hidden;text-overflow: ellipsis;opacity: 0.5') {{ data.context }}
-                                                    .material-symbols-outlined.sml(@click='data.download()' style='float: right; cursor: pointer;' v-if="data.type == 'file'") download
+                                                    .material-symbols-outlined.sml(@click='data.download()' style='float: right; cursor: pointer;') download
 
                                             template(v-else)
                                                 .context.fileUpload(style='white-space: nowrap;overflow: hidden;flex-shrink: 1;text-overflow: ellipsis;' @click='e=>{ e.target.children[0].click() }') {{ data.context ? data.context.name : 'Choose a file' }}
@@ -510,7 +503,7 @@
                                     template(v-if='record?.index' style='display: inline-block')
                                         .feature.index Index
                                         .hoverPreview(style="--pos-r: 0; --arr-r:0")
-                                            span(style='white-space: nowrap') {{ record.index.name }} | {{ record.index.value }}
+                                            span(style='white-space: nowrap') {{ record.index.name }} | {{ typeof record.index.value === 'string' ? '"'+record.index.value+'"' : record.index.value }}
                                     .empty(v-else)
                                 .hoverWrap
                                     template(v-if='record?.reference?.record_id' style='display: inline-block')
@@ -540,8 +533,8 @@ import DeleteRecordOverlay from '@/views/Service/Records/DeleteRecordOverlay.vue
 import TagEditor from './TagEditor.vue';
 import { account, skapi } from '../../../main';
 import { currentService } from '@/data.js';
-import { selectedRecord, records_data, indexValueType, binToRemove, specialChars } from './RecordEdit';
-import { searchInfo, launch, serviceRecords, getPage, records, selectNone, recordPage, currentPage, maxPage, fetching, refresh, nextPage, timeSince, fetchParams, normalizeRecord } from './RecordFetch';
+import { selectedRecord, records_data, indexValueType, remove_bin, specialChars } from './RecordEdit';
+import { searchInfo, launch, serviceRecords, getPage, records, selectNone, recordPage, currentPage, maxPage, fetching, refresh, nextPage, timeSince, fetchParams } from './RecordFetch';
 
 selectedRecord.value = null;
 launch();
@@ -573,15 +566,15 @@ let advancedForm = reactive({
     reference: ''
 });
 
-let indexValuePlaceholder = computed(()=>{
+let indexValuePlaceholder = computed(() => {
     let n = advancedForm.index.name;
-    if(n==='$user_id') {
-        return 'Uploader\'s ID'    
+    if (n === '$user_id') {
+        return 'Uploader\'s ID'
     }
-    if(n === '$referenced_count') {
+    if (n === '$referenced_count') {
         return 'Numbers only'
     }
-    if(n === '$uploaded' || n === '$updated') {
+    if (n === '$uploaded' || n === '$updated') {
         return '13 Digit timestamp number'
     }
     return 'for strings, do "1234" | "false"'
@@ -867,7 +860,7 @@ let removeData = (index) => {
 
     let dat = records_data.value[index];
     if (dat.type === 'binary') {
-        binToRemove.push(dat.endpoint);
+        remove_bin.push(dat.endpoint);
     }
 
     records_data.value.splice(index, 1)
@@ -913,65 +906,47 @@ let saveRecordData = async () => {
         record_params.index = null;
     }
 
-    let to_bin = null;
+    // let to_bin = null;
     // build record data
     let rec_data = records_data.value;
+
     if (!rec_data.length) {
         data = null;
     }
     else {
         let form = new FormData();
 
+        let hasNoData = true;
         for (let d of rec_data) {
+            console.log(d.context)
             if (d.type === 'string') {
+                hasNoData = false;
                 // add to form
                 form.append(d.key, d.context);
             }
-            else if (d.type === 'number') {
+            else if (d.type === 'number' || d.type === 'boolean' || d.type === 'json') {
+                hasNoData = false;
                 // data to blob
-                let blob = new Blob([d.context.includes('.') ? parseFloat(d.context) : parseInt(d.context)], { type: "application/json" });
+                let blob = new Blob([d.context], { type: "application/json" });
                 // add to form
                 form.append(d.key, blob);
             }
-            else if (d.type === 'boolean' || d.type === 'json') {
-                let blob = new Blob([JSON.parse(d.context)], { type: "application/json" });
-                // add to form
-                form.append(d.key, blob);
-            }
-            else if (d.type === 'file') {
-                if (typeof d.context === 'string') {
-                    if (d.fileData) {
-                        let blob = new Blob([JSON.stringify(d.fileData)], { type: "application/json" });
-                        // add to form
-                        form.append(d.key, blob);
-                    }
-                }
-                else {
-                    // 4400000
-                    if (d.context.size > 4400000) {
-                        if (!to_bin) {
-                            to_bin = new FormData();
-                        }
-                        to_bin.append(d.key, d.context);
-                    }
-                    else {
-                        form.append(d.key, d.context);
-                    }
-                }
+            else if (d.type === 'file' && typeof d.context !== 'string') {
+                hasNoData = false;
+                form.append(d.key, d.context);
             }
         }
 
-        data = form;
+        if (hasNoData) {
+            data = null;
+        }
+        else {
+            data = form;
+        }
     }
 
-    if (binToRemove.length) {
-        let res = await skapi.deleteRecFiles({
-            serviceId: currentService.value.service,
-            endpoints: binToRemove
-        });
-        for (let r of res) {
-            await recordPage.editItem(normalizeRecord(r));
-        }
+    if (remove_bin.length) {
+        record_params.remove_bin = remove_bin;
     }
 
     let progress = e => {
@@ -992,31 +967,19 @@ let saveRecordData = async () => {
         }
         else {
             alert(errmsg)
+            throw err
         }
         return
     }
 
-    try {
-        if (to_bin) {
-            let { bin_endpoints } = await skapi.uploadFiles(to_bin, {
-                service: currentService.value.service,
-                record_id: res.record_id,
-                progress
-            });
-
-            if (!res.bin) {
-                res.bin = []
-            }
-
-            for (let ep of bin_endpoints[res.record_id]) {
-                res.bin.push(ep);
+    if (res.bin && Object.keys(res.bin).length > 0 && !Array.isArray(res.bin)) {
+        for (let i in res.bin) {
+            for (let j of res.bin[i]) {
+                delete j.getFile;
             }
         }
-    } catch (err) {
-        alert(err.message);
     }
 
-    selectedRecord.value = res;
     recordInfoEdit.value = false;
 
     if (record_params.record_id) {
@@ -1027,6 +990,8 @@ let saveRecordData = async () => {
     }
 
     getPage(currentPage.value);
+
+    selectedRecord.value = res;
     promiseRunning.value = false;
 }
 
@@ -1113,20 +1078,22 @@ let handleIndexTypeChange = (e) => {
 }
 
 let handleKeydown = (e) => {
-    if(!selectedRecord?.value?.record_id) {return}
-    // if(e.key == 40 || e.key == "ArrowDown" || e.key == 38 || e.key == "ArrowUp") {
-        // e.preventDefault();
-    // }
+    if (recordInfoEdit.value) { return }
+    if (!selectedRecord?.value?.record_id) { return }
+
+    if (e.key == 40 || e.key == "ArrowDown" || e.key == 38 || e.key == "ArrowUp") {
+        e.preventDefault();
+    }
 
     let selectedIndex = records.value.findIndex(record => record.record_id === selectedRecord.value.record_id);
     let lastIndex = records.value.length - 1;
 
     if (e.key == 40 || e.key == "ArrowDown") {
-        if(selectedIndex < lastIndex) {
+        if (selectedIndex < lastIndex) {
             selectedRecord.value = records.value[selectedIndex + 1];
         }
     } else if (e.key == 38 || e.key == "ArrowUp") {
-        if(selectedIndex > 0) {
+        if (selectedIndex > 0) {
             selectedRecord.value = records.value[selectedIndex - 1];
         }
     }
@@ -1134,7 +1101,7 @@ let handleKeydown = (e) => {
 
 // 방향키 select Record
 watch(() => selectedRecord.value, () => {
-    if(selectedRecord.value) {
+    if (selectedRecord.value) {
         document.addEventListener('keydown', handleKeydown);
     } else {
         document.removeEventListener('keydown', handleKeydown);
@@ -1298,18 +1265,22 @@ watch(() => selectedRecord.value, () => {
                     }
 
                     &.leftSelect {
-                        border-bottom: 1px solid rgba(0,0,0,0.8);
+                        border-bottom: 1px solid rgba(0, 0, 0, 0.8);
+
                         &::after {
                             left: 70px;
                         }
+
                         &.disabled {
-                            border-bottom: 1px solid rgba(0,0,0,0.1);
+                            border-bottom: 1px solid rgba(0, 0, 0, 0.1);
                         }
+
                         input {
                             padding-right: 0;
                             margin-left: 80px;
                             border: 0;
                         }
+
                         .customSelect {
                             left: 0;
                         }
@@ -2398,6 +2369,7 @@ watch(() => selectedRecord.value, () => {
                     &.name {
                         width: 90px;
                     }
+
                     &.userId {
                         width: 210px;
                     }
@@ -2413,6 +2385,7 @@ watch(() => selectedRecord.value, () => {
                     &:hover {
                         background-color: unset;
                     }
+
                     th {
                         font-size: 14px;
                         font-weight: 500;
