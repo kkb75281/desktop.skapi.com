@@ -3,7 +3,22 @@
   padding: 0;
   box-sizing: border-box;
   font-family: "Radio Canada", sans-serif;
+  /* user-select: none; */
+}
+
+*:not(input):not(textarea):not(button):not(select) {
+  -webkit-touch-callout: none;
+  /* iOS Safari */
+  -webkit-user-select: none;
+  /* Safari */
+  -khtml-user-select: none;
+  /* Konqueror HTML */
+  -moz-user-select: none;
+  /* Old versions of Firefox */
+  -ms-user-select: none;
+  /* Internet Explorer/Edge */
   user-select: none;
+  /* Non-prefixed version, currently supported by Chrome, Edge, Opera and Firefox */
 }
 
 body {
@@ -17,30 +32,38 @@ body.fa {
   background-color: #fafafa;
 }
 
-input, textarea {
-  color: rgba(0,0,0,0.8) !important;
+input,
+textarea {
+  color: rgba(0, 0, 0, 0.8) !important;
 }
 
-input::placeholder, textarea::placeholder {
-  color: rgba(0,0,0,0.4) !important;
+input::placeholder,
+textarea::placeholder {
+  color: rgba(0, 0, 0, 0.4) !important;
   font-size: 1em !important;
 }
 
 .userSelect {
-    user-select: text !important;
-    cursor: text !important;
+  user-select: text !important;
+  cursor: text !important;
+}
+
+button {
+  cursor: pointer;
 }
 
 /* error */
 .material {
   display: flex;
   flex-wrap: nowrap;
-  align-items: center; 
+  align-items: center;
   color: #F04E4E;
 }
+
 .material.error {
   padding-top: 16px;
 }
+
 .material span {
   margin-left: 6px;
 }
@@ -49,6 +72,7 @@ input::placeholder, textarea::placeholder {
 .passwordInput {
   position: relative;
 }
+
 .passwordInput .passwordIcon {
   position: absolute;
   right: 15px;
@@ -60,35 +84,38 @@ input::placeholder, textarea::placeholder {
 /* material icon */
 .material-symbols-outlined.big {
   font-variation-settings:
-  'FILL' 1,
-  'wght' 400,
-  'GRAD' 0,
-  'opsz' 32;
+    'FILL' 1,
+    'wght' 400,
+    'GRAD' 0,
+    'opsz' 32;
   font-size: 32px;
 }
+
 .material-symbols-outlined.mid {
   font-variation-settings:
-  'FILL' 1,
-  'wght' 400,
-  'GRAD' 0,
-  'opsz' 24;
+    'FILL' 1,
+    'wght' 400,
+    'GRAD' 0,
+    'opsz' 24;
   font-size: 24px;
 }
+
 .material-symbols-outlined.sml {
   font-variation-settings:
-  'FILL' 1,
-  'wght' 400,
-  'GRAD' 0,
-  'opsz' 20;
+    'FILL' 1,
+    'wght' 400,
+    'GRAD' 0,
+    'opsz' 20;
   font-size: 20px;
 }
+
 .material-symbols-outlined.empty {
-    font-variation-settings:
+  font-variation-settings:
     'FILL' 0,
     'wght' 400,
     'GRAD' 0,
     'opsz' 20;
-  }
+}
 
 .rotate_animation {
   animation: rotate_image 1.5s linear infinite;
@@ -102,19 +129,26 @@ input::placeholder, textarea::placeholder {
   animation: rotate_image 1.5s linear infinite;
   transform-origin: 50% 50%;
 }
+
 @keyframes rotate_image {
   100% {
-      transform: rotate(360deg);
+    transform: rotate(360deg);
   }
 }
 
-input:focus {outline: none;}
-select:focus {outline: none;}
+input:focus {
+  outline: none;
+}
+
+select:focus {
+  outline: none;
+}
 
 /* select */
 .customSelect {
   position: relative;
 }
+
 .customSelect select {
   width: 100%;
   border: 0;
@@ -122,6 +156,7 @@ select:focus {outline: none;}
   appearance: none;
   cursor: pointer;
 }
+
 .customSelect .selectArrowDown {
   position: absolute;
   right: 13px;
@@ -135,11 +170,13 @@ select:focus {outline: none;}
 
 /* checkBox */
 .customCheckBox {
-  margin-bottom: 0;  
+  margin-bottom: 0;
 }
+
 .customCheckBox input {
   display: none;
 }
+
 .customCheckBox label {
   position: relative;
   display: flex;
@@ -150,9 +187,10 @@ select:focus {outline: none;}
   font-weight: 400;
   margin-bottom: 0;
 }
+
 .customCheckBox label::before {
   display: inline-block;
-  content:"";
+  content: "";
   width: 16px;
   height: 16px;
   margin-right: 8px;
@@ -160,34 +198,41 @@ select:focus {outline: none;}
   background-color: #eee;
   border-radius: 4px;
 }
+
 .customCheckBox label .check {
   position: absolute;
   left: -2px;
-  top:  -2px;
+  top: -2px;
   width: 20px;
   height: 20px;
   color: #fff;
   opacity: 0;
   cursor: pointer;
 }
-.customCheckBox input:checked+label::before{
+
+.customCheckBox input:checked+label::before {
   background-color: #5f5f5f;
-} 
-.customCheckBox input:checked+label .check{
+}
+
+.customCheckBox input:checked+label .check {
   opacity: 1;
-} 
+}
+
 .customCheckBox span {
   user-select: none;
 }
+
 form .error {
   margin-top: 20px;
   color: #F04E4E;
   font-size: 16px;
   font-weight: 400;
 }
+
 form .error svg {
   margin-right: 4px;
 }
+
 form .error span {
   vertical-align: middle;
 }
@@ -212,30 +257,36 @@ form .error span {
   align-items: center;
   opacity: 1;
 }
+
 .toggleWrap.locked {
   opacity: 0.4;
 }
+
 .toggleWrap.active .toggleBg {
   background-color: #293FE6;
 }
+
 .toggleWrap.active .toggleBg .toggleBtn {
   transform: translate(31px, -50%);
   transition: all 1s;
 }
+
 .toggleWrap span {
   margin-right: 20px;
   color: rgba(0, 0, 0, 0.40);
   font-size: 16px;
   font-weight: 500;
 }
+
 .toggleWrap .toggleBg {
   position: relative;
   width: 63px;
   height: 32px;
   border-radius: 16px;
-  background-color: rgba(0,0,0,0.25);
+  background-color: rgba(0, 0, 0, 0.25);
   transition: all 1s;
 }
+
 .toggleWrap .toggleBg .toggleBtn {
   position: absolute;
   width: 26px;
@@ -249,22 +300,26 @@ form .error span {
   transition: all 1s;
   cursor: pointer;
 }
+
 .toggleWrap .toggleBg.nonClickable .toggleBtn {
-    cursor: default;
+  cursor: default;
 }
 
 .hoverWrap {
   position: relative;
 }
-.hoverWrap > *:nth-child(2) {
+
+.hoverWrap>*:nth-child(2) {
   /* text bubble initial style */
   position: absolute;
   display: none;
 }
-.hoverWrap > *:first-child:hover + * {
+
+.hoverWrap>*:first-child:hover+* {
   /* text bubble hover style */
   display: block;
 }
+
 .hoverPreview {
   /* height: 44px; */
   background-color: #fafafa;
@@ -282,6 +337,7 @@ form .error span {
   right: var(--pos-r);
   align-items: center;
 }
+
 .hoverPreview::after {
   position: absolute;
   content: '';

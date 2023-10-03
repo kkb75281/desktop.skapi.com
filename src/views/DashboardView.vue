@@ -37,7 +37,7 @@ main
                                 .cont 
                                     span CORS
                                     h5 {{ service.cors }}
-                            
+
                             .serviceActive(v-if='service?.pending')
                                 // 왜 인지 모르겠으나 조건 class가 에니메이션을 영향줌 (생성될때 active가 켜졌다->꺼졌다->서비스 생성 완료되면 다시 켜짐)
                                 .material-symbols-outlined.big power_settings_new
@@ -52,11 +52,20 @@ main
 <script setup>
 import { services, serviceFetching } from '@/data.js';
 import { nextTick, ref } from 'vue';
-import { skapi, account } from '@/main.js'
+import { skapi, account } from '@/main.js';
 
+// update services
+if (serviceFetching.value) {
+    serviceFetching.value.then(() => {
+        services.value = skapi.serviceMap.map(sid => skapi.services[sid]).reverse();
+    })
+}
+else {
+    services.value = skapi.serviceMap.map(sid => skapi.services[sid]).reverse();
+}
 let create = ref(false);
 let createService = () => {
-    if(account.value.email_verified) {
+    if (account.value.email_verified) {
         create.value = true;
         nextTick(() => {
             document.getElementById('serviceName').focus();
@@ -112,6 +121,7 @@ main {
             color: rgba(0, 0, 0, 0.40);
         }
     }
+
     .container {
         width: calc(100% + 80px);
         min-height: calc(100vh - 208px);
@@ -121,7 +131,7 @@ main {
         box-shadow: 8px 12px 36px rgba(0, 0, 0, 0.10);
         border-radius: 8px;
     }
-    
+
     .wrapper {
         width: 1200px;
         margin: 0 auto;
@@ -147,7 +157,7 @@ main {
                 &:nth-child(3n+3) {
                     margin-right: 0;
                 }
-                
+
                 &.btn {
                     background: rgba(41, 63, 230, 0.05);
                     display: flex;
@@ -361,6 +371,7 @@ main {
         .title {
             width: 100%;
         }
+
         .container {
             .wrapper {
                 width: 100%;

@@ -121,11 +121,11 @@ template(v-if='currentService')
             .titleWrap
                 .title 
                     .material-symbols-outlined.big language
-                    h2 Subdomain
+                    h2 Hosting
             .listWrap.noWrap
                 .list
                     span Registered Subdomain
-                    h5 {{ currentService.subdomain ? currentService.subdomain + ".skapi.com" : 'No subdomain' }}
+                    h5 {{ currentSubdomain }}
                 .list
                     span Host storage used
                     h5 {{ convertToMb(storageInfo?.[currentService.service]?.host) }}
@@ -139,7 +139,7 @@ template(v-if='currentService')
 </template>
 
 <script setup>
-import { nextTick, ref, watch } from 'vue';
+import { computed, nextTick, ref, watch } from 'vue';
 import { useRouter } from 'vue-router';
 import { currentService, storageInfo } from '@/data.js';
 import { skapi, account } from '@/main.js';
@@ -167,6 +167,18 @@ let enableDisablePromise = ref(false);
 let promiseRunningCors = ref(false);
 let promiseRunningSecKey = ref(false);
 
+let currentSubdomain = computed(() => {
+    if (currentService.value.subdomain) {
+        if (currentService.value.subdomain[0] === '*' || currentService.value.subdomain[0] === '+') {
+            // subdomain will start with * or + when in pending state or removal state
+            return currentService.value.subdomain.slice(1) + '.skapi.com';
+        }
+        return currentService.value.subdomain + '.skapi.com';
+    }
+    else {
+        return 'No subdomain';
+    }
+});
 // let clicked = (e) => {
 //     let target = e.currentTarget;
 
@@ -226,7 +238,7 @@ let copy = (e) => {
 let changeServiceName = () => {
     if (currentService.value.name !== inputServiceName) {
         let previous = currentService.value.name;
-        
+
         promiseRunning.value = true;
 
         skapi.updateService(currentService.value.service, {
@@ -521,10 +533,11 @@ watch(modifyCors, () => {
             font-size: 16px;
             font-weight: 500;
             margin-top: 20px;
-            
+
             &.help {
                 color: rgba(0, 0, 0, 0.40);
             }
+
             span {
                 margin-left: 5px;
             }
@@ -630,6 +643,7 @@ watch(modifyCors, () => {
             width: 52%;
             margin-right: 3%;
         }
+
         .buttonWrap {
             width: 45%;
         }
@@ -649,7 +663,7 @@ watch(modifyCors, () => {
     }
 
     .buttonWrap {
-        width: max(153px ,32%);
+        width: max(153px, 32%);
         display: flex;
         align-items: center;
         flex-wrap: nowrap;

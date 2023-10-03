@@ -1,46 +1,62 @@
 <template lang="pug">
 .containerWrap
     .container
-        h2 Subdomain
+        // main title
+        h2 {{ subdomainState || (computedSubdomain ? computedSubdomain + '.skapi.com' : 'Subdomain') }}
+
+        // head panel when there is subdomain
         template(v-if="currentService.subdomain")
             .buttonWrap 
-                .refresh.clickable(:class="{'nonClickable' : !account.email_verified}")
+                .refresh.clickable(:class="{'nonClickable' : !account.email_verified || subdomainState}")
                     .material-symbols-outlined.mid cached
                     span Refrech CDN
-                .delete.clickable(:class="{'nonClickable' : !account.email_verified}")
+                .delete.clickable(:class="{'nonClickable' : !account.email_verified || subdomainState}" @click='showDeleteSubdomain = true;')
                     .material-symbols-outlined.mid delete
                     span Delete
             .settingWrap 
                 .setting
                     h5.tit Subdomain
-                    template(v-if="modifySudomain")
-                        form.modifyForm(style="margin-top: 8px")
+                    template(v-if="modifySudomain && !subdomainState")
+                        form.modifyForm(style="margin-top: 8px" @submit.prevent='registerSubdomain')
                             .input
-                                input#modifySudomain(type="text" :placeholder="`${currentService.subdomain}`" :value='inputSubdomain' @input="(e) => inputSubdomain = e.target.value")
+                                input#modifySudomain(:disabled="subdomainState || subdomainPromiseRunning ? true : null" type="text" placeholder="Name of Subdomain" required minlength='5' pattern='[a-z0-9]+' title='Subdomain should be lowercase alphanumeric.' :value='inputSubdomain' @input="(e) => {e.target.setCustomValidity(''); inputSubdomain = e.target.value}")
                             .btnWrap
-                                button.cancel(type="button" @click="modifySudomain = false;") Cancel
-                                button.save(type="submit") Save
+                                template(v-if="subdomainPromiseRunning")
+                                    img.loading(src="@/assets/img/loading.png")
+                                template(v-else)
+                                    button.cancel(type="button" @click="modifySudomain = false;") Cancel
+                                    button.save(type="submit" :disabled="subdomainState ? true : null") Save
                     template(v-else)
-                        .cont
-                            h5 subdomain name here
-                            .material-symbols-outlined.mid.btn.clickable(:class="{'nonClickable' : !account.email_verified}" @click="!account.email_verified ? false : modifySudomain = true;") edit
+                        .cont(@click="modifySudomain = true")
+                            h5 {{ computedSubdomain }}
+                            .material-symbols-outlined.mid.btn.clickable(:class="{'nonClickable' : !account.email_verified || subdomainState}") edit
                 .setting
-                    h5.tit 404 file
+                    h5.tit HTML file for 404 page
                     .cont 
-                        .customFile(:class="{'nonClickable' : !account.email_verified}")
-                            input#fileName(value="Upload a file")
-                            label.uploadBtn.btn(for="file404")
-                                .material-symbols-outlined.mid upload
-                                span Upload
-                            input#file404(hidden type="file" @change="showFileName")
+                        .customFile(:class="{'nonClickable' : !account.email_verified || subdomainState}")
+                            p#fileName Upload a file
+                            template(v-if="set404PromiseRunning")
+                                img.loading(style='position: absolute;right: 1em;top: 8px;' src="@/assets/img/loading.png")
+                            template(v-else)
+                                label.uploadBtn.btn(for="file404")
+                                    .material-symbols-outlined.mid upload
+                                    span Upload
+                                input#file404(hidden type="file" @change="set404" accept='text/html')
+
+        // head panel when there is NO subdomain
         template(v-else)
             .create 
                 h3.tit Register Subdomain
-                form.createForm
-                    .input 
-                        input(type="text" placeholder="Name of Subdomain")
-                    .btn(:class="{'nonClickable' : !account.email_verified}")
-                        button(type="submit") Create
+                form.createForm(@submit.prevent='registerSubdomain')
+                    .input
+                        input#modifySudomain(@input='e=>e.target.setCustomValidity("")' :disabled="subdomainPromiseRunning || null" type="text" placeholder="Name of Subdomain" required minlength='5' pattern='[a-z0-9]+' title='Subdomain should be lowercase alphanumeric.')
+                    .btn(:class="{'nonClickable': !account.email_verified}" style='cursor:pointer')
+                        template(v-if="subdomainPromiseRunning")
+                            img.loading(src="@/assets/img/loading.png")
+                        template(v-else)
+                            button(type="submit") Create
+
+    // file part
     .container(v-if="currentService.subdomain")
         .filesHeader
             .filesPathWrap
@@ -63,8 +79,8 @@
                         span Upload
                     input#files(hidden type="file" @change="showFileList")
         .filesWrapper(
-                @dragover="onDragover"
-                @drop="onDrop"
+            @dragover="onDragover"
+            @drop="onDrop"
             )
             template(v-if="fileList.length == 0")
                 //- .noFile
@@ -92,20 +108,24 @@
                         .pathWrapper
                             .path {{ file.name }}
 UploadFileList(v-if="fileList.length && showUploadFileList" :fileList = "fileList" @close="showUploadFileList = false;")
-DeleteFileOverlay(v-if="showDeleteFile" :checkedFiles="checkedFiles" @close="showDeleteFile = false;")
+DeleteFileOverlay(v-if="showDeleteFile" @close="showDeleteFile = false;" title='Delete Files')
+    | Are you sure want to delete the files?
+    br
+DeleteFileOverlay(v-if="showDeleteSubdomain" :callback='removeSubdomain' title='Delete Subdomain' @close="showDeleteSubdomain = false;")
+    | Are you sure want to delete your subdomain? All your hosted files will be lost.
+    br
 </template>
 
 <script setup>
-import { inject, ref } from 'vue';
+import { computed, inject, nextTick, ref, watch } from 'vue';
 import { useRoute } from 'vue-router';
 import { skapi, account, bodyClick } from '@/main.js';
-import { services } from '@/data.js';
+import { currentService } from '@/data.js';
 import UploadFileList from '@/views/Service/subdomain/UploadFileList.vue';
 import DeleteFileOverlay from '@/views/Service/subdomain/DeleteFileOverlay.vue';
 
 let route = useRoute();
 let currnetPath = route.path.split('/')[2];
-let currentService = services.value.find(service => service.service === currnetPath);
 let showUploadFileList = ref(false);
 let modifySudomain = ref(false);
 let showEdit = ref(false);
@@ -114,9 +134,112 @@ let inputSubdomain = ref('');
 let errorFile = ref('');
 let fileList = ref([]);
 let checkedFiles = ref([]);
-let showFileName = (e) => {
-    let file = e.target.value.split('\\')[2];
-    fileName.value = file;
+let showDeleteSubdomain = ref(false);
+let subdomainState = ref('');
+
+let computedSubdomain = ref('...')
+let subdomainPromiseRunning = ref(false);
+watch(modifySudomain, (newValue) => {
+    if (newValue) {
+        nextTick(() => {
+            document.getElementById('modifySudomain').focus();
+        })
+    }
+})
+let subdomainCallback = e => {
+    console.log({ e });
+    if (!e) {
+        return;
+    }
+    currentService.value = e;
+    if (currentService.value.subdomain?.[0] === '+') {
+        inputSubdomain.value = currentService.value.subdomain.slice(1);
+        console.log(' ...Pending')
+        subdomainState.value = ' ...Pending';
+    }
+    else if (currentService.value.subdomain?.[0] === '*') {
+        inputSubdomain.value = currentService.value.subdomain.slice(1);
+        console.log(' ...Removing')
+        subdomainState.value = ' ...Removing';
+    }
+    else {
+        inputSubdomain.value = currentService.value.subdomain || '';
+        subdomainState.value = ''; // idle
+    }
+    computedSubdomain.value = inputSubdomain.value;
+    modifySudomain.value = false;
+}
+
+if (currentService.value.subdomain?.[0] === '+' || currentService.value.subdomain?.[0] === '*') {
+    skapi.updateSubdomain(currentService.service, subdomainCallback);
+}
+else {
+    computedSubdomain.value = currentService.value.subdomain || '';
+    inputSubdomain.value = currentService.value.subdomain || '';
+    subdomainState.value = ''; // idle
+}
+
+let removeSubdomain = e => {
+    return skapi.registerSubdomain(currentService.value.service, {
+        subdomain: '',
+        cb: subdomainCallback
+    }).then(s => { console.log({ ccc: s }); subdomainCallback(s); }).catch(err => {
+        console.log({ err });
+        alert(err.message);
+        throw err;
+    })
+}
+let registerSubdomain = e => {
+    subdomainPromiseRunning.value = true;
+    skapi.registerSubdomain(currentService.value.service, {
+        subdomain: document.getElementById('modifySudomain').value,
+        cb: subdomainCallback
+    })
+        .then(s => {
+            subdomainPromiseRunning.value = false; // don't touch this
+            subdomainCallback(s);
+            modifySudomain.value = false;
+        })
+        .catch(err => {
+            subdomainPromiseRunning.value = false; // this is needed BEFORE customvalidity. or else page refresh will make the validity message go away.
+            nextTick(() => {
+                let ms = document.getElementById('modifySudomain');
+
+                ms.focus();
+                ms.setCustomValidity('The subdomain has already been taken');
+                ms.reportValidity();
+            });
+        });
+}
+
+let set404PromiseRunning = ref(false);
+let set404 = (e) => {
+    set404PromiseRunning.value = true;
+    console.log(e.target.value);
+    console.log(e.target.files);
+    let formdata = new FormData();
+    formdata.append('file', e.target.files[0], e.target.files[0].name);
+
+    skapi.uploadHostFiles(formdata, {
+        serviceId: currentService.value.service,
+        progress: (e) => {
+            console.log(e);
+        }
+    }).then(async () => {
+        let fn = e.target.value.split('\\').slice(-1)[0];
+        try {
+            await skapi.set404({ serviceId: currentService.value.service, path: fn });
+            fileName.textContent = fn;
+        } catch (err) {
+            console.log({ err });
+            alert(err.message);
+        }
+    }).catch(err => {
+        console.log({ err });
+        alert(err.message);
+    }).finally(() => {
+        set404PromiseRunning.value = false;
+    })
 }
 let showFileList = (e) => {
     let files = e.target.files;
@@ -149,7 +272,7 @@ let showFileList = (e) => {
     }
 }
 let onDragover = (event) => {
-    event.preventDefault()  
+    event.preventDefault()
 }
 let onDrop = (event) => {
     event.preventDefault()
@@ -158,7 +281,7 @@ let onDrop = (event) => {
     console.log(files)
     addFiles(files)
 }
-let addFiles = async(files) => {
+let addFiles = async (files) => {
     for (let i = 0; i < files.length; i++) {
         let file = files[i];
 
@@ -199,6 +322,7 @@ bodyClick.recordPage = () => {
     position: relative;
     display: flex;
     flex-wrap: wrap;
+
     .container {
         position: relative;
         width: 100%;
@@ -213,6 +337,7 @@ bodyClick.recordPage = () => {
             font-weight: 700;
             margin-bottom: 40px;
         }
+
         .buttonWrap {
             position: absolute;
             right: 40px;
@@ -232,13 +357,16 @@ bodyClick.recordPage = () => {
                     margin-left: 12px;
                 }
             }
+
             .refresh {
                 color: #293FE6;
             }
+
             .delete {
                 margin-left: 40px;
             }
         }
+
         .uploadBtn {
             display: flex;
             flex-wrap: nowrap;
@@ -258,18 +386,22 @@ bodyClick.recordPage = () => {
                 color: #293FE6;
             }
         }
+
         .settingWrap {
             display: flex;
             flex-wrap: nowrap;
             align-items: center;
             justify-content: space-between;
+
             .setting {
                 width: 47%;
+
                 .tit {
                     color: rgba(0, 0, 0, 0.40);
                     font-size: 16px;
                     font-weight: 500;
                 }
+
                 .cont {
                     position: relative;
                     width: 100%;
@@ -286,23 +418,28 @@ bodyClick.recordPage = () => {
                         background: rgba(0, 0, 0, 0.10);
                         box-shadow: 0px 1px 3px 0px rgba(0, 0, 0, 0.06);
                     }
+
                     h5 {
                         font-size: 16px;
                         font-weight: 700;
-                        color: rgba(0,0,0,0.6);
+                        color: rgba(0, 0, 0, 0.6);
+
                         &:hover {
-                            color: rgba(0,0,0,0.8);
+                            color: rgba(0, 0, 0, 0.8);
                             cursor: default;
                         }
                     }
+
                     .customFile {
                         #fileName {
                             border: 0;
                             background-color: unset;
                             font-size: 16px;
-                            color: rgba(0,0,0,0.4);
+                            // color: rgba(0, 0, 0, 0.4);
+                            color: rgba(0, 0, 0, 0.6);
                         }
                     }
+
                     .btn {
                         position: absolute;
                         right: 0;
@@ -311,15 +448,17 @@ bodyClick.recordPage = () => {
                         cursor: pointer;
                     }
                 }
+
                 .modifyForm {
                     display: flex;
                     flex-wrap: nowrap;
                     justify-content: space-between;
                     height: 44px;
-                    
+
                     .input {
                         width: 65%;
                         position: relative;
+
                         &::before {
                             position: absolute;
                             content: '';
@@ -327,8 +466,10 @@ bodyClick.recordPage = () => {
                             height: 100%;
                             border-radius: 8px;
                             background: rgba(0, 0, 0, 0.05);
-                            z-index: -1;
+                            // z-index: -1;
+                            pointer-events: none;
                         }
+
                         &::after {
                             position: absolute;
                             content: '.skapi.com';
@@ -338,6 +479,7 @@ bodyClick.recordPage = () => {
                             font-size: 16px;
                             font-weight: 400;
                         }
+
                         input {
                             border: 0;
                             width: calc(100% - 87px);
@@ -348,13 +490,14 @@ bodyClick.recordPage = () => {
                             font-weight: 400;
                         }
                     }
+
                     .btnWrap {
                         width: 35%;
                         display: flex;
                         flex-wrap: nowrap;
                         align-items: center;
                         justify-content: end;
-                        
+
                         button {
                             border: 2px solid #293FE6;
                             border-radius: 8px;
@@ -362,11 +505,13 @@ bodyClick.recordPage = () => {
                             font-size: 16px;
                             font-weight: 700;
                             cursor: pointer;
+
                             &.cancel {
                                 background-color: unset;
                                 color: #293FE6;
                                 margin-right: 12px;
                             }
+
                             &.save {
                                 background-color: #293FE6;
                                 color: #fff;
@@ -376,37 +521,45 @@ bodyClick.recordPage = () => {
                 }
             }
         }
+
         .filesHeader {
             display: flex;
             flex-wrap: nowrap;
             align-items: center;
             justify-content: space-between;
             margin-bottom: 28px;
+
             .filesPathWrap {
                 display: flex;
                 flex-wrap: nowrap;
                 align-items: center;
                 color: rgba(0, 0, 0, 0.60);
+
                 span {
                     font-size: 20px;
                     font-weight: 500;
                     margin-left: 13px;
                 }
             }
+
             .filesButtonWrap {
                 display: flex;
                 flex-wrap: nowrap;
                 align-items: center;
+
                 .mid {
                     &:nth-child(2) {
                         margin: 0 25px;
                     }
+
                     &.refresh {
                         color: #293FE6;
                     }
                 }
+
                 .editMenuWrap {
                     position: relative;
+
                     .nest {
                         position: absolute;
                         right: 20px;
@@ -418,21 +571,23 @@ bodyClick.recordPage = () => {
                         padding: 20px;
                         width: 155px;
                         z-index: 2;
-                        
+
                         .editMenu {
                             display: flex;
                             flex-wrap: nowrap;
                             align-items: center;
                             cursor: pointer;
-        
+
                             &:first-child {
                                 margin-bottom: 20px;
                             }
+
                             &:hover {
                                 span {
                                     font-weight: 700;
                                 }
                             }
+
                             span {
                                 margin-left: 10px;
                                 font-size: 16px;
@@ -443,6 +598,7 @@ bodyClick.recordPage = () => {
                 }
             }
         }
+
         .filesWrapper {
             position: relative;
             width: 100%;
@@ -460,19 +616,23 @@ bodyClick.recordPage = () => {
                 transform: translate(-50%, -50%);
                 color: rgba(0, 0, 0, 0.40);
                 text-align: center;
+
                 h2 {
                     font-size: 28px;
                     font-weight: 700;
                     margin-bottom: 28px;
                 }
+
                 p {
                     font-size: 20px;
                     font-weight: 500;
                 }
             }
+
             .fileWrapper {
                 height: 100%;
                 overflow: auto;
+
                 .file {
                     width: 100%;
                     height: 40px;
@@ -481,29 +641,34 @@ bodyClick.recordPage = () => {
                     display: flex;
                     flex-wrap: nowrap;
                     align-items: center;
-                    color: rgba(0,0,0,0.6);
+                    color: rgba(0, 0, 0, 0.6);
+
                     &:nth-child(2n+1) {
                         background: rgba(0, 0, 0, 0.05);
                     }
+
                     .type {
                         margin-left: 10px;
                         margin-right: 20px;
                     }
+
                     .pathWrapper {
                         font-size: 14px;
                         font-weight: 500;
                     }
                 }
             }
+
             .dragNdropUpload {
                 width: 100%;
                 height: 100%;
-                background-color: rgba(250,250,250,0.6);
+                background-color: rgba(250, 250, 250, 0.6);
                 text-align: center;
-                color: rgba(0,0,0,0.4);
+                color: rgba(0, 0, 0, 0.4);
                 display: flex;
                 align-items: center;
                 justify-content: center;
+
                 p {
                     font-size: 20px;
                     font-weight: 500;
@@ -511,6 +676,7 @@ bodyClick.recordPage = () => {
                 }
             }
         }
+
         .uploadListWrapper {
             position: absolute;
             width: 500px;
@@ -518,7 +684,8 @@ bodyClick.recordPage = () => {
             right: 0;
             bottom: 0;
             background-color: #fafafa;
-            border: 1px solid rgba(0,0,0,0.15);
+            border: 1px solid rgba(0, 0, 0, 0.15);
+
             .header {
                 width: 100%;
                 height: 60px;
@@ -528,31 +695,37 @@ bodyClick.recordPage = () => {
                 font-size: 20px;
                 font-weight: 500;
             }
+
             .progressBar {
                 width: 100%;
                 height: 8px;
                 background: rgba(41, 63, 230, 0.20);
             }
+
             .content {
                 width: 100%;
                 height: 320px;
                 padding: 16px 28px;
                 overflow: hidden;
+
                 .listWrap {
                     height: 100%;
                     overflow-y: auto;
                 }
+
                 .list {
                     height: 56px;
                     display: flex;
                     flex-wrap: nowrap;
                     align-items: center;
                     justify-content: space-between;
+
                     .file {
                         display: flex;
                         flex-wrap: nowrap;
                         align-items: center;
-                        color: rgba(0,0,0,0.6);
+                        color: rgba(0, 0, 0, 0.6);
+
                         .pathWrapper {
                             margin-left: 12px;
                         }
@@ -560,6 +733,7 @@ bodyClick.recordPage = () => {
                 }
             }
         }
+
         .create {
             position: relative;
             width: 100%;
@@ -575,11 +749,12 @@ bodyClick.recordPage = () => {
                 font-weight: 700;
                 margin-bottom: 12px;
             }
+
             .createForm {
                 height: 44px;
                 display: flex;
                 align-items: center;
-                
+
                 .input {
                     position: relative;
                     width: 600px;
@@ -592,8 +767,10 @@ bodyClick.recordPage = () => {
                         height: 100%;
                         border-radius: 8px;
                         background: rgba(0, 0, 0, 0.05);
-                        z-index: -1;
+                        pointer-events: none;
+                        // z-index: -1; <-- this is not good. to prevent mouse event, use pointer-events: none;
                     }
+
                     &::after {
                         position: absolute;
                         content: '.skapi.com';
@@ -603,6 +780,7 @@ bodyClick.recordPage = () => {
                         font-size: 16px;
                         font-weight: 400;
                     }
+
                     input {
                         border: 0;
                         width: calc(100% - 85px);
@@ -613,6 +791,7 @@ bodyClick.recordPage = () => {
                         font-weight: 400;
                     }
                 }
+
                 .btn {
                     button {
                         border: 0;
@@ -640,10 +819,11 @@ bodyClick.recordPage = () => {
                         .input {
                             width: calc(100% - 160px);
                         }
+
                         .btnWrap {
                             width: 42%;
                         }
-                    }   
+                    }
                 }
             }
         }

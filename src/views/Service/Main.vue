@@ -124,7 +124,9 @@ let logout = async () => {
 }
 
 let getCurrentService = () => {
-    currentService.value = services.value.find(service => service.service === route.path.split('/')[2]);
+    let srvcId = route.path.split('/')[2];
+    currentService.value = skapi.services[srvcId];
+    // currentService.value = services.value.find(service => service.service === route.path.split('/')[2]);
     if (currentService.value) {
         if (storageInfo.value[currentService.value.service]) {
             return;
@@ -160,6 +162,7 @@ else {
     &.caution {
         padding-top: 52px;
     }
+
     .logo {
         height: 60px;
         display: flex;
@@ -570,6 +573,7 @@ else {
         }
     }
 }
+
 @media (max-width: 1065px) {
     .navCont {
         .navTop {
