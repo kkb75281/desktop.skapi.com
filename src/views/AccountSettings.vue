@@ -222,7 +222,8 @@ main {
         background-color: #fafafa;
         box-shadow: 8px 12px 36px rgba(0, 0, 0, 0.10);
         border-radius: 8px 8px 0 0;
-        z-index: -1;
+        // z-index: -1; <- is this for mouse event?
+        pointer-events: none;
     }
 
     .container {

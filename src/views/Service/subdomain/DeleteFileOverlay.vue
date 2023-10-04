@@ -1,9 +1,9 @@
 <template lang="pug">
 #deleteFile(@click="emits('close')")
     .wrap(@click.stop)
-        .title Delete File
+        .title {{ props.title }}
         p 
-            | You sure want to delete the file?
+            slot
             br
             | This process cannot be undone.
         .buttonWrap 
@@ -11,19 +11,28 @@
                 img.loading(src="@/assets/img/loading.png")
             template(v-else)
                 button.cancel(@click="emits('close')") Cancel
-                button.disable(@click="deleteFiles") Delete
+                button.disable(@click="runCallback") Delete
 </template>
 
 <script setup>
-import { skapi } from '@/main.js';
-import { currentService } from '@/data.js';
+// import { skapi } from '@/main.js';
+// import { currentService } from '@/data.js';
 import { ref } from 'vue';
-let emits = defineEmits(['close']);
-let props = defineProps(['checkedFiles']);
 
+let emits = defineEmits(['close']);
+let props = defineProps(['callback', 'title']);
+let promiseRunning = ref(false);
 let deleteFiles = () => {
     console.log(props.checkedFiles);
     emits('close');
+}
+let runCallback = () => {
+    promiseRunning.value = true;
+    props.callback().then(() => {
+        emits('close');
+    }).finally(() => {
+        promiseRunning.value = false;
+    })
 }
 </script>
 
