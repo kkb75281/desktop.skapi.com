@@ -38,9 +38,9 @@ template(v-if='currentService')
                                         span(style="color:#ff3399") = 
                                         span(style="color:#ff3399") new 
                                         span Skapi(‘
-                                        span(style="color:#ffd500") ap22fAA39RwOW0KU6PUH
+                                        span(style="color:#ffd500") {{ currentService.service }}
                                         span ', ' 
-                                        span(style="color:#ffd500") 3dd7a40d-c0be-4489-bf11-e42d0e3458dc
+                                        span(style="color:#ffd500") {{ currentService.owner }}
                                         span ');
                 .copy.clickable(@click="copy")
                     .material-symbols-outlined.mid file_copy
@@ -58,9 +58,9 @@ template(v-if='currentService')
                     span(:class="{ active: modifyCors }") Cors
                     template(v-if="modifyCors")
                         form.modifyForm(style="margin-top: 8px" @submit.prevent="changeCors")
-                            input#modifyCors(type="text" placeholder='https://your.domain.com' :value='inputCors' @input="(e) => {e.target.setCustomValidity(''); inputCors = e.target.value;}")
+                            input#modifyCors(:disabled="promiseRunningCors || null" type="text" placeholder='https://your.domain.com' :value='inputCors' @input="(e) => {e.target.setCustomValidity(''); inputCors = e.target.value;}")
                             .buttonWrap 
-                                template(v-if="promiseRunning")
+                                template(v-if="promiseRunningCors")
                                     img.loading(src="@/assets/img/loading.png")
                                 template(v-else)
                                     button.cancel(type="button" @click="modifyCors = false;") Cancel
@@ -73,9 +73,9 @@ template(v-if='currentService')
                     span(:class="{ active: modifyKey }") Secret Key
                     template(v-if="modifyKey")
                         form.modifyForm(style="margin-top: 8px" @submit.prevent="setSecretKey")
-                            input#modifyKey(type="text" placeholder="Secret key for external request" :value='inputKey' @input="(e) => inputKey = e.target.value")
+                            input#modifyKey(:disabled="promiseRunningSecKey || null" type="text" placeholder="Secret key for external request" :value='inputKey' @input="(e) => inputKey = e.target.value")
                             .buttonWrap 
-                                template(v-if="promiseRunning")
+                                template(v-if="promiseRunningSecKey")
                                     img.loading(src="@/assets/img/loading.png")
                                 template(v-else)
                                     button.cancel(type="button" @click="modifyKey = false;") Cancel
@@ -96,8 +96,8 @@ template(v-if='currentService')
         router-link.info.hover.record.clicked(:to='`/dashboard/${currentService.service}/records`')
             .titleWrap
                 .title 
-                    .material-symbols-outlined.big folder_open
-                    h2 Records
+                    .material-symbols-outlined.big database
+                    h2 Database
             .listWrap.noWrap
                 .list
                     span # of database storage Used
@@ -121,11 +121,11 @@ template(v-if='currentService')
             .titleWrap
                 .title 
                     .material-symbols-outlined.big language
-                    h2 Subdomain
+                    h2 Hosting
             .listWrap.noWrap
                 .list
                     span Registered Subdomain
-                    h5 {{ currentService.subdomain ? currentService.subdomain + ".skapi.com" : 'No subdomain' }}
+                    h5 {{ currentSubdomain }}
                 .list
                     span Host storage used
                     h5 {{ convertToMb(storageInfo?.[currentService.service]?.host) }}
@@ -139,7 +139,7 @@ template(v-if='currentService')
 </template>
 
 <script setup>
-import { nextTick, ref, watch } from 'vue';
+import { computed, nextTick, ref, watch } from 'vue';
 import { useRouter } from 'vue-router';
 import { currentService, storageInfo } from '@/data.js';
 import { skapi, account } from '@/main.js';
@@ -164,8 +164,21 @@ let inputServiceName = '';
 let inputCors = ref('');
 let inputKey = '';
 let enableDisablePromise = ref(false);
-let promiseRunning = ref(false);
+let promiseRunningCors = ref(false);
+let promiseRunningSecKey = ref(false);
 
+let currentSubdomain = computed(() => {
+    if (currentService.value.subdomain) {
+        if (currentService.value.subdomain[0] === '*' || currentService.value.subdomain[0] === '+') {
+            // subdomain will start with * or + when in pending state or removal state
+            return currentService.value.subdomain.slice(1) + '.skapi.com';
+        }
+        return currentService.value.subdomain + '.skapi.com';
+    }
+    else {
+        return 'No subdomain';
+    }
+});
 // let clicked = (e) => {
 //     let target = e.currentTarget;
 
@@ -186,22 +199,22 @@ let promiseRunning = ref(false);
 //     }, 200);
 // }
 let editServiceName = () => {
-    if(account.value.email_verified) {
-        inputServiceName = currentService.value.name; 
+    if (account.value.email_verified) {
+        inputServiceName = currentService.value.name;
         modifyServiceName.value = true;
     } else {
         return false;
     }
 }
 let editCors = () => {
-    if(account.value.email_verified) {
-        inputCors = currentService.value.cors === '*' ? '' : currentService.value.cors; modifyCors.value = true;
+    if (account.value.email_verified) {
+        inputCors.value = currentService.value.cors === '*' ? '' : currentService.value.cors; modifyCors.value = true;
     } else {
         return false;
     }
 }
 let editKey = () => {
-    if(account.value.email_verified) {
+    if (account.value.email_verified) {
         inputKey = currentService.value.api_key; modifyKey.value = true;
     } else {
         return false;
@@ -225,7 +238,7 @@ let copy = (e) => {
 let changeServiceName = () => {
     if (currentService.value.name !== inputServiceName) {
         let previous = currentService.value.name;
-        
+
         promiseRunning.value = true;
 
         skapi.updateService(currentService.value.service, {
@@ -244,30 +257,38 @@ let changeServiceName = () => {
     }
 }
 let changeCors = () => {
-    let previous = currentService.value.cors;
     let corsArr = inputCors.value.split(',');
     let corsToUpdate = []
     for (let u of corsArr) {
         u = u.trim().toLowerCase();
-        if (u && skapi.validate.url(u)) {
-            corsToUpdate.push(u);
-        }
-        else {
-            document.getElementById('modifyCors').setCustomValidity('Cors origin should be a valid URL. ex) https://your.domain.com');
-            document.getElementById('modifyCors').reportValidity();
-            return;
+        if (u) {
+            if (skapi.validate.url(u)) {
+                corsToUpdate.push(u);
+            }
+            else {
+                document.getElementById('modifyCors').setCustomValidity('Cors origin should be a valid URL. (Separated with comma) ex) https://your.domain1.com, https://your.domain2.com');
+                document.getElementById('modifyCors').reportValidity();
+                return;
+            }
         }
     }
 
+    promiseRunningCors.value = true;
     corsToUpdate.sort()
     skapi.updateService(currentService.value.service, {
         cors: corsToUpdate.length ? corsToUpdate : ['*']
+    }).then(() => {
+        promiseRunningCors.value = false;
+        modifyCors.value = false;
+        currentService.value.cors = corsToUpdate.join(', ');
     }).catch(err => {
-        currentService.value.cors = previous;
-        throw err;
+        promiseRunningCors.value = false;
+        nextTick(() => {
+            document.getElementById('modifyCors').focus();
+            document.getElementById('modifyCors').setCustomValidity(err.message);
+            document.getElementById('modifyCors').reportValidity();
+        });
     });
-    currentService.value.cors = corsToUpdate.join(', ');
-    modifyCors.value = false;
 }
 let setSecretKey = () => {
     let previous = currentService.value.api_key;
@@ -352,7 +373,8 @@ watch(modifyCors, () => {
         margin-right: 2%;
         box-shadow: 8px 12px 36px rgba(0, 0, 0, 0.10);
 
-        &:first-child, &:nth-child(2) {
+        &:first-child,
+        &:nth-child(2) {
             width: 100%;
             margin-right: 0;
         }
@@ -440,7 +462,8 @@ watch(modifyCors, () => {
                 }
             }
 
-            .date, .toggleWrap {
+            .date,
+            .toggleWrap {
                 width: 25%;
                 justify-content: end;
             }
@@ -494,7 +517,7 @@ watch(modifyCors, () => {
                     transition: opacity .4s;
                     opacity: 0;
                 }
-    
+
                 &.copied::after {
                     opacity: 1;
                 }
@@ -510,10 +533,11 @@ watch(modifyCors, () => {
             font-size: 16px;
             font-weight: 500;
             margin-top: 20px;
-            
+
             &.help {
                 color: rgba(0, 0, 0, 0.40);
             }
+
             span {
                 margin-left: 5px;
             }
@@ -554,6 +578,7 @@ watch(modifyCors, () => {
                     font-weight: 700;
                     color: rgba(0, 0, 0, 0.6);
                     margin-top: 8px;
+
                     .pen {
                         position: absolute;
                         right: -50px;
@@ -618,6 +643,7 @@ watch(modifyCors, () => {
             width: 52%;
             margin-right: 3%;
         }
+
         .buttonWrap {
             width: 45%;
         }
@@ -637,7 +663,7 @@ watch(modifyCors, () => {
     }
 
     .buttonWrap {
-        width: max(153px ,32%);
+        width: max(153px, 32%);
         display: flex;
         align-items: center;
         flex-wrap: nowrap;
@@ -672,9 +698,11 @@ watch(modifyCors, () => {
                 .name {
                     width: 45%;
                 }
+
                 .date {
                     width: 30%;
                 }
+
                 .toggleWrap {
                     width: 25%;
                 }

@@ -4,7 +4,7 @@ import { skapi } from "../../../main";
 export let selectedRecord = ref(null);
 export let records_data = ref([]);
 export let indexValueType = ref('string');
-export let binToRemove = ref([]);
+export let remove_bin = [];
 
 export function specialChars(
     string,
@@ -24,22 +24,14 @@ export function specialChars(
         if (!allowPeriods && s.includes('.')) {
             return false
         }
-
-        // allowed special characters: [\]^_`
-        if (/[\[\]\\^_`]/.test(s)) {
-            return true;
-        }
         
-        if (/[`!@#$%^&*()_+\-=\[\]{};':"\\|,<>\/?~]/.test(s)) {
-            if(toAllow.length) {
-                // loop through each character in string
-                for (let i = 0; i < s.length; i++) {
-                    // check if character is allowed
-                    if (toAllow.includes(s[i])) {
-                        return true;
-                    }
-                }
+        if (toAllow.length) {
+            for (let i of toAllow) {
+                s = s.replaceAll(i, '');
             }
+        }
+
+        if (/[!@#$%&*()+\-={};':"\|,<>\/?~]/.test(s)) {
             return false;
         }
 
@@ -50,18 +42,25 @@ export function specialChars(
 }
 watch(selectedRecord, (newVal) => {
     records_data.value = [];
-    binToRemove.value = [];
+    remove_bin = [];
     indexValueType.value = typeof newVal?.index?.value === 'undefined' ? 'string' : typeof newVal?.index?.value;
 
     if (newVal) {
         if (newVal.bin) {
-            for(let b of newVal.bin) {
+            let normBin = (key, obj) => {
                 records_data.value.push({
-                    type: 'file',
-                    key: 'Binary',
-                    context: b,
-                    download: () => skapi.getFile(b, {dataType: 'download'})
+                    type: 'binary',
+                    key,
+                    context: obj.filename,
+                    endpoint: obj.url,
+                    download: () => skapi.getFile(obj.url, { dataType: 'download' })
                 })
+            }
+            for (let k in newVal.bin) {
+                let b = newVal.bin[k];
+                for (let i of b) {
+                    normBin(k, i);
+                }
             }
         }
         // address records_data
@@ -90,7 +89,7 @@ watch(selectedRecord, (newVal) => {
                                         key: d,
                                         context: i.filename,
                                         fileData: data,
-                                        download: () => skapi.getFile(i.url, {dataType: 'download'})
+                                        download: () => skapi.getFile(i.url, { dataType: 'download' })
                                     });
                                 }
                                 else {
@@ -113,7 +112,7 @@ watch(selectedRecord, (newVal) => {
                                     key: d,
                                     context: data.filename,
                                     fileData: data,
-                                    download: () => skapi.getFile(data.url, {dataType: 'download'})
+                                    download: () => skapi.getFile(data.url, { dataType: 'download' })
                                 });
                             }
                             else {

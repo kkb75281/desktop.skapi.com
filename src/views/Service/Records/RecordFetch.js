@@ -3,7 +3,6 @@ import { currentService } from '@/data.js';
 import Pager from '@/skapi-extensions/js/pager.js';
 import { ref, watch, nextTick } from 'vue';
 import { skapi } from '@/main.js';
-import { selectedRecord } from './RecordEdit';
 
 export let serviceRecords = {};
 
@@ -17,6 +16,7 @@ export let recordPage = null;
 export let currentPage = ref(1);
 export let maxPage = ref(1);
 export let fetching = ref(false);
+export let searchInfo = ref(null);
 
 watch(currentPage, (page) => {
     selectNone();
@@ -35,6 +35,8 @@ export let getPage = (p) => {
 }
 
 export let refresh = (params) => {
+    searchInfo.value = null;
+
     if (fetching.value) {
         return;
     }
@@ -81,6 +83,16 @@ export let refresh = (params) => {
         if (u.endOfList) {
             recordPage.endOfList = true;
         }
+        u.list = u.list.map((record) => {
+            if (record.bin) {
+                for (let k in record.bin) {
+                    for (let i of record.bin[k]) {
+                        delete i.getFile;
+                    }
+                }
+            }
+            return record;
+        });
         recordPage.insertItems(u.list).then(_ => {
             // to avoid watch trigger
             if (currentPage.value === 1) {
@@ -126,6 +138,16 @@ export let nextPage = (dir = true) => {
                 if (u.endOfList) {
                     recordPage.endOfList = true;
                 }
+                u.list = u.list.map((record) => {
+                    if (record.bin) {
+                        for (let k in record.bin) {
+                            for (let i of record.bin[k]) {
+                                delete i.getFile;
+                            }
+                        }
+                    }
+                    return record;
+                });
                 recordPage.insertItems(u.list).then(_ => {
                     currentPage.value++;
                     fetching.value = false;
