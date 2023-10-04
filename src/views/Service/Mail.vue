@@ -14,25 +14,33 @@
                 .copy.clickable(@click="copy")
                     .material-symbols-outlined.sml file_copy
                 span Welcome
-            .cont ap22fAA39RwOW0KU6PUH-tp75497d34939ef12f87710de0e7bc66bd@mail.skapi.com
+            .cont 
+                template(v-if="currentService") {{ currentService?.email_triggers?.template_setters?.welcome }}
+                template(v-else) loading...
         .email
             .tit 
                 .copy.clickable(@click="copy")
                     .material-symbols-outlined.sml file_copy
                 span Verification
-            .cont ap22fAA39RwOW0KU6PUH-tp75497d34939ef12f87710de0e7bc66bd@mail.skapi.com
+            .cont
+                template(v-if="currentService") {{ currentService?.email_triggers?.template_setters?.verification }}
+                template(v-else) loading...
         .email
             .tit 
                 .copy.clickable(@click="copy")
                     .material-symbols-outlined.sml file_copy
                 span Signup Confirmation
-            .cont ap22fAA39RwOW0KU6PUH-tp75497d34939ef12f87710de0e7bc66bd@mail.skapi.com
+            .cont 
+                template(v-if="currentService") {{ currentService?.email_triggers?.template_setters?.signup_confirmation }}
+                template(v-else) loading...
         .email
             .tit 
                 .copy.clickable(@click="copy")
                     .material-symbols-outlined.sml file_copy
                 span Newsletter Subscription
-            .cont ap22fAA39RwOW0KU6PUH-tp75497d34939ef12f87710de0e7bc66bd@mail.skapi.com
+            .cont 
+                template(v-if="currentService") {{ currentService?.email_triggers?.template_setters?.newsletter_subscription }}
+                template(v-else) loading...
     .container
         h2 Newsletters
         p 
@@ -47,16 +55,22 @@
                 .copy.clickable(@click="copy")
                     .material-symbols-outlined.sml file_copy
                 span Public Newsletter
-            .cont ap22fAA39RwOW0KU6PUH-tp75497d34939ef12f87710de0e7bc66bd@mail.skapi.com
+            .cont 
+                template(v-if="currentService") {{ currentService?.newsletter_triggers?.[0] }}
+                template(v-else) loading...
         .email
             .tit 
                 .copy.clickable(@click="copy")
                     .material-symbols-outlined.sml file_copy 
                 span Service User Newsletter
-            .cont ap22fAA39RwOW0KU6PUH-tp75497d34939ef12f87710de0e7bc66bd@mail.skapi.com
+            .cont 
+                template(v-if="currentService") {{ currentService?.newsletter_triggers?.[1] }}
+                template(v-else) loading...
 </template>
 
 <script setup>
+import { currentService } from '@/data.js';
+
 let copy = (e) => {
     let currentTarget = e.currentTarget;
     let doc = document.createElement('textarea');

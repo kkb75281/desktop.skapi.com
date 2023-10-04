@@ -2430,6 +2430,10 @@ watch(() => selectedRecord.value, () => {
         text-align: center;
         font-weight: 500;
         color: rgba(0, 0, 0, 0.6);
+
+        &:last-child {
+            margin-right: 0;
+        }
     }
 }
 </style>

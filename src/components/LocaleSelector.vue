@@ -38,7 +38,7 @@ const handleCountryClick = (key) => {
     cursor: pointer;
 
     .name {
-      flex: 1;
+      flex: 0.95;
       text-overflow: ellipsis;
       overflow: hidden;
       white-space: nowrap;
