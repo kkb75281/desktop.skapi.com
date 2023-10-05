@@ -304,10 +304,6 @@ let onDrop = async (event) => {
         return;
     }
 
-    let trackUpload = track => {
-        console.log({ track });
-    }
-
     let formData = new FormData();
     let items = event.dataTransfer.items;
     let filePromises = [];
@@ -330,21 +326,33 @@ let onDrop = async (event) => {
         return;
     }
     for (let f of allFiles) {
+        console.log({ f })
         fileList.value[f.path] = {
-            name: f.path.split('/').slice(-1)[0],
-            uploadPercent: 0
+            name: f.file.name,
+            path: f.path,
+            progress: 0,
+            loaded: 0,
+            size: f.file.size
         }
     }
 
     showUploadFileList.value = true;
 
-    // skapi.uploadHostFiles(formData, {
-    //     serviceId: currentService.value.service,
-    //     progress: trackUpload
-    // }).then(e => {
-    //     console.log({ com: e });
-    //     showUploadFileList.value = false;
-    // })
+    let trackUpload = track => {
+        console.log({ track });
+        if (track.status === 'upload' && track.currentFile) {
+            fileList.value[track.currentFile.name].progress = track.progress;
+            fileList.value[track.currentFile.name].loaded = track.loaded;
+        }
+    }
+
+    skapi.uploadHostFiles(formData, {
+        serviceId: currentService.value.service,
+        progress: trackUpload
+    }).then(e => {
+        console.log({ com: e });
+        showUploadFileList.value = false;
+    })
 }
 
 let addFiles = async (files) => {

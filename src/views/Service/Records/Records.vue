@@ -452,7 +452,7 @@
                 thead
                     tr
                         th
-                            .customCheckBox
+                            .customCheckBox(:class='{"nonClickable": fetching || records && !records.length}')
                                 input#allRecords(type="checkbox" value='allRecords' @click="selectAll")
                                 label(for="allRecords")
                                     .material-symbols-outlined.mid.check check

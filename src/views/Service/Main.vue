@@ -19,7 +19,7 @@ template(v-if='currentService')
                 p Mail
             router-link.menu(:to="`/dashboard/${currentService.service}/subdomain`" :class="{'active': route.name == 'subdomain'}")
                 .material-symbols-outlined.big language
-                p Subdomain
+                p Hosting
     .settingWrap
         .setting 
             .material-symbols-outlined.empty.sml.que help
