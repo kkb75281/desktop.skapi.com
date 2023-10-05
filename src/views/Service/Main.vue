@@ -19,7 +19,7 @@ template(v-if='currentService')
                 p Mail
             router-link.menu(:to="`/dashboard/${currentService.service}/subdomain`" :class="{'active': route.name == 'subdomain'}")
                 .material-symbols-outlined.big language
-                p Subdomain
+                p Hosting
     .settingWrap
         .setting 
             .material-symbols-outlined.empty.sml.que help
@@ -88,6 +88,7 @@ import { ref, watch } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 import { services, serviceFetching, currentService, storageInfo, serviceUsers } from '@/data.js';
 import { serviceRecords } from '@/views/Service/Records/RecordFetch.js';
+import { launch, serviceHost } from './subdomain/SubdomainFetch';
 import { skapi, account, bodyClick } from '@/main.js';
 import EmailCaution from '@/components/EmailCaution.vue';
 
@@ -128,13 +129,22 @@ let getCurrentService = () => {
     currentService.value = skapi.services[srvcId];
     // currentService.value = services.value.find(service => service.service === route.path.split('/')[2]);
     if (currentService.value) {
-        if (storageInfo.value[currentService.value.service]) {
-            return;
+        if (!storageInfo.value[currentService.value.service]) {
+            skapi.storageInformation(currentService.value.service).then(i => {
+                // get storage info
+                storageInfo.value[currentService.value.service] = i;
+                let sd = currentService.value.subdomain;
+                if (sd && (sd[0] !== '*' || sd[0] !== '+')) {
+                    launch(currentService.value.subdomain, f => {
+                        console.log({ f });
+                        if (f.length) {
+                            storageInfo.value[currentService.value.service].host = f[0].size;
+                        }
+                    });
+                }
+            });
         }
-        skapi.storageInformation(currentService.value.service).then(i => {
-            // get storage info
-            storageInfo.value[currentService.value.service] = i;
-        });
+
     }
     else {
         router.replace({ path: '/dashboard' });
