@@ -53,7 +53,7 @@ template(v-if='currentService')
                         li(v-if="route.name == 'mail'" :class="{'active': route.name == 'mail'}")
                             router-link(:to="`/dashboard/${currentService.service}/records`") Mail
                         li(v-if="route.name == 'subdomain'" :class="{'active': route.name == 'subdomain'}")
-                            router-link(:to="`/dashboard/${currentService.service}/records`") Subdomain
+                            router-link(:to="`/dashboard/${currentService.service}/records`") Hosting
             .menuWrap
                 ul(v-if="account")
                     li 
@@ -88,7 +88,7 @@ import { ref, watch } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 import { services, serviceFetching, currentService, storageInfo, serviceUsers } from '@/data.js';
 import { serviceRecords } from '@/views/Service/Records/RecordFetch.js';
-import { launch, serviceHost } from './subdomain/SubdomainFetch';
+import { launch, serviceHost, subdomainInfo } from './subdomain/SubdomainFetch';
 import { skapi, account, bodyClick } from '@/main.js';
 import EmailCaution from '@/components/EmailCaution.vue';
 
@@ -130,21 +130,29 @@ let getCurrentService = () => {
     // currentService.value = services.value.find(service => service.service === route.path.split('/')[2]);
     if (currentService.value) {
         if (!storageInfo.value[currentService.value.service]) {
-            skapi.storageInformation(currentService.value.service).then(i => {
-                // get storage info
-                storageInfo.value[currentService.value.service] = i;
-                let sd = currentService.value.subdomain;
-                if (sd && (sd[0] !== '*' || sd[0] !== '+')) {
-                    launch(currentService.value.subdomain, f => {
-                        console.log({ f });
-                        if (f.length) {
-                            storageInfo.value[currentService.value.service].host = f[0].size;
-                        }
-                    });
+            storageInfo.value[currentService.value.service] = {};
+        }
+        let sd = currentService.value.subdomain;
+        if (sd && (sd[0] !== '*' || sd[0] !== '+')) {
+            skapi.getSubdomainInfo(currentService.value.service, {
+                subdomain: sd,
+            }).then(s =>
+                subdomainInfo.value[sd] = s
+            );
+
+            launch(currentService.value.subdomain, f => {
+                if (f.length) {
+                    storageInfo.value[currentService.value.service].host = f[0].size;
                 }
-            });
+            }, true);
         }
 
+        skapi.storageInformation(currentService.value.service).then(i => {
+            // get storage info
+            for (let k in i) {
+                storageInfo.value[currentService.value.service][k] = i[k];
+            }
+        });
     }
     else {
         router.replace({ path: '/dashboard' });

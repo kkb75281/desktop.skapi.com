@@ -11,12 +11,22 @@ const worker = new Worker(
     { type: 'module' }
 );
 
+export let subdomainInfo = ref({});
 export let files = ref([]);
 export let dirPage = null;
 export let currentPage = ref(1);
 export let maxPage = ref(1);
 export let fetching = ref(false);
 export let searchDir = ref('');
+
+export let subdomainInit = () => {
+    files.value = [];
+    dirPage = null;
+    currentPage.value = 1;
+    maxPage.value = 1;
+    fetching.value = false;
+    searchDir.value = '';
+}
 
 watch(currentPage, (page) => {
     selectNone();
@@ -28,6 +38,7 @@ export let getPage = (p, cb) => {
     dirPage.maxPage = res.maxPage;
     files.value.push(...res.list);
     maxPage.value = res.maxPage;
+    currentPage.value = p;
     if(cb) {
         cb(files.value);
     }
@@ -77,11 +88,12 @@ export let refresh = (dir, cb) => {
     });
 }
 
-export let launch = (dir, cb) => {
-    if (!serviceHost?.[dir]) {
+export let launch = (dir, cb, ref=false) => {
+    if (!serviceHost?.[dir] || ref) {
         refresh(dir, cb);
     }
     else {
+        searchDir.value = dir;
         dirPage = serviceHost[dir];
         files.value = [];
         if (currentPage.value !== 1) {
