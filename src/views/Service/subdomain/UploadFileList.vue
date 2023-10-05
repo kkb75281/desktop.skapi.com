@@ -11,23 +11,24 @@
         .listWrap 
             .list(v-for="(file, index) in fileList") 
                 .file 
-                    .material-symbols-outlined.mid(v-if="file.type == 'folder'") folder
-                    .material-symbols-outlined.mid(v-else-if="file.type.includes('html')") html
-                    .material-symbols-outlined.mid(v-else-if="file.type.includes('css')") css
-                    .material-symbols-outlined.mid(v-else-if="file.type.includes('pdf')") picture_as_pdf
-                    .material-symbols-outlined.mid(v-else-if="file.type.includes('image')") image
-                    .material-symbols-outlined.mid(v-else-if="file.type.includes('video')") movie
-                    .material-symbols-outlined.mid(v-else="file.type == 'file'") draft
+                    .material-symbols-outlined.mid.type(v-if="file.name[0] == '#'") folder
+                    .material-symbols-outlined.mid.type(v-else-if="file.name.includes('.html')") html
+                    .material-symbols-outlined.mid.type(v-else-if="file.name.includes('.css')") css
+                    .material-symbols-outlined.mid.type(v-else-if="file.name.includes('.pdf')") picture_as_pdf
+                    .material-symbols-outlined.mid.type(v-else-if="img.includes(file.name.split('.').slice(-1)[0])") image
+                    .material-symbols-outlined.mid.type(v-else-if="vid.includes(file.name.split('.').slice(-1)[0])") movie
+                    .material-symbols-outlined.mid.type(v-else) draft
                     .pathWrapper
                         .path {{ file.name }}
                 .sucess
 </template>
 <script setup>
 import { ref } from "vue";
-
+import { img, vid } from './extensions';
 let props = defineProps(['fileList']);
 let emits = defineEmits(['close']);
 let hideList = ref(false);
+console.log({fileList: props.fileList});
 </script>
 <style lang="less">
 .uploadListWrapper {

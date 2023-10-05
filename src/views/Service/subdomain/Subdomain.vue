@@ -61,9 +61,9 @@
         .filesHeader
             .filesPathWrap
                 .material-symbols-outlined.big.clickable hard_drive
-                span /
+                span / {{ searchDir.split('/').slice(1).join('/') }}
             .filesButtonWrap
-                .material-symbols-outlined.mid.refresh.clickable cached
+                .material-symbols-outlined.mid.refresh.clickable(:class='{"rotate_animation": fetching }' @click='refresh(searchDir)') cached
                 .material-symbols-outlined.mid.clickable(:class='{"nonClickable": !checkedFiles.length || !account.email_verified}' @click.stop="!account.email_verified ? false : showEdit = !showEdit") more_vert
                 .editMenuWrap(v-if="showEdit" @click.stop)
                     .nest
@@ -79,10 +79,9 @@
                         span Upload
                     input#files(hidden type="file" @change="showFileList")
         .filesWrapper(
-            @dragover="onDragover"
-            @drop="onDrop"
-            )
-            template(v-if="fileList.length == 0")
+            @dragover.stop.prevent="e=>{e.dataTransfer.dropEffect = 'copy'}"
+            @drop.stop.prevent="onDrop")
+            template(v-if="!fetching && files.length == 0")
                 //- .noFile
                 //-     h2 No Files 
                 //-     p You have not uploaded any files
@@ -91,23 +90,24 @@
                     div
                         .material-symbols-outlined.empty(style="font-size:80px") file_present
                         p Drag and Drop Files or Folders here
-            template(v-else-if="fileList.length")
+            template(v-else-if="files.length")
                 .fileWrapper
-                    .file(v-for="(file, index) in fileList")
-                        .customCheckBox
-                            input(type="checkbox" :id="index" @change='trackSelectedFiles')
-                            label(:for="index")
-                                .material-symbols-outlined.mid.check check
-                        .material-symbols-outlined.mid.type(v-if="file.type == 'folder'") folder
-                        .material-symbols-outlined.mid.type(v-else-if="file.type.includes('html')") html
-                        .material-symbols-outlined.mid.type(v-else-if="file.type.includes('css')") css
-                        .material-symbols-outlined.mid.type(v-else-if="file.type.includes('pdf')") picture_as_pdf
-                        .material-symbols-outlined.mid.type(v-else-if="file.type.includes('image')") image
-                        .material-symbols-outlined.mid.type(v-else-if="file.type.includes('video')") movie
-                        .material-symbols-outlined.mid.type(v-else="file.type == 'file'") draft
-                        .pathWrapper
-                            .path {{ file.name }}
-UploadFileList(v-if="fileList.length && showUploadFileList" :fileList = "fileList" @close="showUploadFileList = false;")
+                    template(v-for="(file, index) in files")
+                        .file(v-if='file.name !== "!"')
+                            .customCheckBox
+                                input(type="checkbox" :id="index" @change='trackSelectedFiles')
+                                label(:for="index")
+                                    .material-symbols-outlined.mid.check check
+                            .material-symbols-outlined.mid.type(v-if="file.name[0] == '#'") folder
+                            .material-symbols-outlined.mid.type(v-else-if="file.name.includes('.html')") html
+                            .material-symbols-outlined.mid.type(v-else-if="file.name.includes('.css')") css
+                            .material-symbols-outlined.mid.type(v-else-if="file.name.includes('.pdf')") picture_as_pdf
+                            .material-symbols-outlined.mid.type(v-else-if="img.includes(file.name.split('.').slice(-1)[0])") image
+                            .material-symbols-outlined.mid.type(v-else-if="vid.includes(file.name.split('.').slice(-1)[0])") movie
+                            .material-symbols-outlined.mid.type(v-else) draft
+                            .pathWrapper
+                                .path {{ file.name[0] === '#' ? file.name.slice(1) : file.name }}
+UploadFileList(v-if="fileList && showUploadFileList" :fileList = "fileList" @close="showUploadFileList = false;")
 DeleteFileOverlay(v-if="showDeleteFile" @close="showDeleteFile = false;" title='Delete Files')
     | Are you sure want to delete the files?
     br
@@ -123,6 +123,8 @@ import { skapi, account, bodyClick } from '@/main.js';
 import { currentService } from '@/data.js';
 import UploadFileList from '@/views/Service/subdomain/UploadFileList.vue';
 import DeleteFileOverlay from '@/views/Service/subdomain/DeleteFileOverlay.vue';
+import { launch, currentPage, fetching, searchDir, files, refresh } from './SubdomainFetch';
+import { img, vid } from './extensions';
 
 let route = useRoute();
 let currnetPath = route.path.split('/')[2];
@@ -132,13 +134,14 @@ let showEdit = ref(false);
 let showDeleteFile = ref(false);
 let inputSubdomain = ref('');
 let errorFile = ref('');
-let fileList = ref([]);
+let fileList = ref({});
 let checkedFiles = ref([]);
 let showDeleteSubdomain = ref(false);
 let subdomainState = ref('');
 
-let computedSubdomain = ref('...')
+let computedSubdomain = ref('')
 let subdomainPromiseRunning = ref(false);
+
 watch(modifySudomain, (newValue) => {
     if (newValue) {
         nextTick(() => {
@@ -146,6 +149,14 @@ watch(modifySudomain, (newValue) => {
         })
     }
 })
+
+watch(computedSubdomain, (newValue) => {
+    if (newValue && !subdomainState.value) {
+        console.log('launched')
+        launch(newValue);
+    }
+})
+
 let subdomainCallback = e => {
     console.log({ e });
     if (!e) {
@@ -271,16 +282,79 @@ let showFileList = (e) => {
         fileList.value = [];
     }
 }
-let onDragover = (event) => {
-    event.preventDefault()
+function traverseFileTree(item, path = '') {
+    return new Promise((resolve) => {
+        if (item.isFile) {
+            item.file(function (file) {
+                resolve([{ file, path: path + file.name }]);
+            });
+        } else if (item.isDirectory) {
+            let dirReader = item.createReader();
+            dirReader.readEntries(async function (entries) {
+                let promises = entries.map(entry => traverseFileTree(entry, path + item.name + '/'));
+                let results = await Promise.all(promises);
+                resolve([].concat(...results));
+            });
+        }
+    });
 }
-let onDrop = (event) => {
-    event.preventDefault()
+
+let onDrop = async (event) => {
+    if (!searchDir.value) {
+        return;
+    }
+
+    let formData = new FormData();
+    let items = event.dataTransfer.items;
+    let filePromises = [];
+
+    for (let i = 0; i < items.length; i++) {
+        let item = items[i].webkitGetAsEntry();
+        if (item) {
+            filePromises.push(traverseFileTree(item));
+        }
+    }
+
+    let allFileGroups = await Promise.all(filePromises);
+    let allFiles = [].concat(...allFileGroups);
+
+    allFiles.forEach(({ file, path }) => {
+        formData.append('files[]', file, path);
+    });
+
+    if (!allFiles.length) {
+        return;
+    }
+    for (let f of allFiles) {
+        console.log({ f })
+        fileList.value[f.path] = {
+            name: f.file.name,
+            path: f.path,
+            progress: 0,
+            loaded: 0,
+            size: f.file.size
+        }
+    }
+
     showUploadFileList.value = true;
-    const files = event.dataTransfer.files;
-    console.log(files)
-    addFiles(files)
+
+    let trackUpload = track => {
+        console.log({ track });
+        if (track.status === 'upload' && track.currentFile) {
+            fileList.value[track.currentFile.name].progress = track.progress;
+            fileList.value[track.currentFile.name].loaded = track.loaded;
+        }
+    }
+
+    skapi.uploadHostFiles(formData, {
+        serviceId: currentService.value.service,
+        progress: trackUpload
+    }).then(e => {
+        console.log({ com: e });
+        showUploadFileList.value = false;
+    })
 }
+
 let addFiles = async (files) => {
     for (let i = 0; i < files.length; i++) {
         let file = files[i];
