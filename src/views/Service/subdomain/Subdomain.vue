@@ -120,7 +120,7 @@
                                 .path {{ file.name[0] === '#' ? file.name.slice(1) : file.name }}
 
 UploadFileList(
-    v-if="fileList && Object.keys(fileList).length"
+    v-if="uploading && fileList && Object.keys(fileList).length"
     :fileList = "fileList"
     @cancel='uploading = null;'
     :wholeProgress='uploadWholeProgress')
@@ -182,6 +182,9 @@ if (subdomainInfo.value?.[computedSubdomain.value]) {
 watch(() => subdomainInfo.value?.[computedSubdomain.value], (newValue) => {
     if (newValue?.invid) {
         checkCDNStatus();
+    }
+    else {
+        refreshCDNRun.value = false;
     }
 }, { deep: true });
 
@@ -406,6 +409,7 @@ function traverseFileTree(item, path = '') {
 }
 
 let onDrop = async (event, files) => {
+
     if (!searchDir.value) {
         return;
     }
@@ -421,7 +425,7 @@ let onDrop = async (event, files) => {
         // add files to formdata
         for (let i = 0; i < files.length; i++) {
             let file = files[i];
-            allFiles.push({file, path: file.name});
+            allFiles.push({ file, path: file.name });
             formData.append('files[]', file, file.name);
         }
     }
@@ -465,7 +469,6 @@ let onDrop = async (event, files) => {
 
     let trackUpload = track => {
         if (uploading.value === null) {
-            console.log('aborting...');
             track.abort();
         }
         if (track.status === 'upload' && track.currentFile) {
@@ -481,7 +484,9 @@ let onDrop = async (event, files) => {
         progress: trackUpload,
         nestKey: pathArray.value.join('/')
     }).then(e => {
-        launch(searchDir.value, () => { }, true);
+        if (uploading.value) {
+            launch(searchDir.value, () => { }, true);
+        }
     }).finally(() => {
         uploading.value = null;
         fileList.value = {};
