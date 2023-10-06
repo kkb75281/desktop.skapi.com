@@ -428,7 +428,7 @@ onBeforeUnmount(() => {
                 font-size: min(48px, 2.1vw);
                 margin-bottom: min(65px, 2.8vw);
                 font-weight: 700;
-                line-height: 64px;
+                line-height: 50px;
             }
 
             a {

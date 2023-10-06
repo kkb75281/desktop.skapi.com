@@ -436,6 +436,7 @@ else {
                         color: #293FE6;
                         text-decoration: none;
                         font-size: 16px;
+                        font-weight: 700;
                         cursor: pointer;
                     }
 
