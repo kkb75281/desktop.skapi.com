@@ -1,7 +1,7 @@
 <template lang="pug">
 #changeSuccess(v-if="showSuccess")
     .wrap 
-        .material-symbols-outlined check_circle 
+        .material-symbols-outlined.big check_circle 
         h4 New Password Success
         .message 
             | Your password has been changed successfully.
@@ -41,8 +41,7 @@ let props = defineProps(['showSuccess']);
     box-shadow: 0px 2px 4px 0px rgba(0, 0, 0, 0.10);
 
     .material-symbols-outlined {
-        width: 56px;
-        height: 56px;
+        font-size: 56px;
         color: rgba(90, 216, 88, 1);
         margin-bottom: 20px;
     }
