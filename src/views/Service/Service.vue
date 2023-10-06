@@ -37,11 +37,11 @@ template(v-if='currentService')
                                         span skapi 
                                         span(style="color:#ff3399") = 
                                         span(style="color:#ff3399") new 
-                                        span Skapi(‘
+                                        span Skapi("
                                         span(style="color:#ffd500") {{ currentService.service }}
-                                        span ', ' 
+                                        span ", "
                                         span(style="color:#ffd500") {{ currentService.owner }}
-                                        span ');
+                                        span ");
                 .copy.clickable(@click="copy")
                     .material-symbols-outlined.mid file_copy
             a.question(href="https://docs.skapi.com" target="_blank")
