@@ -392,7 +392,7 @@ let trackSelectedUsers = () => {
 }
 let userCheckConfirm = (user) => {
     let targetInput = document.getElementById(user.user_id);
-    if(targetInput.checked) {
+    if (targetInput.checked) {
         targetInput.checked = false;
     } else {
         targetInput.checked = true;
@@ -470,22 +470,21 @@ let searchUsers = (e) => {
     }
 
     else if (searchTarget === 'timestamp' || searchTarget === 'birthdate') {
-        let dates = search.split('~');
+        let dates = search.split('~').map(d => d.trim());
 
         let startDate = 0;
         if (dates?.[0]) {
-            startDate = startDate ? new Date(dates[0].trim()).getTime() : 0;
-            if(isNaN(startDate)) {
-                startDate = 0;
+            let st = new Date(dates[0]).getTime();
+            if (!isNaN(st)) {
+                startDate = st
             }
         }
 
-        let endDate = new Date().getTime();
+        let endDate = Date.now();
         if (dates?.[1]) {
-            endDate = dates[1].trim();
-            endDate = endDate ? new Date(endDate).getTime() : new Date().getTime();
-            if(isNaN(endDate)) {
-                endDate = new Date().getTime();
+            let ed = new Date(dates[1]).getTime();
+            if (!isNaN(endDate)) {
+                endDate = ed;
             }
         }
 
@@ -742,11 +741,13 @@ onMounted(() => {
                         &:last-child {
                             margin-bottom: 0;
                         }
+
                         &:hover {
                             span {
                                 font-weight: 700;
                             }
                         }
+
                         span {
                             margin-left: 12px;
                         }
@@ -886,6 +887,7 @@ onMounted(() => {
                 tr {
                     cursor: pointer;
                 }
+
                 td {
                     position: relative;
                     height: 60px;
