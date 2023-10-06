@@ -3,10 +3,11 @@
     .header
         .number Uploading {{ fileList.length }} files
         .buttonWrap
-            button.cancel(@click="emits('close')") Cancel
+            button.cancel(@click="emits('cancel')") Cancel
             .material-symbols-outlined.mid(v-if="!hideList" @click="hideList = true;") expand_more
             .material-symbols-outlined.mid(v-else @click="hideList = false;") expand_less
     .progressBar
+        .progress(:style="{ width: props.wholeProgress + '%', height: '100%', background: '#293FE6', position: 'absolute' }")
     .content   
         .listWrap 
             .list(v-for="(file, index) in fileList") 
@@ -20,15 +21,24 @@
                     .material-symbols-outlined.mid.type(v-else) draft
                     .pathWrapper
                         .path {{ file.name }}
-                .sucess
+                .status
+                    //- .material-symbols-outlined.mid(v-if="file.status == 'uploading'") cloud_upload
+                    
+                    .material-symbols-outlined.mid(v-if="file.progress === 100") check_circle
+                    img.loading(v-else-if='file.progress < 1' src="@/assets/img/loading.png")
+                    ProgressCircle(v-else :percent='file.progress')
+                    
+                    //- .material-symbols-outlined.mid(v-else-if="file.status == 'error'") error
+                    //- .material-symbols-outlined.mid(v-else) pending
 </template>
 <script setup>
 import { ref } from "vue";
 import { img, vid } from './extensions';
-let props = defineProps(['fileList']);
-let emits = defineEmits(['close']);
+import ProgressCircle from "../../../components/ProgressCircle.vue";
+let props = defineProps(['fileList', 'wholeProgress']);
+let emits = defineEmits(['cancel']);
 let hideList = ref(false);
-console.log({fileList: props.fileList});
+
 </script>
 <style lang="less">
 .uploadListWrapper {
@@ -38,11 +48,12 @@ console.log({fileList: props.fileList});
     right: 40px;
     bottom: 0;
     background-color: #fafafa;
-    border: 1px solid rgba(0,0,0,0.15);
+    border: 1px solid rgba(0, 0, 0, 0.15);
 
     &.hide {
         bottom: -328px;
     }
+
     .header {
         display: flex;
         flex-wrap: nowrap;
@@ -60,9 +71,11 @@ console.log({fileList: props.fileList});
             display: flex;
             flex-wrap: nowrap;
             align-items: center;
+
             * {
                 cursor: pointer;
             }
+
             .cancel {
                 border: 0;
                 background-color: unset;
@@ -73,36 +86,42 @@ console.log({fileList: props.fileList});
             }
         }
     }
+
     .progressBar {
         width: 100%;
         height: 8px;
         background: rgba(41, 63, 230, 0.20);
+        position: relative;
     }
+
     .content {
         width: 100%;
         height: 320px;
         padding: 16px 28px;
         overflow: hidden;
+
         .listWrap {
             height: 100%;
             overflow-y: auto;
         }
+
         .list {
             height: 56px;
             display: flex;
             flex-wrap: nowrap;
             align-items: center;
             justify-content: space-between;
+
             .file {
                 display: flex;
                 flex-wrap: nowrap;
                 align-items: center;
-                color: rgba(0,0,0,0.6);
+                color: rgba(0, 0, 0, 0.6);
+
                 .pathWrapper {
                     margin-left: 12px;
                 }
             }
         }
     }
-}
-</style>
+}</style>

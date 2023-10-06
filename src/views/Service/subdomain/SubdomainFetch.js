@@ -10,7 +10,7 @@ const worker = new Worker(
     new URL('@/skapi-extensions/js/pager_worker.js', import.meta.url),
     { type: 'module' }
 );
-
+export let fileList = ref({});
 export let subdomainInfo = ref({});
 export let files = ref([]);
 export let dirPage = null;
@@ -18,7 +18,7 @@ export let currentPage = ref(1);
 export let maxPage = ref(1);
 export let fetching = ref(false);
 export let searchDir = ref('');
-
+export let uploading = ref(null);
 export let subdomainInit = () => {
     files.value = [];
     dirPage = null;
@@ -27,6 +27,7 @@ export let subdomainInit = () => {
     fetching.value = false;
     searchDir.value = '';
 }
+export let uploadWholeProgress = ref(0);
 
 watch(currentPage, (page) => {
     selectNone();
@@ -59,7 +60,7 @@ export let refresh = (dir, cb) => {
         id: 'name',
         sortBy: 'name',
         order: 'asc',
-        resultsPerPage: 10
+        resultsPerPage: 50
     })
 
     searchDir.value = dir;

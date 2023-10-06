@@ -127,13 +127,14 @@ let logout = async () => {
 let getCurrentService = () => {
     let srvcId = route.path.split('/')[2];
     currentService.value = skapi.services[srvcId];
-    // currentService.value = services.value.find(service => service.service === route.path.split('/')[2]);
+    
     if (currentService.value) {
         if (!storageInfo.value[currentService.value.service]) {
             storageInfo.value[currentService.value.service] = {};
         }
         let sd = currentService.value.subdomain;
         if (sd && (sd[0] !== '*' || sd[0] !== '+')) {
+            // get subdomain storage info (404 file info)
             skapi.getSubdomainInfo(currentService.value.service, {
                 subdomain: sd,
             }).then(s =>

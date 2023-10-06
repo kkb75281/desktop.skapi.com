@@ -7,8 +7,8 @@
         // head panel when there is subdomain
         template(v-if="currentService.subdomain")
             .buttonWrap 
-                .refresh.clickable(:class="{'nonClickable' : !account.email_verified || subdomainState}")
-                    .material-symbols-outlined.mid cached
+                .refresh.clickable(:class="{'nonClickable' : !account.email_verified || subdomainState || refreshCDNRun}" @click='refreshCdn()')
+                    .material-symbols-outlined.mid(:class="{'rotate_animation': refreshCDNRun}") cached
                     span Refrech CDN
                 .delete.clickable(:class="{'nonClickable' : !account.email_verified || subdomainState}" @click='showDeleteSubdomain = true;')
                     .material-symbols-outlined.mid delete
@@ -38,7 +38,10 @@
                             template(v-if="set404PromiseRunning")
                                 img.loading(style='position: absolute;right: 1em;top: 8px;' src="@/assets/img/loading.png")
                             template(v-else)
-                                label.uploadBtn.btn(for="file404")
+                                label.uploadBtn.btn(v-if="subdomainInfo?.[computedSubdomain]?.['404']" @click='removeSet404')
+                                    .material-symbols-outlined.mid cancel
+                                    span Remove
+                                label.uploadBtn.btn(for="file404" v-else)
                                     .material-symbols-outlined.mid upload
                                     span Upload
                                 input#file404(hidden type="file" @change="set404" accept='text/html')
@@ -79,11 +82,11 @@
                         .editMenu(:class='{"nonClickable": !checkedFiles.length || !account.email_verified}' @click="showDeleteFile = true; showEdit = false;")
                             .material-symbols-outlined.mid delete
                             span Delete
-                .customFile(:class="{'nonClickable' : !account.email_verified}")
+                .customFile(:class="{'nonClickable' : !account.email_verified || Object.keys(fileList).length}")
                     label.uploadBtn.btn(for="files")
                         .material-symbols-outlined.mid upload
                         span Upload
-                    input#files(hidden type="file" @change="showFileList")
+                    input#files(hidden type="file" @change="e=>onDrop(null,e.target.files)" multiple)
 
         // file part
         .filesWrapper(
@@ -115,7 +118,13 @@
                             .material-symbols-outlined.mid.type(v-else) draft
                             .pathWrapper
                                 .path {{ file.name[0] === '#' ? file.name.slice(1) : file.name }}
-UploadFileList(v-if="fileList && showUploadFileList" :fileList = "fileList" @close="showUploadFileList = false;")
+
+UploadFileList(
+    v-if="fileList && Object.keys(fileList).length"
+    :fileList = "fileList"
+    @cancel='uploading = null;'
+    :wholeProgress='uploadWholeProgress')
+
 DeleteFileOverlay(v-if="showDeleteFile" @close="showDeleteFile = false;" title='Delete Files' :callback='deleteSelectedFiles')
     | Are you sure want to delete the selected file(s)?
     br
@@ -134,18 +143,16 @@ import { skapi, account, bodyClick } from '@/main.js';
 import { currentService } from '@/data.js';
 import UploadFileList from '@/views/Service/subdomain/UploadFileList.vue';
 import DeleteFileOverlay from '@/views/Service/subdomain/DeleteFileOverlay.vue';
-import { launch, currentPage, fetching, searchDir, files, refresh, dirPage, getPage, selectNone, subdomainInfo } from './SubdomainFetch';
+import { launch, currentPage, fetching, searchDir, files, refresh, fileList, dirPage, getPage, selectNone, subdomainInfo, uploading, uploadWholeProgress } from './SubdomainFetch';
 import { img, vid } from './extensions';
 
 let route = useRoute();
 let currnetPath = route.path.split('/')[2];
-let showUploadFileList = ref(false);
 let modifySudomain = ref(false);
 let showEdit = ref(false);
 let showDeleteFile = ref(false);
 let inputSubdomain = ref('');
 let errorFile = ref('');
-let fileList = ref({});
 let checkedFiles = ref([]);
 let showDeleteSubdomain = ref(false);
 let subdomainState = ref('');
@@ -161,6 +168,46 @@ let gotoFolder = index => {
     let path = computedSubdomain.value + "/" + pathArray.value.slice(0, index + 1).join("/");
     launch(path);
 }
+let refreshCDNRun = ref(true);
+
+if (subdomainInfo.value?.[computedSubdomain.value]) {
+    if (subdomainInfo.value?.[computedSubdomain.value]?.invid) {
+        checkCDNStatus();
+    }
+    else {
+        refreshCDNRun.value = false;
+    }
+}
+
+watch(() => subdomainInfo.value?.[computedSubdomain.value], (newValue) => {
+    if (newValue?.invid) {
+        checkCDNStatus();
+    }
+}, { deep: true });
+
+let cdnCheckRunning = false;
+let checkCDNStatus = async () => {
+    if (cdnCheckRunning) {
+        return;
+    }
+
+    refreshCDNRun.value = true;
+    skapi.refreshCDN(currentService.value.service, {
+        checkStatus: (e) => {
+            if (e === 'COMPLETE') {
+                cdnCheckRunning = false;
+                refreshCDNRun.value = false;
+                subdomainInfo.value[computedSubdomain.value].invid = null;
+            }
+        }
+    });
+}
+
+let refreshCdn = async () => {
+    refreshCDNRun.value = true;
+    await skapi.refreshCDN(currentService.value.service);
+    checkCDNStatus();
+}
 watch(modifySudomain, (newValue) => {
     if (newValue) {
         nextTick(() => {
@@ -174,10 +221,11 @@ watch(computedSubdomain, (newValue) => {
         launch(newValue);
     }
 })
+
 let removeAllFiles = async () => {
     await skapi.deleteHostFiles({
         serviceId: currentService.value.service,
-        paths: ''
+        paths: ['']
     }).then(() => {
         launch(computedSubdomain.value, async () => {
             for (let k in dirPage.list) {
@@ -313,7 +361,7 @@ let set404 = (e) => {
         let fn = e.target.value.split('\\').slice(-1)[0];
         try {
             await skapi.set404({ serviceId: currentService.value.service, path: fn });
-            subdomainInfo[computedSubdomain.value]['404'] = fn;
+            subdomainInfo.value[computedSubdomain.value]['404'] = fn;
         } catch (err) {
             console.log({ err });
             alert(err.message);
@@ -325,36 +373,21 @@ let set404 = (e) => {
         set404PromiseRunning.value = false;
     })
 }
-let showFileList = (e) => {
-    let files = e.target.files;
-    if (files.length > 0) {
-        for (let i = 0; i < files.length; i++) {
-            const file = files[i];
-            const existingIndex = fileList.value.findIndex((uploadedFile) => uploadedFile.name === file.name);
 
-            if (existingIndex !== -1) {
-                const existingFile = fileList.value[existingIndex];
-                if (file.lastModified > existingFile.lastModified) {
-                    fileList.value.splice(existingIndex, 1, {
-                        name: file.name,
-                        type: file.type,
-                        lastModified: file.lastModified // 파일의 최신 수정 일자 저장
-                    });
-                }
-            } else {
-                fileList.value.push({
-                    name: file.name,
-                    type: file.type,
-                    lastModified: file.lastModified // 파일의 수정 일자 저장
-                });
-            }
-        }
-
-        showUploadFileList.value = true;
-    } else {
-        fileList.value = [];
+let removeSet404 = async () => {
+    set404PromiseRunning.value = true;
+    try {
+        await skapi.set404({ serviceId: currentService.value.service, path: null });
+        delete subdomainInfo.value[computedSubdomain.value]['404'];
+    } catch (err) {
+        console.log({ err });
+        alert(err.message);
+    }
+    finally {
+        set404PromiseRunning.value = false;
     }
 }
+
 function traverseFileTree(item, path = '') {
     return new Promise((resolve) => {
         if (item.isFile) {
@@ -372,32 +405,51 @@ function traverseFileTree(item, path = '') {
     });
 }
 
-let onDrop = async (event) => {
+let onDrop = async (event, files) => {
     if (!searchDir.value) {
         return;
     }
 
-    let formData = new FormData();
-    let items = event.dataTransfer.items;
-    let filePromises = [];
-
-    for (let i = 0; i < items.length; i++) {
-        let item = items[i].webkitGetAsEntry();
-        if (item) {
-            filePromises.push(traverseFileTree(item));
-        }
+    if (Object.keys(fileList.value).length > 0) {
+        return;
     }
 
-    let allFileGroups = await Promise.all(filePromises);
-    let allFiles = [].concat(...allFileGroups);
+    let formData = new FormData();
+    let allFiles = [];
 
-    allFiles.forEach(({ file, path }) => {
-        formData.append('files[]', file, path);
-    });
+    if (files) {
+        // add files to formdata
+        for (let i = 0; i < files.length; i++) {
+            let file = files[i];
+            allFiles.push({file, path: file.name});
+            formData.append('files[]', file, file.name);
+        }
+    }
+    else {
+        let items = event.dataTransfer.items;
+        let filePromises = [];
+
+        for (let i = 0; i < items.length; i++) {
+            let item = items[i].webkitGetAsEntry();
+            if (item) {
+                filePromises.push(traverseFileTree(item));
+            }
+        }
+
+        let allFileGroups = await Promise.all(filePromises);
+        allFiles = [].concat(...allFileGroups);
+
+        allFiles.forEach(({ file, path }) => {
+            formData.append('files[]', file, path);
+        });
+    }
 
     if (!allFiles.length) {
         return;
     }
+
+    let wholeSize = 0;
+    let loadedSize = 0;
     for (let f of allFiles) {
         fileList.value[f.path] = {
             name: f.file.name,
@@ -406,26 +458,34 @@ let onDrop = async (event) => {
             loaded: 0,
             size: f.file.size
         }
+        wholeSize += f.file.size;
     }
 
-    showUploadFileList.value = true;
+    uploadWholeProgress.value = 0;
 
     let trackUpload = track => {
-        console.log(track);
+        if (uploading.value === null) {
+            console.log('aborting...');
+            track.abort();
+        }
         if (track.status === 'upload' && track.currentFile) {
+            loadedSize += track.loaded - fileList.value[track.currentFile.name].loaded;
+            uploadWholeProgress.value = Math.round(loadedSize / wholeSize * 100);
             fileList.value[track.currentFile.name].progress = track.progress;
             fileList.value[track.currentFile.name].loaded = track.loaded;
         }
     }
 
-    skapi.uploadHostFiles(formData, {
+    uploading.value = skapi.uploadHostFiles(formData, {
         serviceId: currentService.value.service,
-        progress: trackUpload
+        progress: trackUpload,
+        nestKey: pathArray.value.join('/')
     }).then(e => {
-        console.log({ completed: e });
-        showUploadFileList.value = false;
         launch(searchDir.value, () => { }, true);
-    })
+    }).finally(() => {
+        uploading.value = null;
+        fileList.value = {};
+    });
 }
 
 // let addFiles = async (files) => {
