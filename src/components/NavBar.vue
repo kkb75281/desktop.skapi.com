@@ -1,7 +1,8 @@
 <template lang="pug">
-.navBar(:class="{'fixed' : route.name == 'home'}")
+.navBar(:class="{'home' : route.name == 'home'}")
     router-link(to="/")
-        img.logo(src="@/assets/img/logo/logo.png")
+        //- img.logo(src="@/assets/img/logo/logo.png")
+        img.logo(src="@/assets/img/logo/symbol-logo-white.svg")
     .menu
         ul(v-if="account")
             li 
@@ -65,6 +66,15 @@ let logout = async () => {
     align-items: center;
     justify-content: space-between;
 
+    &.home {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 60px;
+        padding: 10px 80px 10px 80px;
+        z-index: 9999;
+    }
     &.fixed {
         position: fixed;
         left: 0;
@@ -94,9 +104,11 @@ let logout = async () => {
                 margin-right: 60px;
 
                 a {
-                    color: #293FE6;
+                    // color: #293FE6;
+                    color: #fff;
                     text-decoration: none;
-                    font-size: 20px;
+                    // font-size: 20px;
+                    font-size: 16px;
                     cursor: pointer;
 
                     &.signup {

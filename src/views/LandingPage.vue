@@ -2,7 +2,8 @@
 #lending(ref="lending")
     section#intro(ref="intro" @wheel="handleMouseWheel")
         .introWrap 
-            img.introLogo(src="@/assets/img/logo/logo.svg")
+            //- img.introLogo(src="@/assets/img/logo/logo.svg")
+            img.introLogo(src="@/assets/img/logo/symbol-logo.png")
             .point
                 span One Line Code
                 | =&gt;
@@ -228,7 +229,8 @@ onBeforeUnmount(() => {
         transform: translate(-50%, -50%);
 
         .introLogo {
-            width: max(173px, 11.5vw);
+            // width: max(173px, 11.5vw);
+            width: min(140px, 6vw);
             margin-bottom: max(28px, 2vw);
         }
 
@@ -310,7 +312,8 @@ onBeforeUnmount(() => {
     // margin-top: -50vh;
 
     >div {
-        width: max(1130px, 62vw);
+        // width: max(1130px, 62vw);
+        width: 1400px;
         margin: 0 auto;
         padding-top: max(400px, 17vw);
     }
@@ -480,14 +483,23 @@ onBeforeUnmount(() => {
     }
 }
 
+@media (max-width:1280px) {
+    #intro {
+        .introWrap {
+            .introLogo {
+                width: 71px;
+            }
+        }
+    }
+}
 
 @media (min-width:2200px) {
     #intro {
         .introWrap {
-            .introLogo {
-                width: 270px;
-                margin-bottom: 50px;
-            }
+            // .introLogo {
+            //     width: 270px;
+            //     margin-bottom: 50px;
+            // }
 
             .point {
                 font-size: 64px;
