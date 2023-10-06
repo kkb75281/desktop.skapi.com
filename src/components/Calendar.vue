@@ -69,8 +69,6 @@ function renderCalender(thisMonth) {
     currentMonth.value = thisMonth.getMonth();
     currentDate = thisMonth.getDate();
 
-    console.log(currentYear.value, currentMonth.value, currentDate)
-
     let startDay = new Date(currentYear.value, currentMonth.value, 0);
     let prevDate = startDay.getDate();  // 저번달 마지막 날짜
     let prevDay = startDay.getDay();    // 저번달 마지막 요일
