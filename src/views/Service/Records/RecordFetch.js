@@ -18,6 +18,15 @@ export let maxPage = ref(1);
 export let fetching = ref(false);
 export let searchInfo = ref(null);
 
+export let recordFetchInit = () => {
+    records.value = null;
+    recordPage = null;
+    currentPage.value = 1;
+    maxPage.value = 1;
+    fetching.value = false;
+    searchInfo.value = null;
+}
+
 watch(currentPage, (page) => {
     selectNone();
     getPage(page);
