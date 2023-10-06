@@ -410,7 +410,7 @@ onBeforeUnmount(() => {
             border: 1px solid rgba(255, 255, 255, 0.10);
             background: #434343;
             padding: 30px 10px;
-            font-size: min(20px, 0.85vw);
+            font-size: min(20px, 1vw);
             font-family: Consolas, 'Liberation Mono', Menlo, Courier, monospace !important;
         }
     }
