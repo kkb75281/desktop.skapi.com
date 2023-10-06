@@ -41,37 +41,45 @@
             p No more figuring out how to setup, or deploy each of your backend resources.
             .cardWrap 
                 .card
-                    img(src="@/assets/img/icon/icons-03.png")
-                    .tit Database
-                    .desc Auto indexed, #[br]Full flexibility that #[br]scales
+                    .cardInner
+                        img(src="@/assets/img/icon/icons-03.png")
+                        .tit Database
+                        .desc Auto indexed, #[br]Full flexibility that #[br]scales
                 .card
-                    img(src="@/assets/img/icon/icons-04.png")
-                    .tit Cloud Storage
-                    .desc Secure, #[br]Database integrated, #[br]Expands with no-limit
+                    .cardInner
+                        img(src="@/assets/img/icon/icons-04.png")
+                        .tit Cloud Storage
+                        .desc Secure, #[br]Database integrated, #[br]Expands with no-limit
                 .card
-                    img(src="@/assets/img/icon/icons-05.png")
-                    .tit Security
-                    .desc Works out-of-the-box, #[br]Fully implemented in #[br]all resources
+                    .cardInner
+                        img(src="@/assets/img/icon/icons-05.png")
+                        .tit Security
+                        .desc Works out-of-the-box, #[br]Fully implemented in #[br]all resources
                 .card
-                    img(src="@/assets/img/icon/icons-06.png")
-                    .tit E-Mail service
-                    .desc Verification, #[br]Sending newsletters, #[br]Notification E-mails
+                    .cardInner
+                        img(src="@/assets/img/icon/icons-06.png")
+                        .tit E-Mail service
+                        .desc Verification, #[br]Sending newsletters, #[br]Notification E-mails
                 .card
-                    img(src="@/assets/img/icon/icons-07.png")
-                    .tit Hosting
-                    .desc Immediate website #[br]hosting
+                    .cardInner
+                        img(src="@/assets/img/icon/icons-07.png")
+                        .tit Hosting
+                        .desc Immediate website #[br]hosting
                 .card
-                    img(src="@/assets/img/icon/icons-08.png")
-                    .tit CDN
-                    .desc Implemented to the #[br]cloud storage by #[br]default
+                    .cardInner
+                        img(src="@/assets/img/icon/icons-08.png")
+                        .tit CDN
+                        .desc Implemented to the #[br]cloud storage by #[br]default
                 .card
-                    img(src="@/assets/img/icon/icons-09.png")
-                    .tit Load balancing
-                    .desc Everything controlled #[br]internally
+                    .cardInner
+                        img(src="@/assets/img/icon/icons-09.png")
+                        .tit Load balancing
+                        .desc Everything controlled #[br]internally
                 .card
-                    img(src="@/assets/img/icon/icons-10.png")
-                    .tit Serverless
-                    .desc No deployment, #[br]No installation #[br]required
+                    .cardInner
+                        img(src="@/assets/img/icon/icons-10.png")
+                        .tit Serverless
+                        .desc No deployment, #[br]No installation #[br]required
         .htmlWrap 
             .title Compatible with either #[br]pure HTML projects or any SPA frameworks
             p No additional settings, Just import Skapi library in your HTML file and you’re ready to go.
@@ -208,12 +216,6 @@ onBeforeUnmount(() => {
 </script>
 
 <style lang="less" scoped>
-#lending {
-    // position: relative;
-    // transition: transform 2s ease;
-    // scroll-behavior: smooth;
-}
-
 #intro {
     width: 100vw;
     height: 100vh;
@@ -229,17 +231,16 @@ onBeforeUnmount(() => {
         transform: translate(-50%, -50%);
 
         .introLogo {
-            // width: max(173px, 11.5vw);
             width: min(140px, 6vw);
-            margin-bottom: max(28px, 2vw);
+            margin-bottom: min(28px, 2vw);
         }
 
         .point {
             color: #fff;
-            font-size: max(40px, 3vw);
+            font-size: min(64px, 2.7vw);
             font-weight: 500;
-            line-height: max(70px, 5vw);
-            margin-bottom: max(28px, 2.6vw);
+            line-height: min(100px, 4.5vw);
+            margin-bottom: min(28px, 2.6vw);
 
             span {
                 position: relative;
@@ -258,29 +259,29 @@ onBeforeUnmount(() => {
         }
 
         .code {
-            width: max(516px, 35vw);
-            height: max(38px, 2.4vw);
+            width: min(782px, 34vw);
+            height: min(58px, 2.5vw);
             border-radius: 8px;
             border: 1px solid rgba(255, 255, 255, 0.10);
             background: #434343;
             color: #FFF;
             text-align: center;
             font-family: monospace;
-            font-size: max(16px, 1.1vw);
+            font-size: min(24px, 1.1vw);
             font-weight: 400;
             display: flex;
             align-items: center;
             justify-content: center;
             box-shadow: 3px 9px 6px 0px rgba(0, 0, 0, 0.15);
-            margin-bottom: max(50px, 3.5vw);
+            margin-bottom: min(86px, 3.7vw);
         }
 
         p {
             color: #FFF;
-            font-size: max(16px, 1.05vw);
+            font-size: min(24px, 1.04vw);
             font-weight: 400;
-            line-height: max(24px, 1.6vw);
-            margin-bottom: max(36px, 2vw);
+            line-height: min(36px, 1.6vw);
+            margin-bottom: min(36px, 2vw);
         }
 
         a {
@@ -298,7 +299,7 @@ onBeforeUnmount(() => {
             cursor: pointer;
 
             span {
-                font-size: max(16px, 1vw);
+                font-size: min(20px, 1.1vw);
                 font-weight: 700;
                 margin-right: 10px;
             }
@@ -312,28 +313,27 @@ onBeforeUnmount(() => {
     // margin-top: -50vh;
 
     >div {
-        // width: max(1130px, 62vw);
-        width: 1400px;
+        width: min(1400px, 70vw);
         margin: 0 auto;
-        padding-top: max(400px, 17vw);
+        padding-top: min(550px, 32vw);
     }
 
     .packageWrap {
-        padding-top: max(240px, 11vw);
+        padding-top: min(330px, 19vw);
     }
 
     .title {
         color: #262626;
-        font-size: max(36px, 1.5vw);
+        font-size: min(36px, 2.1vw);
         font-weight: 700;
-        margin-bottom: max(22px, 1.2vw);
+        margin-bottom: min(24px, 1.3vw);
     }
 
     p {
         color: #000;
-        font-size: max(24px, 1.2vw);
+        font-size: min(28px, 1.4vw);
         font-weight: 400;
-        margin-bottom: max(52px, 1.8vw);
+        margin-bottom: min(42px, 1.8vw);
     }
 
     .cardWrap {
@@ -341,45 +341,57 @@ onBeforeUnmount(() => {
         flex-wrap: wrap;
 
         .card {
+            position: relative;
             width: 23.5%;
-            height: max(317px, 17vw);
-            padding: max(32px, 1.7vw);
             margin-right: 2%;
             margin-bottom: 2%;
             border-radius: 8px;
             background-color: #FAFAFA;
             border: 1px solid rgba(0, 0, 0, 0.15);
             box-shadow: 8px 12px 36px rgba(0, 0, 0, 0.10);
-            display: flex;
-            flex-wrap: wrap;
-            flex-direction: column;
-            justify-content: space-between;
 
             &:nth-child(4n+4) {
                 margin-right: 0;
             }
 
-            img {
-                height: max(108px, 5.5vw);
-                object-fit: contain;
-                align-self: start;
-                margin-top: max(-10px, -0.5vw);
-                margin-left: max(-10px, -0.5vw);
+            &::after {
+                display: block;
+                content: "";
+                padding-bottom: 100%;
             }
-
-            .tit {
+            .cardInner {
+                position: absolute;
+                top: 0;
+                left: 0;
                 width: 100%;
-                color: #262626;
-                font-size: max(24px, 1.2vw);
-                font-weight: 500;
-            }
+                height: 100%;
+                object-fit: cover;
+                padding: min(28px, 1.2vw);
 
-            .desc {
-                width: 100%;
-                color: #262626;
-                font-size: max(19px, 1vw);
-                font-weight: 400;
-                line-height: max(24px, 1.4vw);
+                img {
+                    height: min(100px, 4.3vw);
+                    margin-bottom: min(36px, 1.5vw);
+                    object-fit: contain;
+                    align-self: start;
+                    margin-top: min(-10px, -0.5vw);
+                    margin-left: min(-10px, -0.5vw);
+                }
+
+                .tit {
+                    width: 100%;
+                    margin-bottom: min(24px, 1vw);
+                    color: #262626;
+                    font-size: min(24px, 1.2vw);
+                    font-weight: 500;
+                }
+
+                .desc {
+                    width: 100%;
+                    color: #262626;
+                    font-size: min(19px, 1vw);
+                    font-weight: 400;
+                    line-height: min(24px, 1.4vw);
+                }
             }
         }
     }
@@ -387,7 +399,7 @@ onBeforeUnmount(() => {
     .htmlCode {
         .tit {
             color: #000;
-            font-size: 24px;
+            font-size: min(24px, 1.2vw);
             font-weight: 700;
             margin-bottom: 10px;
         }
@@ -398,15 +410,8 @@ onBeforeUnmount(() => {
             border: 1px solid rgba(255, 255, 255, 0.10);
             background: #434343;
             padding: 30px 10px;
-            font-size: 20px;
+            font-size: min(20px, 0.85vw);
             font-family: Consolas, 'Liberation Mono', Menlo, Courier, monospace !important;
-
-            // code {
-            //     color: #FFF;
-            //     font-size: 20px;
-            //     font-weight: 400;
-            //     line-height: 30px;
-            // }
         }
     }
 
@@ -420,14 +425,15 @@ onBeforeUnmount(() => {
 
             .title {
                 color: rgba(0, 0, 0, 0.80);
-                font-size: max(48px, 2.5vw);
+                font-size: min(48px, 2.1vw);
+                margin-bottom: min(65px, 2.8vw);
                 font-weight: 700;
                 line-height: 64px;
             }
 
             a {
                 color: #293FE6;
-                font-size: max(28px, 1.2vw);
+                font-size: min(28px, 1.2vw);
                 font-weight: 700;
                 text-decoration-line: underline;
             }
@@ -445,8 +451,9 @@ onBeforeUnmount(() => {
 
     .joinWrap {
         width: 100%;
-        margin-top: max(400px, 17vw);
-        padding: 100px 0;
+        margin-top: min(400px, 17vw);
+        padding-top: min(140px, 6vw);
+        padding-bottom: min(140px, 6vw);
         background-image: url(@/assets/img/background.svg);
         background-size: cover;
         display: flex;
@@ -459,23 +466,23 @@ onBeforeUnmount(() => {
 
         h2 {
             width: 100%;
-            font-size: max(52px, 2.5vw);
+            font-size: 60px;
             font-weight: 700;
-            margin-bottom: max(17px, 0.8vw);
+            margin-bottom: 17px;
         }
 
         h3 {
             width: 100%;
-            font-size: max(32px, 1.4vw);
+            font-size: 32px;
             font-weight: 500;
-            margin-bottom: max(36px, 1.6vw);
+            margin-bottom: 36px;
         }
 
         a {
             padding: 12px 28px;
             border-radius: 8px;
             background: #293FE6;
-            font-size: max(20px, 0.85vw);
+            font-size: 20px;
             font-weight: 700;
             color: #fff;
             text-decoration: none;
@@ -483,46 +490,32 @@ onBeforeUnmount(() => {
     }
 }
 
-@media (max-width:1280px) {
+@media (max-width:1500px) {
     #intro {
         .introWrap {
             .introLogo {
                 width: 71px;
+                margin-bottom: 40px;
             }
-        }
-    }
-}
-
-@media (min-width:2200px) {
-    #intro {
-        .introWrap {
-            // .introLogo {
-            //     width: 270px;
-            //     margin-bottom: 50px;
-            // }
-
             .point {
-                font-size: 64px;
-                line-height: 100px;
-                margin-bottom: 70px;
+                font-size: 40px;
+                line-height: 70px;
+                margin-bottom: 32px;
             }
-
             .code {
-                width: 782px;
-                height: 52px;
-                font-size: 24px;
-                margin-bottom: 86px;
+                width: 500px;
+                height: 38px;
+                font-size: 16px;
+                margin-bottom: 52px;
             }
-
             p {
-                font-size: 24px;
-                line-height: 36px;
-                margin-bottom: 36px;
+                font-size: 16px;
+                line-height: 24px;
+                margin-bottom: 30px;
             }
-
             a {
                 span {
-                    font-size: 20px;
+                    font-size: 16px;
                 }
             }
         }
@@ -530,71 +523,178 @@ onBeforeUnmount(() => {
 
     #other {
         >div {
-            width: 1416px;
-            padding-top: 400px;
+            width: 940px;
+            padding-top: 535px;
+        }
+
+        .packageWrap {
+            padding-top: 248px;
         }
 
         .title {
-            font-size: 36px;
-            margin-bottom: 24px;
+            font-size: 32px;
+            margin-bottom: 20px;
         }
 
         p {
-            font-size: 28px;
-            margin-bottom: 42px;
+            font-size: 20px;
+            margin-bottom: 36px;
         }
 
         .cardWrap {
             .card {
-                height: 400px;
-                padding: 40px;
+                .cardInner {
+                    padding: 20px;
 
-                img {
-                    height: 135px;
-                    margin-top: -12px;
-                    margin-left: -12px;
+                    img {
+                        height: 80px;
+                        margin-bottom: 8px;
+                    }
+                    .tit {
+                        font-size: 18px;
+                        margin-bottom: 12px;
+                    }
+                    .desc {
+                        font-size: 16px;
+                        line-height: 20px;
+                    }
                 }
+            }
+        }
 
-                .tit {
-                    font-size: 28px;
-                }
-
-                .desc {
-                    font-size: 24px;
-                    line-height: 32px;
-                }
+        .htmlCode {
+            .title {
+                font-size: 16px;
+            }
+            
+            .code {
+                font-size: 16px;
             }
         }
 
         .docWrap {
             .left {
                 .title {
-                    font-size: 60px;
+                    font-size: 40px;
+                    margin-bottom: 57px;
                 }
 
                 a {
-                    font-size: 28px;
+                    font-size: 20px;
                 }
             }
         }
 
         .joinWrap {
-            margin-top: 400px;
-
-            h2 {
-                font-size: 60px;
-                margin-bottom: 17px;
-            }
-
-            h3 {
-                font-size: 32px;
-                margin-bottom: 36px;
-            }
-
-            a {
-                font-size: 20px;
-            }
+            margin-top: 337px;
+            padding-top: 56px;
+            padding-bottom: 56px;
         }
     }
 }
+
+// @media (min-width:2200px) {
+//     #intro {
+//         .introWrap {
+//             // .introLogo {
+//             //     width: 270px;
+//             //     margin-bottom: 50px;
+//             // }
+
+//             .point {
+//                 font-size: 64px;
+//                 line-height: 100px;
+//                 margin-bottom: 70px;
+//             }
+
+//             .code {
+//                 width: 782px;
+//                 height: 52px;
+//                 font-size: 24px;
+//                 margin-bottom: 86px;
+//             }
+
+//             p {
+//                 font-size: 24px;
+//                 line-height: 36px;
+//                 margin-bottom: 36px;
+//             }
+
+//             a {
+//                 span {
+//                     font-size: 20px;
+//                 }
+//             }
+//         }
+//     }
+
+//     #other {
+//         // >div {
+//         //     width: 1416px;
+//         //     padding-top: 400px;
+//         // }
+
+//         .title {
+//             font-size: 36px;
+//             margin-bottom: 24px;
+//         }
+
+//         p {
+//             font-size: 28px;
+//             margin-bottom: 42px;
+//         }
+
+//         // .cardWrap {
+//         //     .card {
+//         //         height: 400px;
+//         //         padding: 40px;
+
+//         //         img {
+//         //             height: 135px;
+//         //             margin-top: -12px;
+//         //             margin-left: -12px;
+//         //         }
+
+//         //         .tit {
+//         //             font-size: 28px;
+//         //         }
+
+//         //         .desc {
+//         //             font-size: 24px;
+//         //             line-height: 32px;
+//         //         }
+//         //     }
+//         // }
+
+//         .docWrap {
+//             .left {
+//                 .title {
+//                     font-size: 60px;
+//                 }
+
+//                 a {
+//                     font-size: 28px;
+//                 }
+//             }
+//         }
+
+//         .joinWrap {
+//             margin-top: 400px;
+
+//             h2 {
+//                 font-size: 60px;
+//                 margin-bottom: 17px;
+//             }
+
+//             h3 {
+//                 font-size: 32px;
+//                 margin-bottom: 36px;
+//             }
+
+//             a {
+//                 font-size: 20px;
+//             }
+//         }
+//     }
+// }
 </style>
