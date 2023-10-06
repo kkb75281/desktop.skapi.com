@@ -1,5 +1,6 @@
 <template lang="pug">
-EmailCaution(v-if="account && !account?.email_verified && route.name !== 'home'")
+template(v-if="account")
+  EmailCaution(v-if="!account?.email_verified && route.name !== 'home'")
 NavBar(v-if="showNavBar")
 router-view
 </template>
