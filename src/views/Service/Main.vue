@@ -1,7 +1,7 @@
 <template lang="pug">
-EmailCaution(v-if="!account.email_verified")
+EmailCaution(v-if="!account?.email_verified")
 template(v-if='currentService')
-    .navSide(:class="{'caution' : !account.email_verified}")
+    .navSide(:class="{'caution' : !account?.email_verified}")
         router-link.logo(to="/")
             img(src="@/assets/img/logo/symbol-logo.png")
         .menuList 
@@ -70,7 +70,7 @@ template(v-if='currentService')
                         router-link.signup(to="/signup") Sign-up
             .prof(v-if="accountInfo && account" @click.stop)
                 .member 
-                    span {{ account.email }}
+                    span {{ account?.email }}
                 .settings 
                     .setting(@click="navigateToPage")
                         .material-symbols-outlined.mid settings

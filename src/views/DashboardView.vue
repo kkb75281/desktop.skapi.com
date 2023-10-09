@@ -7,7 +7,7 @@ main
         .wrapper(v-if="!serviceFetching")
             // service 로딩이 완료 되면 표시
             .boxWrap
-                .box.btn(v-if="!create" @click="createService" :class="{'nonClickable' : !account.email_verified}")
+                .box.btn(v-if="!create" @click="createService" :class="{'nonClickable' : !account?.email_verified}")
                     .material-symbols-outlined.mid add
                     span Create Service
                 .box.create(v-if="create")
@@ -57,6 +57,7 @@ import { skapi, account } from '@/main.js';
 // update services
 if (serviceFetching.value) {
     serviceFetching.value.then(() => {
+        console.log({skapi})
         services.value = skapi.serviceMap.map(sid => skapi.services[sid]).reverse();
     })
 }
@@ -65,7 +66,7 @@ else {
 }
 let create = ref(false);
 let createService = () => {
-    if (account.value.email_verified) {
+    if (account?.value.email_verified) {
         create.value = true;
         nextTick(() => {
             document.getElementById('serviceName').focus();
