@@ -669,10 +669,10 @@ watch(modifyCors, () => {
         flex-wrap: nowrap;
 
         button {
-            height: 44px;
+            height: 32px;
             border: 2px solid #293FE6;
             border-radius: 8px;
-            padding: 6px 12px;
+            padding: 0 12px;
             font-size: 16px;
             font-weight: 700;
             cursor: pointer;

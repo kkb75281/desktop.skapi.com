@@ -32,7 +32,7 @@
                             .material-symbols-outlined.mid.btn.clickable(:class="{'nonClickable' : !account.email_verified || subdomainState}") edit
                 .setting
                     h5.tit HTML file for 404 page
-                    .cont 
+                    .cont.line 
                         .customFile(:class="{'nonClickable' : !account.email_verified || subdomainState}")
                             p {{ subdomainInfo?.[computedSubdomain]?.['404'] || "Upload a file"}}
                             template(v-if="set404PromiseRunning")
@@ -619,7 +619,7 @@ bodyClick.recordPage = () => {
                     width: 100%;
                     height: 44px;
                     line-height: 44px;
-
+                    
                     &::before {
                         position: absolute;
                         content: '';
@@ -629,6 +629,17 @@ bodyClick.recordPage = () => {
                         height: 1px;
                         background: rgba(0, 0, 0, 0.10);
                         box-shadow: 0px 1px 3px 0px rgba(0, 0, 0, 0.06);
+                    }
+
+                    &.line {
+                        &::before {
+                            width: calc(100% - 120px);
+                        }
+
+                        .btn {
+                            bottom: 0;
+                            transform: translateY(-10px);
+                        }
                     }
 
                     h5 {

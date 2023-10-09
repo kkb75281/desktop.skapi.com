@@ -1,7 +1,10 @@
 <template lang="pug">
-.navBar(:class="{'fixed' : route.name == 'home'}")
+.navBar(:class="{'home' : route.name == 'home'}")
     router-link(to="/")
-        img.logo(src="@/assets/img/logo/logo.png")
+        template(v-if="route.name == 'home'")
+            img.logo(src="@/assets/img/logo/symbol-logo-white.svg")
+        template(v-else)
+            img.logo(src="@/assets/img/logo/logo.png")
     .menu
         ul(v-if="account")
             li 
@@ -57,7 +60,7 @@ let logout = async () => {
 <style lang="less" scoped>
 .navBar {
     position: relative;
-    padding: 10px 40px 10px 40px;
+    padding: 10px 80px 10px 80px;
     width: 100%;
     height: 60px;
     display: flex;
@@ -65,6 +68,24 @@ let logout = async () => {
     align-items: center;
     justify-content: space-between;
 
+    &.home {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 60px;
+        z-index: 9999;
+
+        .menu {
+            ul {
+                li {
+                    a {
+                        color: #fff;
+                    }
+                }
+            }
+        }
+    }
     &.fixed {
         position: fixed;
         left: 0;
@@ -96,7 +117,8 @@ let logout = async () => {
                 a {
                     color: #293FE6;
                     text-decoration: none;
-                    font-size: 20px;
+                    font-size: 16px;
+                    font-weight: 700;
                     cursor: pointer;
 
                     &.signup {
