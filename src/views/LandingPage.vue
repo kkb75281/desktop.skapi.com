@@ -2,14 +2,12 @@
 #lending(ref="lending")
     section#intro(ref="intro" @wheel="handleMouseWheel")
         .introWrap 
-            //- img.introLogo(src="@/assets/img/logo/logo.svg")
             img.introLogo(src="@/assets/img/logo/symbol-logo.png")
             .point
                 span One Line Of Code
                 | =&gt;
                 br
                 | Full Backend API
-            //- .code const skapi = new Skapi('service_id', 'owner_id');
             .code(style="color:#f0f0f0;font-family:Consolas, 'Liberation Mono', Menlo, Courier, monospace !important; position:relative !important;overflow:auto")
                 table(style="margin:0;padding:0;border:none;background-color:#434343;border-radius:4px;" cellspacing="0" cellpadding="0")
                     tr
@@ -36,54 +34,55 @@
                 span Get Started
                 .material-symbols-outlined.big arrow_forward
     section#other(ref="other")
-        .packageWrap 
-            .title Skapi provides everything in one package
-            p No more figuring out how to setup, or deploy each of your backend resources.
-            .cardWrap 
-                .card
-                    .cardInner
-                        img(src="@/assets/img/icon/icons-03.png")
-                        .tit Database
-                        .desc Auto indexed, #[br]Full flexibility that #[br]scales
-                .card
-                    .cardInner
-                        img(src="@/assets/img/icon/icons-04.png")
-                        .tit Cloud Storage
-                        .desc Secure, #[br]Database integrated, #[br]Expands with no-limit
-                .card
-                    .cardInner
-                        img(src="@/assets/img/icon/icons-05.png")
-                        .tit Security
-                        .desc Works out-of-the-box, #[br]Fully implemented in #[br]all resources
-                .card
-                    .cardInner
-                        img(src="@/assets/img/icon/icons-06.png")
-                        .tit E-Mail service
-                        .desc Verification, #[br]Sending newsletters, #[br]Notification E-mails
-                .card
-                    .cardInner
-                        img(src="@/assets/img/icon/icons-07.png")
-                        .tit Hosting
-                        .desc Immediate website #[br]hosting
-                .card
-                    .cardInner
-                        img(src="@/assets/img/icon/icons-08.png")
-                        .tit CDN
-                        .desc Implemented to the #[br]cloud storage by #[br]default
-                .card
-                    .cardInner
-                        img(src="@/assets/img/icon/icons-09.png")
-                        .tit Load balancing
-                        .desc Everything controlled #[br]internally
-                .card
-                    .cardInner
-                        img(src="@/assets/img/icon/icons-10.png")
-                        .tit Serverless
-                        .desc No deployment, #[br]No installation #[br]required
-        .htmlWrap 
-            .title Compatible with either #[br]pure HTML projects or any SPA frameworks
-            p No additional settings, Just import Skapi library in your HTML file and you’re ready to go.
-            .htmlCode 
+        .packageWrap(ref="packageWrap")
+            .packageInner
+                .title(:class="{'show' : packageShow}") Skapi provides everything in one package
+                p(:class="{'show' : packageShow}") No more figuring out how to setup, or deploy each of your backend resources.
+                .cardWrap(:class="{'show' : packageShow}") 
+                    .card
+                        .cardInner
+                            img(src="@/assets/img/icon/icons-03.png")
+                            .tit Database
+                            .desc Auto indexed, #[br]Full flexibility that #[br]scales
+                    .card
+                        .cardInner
+                            img(src="@/assets/img/icon/icons-04.png")
+                            .tit Cloud Storage
+                            .desc Secure, #[br]Database integrated, #[br]Expands with no-limit
+                    .card
+                        .cardInner
+                            img(src="@/assets/img/icon/icons-05.png")
+                            .tit Security
+                            .desc Works out-of-the-box, #[br]Fully implemented in #[br]all resources
+                    .card
+                        .cardInner
+                            img(src="@/assets/img/icon/icons-06.png")
+                            .tit E-Mail service
+                            .desc Verification, #[br]Sending newsletters, #[br]Notification E-mails
+                    .card
+                        .cardInner
+                            img(src="@/assets/img/icon/icons-07.png")
+                            .tit Hosting
+                            .desc Immediate website #[br]hosting
+                    .card
+                        .cardInner
+                            img(src="@/assets/img/icon/icons-08.png")
+                            .tit CDN
+                            .desc Implemented to the #[br]cloud storage by #[br]default
+                    .card
+                        .cardInner
+                            img(src="@/assets/img/icon/icons-09.png")
+                            .tit Load balancing
+                            .desc Everything controlled #[br]internally
+                    .card
+                        .cardInner
+                            img(src="@/assets/img/icon/icons-10.png")
+                            .tit Serverless
+                            .desc No deployment, #[br]No installation #[br]required
+        .htmlWrap(ref="htmlWrap")
+            .title(:class="{'show' : htmlShow}") Compatible with either #[br]pure HTML projects or any SPA frameworks
+            p(:class="{'show' : htmlShow}") No additional settings, Just import Skapi library in your HTML file and you’re ready to go.
+            .htmlCode(:class="{'show' : htmlShow}") 
                 .tit index.html 
                 //- .code
                 //-     pre
@@ -100,77 +99,77 @@
                 //-             | ');
                 //-             |&lt;/script&gt;
                 //- .code(style="color:#f0f0f0;font-family:Consolas, 'Liberation Mono', Menlo, Courier, monospace !important; position:relative !important;overflow:auto")
-                table.code(style="margin:0;border:none;background-color:#343434;" cellspacing="0" cellpadding="0")
-                    tr
-                        td(style="padding:6px;border-right:2px solid #4f4f4f")
-                            div(style="margin:0;padding:0;word-break:normal;text-align:right;color:#aaa;font-family:Consolas, 'Liberation Mono', Menlo, Courier, monospace !important;line-height:130%")
-                                div(style="line-height:130%") 1
-                                div(style="line-height:130%") 2
-                                div(style="line-height:130%") 3
-                                div(style="line-height:130%") 4
-                                div(style="line-height:130%") 5
-                                div(style="line-height:130%") 6
-                                div(style="line-height:130%") 7
-                        td(style="padding:6px 0;text-align:left")
-                            div(style="margin:0;padding:0;color:#f0f0f0;font-family:Consolas, 'Liberation Mono', Menlo, Courier, monospace !important;line-height:130%")
-                                div(style="padding:0 6px; white-space:pre; line-height:130%") 
-                                    span(style="color:#f0f0f0") &lt;
-                                    span(style="color:#ff3399") !DOCTYPE 
-                                    span(style="color:#a8ff58") html
-                                    span(style="color:#f0f0f0") &gt;
-                                div(style="padding:0 6px; white-space:pre; line-height:130%") 
-                                    span(style="color:#f0f0f0") &lt;
-                                    span(style="color:#ff3399") head
-                                    span(style="color:#f0f0f0") &gt;
-                                div(style="padding:0 6px; white-space:pre; line-height:130%") 
-                                    span(style="color:#f0f0f0") &lt;
-                                    span(style="color:#ff3399") script 
-                                    span(style="color:#a8ff58") src=
-                                    span(style="color:#ffd500") "https://cdn.jsdelivr.net/npm/skapi-js@latest/dist/skapi.js"
-                                    span(style="color:#ff3399") 
-                                    span(style="color:#f0f0f0") &gt;
-                                    span(style="color:#f0f0f0") &lt;
-                                    span(style="color:#f0f0f0") /
-                                    span(style="color:#ff3399") script
-                                    span(style="color:#f0f0f0") &gt;
-                                div(style="padding:0 6px; white-space:pre; line-height:130%") 
-                                    span(style="color:#f0f0f0") &lt;
-                                    span(style="color:#f0f0f0") /
-                                    span(style="color:#ff3399") head
-                                    span(style="color:#f0f0f0") &gt;
-                                div(style="padding:0 6px; white-space:pre; line-height:130%") 
-                                    span(style="color:#f0f0f0") &lt;
-                                    span(style="color:#ff3399") script
-                                    span(style="color:#f0f0f0") &gt;
-                                div(style="padding:0 6px; white-space:pre; line-height:130%")   
-                                    span(style="color:#ff3399") let 
-                                    span skapi 
-                                    span = 
-                                    span(style="color:#ff3399") new 
-                                    span Skapi( 
-                                    span(style="color:#ffd500") 'SERVICE_ID' 
-                                    span ,  
-                                    span(style="color:#ffd500") 'OWNERS_ID' 
-                                    span );
-                                div(style="padding:0 6px; white-space:pre; line-height:130%") 
-                                    span(style="color:#f0f0f0") &lt;
-                                    span(style="color:#f0f0f0") /
-                                    span(style="color:#ff3399") script
-                                    span(style="color:#f0f0f0") &gt;
-        .docWrap 
+                .code 
+                    table(style="margin:0;border:none;background-color:#434343;" cellspacing="0" cellpadding="0")
+                        tr
+                            td(style="padding:6px;border-right:2px solid #4f4f4f")
+                                div(style="margin:0;padding:0;word-break:normal;text-align:right;color:#aaa;font-family:Consolas, 'Liberation Mono', Menlo, Courier, monospace !important;line-height:130%")
+                                    div(style="line-height:130%") 1
+                                    div(style="line-height:130%") 2
+                                    div(style="line-height:130%") 3
+                                    div(style="line-height:130%") 4
+                                    div(style="line-height:130%") 5
+                                    div(style="line-height:130%") 6
+                                    div(style="line-height:130%") 7
+                            td(style="padding:6px 0;text-align:left")
+                                div(style="margin:0;padding:0;color:#f0f0f0;font-family:Consolas, 'Liberation Mono', Menlo, Courier, monospace !important;line-height:130%")
+                                    div(style="padding:0 6px; white-space:pre; line-height:130%") 
+                                        span(style="color:#f0f0f0") &lt;
+                                        span(style="color:#ff3399") !DOCTYPE 
+                                        span(style="color:#a8ff58") html
+                                        span(style="color:#f0f0f0") &gt;
+                                    div(style="padding:0 6px; white-space:pre; line-height:130%") 
+                                        span(style="color:#f0f0f0") &lt;
+                                        span(style="color:#ff3399") head
+                                        span(style="color:#f0f0f0") &gt;
+                                    div(style="padding:0 6px; white-space:pre; line-height:130%") 
+                                        span(style="color:#f0f0f0") &lt;
+                                        span(style="color:#ff3399") script 
+                                        span(style="color:#a8ff58") src=
+                                        span(style="color:#ffd500") "https://cdn.jsdelivr.net/npm/skapi-js@latest/dist/skapi.js"
+                                        span(style="color:#ff3399") 
+                                        span(style="color:#f0f0f0") &gt;
+                                        span(style="color:#f0f0f0") &lt;
+                                        span(style="color:#f0f0f0") /
+                                        span(style="color:#ff3399") script
+                                        span(style="color:#f0f0f0") &gt;
+                                    div(style="padding:0 6px; white-space:pre; line-height:130%") 
+                                        span(style="color:#f0f0f0") &lt;
+                                        span(style="color:#f0f0f0") /
+                                        span(style="color:#ff3399") head
+                                        span(style="color:#f0f0f0") &gt;
+                                    div(style="padding:0 6px; white-space:pre; line-height:130%") 
+                                        span(style="color:#f0f0f0") &lt;
+                                        span(style="color:#ff3399") script
+                                        span(style="color:#f0f0f0") &gt;
+                                    div(style="padding:0 6px; white-space:pre; line-height:130%")   
+                                        span(style="color:#ff3399") let 
+                                        span skapi 
+                                        span = 
+                                        span(style="color:#ff3399") new 
+                                        span Skapi( 
+                                        span(style="color:#ffd500") 'SERVICE_ID' 
+                                        span ,  
+                                        span(style="color:#ffd500") 'OWNERS_ID' 
+                                        span );
+                                    div(style="padding:0 6px; white-space:pre; line-height:130%") 
+                                        span(style="color:#f0f0f0") &lt;
+                                        span(style="color:#f0f0f0") /
+                                        span(style="color:#ff3399") script
+                                        span(style="color:#f0f0f0") &gt;
+        .docWrap(ref="docWrap" :class="{'show' : docShow}") 
             .left 
                 .title Written in #[br]human language
                 a(href='https://docs.skapi.com' target="_blank") Check out Documentation
             .right
                 img(src="@/assets/img/documentation.png")
         .joinWrap 
-            h2 Skapi is on deta 
+            h2 Skapi is on beta 
             h3 Try it while it's free!
             template(v-if="account")
                 router-link(to="/dashboard") Go to Dashboard
             template(v-else)
                 router-link(to="/signup") Sign-up
-            //- button(@click="moveToTopSmooth") Smooth
 </template>
 
 <script setup>
@@ -180,11 +179,13 @@ import { account } from '@/main.js';
 let lending = ref(null);
 let intro = ref(null);
 let other = ref(null);
+let packageWrap = ref(null);
+let htmlWrap = ref(null);
+let docWrap = ref(null);
 let hasScrolled = false;
-
-let moveToTopSmooth = function() {
-    other.value.scrollIntoView({ behavior: 'smooth' });
-};
+let packageShow = ref(false);
+let htmlShow = ref(false);
+let docShow = ref(false);
 
 let handleMousewheel = function (e) {
     if(!hasScrolled && e.deltaY > 0) {
@@ -194,24 +195,46 @@ let handleMousewheel = function (e) {
         smoothScroll({yPos: 0, duration: 500});
         hasScrolled = false;
     }
+}
 
-    // ios 크롬 사파리에서 behavior: 'smooth' 기능 안됨..
-    // if (!hasScrolled && document.documentElement.scrollTop >= 20) {
-    //     // console.log('Scroll condition met. Scrolling to #other');
-    //     other.value.scrollIntoView({ behavior: 'smooth' });
-    //     hasScrolled = true;
-    // } 
-    // if (hasScrolled && document.documentElement.scrollTop < 20) {
-    //     // console.log('Scroll condition reset.');
-    //     hasScrolled = false;
+let moveHtml = function () {
+    // let packageWrapTop = window.pageYOffset + packageWrap.value.getBoundingClientRect().top;
+    // let htmlWrapTop = window.pageYOffset + htmlWrap.value.getBoundingClientRect().top;
+    // let docWrapTop = window.pageYOffset + docWrap.value.getBoundingClientRect().top;
+
+    // let packageTitle = packageWrap.value.querySelector('.title');
+    // let packageDesc = packageWrap.value.querySelector('p');
+    // let packageCards = packageWrap.value.querySelector('.cardWrap');
+    // let htmlTitle = htmlWrap.value.querySelector('.title');
+    // let htmlDesc = htmlWrap.value.querySelector('p');
+    // let htmlCode = htmlWrap.value.querySelector('.htmlCode');
+
+    // if(scrollY >= packageWrapTop - 500) {
+    //     packageShow.value = true;
+    // } else {
+    //     packageShow.value = false;
+    // }
+
+    // if(scrollY >= htmlWrapTop - 500) {
+    //     htmlShow.value = true;
+    // } else {
+    //     htmlShow.value = false;
+    // }
+
+    // if(scrollY >= docWrapTop - 500) {
+    //     docShow.value = true;
+    // } else {
+    //     docShow.value = false;
     // }
 }
 
 onMounted(() => {
-    window.addEventListener('mousewheel', handleMousewheel);
+    // window.addEventListener('mousewheel', handleMousewheel);
+    window.addEventListener('scroll', moveHtml);
 })
 onBeforeUnmount(() => {
-    window.removeEventListener('mousewheel', handleMousewheel);
+    // window.removeEventListener('mousewheel', handleMousewheel);
+    window.removeEventListener('scroll', moveHtml);
 })
 </script>
 
@@ -231,15 +254,15 @@ onBeforeUnmount(() => {
         transform: translate(-50%, -50%);
 
         .introLogo {
-            width: min(140px, 6vw);
+            width: min(140px, 5vw);
             margin-bottom: min(28px, 2vw);
         }
 
         .point {
             color: #fff;
-            font-size: min(64px, 2.7vw);
+            font-size: min(64px, 3.4vw);
             font-weight: 500;
-            line-height: min(100px, 4.5vw);
+            line-height: min(100px, 5.4vw);
             margin-bottom: min(28px, 2.6vw);
 
             span {
@@ -312,14 +335,27 @@ onBeforeUnmount(() => {
     height: 100%;
     // margin-top: -50vh;
 
+    @keyframes show {
+        from{
+            opacity: 0;
+            transform: translateY(100px);
+        }
+        to{
+            opacity: 1;
+            transform: translateY(0px);
+        }
+    }
+
     >div {
         width: min(1400px, 70vw);
         margin: 0 auto;
-        padding-top: min(550px, 32vw);
+        // padding-top: min(550px, 32vw);
+        padding-top: min(330px, 19vw);
+
     }
 
     .packageWrap {
-        padding-top: min(330px, 19vw);
+        // padding-top: min(330px, 19vw);
     }
 
     .title {
@@ -327,6 +363,13 @@ onBeforeUnmount(() => {
         font-size: min(36px, 2.1vw);
         font-weight: 700;
         margin-bottom: min(24px, 1.3vw);
+        transition: all 1s;
+        // opacity: 0;
+
+        &.show {
+            animation: show 1s;
+            opacity: 1;
+        }
     }
 
     p {
@@ -334,11 +377,23 @@ onBeforeUnmount(() => {
         font-size: min(28px, 1.4vw);
         font-weight: 400;
         margin-bottom: min(42px, 1.8vw);
+        // opacity: 0;
+
+        &.show {
+            animation: show 1.5s;
+            opacity: 1;
+        }
     }
 
     .cardWrap {
         display: flex;
         flex-wrap: wrap;
+        // opacity: 0;
+
+        &.show {
+            animation: show 2s;
+            opacity: 1;
+        }
 
         .card {
             position: relative;
@@ -380,14 +435,14 @@ onBeforeUnmount(() => {
                 .tit {
                     width: 100%;
                     margin-bottom: min(24px, 1vw);
-                    color: #262626;
+                    color: rgba(0,0,0,0.8);
                     font-size: min(24px, 1.2vw);
                     font-weight: 500;
                 }
 
                 .desc {
                     width: 100%;
-                    color: #262626;
+                    color: rgba(0,0,0,0.6);
                     font-size: min(19px, 1vw);
                     font-weight: 400;
                     line-height: min(24px, 1.4vw);
@@ -397,6 +452,13 @@ onBeforeUnmount(() => {
     }
 
     .htmlCode {
+        // opacity: 0;
+
+        &.show {
+            animation: show 2s;
+            opacity: 1;
+        }
+
         .tit {
             color: #000;
             font-size: min(24px, 1.2vw);
@@ -412,6 +474,7 @@ onBeforeUnmount(() => {
             padding: 30px 10px;
             font-size: min(20px, 1vw);
             font-family: Consolas, 'Liberation Mono', Menlo, Courier, monospace !important;
+            overflow: auto;
         }
     }
 
@@ -419,6 +482,12 @@ onBeforeUnmount(() => {
         display: flex;
         flex-wrap: nowrap;
         align-items: center;
+        // opacity: 0;
+
+        &.show {
+            animation: show 1s;
+            opacity: 1;
+        }
 
         .left {
             width: 40%;
@@ -429,6 +498,7 @@ onBeforeUnmount(() => {
                 margin-bottom: min(65px, 2.8vw);
                 font-weight: 700;
                 line-height: 50px;
+                opacity: 1;
             }
 
             a {
@@ -466,14 +536,14 @@ onBeforeUnmount(() => {
 
         h2 {
             width: 100%;
-            font-size: 60px;
+            font-size: 50px;
             font-weight: 700;
             margin-bottom: 17px;
         }
 
         h3 {
             width: 100%;
-            font-size: 32px;
+            font-size: 24px;
             font-weight: 500;
             margin-bottom: 36px;
         }
@@ -495,11 +565,12 @@ onBeforeUnmount(() => {
         .introWrap {
             .introLogo {
                 width: 71px;
-                margin-bottom: 40px;
+                margin-bottom: 25px;
             }
             .point {
-                font-size: 40px;
-                line-height: 70px;
+                font-size: 50px;
+                font-size: min(50px, 5vw);
+                line-height: 82px;
                 margin-bottom: 32px;
             }
             .code {
@@ -524,10 +595,8 @@ onBeforeUnmount(() => {
     #other {
         >div {
             width: 940px;
-            padding-top: 535px;
-        }
-
-        .packageWrap {
+            // width: min(940px, 62vw);
+            // padding-top: 535px;
             padding-top: 248px;
         }
 
@@ -593,108 +662,116 @@ onBeforeUnmount(() => {
     }
 }
 
-// @media (min-width:2200px) {
-//     #intro {
-//         .introWrap {
-//             // .introLogo {
-//             //     width: 270px;
-//             //     margin-bottom: 50px;
-//             // }
+@media (max-width: 660px) {
+    #intro {
+        padding: 0 20px;
+        .introWrap {
+            position: relative;
+            width: 100%;
+            .introLogo {
+                width: 70px;
+                margin-bottom: 33px;
+            }
+            .point {
+                font-size: 35px;
+                line-height: 74px;
+            }
+            .code {
+                width: 100%;
+                padding: 0 10px;
+            }
+            p {
+                font-size: 20px;
+                line-height: 28px;
+                margin-bottom: 48px;
+            }
+        }
+    }
 
-//             .point {
-//                 font-size: 64px;
-//                 line-height: 100px;
-//                 margin-bottom: 70px;
-//             }
+    #other {
+        >div {
+            width: 100%;
+            padding-top: 100px;
+        }
+        .packageWrap, .htmlWrap {
+            padding: 100px 20px 0 20px;
+        }
+        .title {
+            width: 250px;
+            font-size: 28px;
+            line-height: 32px;
+            margin-bottom: 38px;
+        }
+        p {
+            display: none;
+        }
+        .cardWrap {
+            display: block;
 
-//             .code {
-//                 width: 782px;
-//                 height: 52px;
-//                 font-size: 24px;
-//                 margin-bottom: 86px;
-//             }
+            .card {
+                position: relative;
+                width: 100%;
+                height: 100%;
+                margin-right: unset;
+                margin-bottom: 48px;
+                border-radius: 8px;
+                background-color: unset;
+                border: 0;
+                box-shadow: unset;
 
-//             p {
-//                 font-size: 24px;
-//                 line-height: 36px;
-//                 margin-bottom: 36px;
-//             }
+                &::after {
+                    display: none;
+                }
+                .cardInner {
+                    position: relative;
+                    padding: unset;
 
-//             a {
-//                 span {
-//                     font-size: 20px;
-//                 }
-//             }
-//         }
-//     }
+                }
+            }
+        }
+        .htmlCode {
+            .tit {
+                font-size: 24px;
+            }
+            .code {
+                // width: 100%;
+            }
+        }
+        .docWrap {
+            display: none;
+        }
+        .joinWrap {
+            margin-top: 140px;
+            padding-top: 80px;
+            padding-bottom: 80px;
 
-//     #other {
-//         // >div {
-//         //     width: 1416px;
-//         //     padding-top: 400px;
-//         // }
+            h2 {
+                font-size: 40px;
+            }
+            h3 {
+                font-size: 28px;
+            }
+            a {
+                font-size: 20px;
+            }
+        }
+    }
+}
 
-//         .title {
-//             font-size: 36px;
-//             margin-bottom: 24px;
-//         }
+@media (max-width: 500px) {
+    #intro {
+        .introWrap {
+            .code {
+                position: relative;
 
-//         p {
-//             font-size: 28px;
-//             margin-bottom: 42px;
-//         }
-
-//         // .cardWrap {
-//         //     .card {
-//         //         height: 400px;
-//         //         padding: 40px;
-
-//         //         img {
-//         //             height: 135px;
-//         //             margin-top: -12px;
-//         //             margin-left: -12px;
-//         //         }
-
-//         //         .tit {
-//         //             font-size: 28px;
-//         //         }
-
-//         //         .desc {
-//         //             font-size: 24px;
-//         //             line-height: 32px;
-//         //         }
-//         //     }
-//         // }
-
-//         .docWrap {
-//             .left {
-//                 .title {
-//                     font-size: 60px;
-//                 }
-
-//                 a {
-//                     font-size: 28px;
-//                 }
-//             }
-//         }
-
-//         .joinWrap {
-//             margin-top: 400px;
-
-//             h2 {
-//                 font-size: 60px;
-//                 margin-bottom: 17px;
-//             }
-
-//             h3 {
-//                 font-size: 32px;
-//                 margin-bottom: 36px;
-//             }
-
-//             a {
-//                 font-size: 20px;
-//             }
-//         }
-//     }
-// }
+                table {
+                    position: absolute;
+                    left: 0;
+                    top: 50%;
+                    transform: translateY(-50%);
+                }
+            }
+        }
+    }
+}
 </style>

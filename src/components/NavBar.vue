@@ -8,13 +8,13 @@
     .menu
         ul(v-if="account")
             li 
-                a(href="https://docs.skapi.com" target="_blank") Documentation
+                a.doc(href="https://docs.skapi.com" target="_blank") Documentation
             li
                 router-link(to="/dashboard") Dashboard
             li.account(@click.stop="accountInfo = !accountInfo") {{ account.email.charAt(0).toUpperCase() }}
         ul(v-else)
             li 
-                a(href="https://docs.skapi.com" target="_blank") Documentation
+                a.doc(href="https://docs.skapi.com" target="_blank") Documentation
             li
                 router-link(to="/login") Login
             li 
@@ -243,4 +243,25 @@ let logout = async () => {
     .navBar {
         width: 100%;
     }
-}</style>
+}
+@media (max-width: 660px) {
+    .navBar {
+        padding: 0 20px;
+        .logo {
+            display: none;
+        }
+        .menu {
+            ul {
+                display: inline-block;
+                text-align: right;
+                li {
+                    margin-right: 0;
+                    .doc, &.account {
+                        display: none;
+                    }
+                }
+            }
+        }
+    }
+}
+</style>
