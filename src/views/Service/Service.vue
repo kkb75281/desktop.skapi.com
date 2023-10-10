@@ -166,7 +166,7 @@ let inputKey = '';
 let enableDisablePromise = ref(false);
 let promiseRunningCors = ref(false);
 let promiseRunningSecKey = ref(false);
-
+let promiseRunning = ref(false);
 let currentSubdomain = computed(() => {
     if (currentService.value.subdomain) {
         if (currentService.value.subdomain[0] === '*' || currentService.value.subdomain[0] === '+') {

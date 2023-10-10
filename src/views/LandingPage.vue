@@ -5,10 +5,10 @@
             //- img.introLogo(src="@/assets/img/logo/logo.svg")
             img.introLogo(src="@/assets/img/logo/symbol-logo.png")
             .point
-                span One Line Code
+                span One Line Of Code
                 | =&gt;
                 br
-                | Full Backend Service
+                | Full Backend API
             //- .code const skapi = new Skapi('service_id', 'owner_id');
             .code(style="color:#f0f0f0;font-family:Consolas, 'Liberation Mono', Menlo, Courier, monospace !important; position:relative !important;overflow:auto")
                 table(style="margin:0;padding:0;border:none;background-color:#434343;border-radius:4px;" cellspacing="0" cellpadding="0")
