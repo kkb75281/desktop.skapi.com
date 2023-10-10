@@ -4,7 +4,7 @@
         .introWrap 
             img.introLogo(src="@/assets/img/logo/symbol-logo.png")
             .point
-                span One Line Of Code
+                span One Line of Code
                 | =&gt;
                 br
                 | Full Backend API
@@ -27,11 +27,11 @@
                                     span(style="color:#ffd500") 'OWNERS_ID' 
                                     span );
             p
-                | Skapi is a backend API service specifically designed for 
+                | Skapi is a backend API service specially designed for 
                 br
                 | frontend web developers.
-            a(href='https://docs.skapi.com' target="_blank") 
-                span Get Started
+            a(href='https://docs.skapi.com/introduction/getting-started.html' target="_blank") 
+                span Getting Started
                 .material-symbols-outlined.big arrow_forward
     section#other(ref="other")
         .packageWrap(ref="packageWrap")
@@ -43,8 +43,8 @@
                         .cardInner
                             img(src="@/assets/img/icon/icons-03.png")
                             .tit Database
-                            .desc Auto indexed, #[br]Full flexibility that #[br]scales
-                            .mDesc Auto indexed, Full flexibility that scales
+                            .desc Simple, yet flexible #[br]database that scales
+                            .mDesc Simple, yet flexible database that scales
                     .card
                         .cardInner
                             img(src="@/assets/img/icon/icons-04.png")

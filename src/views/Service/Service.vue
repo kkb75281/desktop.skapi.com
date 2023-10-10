@@ -44,7 +44,7 @@ template(v-if='currentService')
                                         span ");
                 .copy.clickable(@click="copy")
                     .material-symbols-outlined.mid file_copy
-            a.question(href="https://docs.skapi.com" target="_blank")
+            a.question(href="https://docs.skapi.com/introduction/getting-started.html" target="_blank")
                 .material-symbols-outlined.empty.sml help 
                 span Where do I put this code?
         .info 
