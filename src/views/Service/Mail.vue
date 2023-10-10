@@ -56,7 +56,7 @@
                     .material-symbols-outlined.sml file_copy
                 span Public Newsletter
             .cont 
-                template(v-if="currentService") {{ currentService?.newsletter_triggers?.[0] }}
+                template(v-if="newsletter_sender?.[currentService.service]?.public") {{ newsletter_sender[currentService.service].public }}
                 template(v-else) loading...
         .email
             .tit 
@@ -64,12 +64,12 @@
                     .material-symbols-outlined.sml file_copy 
                 span Service User Newsletter
             .cont 
-                template(v-if="currentService") {{ currentService?.newsletter_triggers?.[1] }}
+                template(v-if="newsletter_sender?.[currentService.service]?.authorized") {{ newsletter_sender[currentService.service].authorized }}
                 template(v-else) loading...
 </template>
 
 <script setup>
-import { currentService } from '@/data.js';
+import { currentService, newsletter_sender } from '@/data.js';
 
 let copy = (e) => {
     let currentTarget = e.currentTarget;

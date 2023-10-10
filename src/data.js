@@ -5,6 +5,7 @@ export let services = ref([]);
 export let storageInfo = ref({});
 export let currentService = ref(null);
 export let serviceUsers = {};
+export let newsletter_sender = ref({});
 
 export let dataInit = () => {
     serviceFetching.value = false;
@@ -12,4 +13,5 @@ export let dataInit = () => {
     storageInfo.value = {};
     currentService.value = null;
     serviceUsers = {};
+    newsletter_sender.value = {};
 }
