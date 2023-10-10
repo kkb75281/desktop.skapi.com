@@ -15,13 +15,13 @@ template(v-if='currentService')
                                     button.save(type="submit") Save
                     template(v-else)
                         h2 {{ currentService.name }}
-                        .material-symbols-outlined.mid.modify.clickable(:class="{'nonClickable' : !account.email_verified}" @click="editServiceName") edit
+                        .material-symbols-outlined.mid.modify.clickable(:class="{'nonClickable' : !account?.email_verified}" @click="editServiceName") edit
                 .date 
                     span Date Created
                     h5 {{ new Date(currentService.timestamp).toDateString() }}
                 .toggleWrap(:class="{'active': currentService.active >= 1}")
                     span Disable/Enable
-                    .toggleBg(:class="{'nonClickable' : !account.email_verified}")
+                    .toggleBg(:class="{'nonClickable' : !account?.email_verified}")
                         .toggleBtn(@click="enableDisableToggle")
             .startCode 
                 .colorscripter-code(style="color:#f0f0f0;font-family:monospace !important; position:relative !important;overflow:auto")
@@ -67,7 +67,7 @@ template(v-if='currentService')
                                     button.save(type="submit") Save
                     template(v-else)
                         h5 {{ currentService.cors || '*' }}
-                            .material-symbols-outlined.mid.pen.clickable(:class="{'nonClickable' : !account.email_verified}" @click="editCors") edit
+                            .material-symbols-outlined.mid.pen.clickable(:class="{'nonClickable' : !account?.email_verified}" @click="editCors") edit
 
                 .list
                     span(:class="{ active: modifyKey }") Secret Key
@@ -82,7 +82,7 @@ template(v-if='currentService')
                                     button.save(type="submit") Save
                     template(v-else)
                         h5 {{ currentService.api_key || 'No key' }}
-                            .material-symbols-outlined.mid.pen.clickable(:class="{'nonClickable' : !account.email_verified}" @click="editKey") edit
+                            .material-symbols-outlined.mid.pen.clickable(:class="{'nonClickable' : !account?.email_verified}" @click="editKey") edit
 
         router-link.info.hover.user.clicked(:to='`/dashboard/${currentService.service}/users`')
             .titleWrap
@@ -129,8 +129,8 @@ template(v-if='currentService')
                 .list
                     span Host storage used
                     h5 {{ convertToMb(storageInfo?.[currentService.service]?.host) }}
-    .deleteWrap(:class="{'nonClickable' : !account.email_verified}")
-        .deleteInner(@click="!account.email_verified ? false : openDeleteService = true;")
+    .deleteWrap(:class="{'nonClickable' : !account?.email_verified}")
+        .deleteInner(@click="!account?.email_verified ? false : openDeleteService = true;")
             .material-symbols-outlined.mid delete
             span Delete Service
     DisableServiceOverlay(v-if="openDisableService" @close="disableService")
@@ -166,7 +166,7 @@ let inputKey = '';
 let enableDisablePromise = ref(false);
 let promiseRunningCors = ref(false);
 let promiseRunningSecKey = ref(false);
-
+let promiseRunning = ref(false);
 let currentSubdomain = computed(() => {
     if (currentService.value.subdomain) {
         if (currentService.value.subdomain[0] === '*' || currentService.value.subdomain[0] === '+') {
@@ -199,7 +199,7 @@ let currentSubdomain = computed(() => {
 //     }, 200);
 // }
 let editServiceName = () => {
-    if (account.value.email_verified) {
+    if (account.value?.email_verified) {
         inputServiceName = currentService.value.name;
         modifyServiceName.value = true;
     } else {
@@ -207,14 +207,14 @@ let editServiceName = () => {
     }
 }
 let editCors = () => {
-    if (account.value.email_verified) {
+    if (account.value?.email_verified) {
         inputCors.value = currentService.value.cors === '*' ? '' : currentService.value.cors; modifyCors.value = true;
     } else {
         return false;
     }
 }
 let editKey = () => {
-    if (account.value.email_verified) {
+    if (account.value?.email_verified) {
         inputKey = currentService.value.api_key; modifyKey.value = true;
     } else {
         return false;
@@ -303,7 +303,7 @@ let setSecretKey = () => {
     modifyKey.value = false;
 }
 let enableDisableToggle = () => {
-    if (enableDisablePromise.value || !account.value.email_verified) {
+    if (enableDisablePromise.value || !account.value?.email_verified) {
         return;
     }
     if (currentService.value.active === 0) {

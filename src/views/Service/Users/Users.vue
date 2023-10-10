@@ -219,6 +219,7 @@ let userPage = null;
 let currentPage = ref(1);
 let maxPage = ref(1);
 let fetching = ref(false);
+let searchText = ref('');
 
 watch(currentPage, (page) => {
     getPage(page);
@@ -251,7 +252,10 @@ let refresh = () => {
     if (fetching.value) {
         return;
     }
-
+    if (!searchText.value) {
+        fetchParams = defaultFetchParams;
+        fetchParams.value = new Date().getTime();
+    }
     users.value = null;
     serviceUsers[serviceId] = new Pager(worker, {
         id: 'user_id',
@@ -261,7 +265,7 @@ let refresh = () => {
     })
 
     userPage = serviceUsers[serviceId];
-
+    
     fetching.value = true;
     skapi.getUsers(fetchParams, { limit: 50 }).then(u => {
         if (u.endOfList) {
@@ -340,8 +344,6 @@ bodyClick.userPage = () => {
     showDeleteUser.value = false;
 }
 
-let searchText = ref('');
-// let searchFor = ref('user_id');
 let searchFor = ref('timestamp');
 let showFilter = ref(false);
 let showCalendar = ref(false);
