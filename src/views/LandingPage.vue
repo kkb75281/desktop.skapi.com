@@ -44,125 +44,135 @@
                             img(src="@/assets/img/icon/icons-03.png")
                             .tit Database
                             .desc Auto indexed, #[br]Full flexibility that #[br]scales
+                            .mDesc Auto indexed, Full flexibility that scales
                     .card
                         .cardInner
                             img(src="@/assets/img/icon/icons-04.png")
                             .tit Cloud Storage
                             .desc Secure, #[br]Database integrated, #[br]Expands with no-limit
+                            .mDesc Secure, Database integrated, #[br]Expands with no-limit
                     .card
                         .cardInner
                             img(src="@/assets/img/icon/icons-05.png")
                             .tit Security
                             .desc Works out-of-the-box, #[br]Fully implemented in #[br]all resources
+                            .mDesc Works out-of-the-box, Fully #[br]implemented in all resources
                     .card
                         .cardInner
                             img(src="@/assets/img/icon/icons-06.png")
                             .tit E-Mail service
                             .desc Verification, #[br]Sending newsletters, #[br]Notification E-mails
+                            .mDesc Verification, Sending newsletters, #[br]Notification E-mails
                     .card
                         .cardInner
                             img(src="@/assets/img/icon/icons-07.png")
                             .tit Hosting
                             .desc Immediate website #[br]hosting
+                            .mDesc Immediate website hosting
                     .card
                         .cardInner
                             img(src="@/assets/img/icon/icons-08.png")
                             .tit CDN
                             .desc Implemented to the #[br]cloud storage by #[br]default
+                            .mDesc Implemented to the cloud storage by default
                     .card
                         .cardInner
                             img(src="@/assets/img/icon/icons-09.png")
                             .tit Load balancing
                             .desc Everything controlled #[br]internally
+                            .mDesc Everything controlled internally
                     .card
                         .cardInner
                             img(src="@/assets/img/icon/icons-10.png")
                             .tit Serverless
                             .desc No deployment, #[br]No installation #[br]required
+                            .mDesc No deployment, No installation required
         .htmlWrap(ref="htmlWrap")
-            .title(:class="{'show' : htmlShow}") Compatible with either #[br]pure HTML projects or any SPA frameworks
-            p(:class="{'show' : htmlShow}") No additional settings, Just import Skapi library in your HTML file and you’re ready to go.
-            .htmlCode(:class="{'show' : htmlShow}") 
-                .tit index.html 
-                //- .code
-                //-     pre
-                //-         code.language-html
-                //-             |&lt;!DOCTYPE html&gt;
-                //-             |&lt;head&gt;
-                //-             |&lt;script src="https://cdn.jsdelivr.net/npm/skapi-js@latest/dist/skapi.js"&gt;&lt;/script&gt;
-                //-             |&lt;/head&gt;
-                //-             |&lt;script&gt;
-                //-             |    let skapi = new Skapi('
-                //-             span SERVICE_ID
-                //-             | ', '
-                //-             span OWNERS_ID
-                //-             | ');
-                //-             |&lt;/script&gt;
-                //- .code(style="color:#f0f0f0;font-family:Consolas, 'Liberation Mono', Menlo, Courier, monospace !important; position:relative !important;overflow:auto")
-                .code 
-                    table(style="margin:0;border:none;background-color:#434343;" cellspacing="0" cellpadding="0")
-                        tr
-                            td(style="padding:6px;border-right:2px solid #4f4f4f")
-                                div(style="margin:0;padding:0;word-break:normal;text-align:right;color:#aaa;font-family:Consolas, 'Liberation Mono', Menlo, Courier, monospace !important;line-height:130%")
-                                    div(style="line-height:130%") 1
-                                    div(style="line-height:130%") 2
-                                    div(style="line-height:130%") 3
-                                    div(style="line-height:130%") 4
-                                    div(style="line-height:130%") 5
-                                    div(style="line-height:130%") 6
-                                    div(style="line-height:130%") 7
-                            td(style="padding:6px 0;text-align:left")
-                                div(style="margin:0;padding:0;color:#f0f0f0;font-family:Consolas, 'Liberation Mono', Menlo, Courier, monospace !important;line-height:130%")
-                                    div(style="padding:0 6px; white-space:pre; line-height:130%") 
-                                        span(style="color:#f0f0f0") &lt;
-                                        span(style="color:#ff3399") !DOCTYPE 
-                                        span(style="color:#a8ff58") html
-                                        span(style="color:#f0f0f0") &gt;
-                                    div(style="padding:0 6px; white-space:pre; line-height:130%") 
-                                        span(style="color:#f0f0f0") &lt;
-                                        span(style="color:#ff3399") head
-                                        span(style="color:#f0f0f0") &gt;
-                                    div(style="padding:0 6px; white-space:pre; line-height:130%") 
-                                        span(style="color:#f0f0f0") &lt;
-                                        span(style="color:#ff3399") script 
-                                        span(style="color:#a8ff58") src=
-                                        span(style="color:#ffd500") "https://cdn.jsdelivr.net/npm/skapi-js@latest/dist/skapi.js"
-                                        span(style="color:#ff3399") 
-                                        span(style="color:#f0f0f0") &gt;
-                                        span(style="color:#f0f0f0") &lt;
-                                        span(style="color:#f0f0f0") /
-                                        span(style="color:#ff3399") script
-                                        span(style="color:#f0f0f0") &gt;
-                                    div(style="padding:0 6px; white-space:pre; line-height:130%") 
-                                        span(style="color:#f0f0f0") &lt;
-                                        span(style="color:#f0f0f0") /
-                                        span(style="color:#ff3399") head
-                                        span(style="color:#f0f0f0") &gt;
-                                    div(style="padding:0 6px; white-space:pre; line-height:130%") 
-                                        span(style="color:#f0f0f0") &lt;
-                                        span(style="color:#ff3399") script
-                                        span(style="color:#f0f0f0") &gt;
-                                    div(style="padding:0 6px; white-space:pre; line-height:130%")   
-                                        span(style="color:#ff3399") let 
-                                        span skapi 
-                                        span = 
-                                        span(style="color:#ff3399") new 
-                                        span Skapi( 
-                                        span(style="color:#ffd500") 'SERVICE_ID' 
-                                        span ,  
-                                        span(style="color:#ffd500") 'OWNERS_ID' 
-                                        span );
-                                    div(style="padding:0 6px; white-space:pre; line-height:130%") 
-                                        span(style="color:#f0f0f0") &lt;
-                                        span(style="color:#f0f0f0") /
-                                        span(style="color:#ff3399") script
-                                        span(style="color:#f0f0f0") &gt;
+            .htmlInner
+                .title(:class="{'show' : htmlShow}") Compatible with either #[br]pure HTML projects or any SPA frameworks
+                p(:class="{'show' : htmlShow}") No additional settings, Just import Skapi library in your HTML file and you’re ready to go.
+                .htmlCode(:class="{'show' : htmlShow}") 
+                    .tit index.html 
+                    //- .code
+                    //-     pre
+                    //-         code.language-html
+                    //-             |&lt;!DOCTYPE html&gt;
+                    //-             |&lt;head&gt;
+                    //-             |&lt;script src="https://cdn.jsdelivr.net/npm/skapi-js@latest/dist/skapi.js"&gt;&lt;/script&gt;
+                    //-             |&lt;/head&gt;
+                    //-             |&lt;script&gt;
+                    //-             |    let skapi = new Skapi('
+                    //-             span SERVICE_ID
+                    //-             | ', '
+                    //-             span OWNERS_ID
+                    //-             | ');
+                    //-             |&lt;/script&gt;
+                    //- .code(style="color:#f0f0f0;font-family:Consolas, 'Liberation Mono', Menlo, Courier, monospace !important; position:relative !important;overflow:auto")
+                    .code 
+                        table(style="margin:0;border:none;background-color:#434343;" cellspacing="0" cellpadding="0")
+                            tr
+                                td(style="padding:6px;border-right:2px solid #4f4f4f")
+                                    div(style="margin:0;padding:0;word-break:normal;text-align:right;color:#aaa;font-family:Consolas, 'Liberation Mono', Menlo, Courier, monospace !important;line-height:130%")
+                                        div(style="line-height:130%") 1
+                                        div(style="line-height:130%") 2
+                                        div(style="line-height:130%") 3
+                                        div(style="line-height:130%") 4
+                                        div(style="line-height:130%") 5
+                                        div(style="line-height:130%") 6
+                                        div(style="line-height:130%") 7
+                                td(style="padding:6px 0;text-align:left")
+                                    div(style="margin:0;padding:0;color:#f0f0f0;font-family:Consolas, 'Liberation Mono', Menlo, Courier, monospace !important;line-height:130%")
+                                        div(style="padding:0 6px; white-space:pre; line-height:130%") 
+                                            span(style="color:#f0f0f0") &lt;
+                                            span(style="color:#ff3399") !DOCTYPE 
+                                            span(style="color:#a8ff58") html
+                                            span(style="color:#f0f0f0") &gt;
+                                        div(style="padding:0 6px; white-space:pre; line-height:130%") 
+                                            span(style="color:#f0f0f0") &lt;
+                                            span(style="color:#ff3399") head
+                                            span(style="color:#f0f0f0") &gt;
+                                        div(style="padding:0 6px; white-space:pre; line-height:130%") 
+                                            span(style="color:#f0f0f0") &lt;
+                                            span(style="color:#ff3399") script 
+                                            span(style="color:#a8ff58") src=
+                                            span(style="color:#ffd500") "https://cdn.jsdelivr.net/npm/skapi-js@latest/dist/skapi.js"
+                                            span(style="color:#ff3399") 
+                                            span(style="color:#f0f0f0") &gt;
+                                            span(style="color:#f0f0f0") &lt;
+                                            span(style="color:#f0f0f0") /
+                                            span(style="color:#ff3399") script
+                                            span(style="color:#f0f0f0") &gt;
+                                        div(style="padding:0 6px; white-space:pre; line-height:130%") 
+                                            span(style="color:#f0f0f0") &lt;
+                                            span(style="color:#f0f0f0") /
+                                            span(style="color:#ff3399") head
+                                            span(style="color:#f0f0f0") &gt;
+                                        div(style="padding:0 6px; white-space:pre; line-height:130%") 
+                                            span(style="color:#f0f0f0") &lt;
+                                            span(style="color:#ff3399") script
+                                            span(style="color:#f0f0f0") &gt;
+                                        div(style="padding:0 6px; white-space:pre; line-height:130%")   
+                                            span(style="color:#ff3399") let 
+                                            span skapi 
+                                            span = 
+                                            span(style="color:#ff3399") new 
+                                            span Skapi( 
+                                            span(style="color:#ffd500") 'SERVICE_ID' 
+                                            span ,  
+                                            span(style="color:#ffd500") 'OWNERS_ID' 
+                                            span );
+                                        div(style="padding:0 6px; white-space:pre; line-height:130%") 
+                                            span(style="color:#f0f0f0") &lt;
+                                            span(style="color:#f0f0f0") /
+                                            span(style="color:#ff3399") script
+                                            span(style="color:#f0f0f0") &gt;
         .docWrap(ref="docWrap" :class="{'show' : docShow}") 
-            .left 
-                .title Written in #[br]human language
-                a(href='https://docs.skapi.com' target="_blank") Check out Documentation
-            .right
-                img(src="@/assets/img/documentation.png")
+            .docInner
+                .left 
+                    .title Written in #[br]human language
+                    a(href='https://docs.skapi.com' target="_blank") Check out Documentation
+                .right
+                    img(src="@/assets/img/documentation.png")
         .joinWrap 
             h2 Skapi is on beta 
             h3 Try it while it's free!
@@ -447,6 +457,10 @@ onBeforeUnmount(() => {
                     font-weight: 400;
                     line-height: min(24px, 1.4vw);
                 }
+
+                .mDesc {
+                    display: none;
+                }
             }
         }
     }
@@ -599,6 +613,23 @@ onBeforeUnmount(() => {
             // padding-top: 535px;
             padding-top: 248px;
         }
+        .packageWrap {
+            // padding-top: min(330px, 19vw);
+            width: 100%;
+            overflow: auto;
+
+            .packageInner {
+                width: 940px;
+            }
+        }
+
+        .htmlWrap {
+            width: 100%;
+            overflow: auto;
+            .htmlInner {
+                width: 940px;
+            }
+        }
 
         .title {
             font-size: 32px;
@@ -642,6 +673,13 @@ onBeforeUnmount(() => {
         }
 
         .docWrap {
+            width: 100%;
+            overflow: auto;
+            .docInner {
+                display: flex;
+                flex-wrap: nowrap;
+                width: 940px;
+            }
             .left {
                 .title {
                     font-size: 40px;
@@ -651,6 +689,10 @@ onBeforeUnmount(() => {
                 a {
                     font-size: 20px;
                 }
+            }
+            .right {
+                width: 57%;
+                margin-left: 3%;
             }
         }
 
@@ -726,6 +768,12 @@ onBeforeUnmount(() => {
                     position: relative;
                     padding: unset;
 
+                    .desc {
+                        display: none;
+                    }
+                    .mDesc{
+                        display: block;
+                    }
                 }
             }
         }
