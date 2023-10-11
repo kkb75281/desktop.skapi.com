@@ -16,7 +16,7 @@
             li 
                 a.doc(href="https://docs.skapi.com" target="_blank") Documentation
             li
-                router-link(to="/login") Login
+                router-link.login(to="/login") Login
             li 
                 router-link.signup(to="/signup") Sign-up
     .prof(v-if="accountInfo && account" @click.stop)
@@ -256,7 +256,7 @@ let logout = async () => {
                 text-align: right;
                 li {
                     margin-right: 0;
-                    .doc, &.account {
+                    .doc, .login, &.account {
                         display: none;
                     }
                 }

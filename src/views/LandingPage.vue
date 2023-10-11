@@ -93,21 +93,6 @@
                 p(:class="{'show' : htmlShow}") No additional settings, Just import Skapi library in your HTML file and you’re ready to go.
                 .htmlCode(:class="{'show' : htmlShow}") 
                     .tit index.html 
-                    //- .code
-                    //-     pre
-                    //-         code.language-html
-                    //-             |&lt;!DOCTYPE html&gt;
-                    //-             |&lt;head&gt;
-                    //-             |&lt;script src="https://cdn.jsdelivr.net/npm/skapi-js@latest/dist/skapi.js"&gt;&lt;/script&gt;
-                    //-             |&lt;/head&gt;
-                    //-             |&lt;script&gt;
-                    //-             |    let skapi = new Skapi('
-                    //-             span SERVICE_ID
-                    //-             | ', '
-                    //-             span OWNERS_ID
-                    //-             | ');
-                    //-             |&lt;/script&gt;
-                    //- .code(style="color:#f0f0f0;font-family:Consolas, 'Liberation Mono', Menlo, Courier, monospace !important; position:relative !important;overflow:auto")
                     .code 
                         table(style="margin:0;border:none;background-color:#434343;" cellspacing="0" cellpadding="0")
                             tr
@@ -493,10 +478,13 @@ onBeforeUnmount(() => {
     }
 
     .docWrap {
-        display: flex;
-        flex-wrap: nowrap;
         align-items: center;
         // opacity: 0;
+
+        .docInner {
+            display: flex;
+            flex-wrap: nowrap;
+        }
 
         &.show {
             animation: show 1s;
@@ -620,6 +608,7 @@ onBeforeUnmount(() => {
 
             .packageInner {
                 width: 940px;
+                margin: 0 auto;
             }
         }
 
@@ -628,6 +617,7 @@ onBeforeUnmount(() => {
             overflow: auto;
             .htmlInner {
                 width: 940px;
+                margin: 0 auto;
             }
         }
 
@@ -676,9 +666,8 @@ onBeforeUnmount(() => {
             width: 100%;
             overflow: auto;
             .docInner {
-                display: flex;
-                flex-wrap: nowrap;
                 width: 940px;
+                margin: 0 auto;
             }
             .left {
                 .title {
