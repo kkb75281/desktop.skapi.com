@@ -460,7 +460,7 @@ onBeforeUnmount(() => {
 
         .tit {
             color: #000;
-            font-size: min(24px, 1.2vw);
+            font-size: min(24px, 2.5vw);
             font-weight: 700;
             margin-bottom: 10px;
         }
