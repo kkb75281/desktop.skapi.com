@@ -86,7 +86,7 @@ template(v-if='currentService')
 <script setup>
 import { ref, watch } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
-import { services, serviceFetching, currentService, storageInfo, serviceUsers } from '@/data.js';
+import { services, serviceFetching, currentService, storageInfo, serviceUsers, newsletter_sender } from '@/data.js';
 import { serviceRecords } from '@/views/Service/Records/RecordFetch.js';
 import { launch, serviceHost, subdomainInfo } from './subdomain/SubdomainFetch';
 import { skapi, account, bodyClick } from '@/main.js';
@@ -127,8 +127,26 @@ let logout = async () => {
 let getCurrentService = () => {
     let srvcId = route.path.split('/')[2];
     currentService.value = skapi.services[srvcId];
-    
+
     if (currentService.value) {
+        if (!newsletter_sender.value?.[currentService.value.service]?.public) {
+            if (!newsletter_sender.value?.[currentService.value.service]) {
+                newsletter_sender.value[currentService.value.service] = {};
+            }
+            skapi.requestNewsletterSender(currentService.value.service, { groupNum: 0 }).then(s => {
+                newsletter_sender.value[currentService.value.service]['public'] = s;
+            });
+        }
+
+        if (!newsletter_sender.value?.[currentService.value.service]?.authorized) {
+            if (!newsletter_sender.value?.[currentService.value.service]) {
+                newsletter_sender.value[currentService.value.service] = {};
+            }
+            skapi.requestNewsletterSender(currentService.value.service, { groupNum: 1 }).then(s => {
+                newsletter_sender.value[currentService.value.service]['authorized'] = s;
+            });
+        }
+
         if (!storageInfo.value[currentService.value.service]) {
             storageInfo.value[currentService.value.service] = {};
         }
