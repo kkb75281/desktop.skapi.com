@@ -381,51 +381,55 @@ main {
     }
 }
 
-// @media (max-width: 1100px) {
-// main {
-//     .wrapper {
-//         width: 100%;
+@media (max-width: 1100px) {
+    main {
+        .wrapper {
+            width: 100%;
 
-//         .box {
-//             width: 48%;
-//             margin-right: 4%;
-//             margin-bottom: 4%;
+            .boxWrap {
+                .box {
+                    width: 48%;
+                    margin-right: 4%;
+                    margin-bottom: 4%;
+    
+                    &:nth-child(2n+2) {
+                        margin-right: 0;
+                    }
+                    &:nth-child(6n+6) {
+                        margin-right: 0;
+                    }
+                    &:nth-child(3n+3) {
+                        margin-right: 4%;
+                    }
+                }
+            }
+        }
+    }
+}
 
-//             &:nth-child(2n+2) {
-//                 margin-right: 0;
-//             }
-//             &:nth-child(6n+6) {
-//                 margin-right: 0;
-//             }
-//             &:nth-child(3n+3) {
-//                 margin-right: 4%;
-//             }
-//         }
-//     }
-// }
-// }
+@media (max-width: 660px) {
+    main {
+        .wrapper {
+            width: 100%;
+            background-color: unset;
+            padding: 0;
 
-// @media (max-width: 700px) {
-// main {
-//     .wrapper {
-//         width: 100%;
-//         background-color: unset;
-//         padding: 0;
-
-//         .box {
-//             width: 100%;
-//             margin-right: 0%;
-//             margin-bottom: 30px;
-
-//             &:nth-child(3n+3) {
-//                 margin-right: 0;
-//             }
-
-//             &.btn {
-//                 height: 251px;
-//             }
-//         }
-//     }
-// }
-// }
+            .boxWrap {
+                .box {
+                    width: 100%;
+                    margin-right: 0%;
+                    margin-bottom: 30px;
+    
+                    &:nth-child(3n+3) {
+                        margin-right: 0;
+                    }
+    
+                    &.btn {
+                        height: 251px;
+                    }
+                }
+            }
+        }
+    }
+}
 </style>

@@ -2,25 +2,25 @@
 #emailCaution 
     .material-symbols-outlined.mid error
     span In order to able the service, verification is necessary. 
-    router-link(to="/accountSettings") Click here to verify
-    //- .click(@click="goVerify") Click here to verify
+    //- router-link(to="/accountSettings") Click here to verify
+    .click(@click="goVerify") Click here to verify
 </template>
 
 <script setup>
 import { useRouter, useRoute } from 'vue-router';
 
 let router = useRouter();
+let emits = defineEmits(['showVerifyEmail']);
 
-// let goVerify = () => {
-//     let currentHref = window.location.href.split('/').slice(-1)[0];
+let goVerify = () => {
+    let currentHref = window.location.href.split('/').slice(-1)[0];
 
-//     if(currentHref == 'accountSettings') {
-//         // emits('showVerifyEmail');
-//     } else {
-//         router.replace({ path: '/accountSettings' });
-//         console.log('ddddsdsdsd')
-//     }
-// }
+    if(currentHref == 'accountSettings') {
+        emits('showVerifyEmail');
+    } else {
+        router.replace({ path: '/accountSettings' });
+    }
+}
 </script>
 
 <style lang="less" scoped>

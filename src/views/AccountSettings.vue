@@ -61,17 +61,18 @@ main(v-if='account')
                             span Password successfully changed
                     .btn(:class="{'nonClickable' : !account.email_verified}" @click="!account.email_verified ? false : openChangePassword = true;") Change Password
 ChangePassword(v-if="openChangePassword" @close="(e)=>{ if (e === 'success') { passwordChanged = true } openChangePassword=false; }")
-VerifyEmail(v-if="openVerifyEmail" @close="openVerifyEmail=false")
+VerifyEmail(v-if="openVerifyEmail" @close="openVerifyEmail=false;")
 DeleteAccount(v-if="openDeleteAccount" @close="openDeleteAccount=false")
 </template>
 
 <script setup>
-import { computed, nextTick, onMounted, ref, watch } from 'vue';
+import { computed, inject, nextTick, onMounted, ref, watch } from 'vue';
 import { skapi, account } from '@/main.js';
 import ChangePassword from '@/components/ChangePassword.vue';
 import VerifyEmail from '@/components/VerifyEmail.vue';
 import DeleteAccount from '@/components/DeleteAccount.vue';
 
+let showVerifyEmail = inject('showVerifyEmail');
 let info = ref(true);
 let email = ref('');
 let emailConfirmed = ref(false);
@@ -203,6 +204,12 @@ let verifyEmail = () => {
     }
     openVerifyEmail.value = true;
 }
+
+watch(() => showVerifyEmail.value, () => {
+    if(showVerifyEmail.value) {
+        verifyEmail();
+    }
+})
 </script>
 
 <style lang="less" scoped>
@@ -403,5 +410,38 @@ main {
             }
         }
     }
+}
+
+@media (max-width: 800px) {
+    main {
+        .wrapper {
+            .accountCont {
+                .row {
+                    .cont {
+                        // width: 100px;
+                        width: calc(100% - 250px);
+                        white-space: nowrap;
+                        overflow: hidden;
+                        text-overflow: ellipsis;
+                    }
+                    &:nth-child(3) {
+                        .cont {
+                            width: calc(100% - 150px);
+                            .customCheckBox {
+                                label {
+                                    span {
+                                        white-space: nowrap;
+                                        overflow: hidden;
+                                        text-overflow: ellipsis;
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+
 }
 </style>
