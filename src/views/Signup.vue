@@ -425,6 +425,7 @@ let signup = () => {
         form {
             .bottom {
                 display: block;
+                text-align: center;
 
                 &.flex {
                     display: flex;
