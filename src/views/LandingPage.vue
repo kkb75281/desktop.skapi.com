@@ -159,7 +159,7 @@
                 .right
                     img(src="@/assets/img/documentation.png")
         .joinWrap 
-            h2 Skapi is on beta 
+            h2 Skapi is on Beta 
             h3 Try it while it's free!
             template(v-if="account")
                 router-link(to="/dashboard") Go to Dashboard

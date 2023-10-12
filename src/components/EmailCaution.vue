@@ -3,10 +3,24 @@
     .material-symbols-outlined.mid error
     span In order to able the service, verification is necessary. 
     router-link(to="/accountSettings") Click here to verify
+    //- .click(@click="goVerify") Click here to verify
 </template>
 
 <script setup>
+import { useRouter, useRoute } from 'vue-router';
 
+let router = useRouter();
+
+// let goVerify = () => {
+//     let currentHref = window.location.href.split('/').slice(-1)[0];
+
+//     if(currentHref == 'accountSettings') {
+//         // emits('showVerifyEmail');
+//     } else {
+//         router.replace({ path: '/accountSettings' });
+//         console.log('ddddsdsdsd')
+//     }
+// }
 </script>
 
 <style lang="less" scoped>
@@ -25,10 +39,11 @@
         color: rgba(240, 78, 78, 1);
         margin: 0 7px;
     }
-    a {
+    a, .click {
         text-decoration: none;
         color: rgba(240, 78, 78, 1);
         font-weight: 700;
+        cursor: pointer;
     }
 }
 
