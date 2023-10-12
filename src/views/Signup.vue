@@ -58,10 +58,10 @@
                     img.loading(src="@/assets/img/loading.png")
                 
                 template(v-else)
+                    button.create Continue
                     .signup 
                         span Have an account?
                         RouterLink(:to="{name: 'login'}") Login
-                    button.login Create account
     template(v-if="step >= 2")
         .title Tell us More
         form(@submit.prevent="signup" action="")
@@ -122,12 +122,12 @@
             .material.error(v-if="signupError")
                 .material-symbols-outlined.mid error
                 span {{ signupError }}
-            .bottom
+            .bottom.flex
                 template(v-if="promiseRunning")
                     img.loading(src="@/assets/img/loading.png")
                 template(v-else)
-                    button.skip(type="button" @click="skip") Skip
                     button.submit(type="submit") Submit
+                    button.skip(type="button" @click="skip") Skip
 </template>
 
 <script setup>
@@ -276,9 +276,13 @@ let signup = () => {
     top: 50%;
     width: 440px;
     transform: translate(-50%, -50%);
+    // width: 440px;
+    // margin: 0 auto;
+    
     .logo {
         width: 40px;
     }
+
     .title {
         position: relative;
         color: rgba(0, 0, 0, 0.80);
@@ -363,6 +367,7 @@ let signup = () => {
             display: flex;
             align-items: center;
             justify-content: space-between;
+            flex-direction: row-reverse;
             margin-top: 48px;
 
             .signup {
@@ -380,7 +385,7 @@ let signup = () => {
                 }
             }
 
-            .login,
+            .create,
             .submit {
                 border-radius: 8px;
                 background: #293FE6;
@@ -400,6 +405,38 @@ let signup = () => {
                 font-size: 16px;
                 font-weight: 700;
                 cursor: pointer;
+            }
+        }
+    }
+}
+
+@media (max-width: 480px) {
+    .container {
+        position: relative;
+        width: 100%;
+        margin: 0 auto;
+        padding: 75px 20px 0 20px;
+        left: unset;
+        top: unset;
+        transform: unset;
+
+        form {
+            .bottom {
+                display: block;
+
+                &.flex {
+                    display: flex;
+                    align-items: center;
+                    justify-content: space-between;
+                }
+
+                .create {
+                    width: 100%;
+                    margin-bottom: 40px;
+                }
+                .signup {
+                    text-align: center;
+                }
             }
         }
     }

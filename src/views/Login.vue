@@ -29,7 +29,7 @@
                 label(for="remember")
                     span Remember Me
                     span.material-symbols-outlined.mid.check check
-            RouterLink(:to="{name: 'forgotpassword'}") Forgot Email & Password?
+            RouterLink.forgot(:to="{name: 'forgotpassword'}") Forgot Email & Password?
         .material.error(v-if="error")
             .material-symbols-outlined.mid error
             span {{ error }}
@@ -37,10 +37,11 @@
             template(v-if="promiseRunning")
                 img.loading(src="@/assets/img/loading.png")
             template(v-else)
+                button.login Login
+                RouterLink.forgot(:to="{name: 'forgotpassword'}") Forgot Email & Password?
                 .signup 
                     span No account?
                     RouterLink(:to="{name: 'signup'}") Sign up
-                button.login Login
 </template>
 
 <script setup>
@@ -167,7 +168,12 @@ let login = () => {
             display: flex;
             align-items: center;
             justify-content: space-between;
+            flex-direction: row-reverse;
             margin-top: 48px;
+
+            .forgot {
+                display: none;
+            }
 
             .signup {
                 font-size: 16px;
@@ -195,6 +201,42 @@ let login = () => {
                 font-size: 16px;
                 font-weight: 700;
                 cursor: pointer;
+            }
+        }
+    }
+}
+
+@media (max-width: 480px) {
+    .container {
+        position: relative;
+        width: 100%;
+        margin: 0 auto;
+        padding: 75px 20px 0 20px;
+        left: unset;
+        top: unset;
+        transform: unset;
+
+        form {
+            .action {
+                .forgot {
+                    display: none;
+                }
+            }
+            .bottom {
+                display: block;
+                text-align: center;
+
+                .login {
+                    width: 100%;
+                    margin-bottom: 40px;
+                }
+
+                .forgot {
+                    display: block;
+                    margin-bottom: 28px;
+                    text-decoration: none;
+                    color: #293FE6;
+                }
             }
         }
     }

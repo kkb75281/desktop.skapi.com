@@ -42,8 +42,6 @@ let resend = () => {
 
 <style lang="less" scoped>
 .container {
-    // width: 440px;
-    // margin: auto;
     position: fixed;
     left: 50%;
     top: 50%;
@@ -105,6 +103,18 @@ let resend = () => {
             font-weight: 400;
             font-size: 16px;
         }
+    }
+}
+
+@media (max-width: 480px) {
+    .container {
+        position: relative;
+        width: 100%;
+        margin: 0 auto;
+        padding: 75px 20px 0 20px;
+        left: unset;
+        top: unset;
+        transform: unset;
     }
 }
 </style>

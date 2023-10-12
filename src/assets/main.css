@@ -190,13 +190,19 @@ select:focus {
 
 .customCheckBox label::before {
   display: inline-block;
+  position: absolute;
   content: "";
+  left: 0;
+  top: 0;
   width: 16px;
   height: 16px;
-  margin-right: 8px;
   border: 2px solid #5f5f5f;
   background-color: #eee;
   border-radius: 4px;
+}
+
+.customCheckBox label span:not(.check) {
+  margin-left: 28px;
 }
 
 .customCheckBox label .check {
