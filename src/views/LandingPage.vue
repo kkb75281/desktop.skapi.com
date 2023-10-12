@@ -727,6 +727,11 @@ onBeforeUnmount(() => {
         .packageWrap, .htmlWrap {
             padding: 100px 20px 0 20px;
         }
+        .packageWrap {
+            .packageInner {
+                width: 100%;
+            }
+        }
         .title {
             width: 250px;
             font-size: 28px;
