@@ -1,8 +1,8 @@
 <template lang="pug">
 main(v-if='account')
+    .title 
+        h2 Account Setting
     .container
-        .title 
-            h2 Account Setting
         .wrapper 
             .accountWrap 
                 // info 변수를 정의하는 경우가 없는것같습니다. info의 역활은?
@@ -211,27 +211,9 @@ main {
     margin-top: 68px;
     padding: 0 40px;
 
-    &::before {
-        position: absolute;
-        content: '';
-        left: 0;
-        top: 80px;
-        // width: 100%;
-        width: max(1320px, 100%);
-        height: calc(100vh - 208px);
-        background-color: #fafafa;
-        box-shadow: 8px 12px 36px rgba(0, 0, 0, 0.10);
-        border-radius: 8px 8px 0 0;
-        // z-index: -1; <- is this for mouse event?
-        pointer-events: none;
-    }
-
-    .container {
+    .title {
         width: 1200px;
         margin: 0 auto;
-    }
-
-    .title {
         padding-bottom: 42px;
 
         h2 {
@@ -242,9 +224,18 @@ main {
         }
     }
 
+    .container {
+        width: calc(100% + 80px);
+        min-height: calc(100vh - 208px);
+        margin-left: -40px;
+        padding: 60px 40px 0 40px;
+        background-color: #fafafa;
+        box-shadow: 8px 12px 36px rgba(0, 0, 0, 0.10);
+        border-radius: 8px;
+    }
+
     .wrapper {
         width: 100%;
-        padding: 60px 0;
         display: flex;
         flex-wrap: nowrap;
 
@@ -401,8 +392,14 @@ main {
 
 @media (max-width: 1280px) {
     main {
-        .container {
+        .title {
             width: 100%;
+        }
+
+        .container {
+            .wrapper {
+                width: 100%;
+            }
         }
     }
 }

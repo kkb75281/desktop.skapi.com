@@ -16,8 +16,7 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    background: #FFEEEC;
-    box-shadow: 0px 4px 4px 0px rgba(0, 0, 0, 0.25);
+    background: #FFE7E8;
 
     .material-symbols-outlined {
         color: rgba(240, 78, 78, 1);
@@ -28,14 +27,14 @@
     }
     a {
         text-decoration: none;
-        color: #293FE6;
+        color: rgba(240, 78, 78, 1);
         font-weight: 700;
     }
 }
 
-@media (max-width: 1065px) {
+@media (max-width: 1280px) {
     #emailCaution {
-        width: 1065px;
+        width: 100%;
     }
 }
 </style>

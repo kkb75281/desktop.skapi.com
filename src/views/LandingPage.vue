@@ -193,34 +193,34 @@ let handleMousewheel = function (e) {
 }
 
 let moveHtml = function () {
-    // let packageWrapTop = window.pageYOffset + packageWrap.value.getBoundingClientRect().top;
-    // let htmlWrapTop = window.pageYOffset + htmlWrap.value.getBoundingClientRect().top;
-    // let docWrapTop = window.pageYOffset + docWrap.value.getBoundingClientRect().top;
+    let packageWrapTop = window.pageYOffset + packageWrap.value.getBoundingClientRect().top;
+    let htmlWrapTop = window.pageYOffset + htmlWrap.value.getBoundingClientRect().top;
+    let docWrapTop = window.pageYOffset + docWrap.value.getBoundingClientRect().top;
 
-    // let packageTitle = packageWrap.value.querySelector('.title');
-    // let packageDesc = packageWrap.value.querySelector('p');
-    // let packageCards = packageWrap.value.querySelector('.cardWrap');
-    // let htmlTitle = htmlWrap.value.querySelector('.title');
-    // let htmlDesc = htmlWrap.value.querySelector('p');
-    // let htmlCode = htmlWrap.value.querySelector('.htmlCode');
+    let packageTitle = packageWrap.value.querySelector('.title');
+    let packageDesc = packageWrap.value.querySelector('p');
+    let packageCards = packageWrap.value.querySelector('.cardWrap');
+    let htmlTitle = htmlWrap.value.querySelector('.title');
+    let htmlDesc = htmlWrap.value.querySelector('p');
+    let htmlCode = htmlWrap.value.querySelector('.htmlCode');
 
-    // if(scrollY >= packageWrapTop - 500) {
-    //     packageShow.value = true;
-    // } else {
-    //     packageShow.value = false;
-    // }
+    if(scrollY >= packageWrapTop - 500) {
+        packageShow.value = true;
+    } else {
+        packageShow.value = false;
+    }
 
-    // if(scrollY >= htmlWrapTop - 500) {
-    //     htmlShow.value = true;
-    // } else {
-    //     htmlShow.value = false;
-    // }
+    if(scrollY >= htmlWrapTop - 500) {
+        htmlShow.value = true;
+    } else {
+        htmlShow.value = false;
+    }
 
-    // if(scrollY >= docWrapTop - 500) {
-    //     docShow.value = true;
-    // } else {
-    //     docShow.value = false;
-    // }
+    if(scrollY >= docWrapTop - 500) {
+        docShow.value = true;
+    } else {
+        docShow.value = false;
+    }
 }
 
 onMounted(() => {
@@ -359,7 +359,7 @@ onBeforeUnmount(() => {
         font-weight: 700;
         margin-bottom: min(24px, 1.3vw);
         transition: all 1s;
-        // opacity: 0;
+        opacity: 0;
 
         &.show {
             animation: show 1s;
@@ -372,7 +372,7 @@ onBeforeUnmount(() => {
         font-size: min(28px, 1.4vw);
         font-weight: 400;
         margin-bottom: min(42px, 1.8vw);
-        // opacity: 0;
+        opacity: 0;
 
         &.show {
             animation: show 1.5s;
@@ -383,7 +383,7 @@ onBeforeUnmount(() => {
     .cardWrap {
         display: flex;
         flex-wrap: wrap;
-        // opacity: 0;
+        opacity: 0;
 
         &.show {
             animation: show 2s;
@@ -445,13 +445,14 @@ onBeforeUnmount(() => {
 
                 .mDesc {
                     display: none;
+                    color: rgba(0,0,0,0.6);
                 }
             }
         }
     }
 
     .htmlCode {
-        // opacity: 0;
+        opacity: 0;
 
         &.show {
             animation: show 2s;
@@ -470,7 +471,7 @@ onBeforeUnmount(() => {
             border-radius: 8px;
             border: 1px solid rgba(255, 255, 255, 0.10);
             background: #434343;
-            padding: 30px 10px;
+            padding: 20px 10px;
             font-size: min(20px, 1vw);
             font-family: Consolas, 'Liberation Mono', Menlo, Courier, monospace !important;
             overflow: auto;
@@ -479,7 +480,7 @@ onBeforeUnmount(() => {
 
     .docWrap {
         align-items: center;
-        // opacity: 0;
+        opacity: 0;
 
         .docInner {
             display: flex;
@@ -726,14 +727,12 @@ onBeforeUnmount(() => {
         }
         .packageWrap, .htmlWrap {
             padding: 100px 20px 0 20px;
-        }
-        .packageWrap {
-            .packageInner {
+            .packageInner, .htmlInner {
                 width: 100%;
             }
         }
         .title {
-            width: 250px;
+            width: 320px;
             font-size: 28px;
             line-height: 32px;
             margin-bottom: 38px;
@@ -762,10 +761,14 @@ onBeforeUnmount(() => {
                     position: relative;
                     padding: unset;
 
+                    .tit {
+                        font-size: 24px;
+                    }
                     .desc {
                         display: none;
                     }
                     .mDesc{
+                        font-size: 20px;
                         display: block;
                     }
                 }
@@ -776,7 +779,18 @@ onBeforeUnmount(() => {
                 font-size: 24px;
             }
             .code {
-                // width: 100%;
+                table {
+                    td {
+                        font-size: 16px !important;
+
+                        div {
+                            font-size: 16px !important;
+                            span {
+                                font-size: 16px !important;
+                            }
+                        }
+                    }
+                }
             }
         }
         .docWrap {
