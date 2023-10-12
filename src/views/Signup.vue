@@ -364,6 +364,7 @@ let signup = () => {
             }
         }
         .bottom {
+            height: 44px;
             display: flex;
             align-items: center;
             justify-content: space-between;
@@ -391,6 +392,7 @@ let signup = () => {
                 background: #293FE6;
                 box-shadow: 0px -1px 1px 0px rgba(0, 0, 0, 0.15) inset;
                 border: 0;
+                height: 44px;
                 padding: 12px 28px;
                 color: #fff;
                 font-size: 16px;

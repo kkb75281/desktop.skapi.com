@@ -60,7 +60,7 @@ let logout = async () => {
 <style lang="less" scoped>
 .navBar {
     position: relative;
-    padding: 10px 80px 10px 80px;
+    padding: 10px 40px 10px 40px;
     width: 100%;
     height: 60px;
     display: flex;
@@ -117,7 +117,7 @@ let logout = async () => {
                 a {
                     color: #293FE6;
                     text-decoration: none;
-                    font-size: 16px;
+                    font-size: 20px;
                     font-weight: 700;
                     cursor: pointer;
 
