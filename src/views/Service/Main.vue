@@ -21,9 +21,9 @@ template(v-if='currentService')
                 .material-symbols-outlined.big language
                 p Hosting
     .settingWrap
-        .setting 
+        .setting
             .material-symbols-outlined.empty.sml.que help
-            span Help & getting started
+            a(href="https://docs.skapi.com/introduction/getting-started.html" target="_blank") Help & getting started
         //- .settingIcon
         //-     .material-symbols-outlined.empty.sml brightness_5
         //- .settingToggle
@@ -288,22 +288,25 @@ else {
         background-color: rgba(0, 0, 0, 0.1);
     }
 
+    .setting {
+        padding-top: 28px;
+        padding-bottom: 21px;
+        text-decoration: none;
+
+        a {
+            margin-left: 9px;
+            font-size: 14px;
+            text-decoration: none;
+            color: rgba(0, 0, 0, 0.6);
+        }
+    }
+
     .setting,
     .settingIcon {
         display: flex;
         flex-wrap: nowrap;
         align-items: center;
         justify-content: center;
-
-        &:first-child {
-            padding-top: 28px;
-            padding-bottom: 21px;
-        }
-
-        span {
-            margin-left: 9px;
-            font-size: 14px;
-        }
     }
 
     .settingIcon {
