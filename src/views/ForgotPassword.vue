@@ -26,7 +26,7 @@
                     img.loading(src="@/assets/img/loading.png")
                 template(v-else)
                     RouterLink(:to="{name: 'login'}") Back to Log in
-                    button Continue
+                    button(type="submit") Continue
     template(v-else-if="step === 2")
         form(@submit.prevent="step++")
             p 
@@ -52,8 +52,8 @@
                 .material-symbols-outlined.mid error
                 span {{ codeError }}
             .bottom
-                button.back(@click="back") Back
-                button Continue
+                button.back(type="button" @click="back") Back
+                button(type="submit") Continue
     template(v-else-if="step === 3")
         form(@submit.prevent="changePassword" action="")
             p Create a new password.
@@ -90,14 +90,14 @@
                     template(v-else)
                         .material-symbols-outlined.sml visibility_off
             .bottom(style="justify-content: flex-end;")
-                button Continue
+                button(type="submit") Continue
     .navigator(v-if="step <= 3")
         .ball(v-for="num in 3" @click="() => { num < step ? step = num : null; password = '';  passwordConfirm = '';}" :class="{'active': step === num}")
 changeSuccess(:showSuccess="showSuccess")
 </template>
 
 <script setup>
-import { onMounted, ref } from 'vue';
+import { nextTick, onMounted, ref } from 'vue';
 import { skapi } from '@/main.js';
 import changeSuccess from '@/components/ChangeSuccess.vue';
 
@@ -134,7 +134,10 @@ let changePassword = () => {
     skapi.resetPassword({ email: email, code: code.value, new_password: newPassword }).then(res => {
         showSuccess.value = true;
     }).catch(err => {
-        codeError.value = err.message;
+        step.value--;
+        nextTick(() => {
+            codeError.value = err.message;
+        });
     })
 }
 let back = () => {
