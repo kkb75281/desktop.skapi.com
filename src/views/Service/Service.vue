@@ -50,7 +50,7 @@ template(v-if='currentService')
         .info 
             .title 
                 h2 Security Setting
-                .question.help
+                a.question.help(href='https://docs.skapi.com/security/security-settings.html' target="_blank")
                     .material-symbols-outlined.empty.sml help 
                     span Help
             .listWrap

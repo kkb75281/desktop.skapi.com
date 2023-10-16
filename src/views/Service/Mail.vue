@@ -8,7 +8,7 @@
             | You can customize the content of these emails by sending your customized version of the email to the addresses below.
             br
             | For more information refer the 
-            a(href="https://docs.skapi.com" target="_blank") Documentation
+            a(href="https://docs.skapi.com/email/email-templates.html" target="_blank") Documentation
         .email
             .tit 
                 .copy.clickable(@click="copy")
@@ -49,7 +49,7 @@
             | You can send newsletters either to your public subscribers or your service users.
             br
             | For more information refer the 
-            a(href="https://docs.skapi.com" target="_blank") Documentation
+            a(href="https://docs.skapi.com/email/email-templates.html" target="_blank") Documentation
         .email
             .tit 
                 .copy.clickable(@click="copy")
