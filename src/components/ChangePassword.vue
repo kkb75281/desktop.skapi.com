@@ -1,6 +1,6 @@
 <template lang="pug">
-#changePassword(@click="closeWindow")
-    .wrap(@click.stop)
+#changePassword(@mousedown="closeWindow")
+    .wrap(@mousedown.stop)
         .header Change Password
         .content
             template(v-if="step === 1")
