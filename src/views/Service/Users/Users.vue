@@ -579,6 +579,19 @@ onMounted(() => {
 </script>
     
 <style lang="less" scoped>
+.customCheckBox {
+    // label {
+    //     &::before {
+    //         left: 50%;
+    //         top: 50%;
+    //         transform: translate(-50%, -50%);
+    //     }
+    //     .check {
+    //         left: 1.5px;
+    //         top: -12px;            
+    //     }
+    // }
+}
 .containerWrap {
     position: relative;
     display: flex;

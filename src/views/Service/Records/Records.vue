@@ -1110,6 +1110,19 @@ watch(() => selectedRecord.value, () => {
 </script>
 
 <style lang="less" scoped>
+.customCheckBox {
+    // label {
+    //     &::before {
+    //         left: 50%;
+    //         top: 50%;
+    //         transform: translate(-50%, -50%);
+    //     }
+    //     .check {
+    //         left: 22.5px;
+    //         top: -12px;            
+    //     }
+    // }
+}
 .containerWrap {
     display: flex;
     flex-wrap: wrap;

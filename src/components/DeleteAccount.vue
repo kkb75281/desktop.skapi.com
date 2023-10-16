@@ -168,6 +168,10 @@ let closeWindow = () => {
 
 .customCheckBox {
     margin-bottom: 12px;
+
+    label {
+        width: 100%;
+    }
 }
 
 .wrap {

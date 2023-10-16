@@ -102,6 +102,10 @@ let login = () => {
     width: 440px;
     transform: translate(-50%, -50%);
 
+    .customCheckBox label {
+        width: 100%;
+    }
+
     .logo {
         width: 40px;
     }

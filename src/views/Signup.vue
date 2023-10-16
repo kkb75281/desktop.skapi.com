@@ -348,6 +348,10 @@ let signup = () => {
         }
         .customCheckBox {
             margin-bottom: 14px;
+
+            label {
+                width: 100%;
+            }
         }
 
         .action {
