@@ -211,6 +211,11 @@ let login = () => {
 }
 
 @media (max-width: 480px) {
+    .customCheckBox {
+        label {
+            align-items: unset;
+        }
+    }
     .container {
         position: relative;
         width: 100%;
