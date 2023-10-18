@@ -15,7 +15,7 @@ skapi.getProfile().then(u => {
 const app = createApp(App)
 
 app.use(router)
-// work
+
 app.mount('#app')
 
 let bodyClick = {}
