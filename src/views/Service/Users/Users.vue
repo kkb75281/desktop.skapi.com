@@ -18,7 +18,13 @@
             .searchBar
                 .material-symbols-outlined.mid.search search
                 input#searchInput(v-if="searchFor === 'timestamp'" placeholder="YYYY-MM-DD ~ YYYY-MM-DD" v-model="searchText")
-                input#searchInput(v-else-if="searchFor === 'user_id'" placeholder="Search Users" v-model="searchText")
+                input#searchInput(
+                    v-else-if="searchFor === 'user_id'" 
+                    placeholder="Search Users" 
+                    v-model="searchText"
+                    @input="e=>{e.target.setCustomValidity('');}"
+                    pattern="[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}"
+                )
                 input#searchInput(v-else-if="searchFor === 'email'" placeholder="Search public email address" v-model="searchText")
                 input#searchInput(v-else-if="searchFor === 'phone_number'" placeholder="eg+821234567890" v-model="searchText")
                 input#searchInput(v-else-if="searchFor === 'address'" placeholder="Address" v-model="searchText")
