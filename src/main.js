@@ -18,6 +18,8 @@ app.use(router)
 
 app.mount('#app')
 
+console.log('IM fixing a bug!')
+
 let bodyClick = {}
 document.body.addEventListener('click', ()=>{
     if(Object.keys(bodyClick).length) {
