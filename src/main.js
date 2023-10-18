@@ -18,7 +18,7 @@ app.use(router)
 
 app.mount('#app')
 
-console.log('fix spelling')
+console.log('Final fix')
 
 let bodyClick = {}
 document.body.addEventListener('click', ()=>{
