@@ -42,61 +42,61 @@
                             input#userID(type="checkbox" :checked="filterOptions.userID" @change="filterOptions.userID = !filterOptions.userID")
                             label(for="userID")
                                 .material-symbols-outlined.mid.check check
-                        span User ID
+                                span User ID
                     .filter 
                         .customCheckBox
                             input#name(type="checkbox" :checked="filterOptions.name" @change="filterOptions.name = !filterOptions.name")
                             label(for="name")
                                 .material-symbols-outlined.mid.check check
-                        span Name
+                                span Name
                     .filter 
                         .customCheckBox
                             input#block(type="checkbox" :checked="filterOptions.block" @change="filterOptions.block = !filterOptions.block")
                             label(for="block")
                                 .material-symbols-outlined.mid.check check
-                        span Block/Unblock
+                                span Block/Unblock
                     .filter 
                         .customCheckBox
                             input#status(type="checkbox" :checked="filterOptions.status" @change="filterOptions.status = !filterOptions.status")
                             label(for="status")
                                 .material-symbols-outlined.mid.check check
-                        span Status
+                                span Status
                     .filter 
                         .customCheckBox
                             input#email(type="checkbox" :checked="filterOptions.email" @change="filterOptions.email = !filterOptions.email")
                             label(for="email")
                                 .material-symbols-outlined.mid.check check
-                        span Email
+                                span Email
                     .filter 
                         .customCheckBox
                             input#address(type="checkbox" :checked="filterOptions.address" @change="filterOptions.address = !filterOptions.address")
                             label(for="address")
                                 .material-symbols-outlined.mid.check check
-                        span Address
+                                span Address
                     .filter 
                         .customCheckBox
                             input#gender(type="checkbox" :checked="filterOptions.gender" @change="filterOptions.gender = !filterOptions.gender")
                             label(for="gender")
                                 .material-symbols-outlined.mid.check check
-                        span Gender
+                                span Gender
                     .filter 
                         .customCheckBox
                             input#locale(type="checkbox" :checked="filterOptions.locale" @change="filterOptions.locale = !filterOptions.locale")
                             label(for="locale")
                                 .material-symbols-outlined.mid.check check
-                        span Locale
+                                span Locale
                     //- .filter 
                     //-     .customCheckBox
                     //-         input#group(type="checkbox" :checked="filterOptions.group" @change="filterOptions.group = !filterOptions.group")
                     //-         label(for="group")
                     //-             .material-symbols-outlined.mid.check check
-                    //-     span Group
+                    //-             span Group
                     .filter 
                         .customCheckBox
                             input#timestamp(type="checkbox" :checked="filterOptions.timestamp" @change="filterOptions.timestamp = !filterOptions.timestamp")
                             label(for="timestamp")
                                 .material-symbols-outlined.mid.check check
-                        span Date Created
+                                span Date Created
                 .material-symbols-outlined.mid.refresh.clickable(@click='refresh' :class='{"rotate_animation": fetching }') cached
                 .material-symbols-outlined.mid.menu.clickable(:class='{"nonClickable": !checkedUsers.length || !account.email_verified}' @click.stop="!account.email_verified ? false : showUserSetting = !showUserSetting") more_vert
                 .userSettingWrap(v-if="showUserSetting" @click.stop)
@@ -715,6 +715,11 @@ onMounted(() => {
 
                     &:last-child {
                         margin-bottom: 0;
+                    }
+                    .customCheckBox {
+                        label {
+                            width: 100%;
+                        }
                     }
                 }
             }
