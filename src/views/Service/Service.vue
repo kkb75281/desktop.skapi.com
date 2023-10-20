@@ -691,7 +691,7 @@ watch(modifyCors, () => {
     }
 }
 
-@media (max-width: 1150px) {
+@media (max-width: 1320px) {
     .infoWrap {
         .info {
             .title {

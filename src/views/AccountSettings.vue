@@ -218,6 +218,10 @@ main {
     margin-top: 68px;
     padding: 0 40px;
 
+    .customCheckBox label {
+        width: 100%;
+    }
+
     .title {
         width: 1200px;
         margin: 0 auto;

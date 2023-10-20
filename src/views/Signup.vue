@@ -348,6 +348,10 @@ let signup = () => {
         }
         .customCheckBox {
             margin-bottom: 14px;
+
+            label {
+                width: 100%;
+            }
         }
 
         .action {
@@ -413,6 +417,11 @@ let signup = () => {
 }
 
 @media (max-width: 480px) {
+    .customCheckBox {
+        label {
+            align-items: unset;
+        }
+    }
     .container {
         position: relative;
         width: 100%;

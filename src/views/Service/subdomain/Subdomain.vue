@@ -871,8 +871,7 @@ bodyClick.recordPage = () => {
                     }
 
                     .type {
-                        margin-left: 10px;
-                        margin-right: 20px;
+                        margin: 0 20px;
                     }
 
                     .pathWrapper {

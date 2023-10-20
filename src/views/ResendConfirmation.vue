@@ -7,7 +7,7 @@
         | Please check your inbox for a confirmation email. 
         br
         | Click the link in the email to confirm your email address. 
-    .email The code has sent to : 
+    .email The link has sent to : 
         span {{ decodedEmail }}
     .resend
         template(v-if="resending")
