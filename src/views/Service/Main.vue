@@ -435,6 +435,17 @@ else {
                             color: rgba(0, 0, 0, 0.40);
                         }
 
+                        &:nth-child(2) {
+                            // width: 80px;
+                            // white-space: nowrap;
+                            // overflow: hidden;
+                            // text-overflow: ellipsis;
+                        }
+
+                        &:last-child {
+                            margin-right: 0;
+                        }
+
                         &::before {
                             position: absolute;
                             content: '>';
@@ -479,7 +490,7 @@ else {
                         transform: translateY(-50%);                    
                         width: 1px;
                         height: 25px;
-                        background-color: rgba(0,0,0,0.6);
+                        background-color: rgba(0,0,0,0.1);
                     }
 
                     li {

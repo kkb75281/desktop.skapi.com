@@ -97,7 +97,7 @@ let logout = async () => {
             ul {
                 &:first-child {
                     &::after {
-                        background-color: #fff;
+                        background-color: rgba(255,255,255,0.4);
                     }
                 }
                 li {
@@ -163,7 +163,7 @@ let logout = async () => {
                     transform: translateY(-50%);                    
                     width: 1px;
                     height: 25px;
-                    background-color: rgba(0,0,0,0.6);
+                    background-color: rgba(0,0,0,0.1);
                 }
 
                 li {
