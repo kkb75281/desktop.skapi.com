@@ -27,10 +27,11 @@
                                     span ,
                                     span(style="color:#ffd500") 'OWNERS_ID' 
                                     span );
-            p
+            .desc
                 | Skapi is a backend API service specially designed for 
                 br
                 | frontend web developers.
+            .mdesc Skapi is a backend API service specially designed for frontend web developers.
             a(href='https://docs.skapi.com/introduction/getting-started.html' target="_blank") 
                 span Getting Started
                 .material-symbols-outlined.big arrow_forward
@@ -299,12 +300,16 @@ onBeforeUnmount(() => {
             margin-bottom: min(86px, 3.7vw);
         }
 
-        p {
+        .desc, .mdesc {
             color: #FFF;
             font-size: min(24px, 1.04vw);
             font-weight: 400;
             line-height: min(36px, 1.6vw);
             margin-bottom: min(36px, 2vw);
+        }
+
+        .mdesc {
+            display: none;
         }
 
         a {
@@ -587,7 +592,7 @@ onBeforeUnmount(() => {
                 font-size: 16px;
                 margin-bottom: 52px;
             }
-            p {
+            .desc {
                 font-size: 16px;
                 line-height: 24px;
                 margin-bottom: 30px;
@@ -722,10 +727,15 @@ onBeforeUnmount(() => {
                 width: 100%;
                 padding: 0 10px;
             }
-            p {
+            .desc {
+                display: none;
+            }
+            
+            .mdesc {
                 font-size: 20px;
                 line-height: 28px;
                 margin-bottom: 48px;
+                display: block;
             }
         }
     }
