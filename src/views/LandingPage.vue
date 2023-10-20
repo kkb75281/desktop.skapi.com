@@ -3,6 +3,7 @@
     section#intro(ref="intro" @wheel="handleMouseWheel")
         .introWrap 
             img.introLogo(src="@/assets/img/logo/symbol-logo.png")
+            img.mintroLogo(src="@/assets/img/logo/text-logo-white.svg")
             .point
                 span One Line of Code
                 | =&gt;
@@ -251,6 +252,10 @@ onBeforeUnmount(() => {
         .introLogo {
             width: min(140px, 5vw);
             margin-bottom: min(28px, 2vw);
+        }
+
+        .mintroLogo {
+            display: none;
         }
 
         .point {
@@ -702,6 +707,11 @@ onBeforeUnmount(() => {
             width: 100%;
             .introLogo {
                 width: 70px;
+                margin-bottom: 33px;
+                display: none;
+            }
+            .mintroLogo {
+                display: block;
                 margin-bottom: 33px;
             }
             .point {

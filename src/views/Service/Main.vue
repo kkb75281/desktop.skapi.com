@@ -55,19 +55,35 @@ template(v-if='currentService')
                         li(v-if="route.name == 'subdomain'" :class="{'active': route.name == 'subdomain'}")
                             router-link(:to="`/dashboard/${currentService.service}/records`") Hosting
             .menuWrap
-                ul(v-if="account")
-                    li 
-                        a(href="https://docs.skapi.com" target="_blank") Documentation
-                    li
-                        router-link(to="/dashboard") Dashboard
-                    li.account(@click.stop="accountInfo = !accountInfo") {{ account.email.charAt(0).toUpperCase() }}
-                ul(v-else)
-                    li 
-                        a(href="https://docs.skapi.com" target="_blank") Documentation
-                    li
-                        router-link(to="/login") Login
-                    li 
-                        router-link.signup(to="/signup") Sign-up
+                template(v-if="account")
+                    ul
+                        li
+                            a(href="https://twitter.com/skapijs" target="_blank")
+                                img(src="@/assets/img/icon/twitter.svg")
+                        li
+                            a(href="https://discord.com/channels/1164154380816236626/1164154380816236628" target="_blank")
+                                img(src="@/assets/img/icon/discord.svg")
+                    ul
+                        li 
+                            a(href="https://docs.skapi.com" target="_blank") Documentation
+                        li
+                            router-link(to="/dashboard") Dashboard
+                        li.account(@click.stop="accountInfo = !accountInfo") {{ account.email.charAt(0).toUpperCase() }}
+                template(v-else)
+                    ul
+                        li
+                            a(href="https://twitter.com/skapijs" target="_blank")
+                                img(src="@/assets/img/icon/twitter.svg")
+                        li
+                            a(href="https://discord.com/channels/1164154380816236626/1164154380816236628" target="_blank")
+                                img(src="@/assets/img/icon/discord.svg")
+                    ul
+                        li 
+                            a(href="https://docs.skapi.com" target="_blank") Documentation
+                        li
+                            router-link(to="/login") Login
+                        li 
+                            router-link.signup(to="/signup") Sign-up
             .prof(v-if="accountInfo && account" @click.stop)
                 .member 
                     span {{ account?.email }}
@@ -444,24 +460,82 @@ else {
         }
 
         .menuWrap {
+            display: flex;
+            flex-wrap: nowrap;
+
             ul {
+                position: relative;
                 display: flex;
                 flex-wrap: nowrap;
                 align-items: center;
+                padding: 0 24px;
+
+                &:first-child {
+                    &::after {
+                        position: absolute;
+                        content: '';
+                        top: 50%;
+                        right: 0;
+                        transform: translateY(-50%);                    
+                        width: 1px;
+                        height: 25px;
+                        background-color: rgba(0,0,0,0.6);
+                    }
+
+                    li {
+                        margin-right: 16px;
+                    }
+                }
+
+                &:last-child {
+                    padding-right: 0;
+                }
 
                 li {
                     list-style: none;
-                    margin-right: 60px;
+                    margin-right: 24px;
 
+                    &:last-child {
+                        margin-right: 0;
+                    }
+                    
                     a {
-                        color: #293FE6;
+                        color: rgba(0,0,0,0.6);
                         text-decoration: none;
                         font-size: 20px;
                         font-weight: 700;
                         cursor: pointer;
+                        
+                        &:hover {
+                            color: rgba(0,0,0,1);
+
+                            img {
+                                opacity: 1;
+                            }
+                        }
+
+                        &.signup {
+                            color: #fff;
+                            padding: 8px 20px;
+                            border-radius: 8px;
+                            font-size: 16px;
+                            font-weight: 700;
+                            background: #293FE6;
+                        }
+
+                        img {
+                            width: 20px;
+                            height: 20px;
+                            opacity: 0.6;
+                            margin-top: 5px;
+                        }
                     }
 
                     &:last-child {
+                        margin-right: 0;
+                    }
+
+                    &.account {
                         position: relative;
                         margin-right: 0;
                         width: 40px;
@@ -474,7 +548,6 @@ else {
                         align-items: center;
                         justify-content: center;
                         cursor: pointer;
-
                     }
                 }
             }
