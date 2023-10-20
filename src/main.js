@@ -18,6 +18,7 @@ app.use(router)
 
 app.mount('#app')
 
+//test
 let bodyClick = {}
 document.body.addEventListener('click', ()=>{
     if(Object.keys(bodyClick).length) {
