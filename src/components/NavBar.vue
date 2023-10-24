@@ -13,7 +13,7 @@
                     a(href="https://twitter.com/skapijs" target="_blank")
                         img(src="@/assets/img/icon/twitter.svg")
                 li
-                    a(href="https://discord.com/channels/1164154380816236626/1164154380816236628" target="_blank")
+                    a(href="https://discord.gg/3QdZzQwR" target="_blank")
                         img(src="@/assets/img/icon/discord.svg")
             ul
                 li.doc
