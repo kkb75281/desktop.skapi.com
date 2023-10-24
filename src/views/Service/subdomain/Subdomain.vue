@@ -9,7 +9,7 @@
             .buttonWrap 
                 .refresh.clickable(:class="{'nonClickable' : !account.email_verified || subdomainState || refreshCDNRun}" @click='refreshCdn()')
                     .material-symbols-outlined.mid(:class="{'rotate_animation': refreshCDNRun}") cached
-                    span Refrech CDN
+                    span Refresh CDN
                 .delete.clickable(:class="{'nonClickable' : !account.email_verified || subdomainState}" @click='showDeleteSubdomain = true;')
                     .material-symbols-outlined.mid delete
                     span Delete
