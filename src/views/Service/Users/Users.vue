@@ -477,7 +477,7 @@ let searchUsers = (e) => {
         refresh();
     }
 
-    else if (searchTarget === 'timestamp' || searchTarget === 'birthdate') {
+    else if (searchTarget === 'timestamp') {
         let dates = search.split('~').map(d => d.trim());
 
         let startDate = 0;
@@ -503,6 +503,7 @@ let searchUsers = (e) => {
             range: endDate
         }
 
+        console.log(fetchParams)
         refresh();
     }
     else if (searchTarget === 'user_id') {
@@ -511,6 +512,22 @@ let searchUsers = (e) => {
             searchFor: 'user_id',
             value: search
         }
+        refresh();
+    }
+    else if (searchTarget === 'birthdate') {
+        let dates = search.split('~').map(d => d.trim());
+
+        let startDate = dates?.[0] || '1000-01-01';
+
+        let endDate = dates?.[1] || new Date().toISOString().substring(0, 10);
+
+        fetchParams = {
+            service: serviceId,
+            searchFor: searchTarget,
+            value: startDate,
+            range: endDate
+        }
+
         refresh();
     }
     else {
