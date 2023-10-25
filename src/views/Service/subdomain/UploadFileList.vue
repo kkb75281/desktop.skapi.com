@@ -49,6 +49,7 @@ let hideList = ref(false);
     bottom: 0;
     background-color: #fafafa;
     border: 1px solid rgba(0, 0, 0, 0.15);
+    overflow: hidden;
 
     &.hide {
         bottom: -328px;

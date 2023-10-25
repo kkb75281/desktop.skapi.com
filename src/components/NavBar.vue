@@ -2,23 +2,40 @@
 .navBar(:class="{'home' : route.name == 'home'}")
     router-link(to="/")
         template(v-if="route.name == 'home'")
-            img.logo(src="@/assets/img/logo/symbol-logo-white.svg")
+            img.logo(src="@/assets/img/logo/logo-white.svg")
+            img.mlogo(src="@/assets/img/logo/symbol-logo-white.png")
         template(v-else)
             img.logo(src="@/assets/img/logo/logo.png")
     .menu
-        ul(v-if="account")
-            li 
-                a.doc(href="https://docs.skapi.com" target="_blank") Documentation
-            li
-                router-link(to="/dashboard") Dashboard
-            li.account(@click.stop="accountInfo = !accountInfo") {{ account.email.charAt(0).toUpperCase() }}
-        ul(v-else)
-            li 
-                a.doc(href="https://docs.skapi.com" target="_blank") Documentation
-            li
-                router-link.login(to="/login") Login
-            li 
-                router-link.signup(to="/signup") Sign-up
+        template(v-if="account")
+            ul
+                li
+                    a(href="https://twitter.com/skapijs" target="_blank")
+                        img(src="@/assets/img/icon/twitter.svg")
+                li
+                    a(href="https://discord.gg/3QdZzQwR" target="_blank")
+                        img(src="@/assets/img/icon/discord.svg")
+            ul
+                li.doc
+                    a(href="https://docs.skapi.com" target="_blank") Documentation
+                li
+                    router-link(to="/dashboard") Dashboard
+                li.account(@click.stop="accountInfo = !accountInfo") {{ account.email.charAt(0).toUpperCase() }}
+        template(v-else)
+            ul
+                li
+                    a(href="https://twitter.com/skapijs" target="_blank")
+                        img(src="@/assets/img/icon/twitter.svg")
+                li
+                    a(href="https://discord.com/channels/1164154380816236626/1164154380816236628" target="_blank")
+                        img(src="@/assets/img/icon/discord.svg")
+            ul
+                li.doc 
+                    a(href="https://docs.skapi.com" target="_blank") Documentation
+                li.login
+                    router-link(to="/login") Login
+                li 
+                    router-link.signup(to="/signup") Sign-up
     .prof(v-if="accountInfo && account" @click.stop)
         .member 
             span {{ account.email }}
@@ -78,9 +95,26 @@ let logout = async () => {
 
         .menu {
             ul {
+                &:first-child {
+                    &::after {
+                        background-color: rgba(255,255,255,0.4);
+                    }
+                }
                 li {
                     a {
                         color: #fff;
+
+                        &:hover {
+                            color: #293FE6;
+
+                            img {
+                                filter: invert(28%) sepia(100%) saturate(5415%) hue-rotate(234deg) brightness(89%) contrast(102%);
+                            }
+                        }
+                        img {
+                            filter: invert(100%) sepia(0%) saturate(7500%) hue-rotate(355deg) brightness(107%) contrast(106%);
+                            opacity: 1;
+                        }
                     }
                 }
             }
@@ -104,22 +138,65 @@ let logout = async () => {
         width: 120px;
     }
 
+    .mlogo {
+        width: 32px;
+        display: none;
+    }
+
     .menu {
+        display: flex;
+        flex-wrap: nowrap;
+
         ul {
+            position: relative;
             display: flex;
             flex-wrap: nowrap;
             align-items: center;
+            padding: 0 24px;
+
+            &:first-child {
+                &::after {
+                    position: absolute;
+                    content: '';
+                    top: 50%;
+                    right: 0;
+                    transform: translateY(-50%);                    
+                    width: 1px;
+                    height: 25px;
+                    background-color: rgba(0,0,0,0.1);
+                }
+
+                li {
+                    margin-right: 16px;
+                }
+            }
+
+            &:last-child {
+                padding-right: 0;
+            }
 
             li {
                 list-style: none;
-                margin-right: 60px;
+                margin-right: 24px;
 
+                &:last-child {
+                    margin-right: 0;
+                }
+                
                 a {
-                    color: #293FE6;
+                    color: rgba(0,0,0,0.6);
                     text-decoration: none;
                     font-size: 20px;
                     font-weight: 700;
                     cursor: pointer;
+                    
+                    &:hover {
+                        color: rgba(0,0,0,1);
+
+                        img {
+                            opacity: 1;
+                        }
+                    }
 
                     &.signup {
                         color: #fff;
@@ -128,6 +205,12 @@ let logout = async () => {
                         font-size: 16px;
                         font-weight: 700;
                         background: #293FE6;
+                    }
+
+                    img {
+                        width: 20px;
+                        height: 20px;
+                        opacity: 0.6;
                     }
                 }
 
@@ -244,23 +327,40 @@ let logout = async () => {
         width: 100%;
     }
 }
-@media (max-width: 660px) {
+@media (max-width: 680px) {
     .navBar {
         padding: 0 20px;
-        .logo {
-            display: none;
+        &.home {
+            .logo {
+                display: none;
+            }
+            .mlogo {
+                display: block;
+            }
         }
         .menu {
             ul {
-                display: inline-block;
-                text-align: right;
-                li {
-                    margin-right: 0;
-                    .doc, .login, &.account {
-                        display: none;
+                &:last-child {
+                    padding-right: 4px;
+
+                    li {
+                        margin-right: 0;
+                        &.doc, &.login, &.account {
+                            display: none;
+                        }
                     }
                 }
             }
+            // ul {
+            //     display: inline-block;
+            //     text-align: right;
+            //     li {
+            //         margin-right: 0;
+            //         .doc, .login, &.account {
+            //             display: none;
+            //         }
+            //     }
+            // }
         }
     }
 }
