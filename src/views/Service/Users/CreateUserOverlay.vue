@@ -65,8 +65,11 @@ let createUser = () => {
     error.value = '';
     skapi.signup({
         email,
-        password,
+        // password,
+        access_group: 2,
         service: currentService.value.service
+    }, {
+        signup_confirmation: '/hello',
     }).then((res) => {
         promiseRunning.value = false;
         emits('close', res);

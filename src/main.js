@@ -5,7 +5,7 @@ import App from './App.vue'
 import router from './router'
 import Admin from '@/skapi-extensions/js/admin.js'
 
-let skapi = new Admin("us31zettahertzesskpi");
+let skapi = new Admin("eu71zettahertzesskpi");
 let account = ref('pending');
 
 skapi.getProfile().then(u => {
