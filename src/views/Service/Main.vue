@@ -173,7 +173,7 @@ let getCurrentService = () => {
                 subdomain: sd,
             }).then(s =>
                 subdomainInfo.value[sd] = s
-            );
+            ).catch(err=>err);
 
             launch(currentService.value.subdomain, f => {
                 if (f.length) {
