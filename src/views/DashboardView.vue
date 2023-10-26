@@ -57,7 +57,6 @@ import { skapi, account } from '@/main.js';
 // update services
 if (serviceFetching.value) {
     serviceFetching.value.then(() => {
-        console.log({skapi})
         services.value = skapi.serviceMap.map(sid => skapi.services[sid]).reverse();
     })
 }
@@ -93,6 +92,9 @@ let addService = () => {
             skapi.insertService(s);
             services.value[0] = s;
             create.value = false;
+        }).catch(err => {
+            alert(err.message);
+            services.value.shift();
         })
         .finally(_ => promiseRunning.value = false)
 }
@@ -391,13 +393,15 @@ main {
                     width: 48%;
                     margin-right: 4%;
                     margin-bottom: 4%;
-    
+
                     &:nth-child(2n+2) {
                         margin-right: 0;
                     }
+
                     &:nth-child(6n+6) {
                         margin-right: 0;
                     }
+
                     &:nth-child(3n+3) {
                         margin-right: 4%;
                     }
@@ -419,11 +423,11 @@ main {
                     width: 100%;
                     margin-right: 0%;
                     margin-bottom: 30px;
-    
+
                     &:nth-child(3n+3) {
                         margin-right: 0;
                     }
-    
+
                     &.btn {
                         height: 251px;
                     }
