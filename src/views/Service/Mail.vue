@@ -37,6 +37,14 @@
             .tit 
                 .copy.clickable(@click="copy")
                     .material-symbols-outlined.sml file_copy
+                span Invitation
+            .cont 
+                template(v-if="currentService") {{ currentService?.email_triggers?.template_setters?.invitation }}
+                template(v-else) loading...
+        .email
+            .tit 
+                .copy.clickable(@click="copy")
+                    .material-symbols-outlined.sml file_copy
                 span Newsletter Subscription
             .cont 
                 template(v-if="currentService") {{ currentService?.email_triggers?.template_setters?.newsletter_subscription }}

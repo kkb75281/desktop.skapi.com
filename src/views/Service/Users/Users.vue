@@ -116,7 +116,7 @@
                         .setting(@click="()=>{showDeleteUser = true; showUserSetting = false;}")
                             .material-symbols-outlined.mid delete
                             span delete
-                button.create(:class="{'nonClickable' : !account.email_verified}" @click="!account.email_verified ? false : createUserShow=true" style='margin-left:1rem') Create User
+                button.create(:class="{'nonClickable' : !account.email_verified}" @click="!account.email_verified ? false : inviteUserShow=true" style='margin-left:1rem') Invite User
             .pagenator 
                 .material-symbols-outlined.sml.prevPage.clickable(:class='{"nonClickable": currentPage === 1 || fetching }' @click='e=>{currentPage--; nextTick(selectNone)}') arrow_back_ios
                 .material-symbols-outlined.sml.nextPage.clickable(:class='{"nonClickable": maxPage <= currentPage && userPage?.endOfList || fetching }' @click='nextPage') arrow_forward_ios
@@ -194,10 +194,19 @@
                 p There are no users matching your search terms.
     Calendar(v-if="showCalendar" @dateClicked="handledateClick" alwaysEmit='true')
     LocaleSelector(v-if="showLocale" @countryClicked="handleCountryClick")
-    CreateUserOverlay(v-if='createUserShow' @close='userCreated')
+    InviteUserOverlay(v-if='inviteUserShow' @close='(e)=>{inviteUserShow=false;inviteSuccess=e;}')
     DeleteUserOverlay(v-if='showDeleteUser' @close='userDelete' :checkedUsers='checkedUsers')
     BlockUserOverlay(v-if='showBlockUser' @close='userBlock' :checkedUsers='checkedUsers')
     UnblockUserOverlay(v-if='showUnblockUser' @close='userUnblock' :checkedUsers='checkedUsers')
+    msgOverlay(v-if='inviteSuccess' @close='inviteSuccess = false' title='Success' :preventBackgroundClick='true')
+        p Invitation email has been {{inviteSuccess === true ? 'sent' : 'resent' }} to the user.
+        br
+        p If the user accepts the invitation email and login, they will appear on your user list.        
+        br
+        br
+        div(style='text-align: right;')
+            button.msgButton(@click='inviteSuccess=false') OK
+
 </template>
     
 <script setup>
@@ -208,17 +217,18 @@ import { computed, nextTick, onMounted, onUnmounted, ref, watch } from 'vue';
 import Countries from '@/skapi-extensions/js/countries.js';
 import Calendar from '@/components/Calendar.vue';
 import LocaleSelector from '@/components/LocaleSelector.vue';
-import CreateUserOverlay from './CreateUserOverlay.vue';
+import InviteUserOverlay from './InviteUserOverlay.vue';
 import DeleteUserOverlay from './DeleteUserOverlay.vue';
 import BlockUserOverlay from './BlockUserOverlay.vue';
 import UnblockUserOverlay from './UnblockUserOverlay.vue';
+import msgOverlay from '@/components/msgOverlay.vue';
+
 import Pager from '@/skapi-extensions/js/pager.js';
 const worker = new Worker(
     new URL('@/skapi-extensions/js/pager_worker.js', import.meta.url),
     { type: 'module' }
 );
 
-let createUserShow = ref(false);
 let serviceId = currentService.value.service;
 let users = ref(null);
 let userPage = null;
@@ -226,7 +236,8 @@ let currentPage = ref(1);
 let maxPage = ref(1);
 let fetching = ref(false);
 let searchText = ref('');
-
+let inviteSuccess = ref(false);
+let inviteUserShow = ref(false);
 watch(currentPage, (page) => {
     getPage(page);
 });
@@ -271,7 +282,7 @@ let refresh = () => {
     })
 
     userPage = serviceUsers[serviceId];
-    
+
     fetching.value = true;
     skapi.getUsers(fetchParams, { limit: 50 }).then(u => {
         if (u.endOfList) {
@@ -318,28 +329,6 @@ let nextPage = () => {
 
     nextTick(selectNone);
 
-}
-let userCreated = e => {
-    if (e) {
-        // from CreateUserOverlay.vue - if user created
-        userPage = serviceUsers[serviceId];
-
-        // if the list is timestamp based, or if the user has the searchFor value
-        // if the searchFor is user_id ignore insert because user_id search is only for one user
-        if (
-            fetchParams.searchFor !== 'user_id' &&
-            fetchParams.searchFor === 'timestamp' ||
-            e[fetchParams.searchFor]
-        ) {
-            userPage.insertItems([e]).then(_ => {
-                users.value = userPage.getPage(currentPage.value).list
-                createUserShow.value = false;
-            });
-        }
-    }
-    else {
-        createUserShow.value = false;
-    }
 }
 
 bodyClick.userPage = () => {
