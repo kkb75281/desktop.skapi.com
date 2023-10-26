@@ -1,7 +1,7 @@
 <template lang="pug">
-#dialogBackground(@mouseup="closeDialog")
+#dialogBackground(@click="closeDialog" @mousedown="pendClose = true")
     .center
-        .dialog(@mouseup.stop)
+        .dialog(@mousedown.stop @mouseup='pendClose = false')
             .title Invite User
             form(@submit.prevent="createUser")
                 p Invitation Email includes a temporary password and the acception link.
@@ -74,11 +74,13 @@ let promiseRunning = ref(false);
 let email = '';
 let name = '';
 let redirect = '';
+let pendClose = false;
 
 let closeDialog = () => {
-    if (!promiseRunning.value) {
+    if (!promiseRunning.value && pendClose) {
         emits('close', false);
     }
+    pendClose = false;
 }
 
 let createUser = () => {
