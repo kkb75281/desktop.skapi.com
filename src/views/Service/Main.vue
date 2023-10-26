@@ -2,41 +2,42 @@
 EmailCaution(v-if="!account?.email_verified")
 template(v-if='currentService')
     .navSide(:class="{'caution' : !account?.email_verified}")
-        router-link.logo(to="/")
-            img(src="@/assets/img/logo/symbol-logo.png")
-        .menuList 
-            router-link.menu(:to="`/dashboard/${currentService.service}`" :class="{'active': route.name == 'service'}")
-                .material-symbols-outlined.big home
-                p Home
-            router-link.menu(:to="`/dashboard/${currentService.service}/users`" :class="{'active': route.name == 'users'}")
-                .material-symbols-outlined.big supervisor_account
-                p Users
-            router-link.menu(:to="`/dashboard/${currentService.service}/records`" :class="{'active': route.name == 'records'}")
-                .material-symbols-outlined.big database
-                p Database
-            router-link.menu(:to="`/dashboard/${currentService.service}/mail`" :class="{'active': route.name == 'mail'}")
-                .material-symbols-outlined.big email
-                p Mail
-            router-link.menu(:to="`/dashboard/${currentService.service}/subdomain`" :class="{'active': route.name == 'subdomain'}")
-                .material-symbols-outlined.big language
-                p Hosting
-    .settingWrap
-        .setting
-            .material-symbols-outlined.empty.sml.que help
-            a(href="https://docs.skapi.com/introduction/getting-started.html" target="_blank") Help & getting started
-        //- .settingIcon
-        //-     .material-symbols-outlined.empty.sml brightness_5
-        //- .settingToggle
-        //-     input(type="checkbox" id="switch")
-        //-     label(for="switch")
-        //-         .toggle
-        //-         .names
-        //-             .light
-        //-                 .material-symbols-outlined.empty.sml brightness_5
-        //-                 span Light
-        //-             .dark
-        //-                 .material-symbols-outlined.empty.sml clear_night
-        //-                 span Dark
+        .navSideWrap
+            router-link.logo(to="/")
+                img(src="@/assets/img/logo/symbol-logo.png")
+            .menuList 
+                router-link.menu(:to="`/dashboard/${currentService.service}`" :class="{'active': route.name == 'service'}")
+                    .material-symbols-outlined.big home
+                    p Home
+                router-link.menu(:to="`/dashboard/${currentService.service}/users`" :class="{'active': route.name == 'users'}")
+                    .material-symbols-outlined.big supervisor_account
+                    p Users
+                router-link.menu(:to="`/dashboard/${currentService.service}/records`" :class="{'active': route.name == 'records'}")
+                    .material-symbols-outlined.big database
+                    p Database
+                router-link.menu(:to="`/dashboard/${currentService.service}/mail`" :class="{'active': route.name == 'mail'}")
+                    .material-symbols-outlined.big email
+                    p Mail
+                router-link.menu(:to="`/dashboard/${currentService.service}/subdomain`" :class="{'active': route.name == 'subdomain'}")
+                    .material-symbols-outlined.big language
+                    p Hosting
+            .settingWrap
+                .setting
+                    .material-symbols-outlined.empty.sml.que help
+                    a(href="https://docs.skapi.com/introduction/getting-started.html" target="_blank") Help & getting started
+                //- .settingIcon
+                //-     .material-symbols-outlined.empty.sml brightness_5
+                //- .settingToggle
+                //-     input(type="checkbox" id="switch")
+                //-     label(for="switch")
+                //-         .toggle
+                //-         .names
+                //-             .light
+                //-                 .material-symbols-outlined.empty.sml brightness_5
+                //-                 span Light
+                //-             .dark
+                //-                 .material-symbols-outlined.empty.sml clear_night
+                //-                 span Dark
     .navCont
         .navTop
             .routeWrap
@@ -207,6 +208,7 @@ else {
 .navSide {
     position: absolute;
     width: 240px;
+    height: 100%;
     padding-left: 28px;
     left: 0;
     top: 0;
@@ -215,7 +217,12 @@ else {
     &.caution {
         padding-top: 52px;
     }
+}
 
+.navSideWrap {
+    position: relative;
+    width: 100%;
+    height: 100%;
     .logo {
         height: 60px;
         display: flex;
@@ -285,124 +292,124 @@ else {
             }
         }
     }
-}
 
-.settingWrap {
-    position: fixed;
-    width: 184px;
-    left: 28px;
-    // bottom: 40px;
-    bottom: 10px;
-    color: rgba(0, 0, 0, 0.6);
-
-    &::before {
+    .settingWrap {
         position: absolute;
-        content: '';
-        top: 0;
-        width: 100%;
-        height: 1px;
-        background-color: rgba(0, 0, 0, 0.1);
-    }
-
-    .setting {
-        padding-top: 28px;
-        padding-bottom: 21px;
-        text-decoration: none;
-
-        a {
-            margin-left: 9px;
-            font-size: 14px;
+        left: 0;
+        bottom: 40px;
+        bottom: 10px;
+        color: rgba(0, 0, 0, 0.6);
+    
+        &::before {
+            position: absolute;
+            content: '';
+            top: 0;
+            width: 100%;
+            height: 1px;
+            background-color: rgba(0, 0, 0, 0.1);
+        }
+    
+        .setting {
+            padding-top: 28px;
+            padding-bottom: 21px;
             text-decoration: none;
-            color: rgba(0, 0, 0, 0.6);
+    
+            a {
+                margin-left: 9px;
+                font-size: 14px;
+                text-decoration: none;
+                color: rgba(0, 0, 0, 0.6);
+            }
         }
-    }
-
-    .setting,
-    .settingIcon {
-        display: flex;
-        flex-wrap: nowrap;
-        align-items: center;
-        justify-content: center;
-    }
-
-    .settingIcon {
-        display: none;
-    }
-
-    .settingToggle {
-        display: flex;
-        flex-direction: column;
-        text-align: center;
-        width: 100%;
-
-        label {
-            width: 100%;
-            height: 32px;
-            background: rgba(0, 0, 0, 0.05);
-            border-radius: 20px;
-            position: relative;
-            cursor: pointer;
-        }
-
-        .toggle {
-            position: absolute;
-            top: 4px;
-            left: 4px;
-            width: 50%;
-            height: 25px;
-            background-color: #fafafa;
-            border-radius: 20px;
-            box-shadow: 0px -1px 1px 0px rgba(0, 0, 0, 0.15) inset;
-            transition: all 0.3s;
-        }
-
-        .names {
-            width: 100%;
-            position: absolute;
-            top: 50%;
-            transform: translateY(-50%);
+    
+        .setting,
+        .settingIcon {
             display: flex;
+            flex-wrap: nowrap;
             align-items: center;
-            justify-content: space-around;
-
-            div {
-                display: flex;
-                flex-wrap: nowrap;
-                align-items: center;
-
-                span {
-                    font-size: 14px;
-                    font-weight: 500;
-                }
-
-                svg {
-                    margin-right: 8px;
-                }
+            justify-content: center;
+        }
+    
+        .settingIcon {
+            display: none;
+        }
+    
+        .settingToggle {
+            display: flex;
+            flex-direction: column;
+            text-align: center;
+            width: 100%;
+    
+            label {
+                width: 100%;
+                height: 32px;
+                background: rgba(0, 0, 0, 0.05);
+                border-radius: 20px;
+                position: relative;
+                cursor: pointer;
             }
-
-            .dark {
-                opacity: 0.5;
-                padding-right: 9px;
+    
+            .toggle {
+                position: absolute;
+                top: 4px;
+                left: 4px;
+                width: 50%;
+                height: 25px;
+                background-color: #fafafa;
+                border-radius: 20px;
+                box-shadow: 0px -1px 1px 0px rgba(0, 0, 0, 0.15) inset;
+                transition: all 0.3s;
+            }
+    
+            .names {
+                width: 100%;
+                position: absolute;
+                top: 50%;
+                transform: translateY(-50%);
+                display: flex;
+                align-items: center;
+                justify-content: space-around;
+    
+                div {
+                    display: flex;
+                    flex-wrap: nowrap;
+                    align-items: center;
+    
+                    span {
+                        font-size: 14px;
+                        font-weight: 500;
+                    }
+    
+                    svg {
+                        margin-right: 8px;
+                    }
+                }
+    
+                .dark {
+                    opacity: 0.5;
+                    padding-right: 9px;
+                }
             }
         }
-    }
-
-    input[type="checkbox"] {
-        display: none;
-    }
-
-    input[type="checkbox"]:checked+.settingWrap .toggle {
-        transform: translateX(95px);
-    }
-
-    input[type="checkbox"]:checked+.settingWrap .dark {
-        opacity: 1;
-    }
-
-    input[type="checkbox"]:checked+.settingWrap .light {
-        opacity: .5;
+    
+        input[type="checkbox"] {
+            display: none;
+        }
+    
+        input[type="checkbox"]:checked+.settingWrap .toggle {
+            transform: translateX(95px);
+        }
+    
+        input[type="checkbox"]:checked+.settingWrap .dark {
+            opacity: 1;
+        }
+    
+        input[type="checkbox"]:checked+.settingWrap .light {
+            opacity: .5;
+        }
     }
 }
+
 
 .navCont {
     padding: 0 40px 0 240px;
