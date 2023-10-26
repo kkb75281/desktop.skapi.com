@@ -196,6 +196,10 @@ let logout = async () => {
                         img {
                             opacity: 1;
                         }
+
+                        &.signup {
+                            color: #fff;
+                        }
                     }
 
                     &.signup {
