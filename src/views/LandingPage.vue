@@ -2,39 +2,39 @@
 #lending(ref="lending")
     section#intro(ref="intro" @wheel="handleMouseWheel")
         .introWrap 
-            img.introLogo(src="@/assets/img/logo/symbol-logo.png")
-            img.mintroLogo(src="@/assets/img/logo/text-logo-white.svg")
-            .point
-                span One Line of Code
-                | =&gt;
-                br
-                | Full Backend API
-            .code(style="color:#f0f0f0;font-family:Consolas, 'Liberation Mono', Menlo, Courier, monospace !important; position:relative !important;overflow:auto")
-                table(style="margin:0;padding:0;border:none;background-color:#434343;border-radius:4px;" cellspacing="0" cellpadding="0")
-                    tr
-                        td(style="padding:6px;border-right:2px solid #4f4f4f")
-                            div(style="margin:0;padding:0;word-break:normal;text-align:right;color:#aaa;font-family:Consolas, 'Liberation Mono', Menlo, Courier, monospace !important;line-height:130%")
-                                div(style="line-height:130%") 1
-                        td(style="padding:6px 0;text-align:left")
-                            div(style="margin:0;padding:0;color:#f0f0f0;font-family:Consolas, 'Liberation Mono', Menlo, Courier, monospace !important;line-height:130%")
-                                div(style="padding:0 6px; white-space:pre; line-height:130%")
-                                    span(style="color:#ff3399") const 
-                                    span skapi 
-                                    span(style="color:#ff3399") = 
-                                    span(style="color:#ff3399") new 
-                                    span Skapi( 
-                                    span(style="color:#ffd500") 'SERVICE_ID' 
-                                    span ,
-                                    span(style="color:#ffd500") 'OWNERS_ID' 
-                                    span );
-            .desc
-                | Skapi is a backend API service specially designed for 
-                br
-                | frontend web developers.
-            .mdesc Skapi is a backend API service specially designed for frontend web developers.
-            a(href='https://docs.skapi.com/introduction/getting-started.html' target="_blank") 
-                span Getting Started
-                .material-symbols-outlined.big arrow_forward
+            .introInner
+                img.introLogo(src="@/assets/img/logo/symbol-logo.png")
+                img.mintroLogo(src="@/assets/img/logo/text-logo-white.svg")
+                .point
+                    span One Line of Code
+                    | =&gt;
+                    br
+                    | Full Backend API
+                .code(style="color:#f0f0f0;font-family:Consolas, 'Liberation Mono', Menlo, Courier, monospace !important; position:relative !important;overflow:auto")
+                    table(style="margin:0;padding:0;border:none;background-color:#434343;border-radius:4px;" cellspacing="0" cellpadding="0")
+                        tr
+                            td(style="padding:6px;border-right:2px solid #4f4f4f")
+                                div(style="margin:0;padding:0;word-break:normal;text-align:right;color:#aaa;font-family:Consolas, 'Liberation Mono', Menlo, Courier, monospace !important;line-height:130%")
+                                    div(style="line-height:130%") 1
+                            td(style="padding:6px 0;text-align:left")
+                                div(style="margin:0;padding:0;color:#f0f0f0;font-family:Consolas, 'Liberation Mono', Menlo, Courier, monospace !important;line-height:130%")
+                                    div(style="padding:0 6px; white-space:pre; line-height:130%")
+                                        span(style="color:#ff3399") const 
+                                        span skapi = 
+                                        span(style="color:#ff3399") new 
+                                        span Skapi( 
+                                        span(style="color:#ffd500") 'SERVICE_ID' 
+                                        span ,
+                                        span(style="color:#ffd500") 'OWNERS_ID' 
+                                        span );
+                .desc
+                    | Skapi is a backend API service specially designed for 
+                    br
+                    | frontend web developers.
+                .mdesc Skapi is a backend API service specially designed for frontend web developers.
+                a(href='https://docs.skapi.com/introduction/getting-started.html' target="_blank") 
+                    span Getting Started
+                    .material-symbols-outlined.big arrow_forward
     section#other(ref="other")
         .packageWrap(ref="packageWrap")
             .packageInner
@@ -121,7 +121,8 @@
                                         div(style="padding:0 6px; white-space:pre; line-height:130%") 
                                             span(style="color:#f0f0f0") &lt;
                                             span(style="color:#ff3399") script 
-                                            span(style="color:#a8ff58") src=
+                                            span(style="color:#a8ff58") src
+                                            span =
                                             span(style="color:#ffd500") "https://cdn.jsdelivr.net/npm/skapi-js@latest/dist/skapi.js"
                                             span(style="color:#ff3399") 
                                             span(style="color:#f0f0f0") &gt;
@@ -184,12 +185,13 @@ let packageShow = ref(false);
 let htmlShow = ref(false);
 let docShow = ref(false);
 
+// mousewheel event
 let handleMousewheel = function (e) {
-    if(!hasScrolled && e.deltaY > 0) {
-        smoothScroll({yPos: window.innerHeight, duration: 500});
+    if (!hasScrolled && e.deltaY > 0) {
+        smoothScroll({ yPos: window.innerHeight, duration: 500 });
         hasScrolled = true;
-    } else if(hasScrolled && e.deltaY < 0 && document.documentElement.scrollTop < other.value.offsetTop) {
-        smoothScroll({yPos: 0, duration: 500});
+    } else if (hasScrolled && e.deltaY < 0 && document.documentElement.scrollTop < other.value.offsetTop) {
+        smoothScroll({ yPos: 0, duration: 500 });
         hasScrolled = false;
     }
 }
@@ -206,49 +208,69 @@ let moveHtml = function () {
     let htmlDesc = htmlWrap.value.querySelector('p');
     let htmlCode = htmlWrap.value.querySelector('.htmlCode');
 
-    if(scrollY >= packageWrapTop - 500) {
+    if (scrollY >= packageWrapTop - 500) {
         packageShow.value = true;
     } else {
         packageShow.value = false;
     }
 
-    if(scrollY >= htmlWrapTop - 500) {
+    if (scrollY >= htmlWrapTop - 500) {
         htmlShow.value = true;
     } else {
         htmlShow.value = false;
     }
 
-    if(scrollY >= docWrapTop - 500) {
+    if (scrollY >= docWrapTop - 500) {
         docShow.value = true;
     } else {
         docShow.value = false;
     }
 }
 
+let resize = () => {
+    if (/Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent)) {
+        lending.value.classList.add('mobile');
+    } else {
+        lending.value.classList.remove('mobile');
+    }
+}
+
 onMounted(() => {
-    // window.addEventListener('mousewheel', handleMousewheel);
     window.addEventListener('scroll', moveHtml);
+    window.addEventListener('resize', resize);
 })
 onBeforeUnmount(() => {
-    // window.removeEventListener('mousewheel', handleMousewheel);
     window.removeEventListener('scroll', moveHtml);
+    window.removeEventListener('resize', resize);
 })
+
+
 </script>
 
 <style lang="less" scoped>
+#lending.mobile {
+    #intro {
+        height: 100%;
+        padding: 140px 20px 120px 20px;
+    }
+}
+
 #intro {
     width: 100vw;
     height: 100vh;
-    background-image: url(@/assets/img/background.svg);
-    background-size: cover;
+    background: linear-gradient(217deg, rgba(0, 255, 170, 1), rgba(255, 0, 0, 0) 70.71%), linear-gradient(54deg, rgba(0, 14, 255, 1), rgba(0, 255, 0, 0) 70.71%), linear-gradient(148deg, rgba(0, 14, 255, 1), rgba(0, 255, 0, 0) 70.71%), linear-gradient(336deg, rgba(252, 208, 75, 1), rgba(0, 0, 255, 1) 70.71%);
     position: relative;
+    display: table;
     z-index: 9;
 
     .introWrap {
-        position: absolute;
-        left: 50%;
-        top: 50%;
-        transform: translate(-50%, -50%);
+        display: table-cell;
+        vertical-align: middle;
+
+        .introInner {
+            width: min(782px, 34vw);
+            margin: 0 auto;
+        }
 
         .introLogo {
             width: min(140px, 5vw);
@@ -256,6 +278,7 @@ onBeforeUnmount(() => {
         }
 
         .mintroLogo {
+            width: 193px;
             display: none;
         }
 
@@ -300,7 +323,8 @@ onBeforeUnmount(() => {
             margin-bottom: min(86px, 3.7vw);
         }
 
-        .desc, .mdesc {
+        .desc,
+        .mdesc {
             color: #FFF;
             font-size: min(24px, 1.04vw);
             font-weight: 400;
@@ -341,11 +365,12 @@ onBeforeUnmount(() => {
     // margin-top: -50vh;
 
     @keyframes show {
-        from{
+        from {
             opacity: 0;
             transform: translateY(100px);
         }
-        to{
+
+        to {
             opacity: 1;
             transform: translateY(0px);
         }
@@ -419,6 +444,7 @@ onBeforeUnmount(() => {
                 content: "";
                 padding-bottom: 100%;
             }
+
             .cardInner {
                 position: absolute;
                 top: 0;
@@ -440,14 +466,14 @@ onBeforeUnmount(() => {
                 .tit {
                     width: 100%;
                     margin-bottom: min(24px, 1vw);
-                    color: rgba(0,0,0,0.8);
+                    color: rgba(0, 0, 0, 0.8);
                     font-size: min(24px, 1.2vw);
                     font-weight: 500;
                 }
 
                 .desc {
                     width: 100%;
-                    color: rgba(0,0,0,0.6);
+                    color: rgba(0, 0, 0, 0.6);
                     font-size: min(19px, 1vw);
                     font-weight: 400;
                     line-height: min(24px, 1.4vw);
@@ -455,7 +481,7 @@ onBeforeUnmount(() => {
 
                 .mDesc {
                     display: none;
-                    color: rgba(0,0,0,0.6);
+                    color: rgba(0, 0, 0, 0.6);
                 }
             }
         }
@@ -537,8 +563,7 @@ onBeforeUnmount(() => {
         margin-top: min(400px, 17vw);
         padding-top: min(140px, 6vw);
         padding-bottom: min(140px, 6vw);
-        background-image: url(@/assets/img/background.svg);
-        background-size: cover;
+        background: linear-gradient(217deg, rgba(0, 255, 170, 1), rgba(255, 0, 0, 0) 70.71%), linear-gradient(54deg, rgba(0, 14, 255, 1), rgba(0, 255, 0, 0) 70.71%), linear-gradient(148deg, rgba(0, 14, 255, 1), rgba(0, 255, 0, 0) 70.71%), linear-gradient(336deg, rgba(252, 208, 75, 1), rgba(0, 0, 255, 1) 70.71%);
         display: flex;
         flex-wrap: wrap;
         align-items: center;
@@ -576,27 +601,35 @@ onBeforeUnmount(() => {
 @media (max-width:1500px) {
     #intro {
         .introWrap {
+            .introInner {
+                width: 500px;
+            }
+
             .introLogo {
                 width: 71px;
                 margin-bottom: 25px;
             }
+
             .point {
                 font-size: 50px;
                 font-size: min(50px, 5vw);
                 line-height: 82px;
                 margin-bottom: 32px;
             }
+
             .code {
                 width: 500px;
                 height: 38px;
                 font-size: 16px;
                 margin-bottom: 52px;
             }
+
             .desc {
                 font-size: 16px;
                 line-height: 24px;
                 margin-bottom: 30px;
             }
+
             a {
                 span {
                     font-size: 16px;
@@ -612,6 +645,7 @@ onBeforeUnmount(() => {
             // padding-top: 535px;
             padding-top: 248px;
         }
+
         .packageWrap {
             // padding-top: min(330px, 19vw);
             width: 100%;
@@ -626,6 +660,7 @@ onBeforeUnmount(() => {
         .htmlWrap {
             width: 100%;
             overflow: auto;
+
             .htmlInner {
                 width: 940px;
                 margin: 0 auto;
@@ -651,10 +686,12 @@ onBeforeUnmount(() => {
                         height: 80px;
                         margin-bottom: 8px;
                     }
+
                     .tit {
                         font-size: 18px;
                         margin-bottom: 12px;
                     }
+
                     .desc {
                         font-size: 16px;
                         line-height: 20px;
@@ -667,7 +704,7 @@ onBeforeUnmount(() => {
             .title {
                 font-size: 16px;
             }
-            
+
             .code {
                 font-size: 16px;
             }
@@ -676,10 +713,12 @@ onBeforeUnmount(() => {
         .docWrap {
             width: 100%;
             overflow: auto;
+
             .docInner {
                 width: 940px;
                 margin: 0 auto;
             }
+
             .left {
                 .title {
                     font-size: 40px;
@@ -690,6 +729,7 @@ onBeforeUnmount(() => {
                     font-size: 20px;
                 }
             }
+
             .right {
                 width: 57%;
                 margin-left: 3%;
@@ -707,30 +747,40 @@ onBeforeUnmount(() => {
 @media (max-width: 660px) {
     #intro {
         padding: 0 20px;
+
         .introWrap {
             position: relative;
             width: 100%;
+
+            .introInner {
+                width: 100%;
+            }
+
             .introLogo {
                 width: 70px;
                 margin-bottom: 33px;
                 display: none;
             }
+
             .mintroLogo {
                 display: block;
                 margin-bottom: 33px;
             }
+
             .point {
                 font-size: 35px;
                 line-height: 74px;
             }
+
             .code {
                 width: 100%;
                 padding: 0 10px;
             }
+
             .desc {
                 display: none;
             }
-            
+
             .mdesc {
                 font-size: 20px;
                 line-height: 28px;
@@ -745,21 +795,28 @@ onBeforeUnmount(() => {
             width: 100%;
             padding-top: 100px;
         }
-        .packageWrap, .htmlWrap {
+
+        .packageWrap,
+        .htmlWrap {
             padding: 100px 20px 0 20px;
-            .packageInner, .htmlInner {
+
+            .packageInner,
+            .htmlInner {
                 width: 100%;
             }
         }
+
         .title {
             width: 320px;
             font-size: 28px;
             line-height: 32px;
             margin-bottom: 38px;
         }
+
         p {
             display: none;
         }
+
         .cardWrap {
             display: block;
 
@@ -777,6 +834,7 @@ onBeforeUnmount(() => {
                 &::after {
                     display: none;
                 }
+
                 .cardInner {
                     position: relative;
                     padding: unset;
@@ -784,20 +842,24 @@ onBeforeUnmount(() => {
                     .tit {
                         font-size: 24px;
                     }
+
                     .desc {
                         display: none;
                     }
-                    .mDesc{
+
+                    .mDesc {
                         font-size: 20px;
                         display: block;
                     }
                 }
             }
         }
+
         .htmlCode {
             .tit {
                 font-size: 24px;
             }
+
             .code {
                 table {
                     td {
@@ -805,6 +867,7 @@ onBeforeUnmount(() => {
 
                         div {
                             font-size: 16px !important;
+
                             span {
                                 font-size: 16px !important;
                             }
@@ -813,9 +876,11 @@ onBeforeUnmount(() => {
                 }
             }
         }
+
         .docWrap {
             display: none;
         }
+
         .joinWrap {
             margin-top: 140px;
             padding-top: 80px;
@@ -824,9 +889,11 @@ onBeforeUnmount(() => {
             h2 {
                 font-size: 40px;
             }
+
             h3 {
                 font-size: 28px;
             }
+
             a {
                 font-size: 20px;
             }
@@ -850,4 +917,25 @@ onBeforeUnmount(() => {
         }
     }
 }
-</style>
+
+@media (max-width: 390px) {
+    #intro {
+        .introWrap {
+            .point {
+                font-size: 32px;
+                line-height: 65px;
+            }
+
+            .code {
+                position: relative;
+
+                table {
+                    position: absolute;
+                    left: 0;
+                    top: 50%;
+                    transform: translateY(-50%);
+                }
+            }
+        }
+    }
+}</style>
