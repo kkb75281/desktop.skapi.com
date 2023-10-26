@@ -1,7 +1,7 @@
 <template lang="pug">
-#dialogBackground(@click="closeDialog" @mousedown="pendClose = true")
+#dialogBackground(@mouseup="closeDialog")
     .center
-        .dialog(@mousedown.stop @mouseup='pendClose = false')
+        .dialog(@mouseup.stop)
             .title {{ props.title }}
             div(style='padding: 28px;')
                 slot
