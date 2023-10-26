@@ -1,20 +1,21 @@
 <template lang="pug">
-#dialogBackground(@click="closeDialog" @mousedown="pendClose = true")
+#dialogBackground(@click="closeDialog" @mousedown="pendClose = true" style='--max-width: 480px;')
     .center
         .dialog(@mousedown.stop @mouseup='pendClose = false')
             .title {{ props.title }}
-            div(style='padding: 28px;')
+            div(style='padding: 28px;max-width: 100%;box-sizing: content-box;')
                 slot
 </template>
     
 <script setup>
 let props = defineProps(['title', 'preventBackgroundClick']);
 let emits = defineEmits(['close']);
+let pendClose = false;
 let closeDialog = () => {
     if (props.preventBackgroundClick) {
         return;
     }
-    else {
+    else if (pendClose) {
         emits('close');
     }
 }
@@ -46,7 +47,7 @@ let closeDialog = () => {
     overflow: auto;
     text-align: left;
 
-    max-width: 480px; // width of the dialog
+    max-width: var(--max-width); // width of the dialog
 
     border-radius: 8px;
     border: 1px solid rgba(0, 0, 0, 0.15);

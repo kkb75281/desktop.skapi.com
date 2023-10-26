@@ -604,6 +604,7 @@ onMounted(() => {
     //     }
     // }
 }
+
 .containerWrap {
     position: relative;
     display: flex;
@@ -728,6 +729,7 @@ onMounted(() => {
                     &:last-child {
                         margin-bottom: 0;
                     }
+
                     .customCheckBox {
                         label {
                             width: 100%;
@@ -972,5 +974,19 @@ onMounted(() => {
             }
         }
     }
+}
+</style>
+
+<style lang="less">
+button.msgButton {
+    padding: 0 28px;
+    height: 44px;
+    border-radius: 8px;
+    border: 2px solid #293FE6;
+    background-color: unset;
+    color: #293FE6;
+    font-size: 16px;
+    font-weight: 700;
+    cursor: pointer;
 }
 </style>
