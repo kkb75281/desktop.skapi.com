@@ -360,16 +360,3 @@ form .error span {
   border-left: 20px solid #fafafa;
   rotate: -45deg;
 }
-
-
-button.msgButton {
-  padding: 0 28px;
-  height: 44px;
-  border-radius: 8px;
-  border: 2px solid #293FE6;
-  background-color: unset;
-  color: #293FE6;
-  font-size: 16px;
-  font-weight: 700;
-  cursor: pointer;
-}

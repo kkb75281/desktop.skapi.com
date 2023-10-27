@@ -104,7 +104,7 @@
             template(v-else-if="files.length")
                 .fileWrapper
                     template(v-for="(file, index) in files")
-                        .file.clickable(v-if='file.name !== "!"' @click="file.name[0] == '#' ? launch(file.path + '/' + file.name.slice(1)) : downloadFile(file)")
+                        .file.clickable(v-if='file.name !== "!"' @click="file.name[0] == '#' ? launch(file.path + '/' + file.name.slice(1)) : viewFileInfo(file)")
                             .customCheckBox(@click.stop)
                                 input(type="checkbox" :id="index" :value='file.path + "/" + file.name' @change='trackSelectedFiles')
                                 label(:for="index")
@@ -134,9 +134,45 @@ DeleteFileOverlay(v-if="showDeleteSubdomain" :callback='removeSubdomain' title='
 DeleteFileOverlay(v-if="showRemoveAllFiles" :callback='removeAllFiles' title='Delete Subdomain' @close="showRemoveAllFiles = false;")
     | Are you sure want to delete all the files in your subdomain? All your hosted files will be lost.
     br
+
+msgOverlay(v-if="fileInfo" @close="fileInfo = null" :title="fileInfo?.name" style='--max-width: 600px;')
+    .fileInfo
+        span
+            b Filename:&nbsp;
+        a(target="_blank" :href='`https://${ computedSubdomain }.skapi.com/${ fileInfo?.path.split(computedSubdomain).slice(1).join("") }${ encodeURI(fileInfo.name) }`') {{ fileInfo.name }}
+        
+        br
+        br
+
+        span
+            b Size:&nbsp;
+        span.value {{ formatBytes(fileInfo?.size || 0) }}
+
+        br
+        br
+
+        span
+            b Last Modified:&nbsp;
+        span.value {{ fileInfo?.upl ? new Date(fileInfo.upl).toString().split(' ').slice(0, 5).join(' ') : 'Unknown' }}
+
+        br
+        br
+
+        span
+            b URL:&nbsp;
+        span.value https://{{ computedSubdomain }}.skapi.com/{{ fileInfo?.path.split(computedSubdomain + '/').slice(1).join('') }}{{ encodeURI(fileInfo.name) }}
+
+        br
+        br
+        br
+        br
+
+        div(style='text-align: right;')
+            button.msgButton(@click='fileInfo=false') Close
 </template>
 
 <script setup>
+import msgOverlay from '@/components/msgOverlay.vue';
 import { computed, inject, nextTick, ref, watch } from 'vue';
 import { useRoute } from 'vue-router';
 import { skapi, account, bodyClick } from '@/main.js';
@@ -276,13 +312,19 @@ let deleteSelectedFiles = async () => {
         alert(err.message);
     });
 }
-let downloadFile = (f) => {
-    let path = f.path + '/' + f.name;
-    let pathSplit = path.split('/');
-    path = pathSplit.slice(1).join('/');
-    let endpoint = 'https://' + pathSplit[0] + '.skapi.com/' + path;
-    skapi.getFile(endpoint, { expires: 30 });
+
+let fileInfo = ref(null);
+let viewFileInfo = f => {
+    fileInfo.value = f;
 }
+
+// let downloadFile = (f) => {
+//     let path = f.path + '/' + f.name;
+//     let pathSplit = path.split('/');
+//     path = pathSplit.slice(1).join('/');
+//     let endpoint = 'https://' + pathSplit[0] + '.skapi.com/' + path;
+//     skapi.getFile(endpoint, { expires: 30 });
+// }
 
 let subdomainCallback = e => {
     if (!e) {
@@ -527,6 +569,17 @@ let trackSelectedFiles = () => {
 bodyClick.recordPage = () => {
     showEdit.value = false;
 }
+function formatBytes(bytes, decimals = 2) {
+    if (!+bytes) return '0 Bytes'
+
+    const k = 1024
+    const dm = decimals < 0 ? 0 : decimals
+    const sizes = ['Bytes', 'KiB', 'MiB', 'GiB', 'TiB', 'PiB', 'EiB', 'ZiB', 'YiB']
+
+    const i = Math.floor(Math.log(bytes) / Math.log(k))
+
+    return `${parseFloat((bytes / Math.pow(k, i)).toFixed(dm))} ${sizes[i]}`
+}
 </script>
 
 <style lang="less" scoped>
@@ -619,7 +672,7 @@ bodyClick.recordPage = () => {
                     width: 100%;
                     height: 44px;
                     line-height: 44px;
-                    
+
                     &::before {
                         position: absolute;
                         content: '';
@@ -1048,6 +1101,22 @@ bodyClick.recordPage = () => {
                     }
                 }
             }
+        }
+    }
+}
+</style>
+
+<style lang="less">
+.fileInfo {
+    user-select: text;
+    
+    a, span, b {
+        display: inline-block;
+        word-break: break-all;
+        user-select: text;
+
+        &.value {
+            line-height: 1;
         }
     }
 }

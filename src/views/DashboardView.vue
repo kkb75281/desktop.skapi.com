@@ -30,7 +30,7 @@ main
                             .contWrap 
                                 .cont 
                                     span Locale
-                                    h5 {{ service.created_locale }}
+                                    h5 {{ regions?.[service.region] || service.region }}
                                 .cont 
                                     span Date Created
                                     h5 {{ typeof service.timestamp === 'string' ? service.timestamp : new Date(service.timestamp).toDateString() }}
@@ -97,6 +97,12 @@ let addService = () => {
             services.value.shift();
         })
         .finally(_ => promiseRunning.value = false)
+}
+const regions = {
+    'us-west-2': 'US',
+    'ap-northeast-2': 'KR',
+    'ap-southeast-1': 'SG',
+    'ap-south-1': 'IN'
 }
 </script>
 
