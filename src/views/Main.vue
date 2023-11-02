@@ -2,7 +2,7 @@
 template(v-if="account")
   EmailCaution(v-if="!account?.email_verified && route.name !== 'home'" @showVerifyEmail="showVerifyEmail=true")
 NavBar(v-if="showNavBar")
-router-view
+router-view(v-if="!route.params.service")
 </template>
 
 <script setup>

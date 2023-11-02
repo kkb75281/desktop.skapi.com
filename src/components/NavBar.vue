@@ -6,8 +6,22 @@
                 img(v-if="route.name == 'home'" src="@/assets/img/logo/logo-white.svg")
                 img(v-else-if="route.name == 'dashboard'" src="@/assets/img/logo/logo.png")
                 img.small(v-else src="@/assets/img/logo/symbol-logo.png")
+            .topRoute(v-if="route.params.service && currentService") 
+                ol
+                    li 
+                        router-link(to="/dashboard") Dashboard
+                    li(:class="{'active': route.name == 'service'}")
+                        router-link(:to="`/dashboard/${currentService.service}`") {{ currentService.name }}
+                    li(v-if="route.name == 'users'" :class="{'active': route.name == 'users'}")
+                        router-link(:to="`/dashboard/${currentService.service}/users`") Users
+                    li(v-if="route.name == 'records'" :class="{'active': route.name == 'records'}")
+                        router-link(:to="`/dashboard/${currentService.service}/records`") Records
+                    li(v-if="route.name == 'mail'" :class="{'active': route.name == 'mail'}")
+                        router-link(:to="`/dashboard/${currentService.service}/records`") Mail
+                    li(v-if="route.name == 'subdomain'" :class="{'active': route.name == 'subdomain'}")
+                        router-link(:to="`/dashboard/${currentService.service}/records`") Hosting
         .right
-            .menu(:class="{'white' : route.name == 'home'}")
+            .topMenu(:class="{'white' : route.name == 'home'}")
                 template(v-if="account")
                     ul
                         li
@@ -48,9 +62,24 @@
                     span.material-symbols-outlined.sml logout
                     span Logout
             .policy terms of service ● privacy policy
-    nav#side(v-if="servicePage")
-        .left 
-
+    nav#side(v-if="route.params.service && currentService")
+        .left
+            .sideMenu 
+                router-link.menu(:to="`/dashboard/${currentService.service}`" :class="{'active': route.name == 'service'}")
+                    .material-symbols-outlined.big home
+                    h3 Home
+                router-link.menu(:to="`/dashboard/${currentService.service}/users`" :class="{'active': route.name == 'users'}")
+                    .material-symbols-outlined.big supervisor_account
+                    h3 Users
+                router-link.menu(:to="`/dashboard/${currentService.service}/records`" :class="{'active': route.name == 'records'}")
+                    .material-symbols-outlined.big database
+                    h3 Database
+                router-link.menu(:to="`/dashboard/${currentService.service}/mail`" :class="{'active': route.name == 'mail'}")
+                    .material-symbols-outlined.big email
+                    h3 Mail
+                router-link.menu(:to="`/dashboard/${currentService.service}/subdomain`" :class="{'active': route.name == 'subdomain'}")
+                    .material-symbols-outlined.big language
+                    h3 Hosting
         .right 
             router-view
 </template>
@@ -58,14 +87,17 @@
 <script setup>
 import { ref } from 'vue'
 import { useRouter, useRoute } from 'vue-router';
-import { skapi, account, bodyClick } from '@/main.js';
-
-console.log(account.value)
+import { skapi, account, bodyClick } from '@/main';
+import { services, serviceFetching, currentService, storageInfo, serviceUsers, newsletter_sender } from '@/data';
+import { serviceRecords } from '@/views/Service/Records/RecordFetch';
+import { launch, serviceHost, subdomainInfo } from '@/views/Service/subdomain/SubdomainFetch';
 
 let route = useRoute();
 let router = useRouter();
 let accountInfo = ref(false);
 let servicePage = ref(false);
+
+currentService.value = null;
 
 bodyClick.nav = ()=>{
     accountInfo.value = false;
@@ -78,8 +110,80 @@ let navigateToPage = () => {
 let logout = async () => {
     accountInfo.value = false;
     account.value = null;
+    services.value = [];
+    storageInfo.value = {};
+
+    for (let k in serviceUsers) {
+        delete serviceUsers[k];
+    }
+
+    for (let k in serviceRecords) {
+        delete serviceRecords[k];
+    }
+
     await skapi.logout();
+
     router.push({ path: '/' });
+}
+let getCurrentService = () => {
+    let srvcId = route.path.split('/')[2];
+    currentService.value = skapi.services[srvcId];
+
+    if (currentService.value) {
+        if (!newsletter_sender.value?.[currentService.value.service]?.public) {
+            if (!newsletter_sender.value?.[currentService.value.service]) {
+                newsletter_sender.value[currentService.value.service] = {};
+            }
+            skapi.requestNewsletterSender(currentService.value.service, { groupNum: 0 }).then(s => {
+                newsletter_sender.value[currentService.value.service]['public'] = s;
+            });
+        }
+
+        if (!newsletter_sender.value?.[currentService.value.service]?.authorized) {
+            if (!newsletter_sender.value?.[currentService.value.service]) {
+                newsletter_sender.value[currentService.value.service] = {};
+            }
+            skapi.requestNewsletterSender(currentService.value.service, { groupNum: 1 }).then(s => {
+                newsletter_sender.value[currentService.value.service]['authorized'] = s;
+            });
+        }
+
+        if (!storageInfo.value[currentService.value.service]) {
+            storageInfo.value[currentService.value.service] = {};
+        }
+        let sd = currentService.value.subdomain;
+        if (sd && (sd[0] !== '*' || sd[0] !== '+')) {
+            // get subdomain storage info (404 file info)
+            skapi.getSubdomainInfo(currentService.value.service, {
+                subdomain: sd,
+            }).then(s =>
+                subdomainInfo.value[sd] = s
+            ).catch(err=>err);
+
+            launch(currentService.value.subdomain, f => {
+                if (f.length) {
+                    storageInfo.value[currentService.value.service].host = f[0].size;
+                }
+            }, true);
+        }
+
+        skapi.storageInformation(currentService.value.service).then(i => {
+            // get storage info
+            for (let k in i) {
+                storageInfo.value[currentService.value.service][k] = i[k];
+            }
+        });
+    }
+    else {
+        router.replace({ path: '/dashboard' });
+    }
+}
+
+if (serviceFetching.value instanceof Promise) {
+    serviceFetching.value.then(getCurrentService);
+}
+else {
+    getCurrentService()
 }
 </script>
 
@@ -96,6 +200,7 @@ let logout = async () => {
     align-items: center;
     justify-content: space-between;
     .left {
+        position: relative;
         .logo {
             img {
                 width: 120px;
@@ -104,9 +209,64 @@ let logout = async () => {
                 }
             }
         }
+        .topRoute {
+            position: absolute;
+            left: 200px;
+            top: 50%;
+            transform: translateY(-50%);
+            ol {
+                height: 40px;
+                display: flex;
+                align-items: center;
+    
+                li {
+                    position: relative;
+                    list-style: none;
+                    margin-right: 50px;
+    
+                    a {
+                        font-size: 20px;
+                        font-weight: 700;
+                        text-decoration: none;
+                        color: rgba(0, 0, 0, 0.40);
+                    }
+    
+                    &:nth-child(2) {
+                        // width: 80px;
+                        // white-space: nowrap;
+                        // overflow: hidden;
+                        // text-overflow: ellipsis;
+                    }
+    
+                    &:last-child {
+                        margin-right: 0;
+                    }
+    
+                    &::before {
+                        position: absolute;
+                        content: '>';
+                        right: -30px;
+                        top: 50%;
+                        transform: translateY(-50%);
+                        font-size: 20px;
+                        color: rgba(0, 0, 0, 0.40);
+                    }
+    
+                    &.active {
+                        a {
+                            color: #293FE6;
+                        }
+                    }
+    
+                    &.active::before {
+                        display: none;
+                    }
+                }
+            }
+        }
     }
     .right {
-        .menu {
+        .topMenu {
             &.white {
                 ul {
                     &:first-child {
@@ -134,6 +294,7 @@ let logout = async () => {
                 }
             }
         }
+
         ul {
             position: relative;
             display: inline-block;
@@ -315,6 +476,83 @@ let logout = async () => {
     }
 }
 #side {
-    display: inline-block;
+    margin-top: 60px;
+    padding-top: 56px;
+
+    .left {
+        display: inline-block;
+        vertical-align: top;
+        width: 240px;
+
+        .sideMenu {
+            padding: 0 16px;
+
+            .menu {
+                position: relative;
+                display: block;
+                padding: 12px;
+                color: #293FE6;
+                text-decoration: none;
+                margin-bottom: 4px;
+                cursor: pointer;
+
+                * {
+                    display: inline-block;
+                    vertical-align: middle;
+                }
+
+                &::after {
+                    position: absolute;
+                    content: '';
+                    width: 208px;
+                    height: 56px;
+                    left: 50%;
+                    top: 50%;
+                    transform: translate(-50%, -50%);
+                    border-radius: 8px;
+                    background: rgba(0, 0, 0, 0.05);
+                    box-shadow: 0px -1px 1px 0px rgba(0, 0, 0, 0.15) inset;
+                    opacity: 0;
+                }
+
+                &:hover {
+                    &::after {
+                        opacity: 1;
+                    }
+                }
+
+                &.active {
+                    &::after {
+                        opacity: 1;
+                    }
+
+                    span {
+                        font-weight: 700;
+                    }
+                }
+
+                &:first-child {
+                    margin-bottom: 66px;
+                }
+
+                svg {
+                    display: inline-block;
+                    width: 28px;
+                    height: 28px;
+                }
+
+                h3 {
+                    margin-left: 13px;
+                    font-size: 20px;
+                    font-weight: 500;
+                }
+            }
+        }
+    }
+    .right {
+        display: inline-block;
+        width: calc(100vw - 240px);
+        padding-right: 40px;
+    }
 }
 </style>
