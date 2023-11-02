@@ -77,7 +77,8 @@ const router = createRouter({
     },
     {
       path: '/dashboard/:service',
-      component: ServiceMain,
+    //   component: ServiceMain,
+      component: Main,
       children: [
         {
           path: '',

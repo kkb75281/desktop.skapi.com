@@ -1,58 +1,52 @@
 <template lang="pug">
-#navBar 
-    nav#top
-        .left
-            router-link.logo(to="/")
-                img(v-if="route.name == 'home'" src="@/assets/img/logo/logo-white.svg")
-                img(v-else-if="route.name == 'dashboard'" src="@/assets/img/logo/logo.png")
-                img.small(v-else src="@/assets/img/logo/symbol-logo.png")
-        .right
-            .menu(:class="{'white' : route.name == 'home'}")
-                template(v-if="account")
-                    ul
-                        li
-                            a(href="https://twitter.com/skapijs" target="_blank")
-                                img(src="@/assets/img/icon/twitter.svg")
-                        li
-                            a(href="https://discord.gg/3QdZzQwR" target="_blank")
-                                img(src="@/assets/img/icon/discord.svg")
-                    ul
-                        li.doc
-                            a(href="https://docs.skapi.com" target="_blank") Documentation
-                        li
-                            router-link(to="/dashboard") Dashboard
-                        li.account(@click.stop="accountInfo = !accountInfo") {{ account.email.charAt(0).toUpperCase() }}
-                template(v-else)
-                    ul
-                        li
-                            a(href="https://twitter.com/skapijs" target="_blank")
-                                img(src="@/assets/img/icon/twitter.svg")
-                        li
-                            a(href="https://discord.com/channels/1164154380816236626/1164154380816236628" target="_blank")
-                                img(src="@/assets/img/icon/discord.svg")
-                    ul
-                        li.doc 
-                            a(href="https://docs.skapi.com" target="_blank") Documentation
-                        li.login
-                            router-link(to="/login") Login
-                        li 
-                            router-link.signup(to="/signup") Sign-up
-        .prof(v-if="accountInfo && account" @click.stop)
-            .member 
-                span {{ account.email }}
-            .settings 
-                .setting(@click="navigateToPage")
-                    span.material-symbols-outlined.sml settings
-                    span Account Settings
-                .setting(@click="logout")
-                    span.material-symbols-outlined.sml logout
-                    span Logout
-            .policy terms of service ● privacy policy
-    nav#side(v-if="servicePage")
-        .left 
-
-        .right 
-            router-view
+.navBar(:class="{'home' : route.name == 'home'}")
+    router-link(to="/")
+        template(v-if="route.name == 'home'")
+            img.logo(src="@/assets/img/logo/logo-white.svg")
+            img.mlogo(src="@/assets/img/logo/symbol-logo-white.png")
+        template(v-else)
+            img.logo(src="@/assets/img/logo/logo.png")
+    .menu
+        template(v-if="account")
+            ul
+                li
+                    a(href="https://twitter.com/skapijs" target="_blank")
+                        img(src="@/assets/img/icon/twitter.svg")
+                li
+                    a(href="https://discord.gg/3QdZzQwR" target="_blank")
+                        img(src="@/assets/img/icon/discord.svg")
+            ul
+                li.doc
+                    a(href="https://docs.skapi.com" target="_blank") Documentation
+                li
+                    router-link(to="/dashboard") Dashboard
+                li.account(@click.stop="accountInfo = !accountInfo") {{ account.email.charAt(0).toUpperCase() }}
+        template(v-else)
+            ul
+                li
+                    a(href="https://twitter.com/skapijs" target="_blank")
+                        img(src="@/assets/img/icon/twitter.svg")
+                li
+                    a(href="https://discord.com/channels/1164154380816236626/1164154380816236628" target="_blank")
+                        img(src="@/assets/img/icon/discord.svg")
+            ul
+                li.doc 
+                    a(href="https://docs.skapi.com" target="_blank") Documentation
+                li.login
+                    router-link(to="/login") Login
+                li 
+                    router-link.signup(to="/signup") Sign-up
+    .prof(v-if="accountInfo && account" @click.stop)
+        .member 
+            span {{ account.email }}
+        .settings 
+            .setting(@click="navigateToPage")
+                span.material-symbols-outlined.sml settings
+                span Account Settings
+            .setting(@click="logout")
+                span.material-symbols-outlined.sml logout
+                span Logout
+        .policy terms of service ● privacy policy
 </template>
 
 <script setup>
@@ -60,12 +54,9 @@ import { ref } from 'vue'
 import { useRouter, useRoute } from 'vue-router';
 import { skapi, account, bodyClick } from '@/main.js';
 
-console.log(account.value)
-
 let route = useRoute();
 let router = useRouter();
 let accountInfo = ref(false);
-let servicePage = ref(false);
 
 bodyClick.nav = ()=>{
     accountInfo.value = false;
@@ -84,65 +75,86 @@ let logout = async () => {
 </script>
 
 <style lang="less" scoped>
-#top {
-    position: absolute;
-    left: 0;
-    top: 0;
+.navBar {
+    position: relative;
+    padding: 10px 40px 10px 40px;
     width: 100%;
     height: 60px;
-    z-index: 999;
-    padding: 10px 40px;
     display: flex;
+    flex-wrap: nowrap;
     align-items: center;
     justify-content: space-between;
-    .left {
-        .logo {
-            img {
-                width: 120px;
-                &.small {
-                    width: 36px;
+
+    &.home {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 60px;
+        z-index: 9999;
+
+        .menu {
+            ul {
+                &:first-child {
+                    &::after {
+                        background-color: rgba(255,255,255,0.4);
+                    }
+                }
+                li {
+                    a {
+                        color: #fff;
+
+                        &:hover {
+                            color: #293FE6;
+
+                            img {
+                                filter: invert(28%) sepia(100%) saturate(5415%) hue-rotate(234deg) brightness(89%) contrast(102%);
+                            }
+                        }
+                        img {
+                            filter: invert(100%) sepia(0%) saturate(7500%) hue-rotate(355deg) brightness(107%) contrast(106%);
+                            opacity: 1;
+                        }
+                    }
                 }
             }
         }
     }
-    .right {
-        .menu {
-            &.white {
-                ul {
-                    &:first-child {
-                        &::after {
-                            background-color: rgba(255,255,255,0.4);
-                        }
-                    }
-                    li {
-                        a {
-                            color: #fff;
+    &.fixed {
+        position: fixed;
+        left: 0;
+        top: 0;
+        z-index: 9999999;
+        background-color: #f0f0f0;
+        box-shadow: 8px 12px 36px 0px rgba(0, 0, 0, 0.10);
+    }
 
-                            &:hover {
-                                color: #293FE6;
+    :first-child {
+        display: flex;
+        align-items: center;
+    }
 
-                                img {
-                                    filter: invert(28%) sepia(100%) saturate(5415%) hue-rotate(234deg) brightness(89%) contrast(102%);
-                                }
-                            }
-                            img {
-                                filter: invert(100%) sepia(0%) saturate(7500%) hue-rotate(355deg) brightness(107%) contrast(106%);
-                                opacity: 1;
-                            }
-                        }
-                    }
-                }
-            }
-        }
+    .logo {
+        width: 120px;
+    }
+
+    .mlogo {
+        width: 32px;
+        display: none;
+    }
+
+    .menu {
+        display: flex;
+        flex-wrap: nowrap;
+
         ul {
             position: relative;
-            display: inline-block;
-            line-height: 40px;
+            display: flex;
+            flex-wrap: nowrap;
+            align-items: center;
             padding: 0 24px;
 
             &:first-child {
-                vertical-align: middle;
-
                 &::after {
                     position: absolute;
                     content: '';
@@ -164,10 +176,8 @@ let logout = async () => {
             }
 
             li {
-                display: inline-block;
                 list-style: none;
                 margin-right: 24px;
-                text-align: center;
 
                 &:last-child {
                     margin-right: 0;
@@ -221,14 +231,15 @@ let logout = async () => {
                     background-color: #293FE6;
                     color: #fff;
                     font-size: 20px;
-                    // display: flex;
-                    // align-items: center;
-                    // justify-content: center;
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
                     cursor: pointer;
                 }
             }
         }
     }
+
     .prof {
         position: absolute;
         right: 40px;
@@ -314,7 +325,47 @@ let logout = async () => {
         }
     }
 }
-#side {
-    display: inline-block;
+
+@media (max-width: 1420px) {
+    .navBar {
+        width: 100%;
+    }
+}
+@media (max-width: 680px) {
+    .navBar {
+        padding: 0 20px;
+        &.home {
+            .logo {
+                display: none;
+            }
+            .mlogo {
+                display: block;
+            }
+        }
+        .menu {
+            ul {
+                &:last-child {
+                    padding-right: 4px;
+
+                    li {
+                        margin-right: 0;
+                        &.doc, &.login, &.account {
+                            display: none;
+                        }
+                    }
+                }
+            }
+            // ul {
+            //     display: inline-block;
+            //     text-align: right;
+            //     li {
+            //         margin-right: 0;
+            //         .doc, .login, &.account {
+            //             display: none;
+            //         }
+            //     }
+            // }
+        }
+    }
 }
 </style>

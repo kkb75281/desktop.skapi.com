@@ -1,104 +1,103 @@
 <template lang="pug">
-//- EmailCaution(v-if="!account?.email_verified")
-//- template(v-if='currentService')
-//-     .navSide(:class="{'caution' : !account?.email_verified}")
-//-         .navSideWrap
-//-             router-link.logo(to="/")
-//-                 img(src="@/assets/img/logo/symbol-logo.png")
-//-             .menuList 
-//-                 router-link.menu(:to="`/dashboard/${currentService.service}`" :class="{'active': route.name == 'service'}")
-//-                     .material-symbols-outlined.big home
-//-                     p Home
-//-                 router-link.menu(:to="`/dashboard/${currentService.service}/users`" :class="{'active': route.name == 'users'}")
-//-                     .material-symbols-outlined.big supervisor_account
-//-                     p Users
-//-                 router-link.menu(:to="`/dashboard/${currentService.service}/records`" :class="{'active': route.name == 'records'}")
-//-                     .material-symbols-outlined.big database
-//-                     p Database
-//-                 router-link.menu(:to="`/dashboard/${currentService.service}/mail`" :class="{'active': route.name == 'mail'}")
-//-                     .material-symbols-outlined.big email
-//-                     p Mail
-//-                 router-link.menu(:to="`/dashboard/${currentService.service}/subdomain`" :class="{'active': route.name == 'subdomain'}")
-//-                     .material-symbols-outlined.big language
-//-                     p Hosting
-//-             .settingWrap
-//-                 .setting
-//-                     .material-symbols-outlined.empty.sml.que help
-//-                     a(href="https://docs.skapi.com/introduction/getting-started.html" target="_blank") Help & getting started
-//-                 //- .settingIcon
-//-                 //-     .material-symbols-outlined.empty.sml brightness_5
-//-                 //- .settingToggle
-//-                 //-     input(type="checkbox" id="switch")
-//-                 //-     label(for="switch")
-//-                 //-         .toggle
-//-                 //-         .names
-//-                 //-             .light
-//-                 //-                 .material-symbols-outlined.empty.sml brightness_5
-//-                 //-                 span Light
-//-                 //-             .dark
-//-                 //-                 .material-symbols-outlined.empty.sml clear_night
-//-                 //-                 span Dark
-//-     .navCont
-//-         .navTop
-//-             .routeWrap
-//-                 nav 
-//-                     ol
-//-                         li 
-//-                             router-link(to="/dashboard") Dashboard
-//-                         li(:class="{'active': route.name == 'service'}")
-//-                             router-link(:to="`/dashboard/${currentService.service}`") {{ currentService.name }}
-//-                         li(v-if="route.name == 'users'" :class="{'active': route.name == 'users'}")
-//-                             router-link(:to="`/dashboard/${currentService.service}/users`") Users
-//-                         li(v-if="route.name == 'records'" :class="{'active': route.name == 'records'}")
-//-                             router-link(:to="`/dashboard/${currentService.service}/records`") Records
-//-                         li(v-if="route.name == 'mail'" :class="{'active': route.name == 'mail'}")
-//-                             router-link(:to="`/dashboard/${currentService.service}/records`") Mail
-//-                         li(v-if="route.name == 'subdomain'" :class="{'active': route.name == 'subdomain'}")
-//-                             router-link(:to="`/dashboard/${currentService.service}/records`") Hosting
-//-             .menuWrap
-//-                 template(v-if="account")
-//-                     ul
-//-                         li
-//-                             a(href="https://twitter.com/skapijs" target="_blank")
-//-                                 img(src="@/assets/img/icon/twitter.svg")
-//-                         li
-//-                             a(href="https://discord.gg/3QdZzQwR" target="_blank")
-//-                                 img(src="@/assets/img/icon/discord.svg")
-//-                     ul
-//-                         li 
-//-                             a(href="https://docs.skapi.com" target="_blank") Documentation
-//-                         li
-//-                             router-link(to="/dashboard") Dashboard
-//-                         li.account(@click.stop="accountInfo = !accountInfo") {{ account.email.charAt(0).toUpperCase() }}
-//-                 template(v-else)
-//-                     ul
-//-                         li
-//-                             a(href="https://twitter.com/skapijs" target="_blank")
-//-                                 img(src="@/assets/img/icon/twitter.svg")
-//-                         li
-//-                             a(href="https://discord.com/channels/1164154380816236626/1164154380816236628" target="_blank")
-//-                                 img(src="@/assets/img/icon/discord.svg")
-//-                     ul
-//-                         li 
-//-                             a(href="https://docs.skapi.com" target="_blank") Documentation
-//-                         li
-//-                             router-link(to="/login") Login
-//-                         li 
-//-                             router-link.signup(to="/signup") Sign-up
-//-             .prof(v-if="accountInfo && account" @click.stop)
-//-                 .member 
-//-                     span {{ account?.email }}
-//-                 .settings 
-//-                     .setting(@click="navigateToPage")
-//-                         .material-symbols-outlined.mid settings
-//-                         .click Account Settings
-//-                     .setting(@click="logout")
-//-                         .material-symbols-outlined.mid logout
-//-                         .click Logout
-//-                 .policy terms of service ● privacy policy
-//-         .cont
-//-             router-view
-NavBar
+EmailCaution(v-if="!account?.email_verified")
+template(v-if='currentService')
+    .navSide(:class="{'caution' : !account?.email_verified}")
+        .navSideWrap
+            router-link.logo(to="/")
+                img(src="@/assets/img/logo/symbol-logo.png")
+            .menuList 
+                router-link.menu(:to="`/dashboard/${currentService.service}`" :class="{'active': route.name == 'service'}")
+                    .material-symbols-outlined.big home
+                    p Home
+                router-link.menu(:to="`/dashboard/${currentService.service}/users`" :class="{'active': route.name == 'users'}")
+                    .material-symbols-outlined.big supervisor_account
+                    p Users
+                router-link.menu(:to="`/dashboard/${currentService.service}/records`" :class="{'active': route.name == 'records'}")
+                    .material-symbols-outlined.big database
+                    p Database
+                router-link.menu(:to="`/dashboard/${currentService.service}/mail`" :class="{'active': route.name == 'mail'}")
+                    .material-symbols-outlined.big email
+                    p Mail
+                router-link.menu(:to="`/dashboard/${currentService.service}/subdomain`" :class="{'active': route.name == 'subdomain'}")
+                    .material-symbols-outlined.big language
+                    p Hosting
+            .settingWrap
+                .setting
+                    .material-symbols-outlined.empty.sml.que help
+                    a(href="https://docs.skapi.com/introduction/getting-started.html" target="_blank") Help & getting started
+                //- .settingIcon
+                //-     .material-symbols-outlined.empty.sml brightness_5
+                //- .settingToggle
+                //-     input(type="checkbox" id="switch")
+                //-     label(for="switch")
+                //-         .toggle
+                //-         .names
+                //-             .light
+                //-                 .material-symbols-outlined.empty.sml brightness_5
+                //-                 span Light
+                //-             .dark
+                //-                 .material-symbols-outlined.empty.sml clear_night
+                //-                 span Dark
+    .navCont
+        .navTop
+            .routeWrap
+                nav 
+                    ol
+                        li 
+                            router-link(to="/dashboard") Dashboard
+                        li(:class="{'active': route.name == 'service'}")
+                            router-link(:to="`/dashboard/${currentService.service}`") {{ currentService.name }}
+                        li(v-if="route.name == 'users'" :class="{'active': route.name == 'users'}")
+                            router-link(:to="`/dashboard/${currentService.service}/users`") Users
+                        li(v-if="route.name == 'records'" :class="{'active': route.name == 'records'}")
+                            router-link(:to="`/dashboard/${currentService.service}/records`") Records
+                        li(v-if="route.name == 'mail'" :class="{'active': route.name == 'mail'}")
+                            router-link(:to="`/dashboard/${currentService.service}/records`") Mail
+                        li(v-if="route.name == 'subdomain'" :class="{'active': route.name == 'subdomain'}")
+                            router-link(:to="`/dashboard/${currentService.service}/records`") Hosting
+            .menuWrap
+                template(v-if="account")
+                    ul
+                        li
+                            a(href="https://twitter.com/skapijs" target="_blank")
+                                img(src="@/assets/img/icon/twitter.svg")
+                        li
+                            a(href="https://discord.gg/3QdZzQwR" target="_blank")
+                                img(src="@/assets/img/icon/discord.svg")
+                    ul
+                        li 
+                            a(href="https://docs.skapi.com" target="_blank") Documentation
+                        li
+                            router-link(to="/dashboard") Dashboard
+                        li.account(@click.stop="accountInfo = !accountInfo") {{ account.email.charAt(0).toUpperCase() }}
+                template(v-else)
+                    ul
+                        li
+                            a(href="https://twitter.com/skapijs" target="_blank")
+                                img(src="@/assets/img/icon/twitter.svg")
+                        li
+                            a(href="https://discord.com/channels/1164154380816236626/1164154380816236628" target="_blank")
+                                img(src="@/assets/img/icon/discord.svg")
+                    ul
+                        li 
+                            a(href="https://docs.skapi.com" target="_blank") Documentation
+                        li
+                            router-link(to="/login") Login
+                        li 
+                            router-link.signup(to="/signup") Sign-up
+            .prof(v-if="accountInfo && account" @click.stop)
+                .member 
+                    span {{ account?.email }}
+                .settings 
+                    .setting(@click="navigateToPage")
+                        .material-symbols-outlined.mid settings
+                        .click Account Settings
+                    .setting(@click="logout")
+                        .material-symbols-outlined.mid logout
+                        .click Logout
+                .policy terms of service ● privacy policy
+        .cont
+            router-view
 </template>
 
 <script setup>

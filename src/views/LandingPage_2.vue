@@ -51,54 +51,55 @@
                 br
                 br
                 .cardWrap(:class="{'show' : packageShow}") 
-                    .card
-                        .inner
-                            img(src="@/assets/img/icon/icons-03.png")
-                            h4.tit Database
-                            p.desc Simple, yet flexible #[br]database that scales
-                            p.mDesc Simple, yet flexible database that scales
-                    .card
-                        .inner
-                            img(src="@/assets/img/icon/icons-04.png")
-                            h4.tit Cloud Storage
-                            p.desc Secure, #[br]Database integrated, #[br]Expands with no-limit
-                            p.mDesc Secure, Database integrated, #[br]Expands with no-limit
-                    .card
-                        .inner
-                            img(src="@/assets/img/icon/icons-05.png")
-                            h4.tit Security
-                            p.desc Works out-of-the-box, #[br]Fully implemented in #[br]all resources
-                            p.mDesc Works out-of-the-box, Fully #[br]implemented in all resources
-                    .card
-                        .inner
-                            img(src="@/assets/img/icon/icons-06.png")
-                            h4.tit E-Mail service
-                            p.desc Verification, #[br]Sending newsletters, #[br]Notification E-mails
-                            p.mDesc Verification, Sending newsletters, #[br]Notification E-mails
-                    .card
-                        .inner
-                            img(src="@/assets/img/icon/icons-07.png")
-                            h4.tit Hosting
-                            p.desc Immediate website #[br]hosting
-                            p.mDesc Immediate website hosting
-                    .card
-                        .inner
-                            img(src="@/assets/img/icon/icons-08.png")
-                            h4.tit CDN
-                            p.desc Implemented to the #[br]cloud storage by #[br]default
-                            p.mDesc Implemented to the cloud storage by default
-                    .card
-                        .inner
-                            img(src="@/assets/img/icon/icons-09.png")
-                            h4.tit Load balancing
-                            p.desc Everything controlled #[br]internally
-                            p.mDesc Everything controlled internally
-                    .card
-                        .inner
-                            img(src="@/assets/img/icon/icons-10.png")
-                            h4.tit Serverless
-                            p.desc No deployment, #[br]No installation #[br]required
-                            p.mDesc No deployment, No installation required
+                    .cardInner
+                        .card
+                            .inner
+                                img(src="@/assets/img/icon/icons-03.png")
+                                h4.tit Database
+                                p.desc Simple, yet flexible #[br]database that scales
+                                p.mDesc Simple, yet flexible database that scales
+                        .card
+                            .inner
+                                img(src="@/assets/img/icon/icons-04.png")
+                                h4.tit Cloud Storage
+                                p.desc Secure, #[br]Database integrated, #[br]Expands with no-limit
+                                p.mDesc Secure, Database integrated, #[br]Expands with no-limit
+                        .card
+                            .inner
+                                img(src="@/assets/img/icon/icons-05.png")
+                                h4.tit Security
+                                p.desc Works out-of-the-box, #[br]Fully implemented in #[br]all resources
+                                p.mDesc Works out-of-the-box, Fully #[br]implemented in all resources
+                        .card
+                            .inner
+                                img(src="@/assets/img/icon/icons-06.png")
+                                h4.tit E-Mail service
+                                p.desc Verification, #[br]Sending newsletters, #[br]Notification E-mails
+                                p.mDesc Verification, Sending newsletters, #[br]Notification E-mails
+                        .card
+                            .inner
+                                img(src="@/assets/img/icon/icons-07.png")
+                                h4.tit Hosting
+                                p.desc Immediate website #[br]hosting
+                                p.mDesc Immediate website hosting
+                        .card
+                            .inner
+                                img(src="@/assets/img/icon/icons-08.png")
+                                h4.tit CDN
+                                p.desc Implemented to the #[br]cloud storage by #[br]default
+                                p.mDesc Implemented to the cloud storage by default
+                        .card
+                            .inner
+                                img(src="@/assets/img/icon/icons-09.png")
+                                h4.tit Load balancing
+                                p.desc Everything controlled #[br]internally
+                                p.mDesc Everything controlled internally
+                        .card
+                            .inner
+                                img(src="@/assets/img/icon/icons-10.png")
+                                h4.tit Serverless
+                                p.desc No deployment, #[br]No installation #[br]required
+                                p.mDesc No deployment, No installation required
         .htmlWrap(ref="htmlWrap")
             .htmlInner
                 h2.title(:class="{'show' : htmlShow}") Compatible with either #[br]pure HTML projects or any SPA frameworks
@@ -410,69 +411,104 @@ onBeforeUnmount(() => {
     }
 
     .cardWrap {
-        .card {
-            position: relative;
-            display: inline-block;
-            width: 23.5%;
-            margin-right: 2%;
-            margin-bottom: 2%;
-            border-radius: 8px;
-            background-color: #FAFAFA;
-            border: 1px solid rgba(0, 0, 0, 0.15);
-            box-shadow: 8px 12px 36px rgba(0, 0, 0, 0.10);
+        .cardInner {
+            text-align: center;
+            .card {
+                position: relative;
+                display: inline-block;
+                background-color: #FAFAFA;
+                width: 250px;
+                text-align: left;
+                border-radius: 8px;
+                border: 1px solid rgba(0, 0, 0, 0.15);
+                box-shadow: 8px 12px 36px rgba(0, 0, 0, 0.10);
 
-            &:nth-child(4n+4) {
-                margin-right: 0;
-            }
-
-            &::after {
-                display: block;
-                content: "";
-                padding-bottom: 100%;
-            }
-
-            .inner {
-                position: absolute;
-                top: 0;
-                left: 0;
-                width: 100%;
-                height: 100%;
-                object-fit: cover;
-                padding: min(28px, 1.2vw);
-
-                img {
-                    height: min(100px, 4.3vw);
-                    margin-bottom: min(36px, 1.5vw);
-                    object-fit: contain;
-                    align-self: start;
-                    margin-top: min(-10px, -0.5vw);
-                    margin-left: min(-10px, -0.5vw);
+                &::after {
+                    display: block;
+                    content: "";
+                    padding-bottom: 100%;
                 }
 
-                .tit {
+                .inner {
+                    position: absolute;
+                    top: 0;
+                    left: 0;
                     width: 100%;
-                    margin-bottom: min(24px, 1vw);
-                    color: rgba(0, 0, 0, 0.8);
-                    font-size: 1.5rem;
-                    font-weight: 500;
-                }
+                    height: 100%;
+                    object-fit: cover;
 
-                .desc {
-                    width: 100%;
-                    color: rgba(0, 0, 0, 0.6);
-                    font-size: 1.2rem;
-                    font-weight: 400;
-                    line-height: 1.3;
-                }
-
-                .mDesc {
-                    display: none;
-                    font-size: 1.2rem;
-                    color: rgba(0, 0, 0, 0.6);
+                    img {
+                        height: 100px;
+                    }
                 }
             }
         }
     }
+
+    // .cardWrap {
+    //     .card {
+    //         position: relative;
+    //         display: inline-block;
+    //         width: 23.5%;
+    //         margin-right: 2%;
+    //         margin-bottom: 2%;
+    //         border-radius: 8px;
+    //         background-color: #FAFAFA;
+    //         border: 1px solid rgba(0, 0, 0, 0.15);
+    //         box-shadow: 8px 12px 36px rgba(0, 0, 0, 0.10);
+
+    //         &:nth-child(4n+4) {
+    //             margin-right: 0;
+    //         }
+
+    //         &::after {
+    //             display: block;
+    //             content: "";
+    //             padding-bottom: 100%;
+    //         }
+
+    //         .cardInner {
+    //             position: absolute;
+    //             top: 0;
+    //             left: 0;
+    //             width: 100%;
+    //             height: 100%;
+    //             object-fit: cover;
+    //             padding: min(28px, 1.2vw);
+
+    //             img {
+    //                 height: min(100px, 4.3vw);
+    //                 margin-bottom: min(36px, 1.5vw);
+    //                 object-fit: contain;
+    //                 align-self: start;
+    //                 margin-top: min(-10px, -0.5vw);
+    //                 margin-left: min(-10px, -0.5vw);
+    //             }
+
+    //             .tit {
+    //                 width: 100%;
+    //                 margin-bottom: min(24px, 1vw);
+    //                 color: rgba(0, 0, 0, 0.8);
+    //                 font-size: 1.5rem;
+    //                 font-weight: 500;
+    //             }
+
+    //             .desc {
+    //                 width: 100%;
+    //                 color: rgba(0, 0, 0, 0.6);
+    //                 font-size: 1.2rem;
+    //                 font-weight: 400;
+    //                 line-height: 1.3;
+    //             }
+
+    //             .mDesc {
+    //                 display: none;
+    //                 font-size: 1.2rem;
+    //                 color: rgba(0, 0, 0, 0.6);
+    //             }
+    //         }
+    //     }
+    // }
 
     .htmlCode {
         .tit {
@@ -566,7 +602,7 @@ onBeforeUnmount(() => {
 
         .cardWrap {
             .card {
-                .inner {
+                .cardInner {
                     padding: 20px;
 
                     img {
@@ -722,7 +758,7 @@ onBeforeUnmount(() => {
                     display: none;
                 }
 
-                .inner {
+                .cardInner {
                     position: relative;
                     padding: unset;
 
