@@ -58,50 +58,87 @@ const router = createRouter({
           name: 'home',
           component: LandingPage
         },
-        {
-          path: 'dashboard',
-          name: 'dashboard',
-          component: Dashboard
-        },
-        {
-          path: 'accountSettings',
-          name: 'accountSettings',
-          component: AccountSettings
-        },
       ]
     },
-    {
-      path: '/dashboard/:service',
+    // {
+    //   path: '/',
     //   component: ServiceMain,
-      component: Main,
-      children: [
-        {
-          path: '',
-          name: 'service',
-          component: Service
-        },
-        {
-          path: 'users',
-          name: 'users',
-          component: Users
-        },
-        {
-          path: 'records',
-          name: 'records',
-          component: Records
-        },
-        {
-          path: 'mail',
-          name: 'mail',
-          component: Mail
-        },
-        {
-          path: 'subdomain',
-          name: 'subdomain',
-          component: Subdomain
-        }
-      ]
-    }
+    //   children: [
+    //     {
+    //       path: 'accountSettings',
+    //       name: 'accountSettings',
+    //       component: AccountSettings
+    //     },
+    //     {
+    //       path: 'dashboard',
+    //       // name: 'dashboard',
+    //       // component: Dashboard
+    //       children: [
+    //         {
+    //           path: '',
+    //           name: 'dashboard',
+    //           component: Dashboard
+    //         },
+    //         {
+    //           path: ':service',
+    //           name: 'service',
+    //           component: Service
+    //         },
+    //         {
+    //           path: 'users',
+    //           name: 'users',
+    //           component: Users
+    //         },
+    //         {
+    //           path: 'records',
+    //           name: 'records',
+    //           component: Records
+    //         },
+    //         {
+    //           path: 'mail',
+    //           name: 'mail',
+    //           component: Mail
+    //         },
+    //         {
+    //           path: 'subdomain',
+    //           name: 'subdomain',
+    //           component: Subdomain
+    //         }
+    //       ]
+    //     },
+    //   ]
+    // },
+    // {
+    //   path: '/dashboard/:service',
+    //   component: ServiceMain,
+    //   children: [
+    //     {
+    //       path: '',
+    //       name: 'service',
+    //       component: Service
+    //     },
+    //     {
+    //       path: 'users',
+    //       name: 'users',
+    //       component: Users
+    //     },
+    //     {
+    //       path: 'records',
+    //       name: 'records',
+    //       component: Records
+    //     },
+    //     {
+    //       path: 'mail',
+    //       name: 'mail',
+    //       component: Mail
+    //     },
+    //     {
+    //       path: 'subdomain',
+    //       name: 'subdomain',
+    //       component: Subdomain
+    //     }
+    //   ]
+    // },
   ]
 })
 

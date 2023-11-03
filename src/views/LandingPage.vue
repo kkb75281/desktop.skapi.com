@@ -58,6 +58,7 @@
                                 br
                                 h5.tit Database
                                 br
+                                br
                                 p.des Simple, yet flexible #[br]database that scales
                                 p.mDes Simple, yet flexible database that scales
                         .card
@@ -65,6 +66,7 @@
                                 img(src="@/assets/img/icon/icons-04.png")
                                 br
                                 h5.tit Cloud Storage
+                                br
                                 br
                                 p.des Secure, #[br]Database integrated, #[br]Expands with no-limit
                                 p.mDes Secure, Database integrated, #[br]Expands with no-limit
@@ -74,6 +76,7 @@
                                 br
                                 h5.tit Security
                                 br
+                                br
                                 p.des Works out-of-the-box, #[br]Fully implemented in #[br]all resources
                                 p.mDes Works out-of-the-box, Fully #[br]implemented in all resources
                         .card
@@ -81,6 +84,7 @@
                                 img(src="@/assets/img/icon/icons-06.png")
                                 br
                                 h5.tit E-Mail service
+                                br
                                 br
                                 p.des Verification, #[br]Sending newsletters, #[br]Notification E-mails
                                 p.mDes Verification, Sending newsletters, #[br]Notification E-mails
@@ -90,6 +94,7 @@
                                 br
                                 h5.tit Hosting
                                 br
+                                br
                                 p.des Immediate website #[br]hosting
                                 p.mDes Immediate website hosting
                         .card
@@ -97,6 +102,7 @@
                                 img(src="@/assets/img/icon/icons-08.png")
                                 br
                                 h5.tit CDN
+                                br
                                 br
                                 p.des Implemented to the #[br]cloud storage by #[br]default
                                 p.mDes Implemented to the cloud storage by default
@@ -106,6 +112,7 @@
                                 br
                                 h5.tit Load balancing
                                 br
+                                br
                                 p.des Everything controlled #[br]internally
                                 p.mDes Everything controlled internally
                         .card
@@ -113,6 +120,7 @@
                                 img(src="@/assets/img/icon/icons-10.png")
                                 br
                                 h5.tit Serverless
+                                br
                                 br
                                 p.des No deployment, #[br]No installation #[br]required
                                 p.mDes No deployment, No installation required
@@ -184,7 +192,7 @@
         .docWrap(ref="docWrap" :class="{'show' : docShow}") 
             .docInner
                 .left 
-                    h2.title Written in #[br]human language
+                    h2.title.big Written in #[br]human language
                     br
                     br
                     a(href='https://docs.skapi.com' target="_blank") Check out Documentation
@@ -268,11 +276,11 @@ let resize = () => {
 }
 
 onMounted(() => {
-    // window.addEventListener('scroll', moveHtml);
+    window.addEventListener('scroll', moveHtml);
     window.addEventListener('resize', resize);
 })
 onBeforeUnmount(() => {
-    // window.removeEventListener('scroll', moveHtml);
+    window.removeEventListener('scroll', moveHtml);
     window.removeEventListener('resize', resize);
 })
 
@@ -523,6 +531,7 @@ onBeforeUnmount(() => {
             a {
                 color: #293FE6;
                 font-weight: 700;
+                font-size: 1.2rem;
                 text-decoration-line: underline;
             }
         }
@@ -575,214 +584,9 @@ onBeforeUnmount(() => {
     }
 }
 
-// @media (max-width:1500px) {
-//     #other {
-//         >div {
-//             width: 940px;
-//             padding-top: 248px;
-//         }
-
-//         .cardWrap {
-//             .card {
-//                 .cardInner {
-//                     padding: 20px;
-
-//                     img {
-//                         height: 80px;
-//                         margin-bottom: 8px;
-//                     }
-
-//                     .tit {
-//                         font-size: 1.2rem;
-//                         margin-bottom: 12px;
-//                     }
-
-//                     .desc {
-//                         font-size: 1rem;
-//                         line-height: 20px;
-//                     }
-//                 }
-//             }
-//         }
-
-//         .htmlWrap {
-//             .htmlInner {
-//                 width: 100%;
-//                 margin: 0 auto;
-//             }
-//         }
-
-//         .docWrap {
-//             width: 100%;
-
-//             .docInner {
-//                 width: 940px;
-//                 margin: 0 auto;
-//             }
-
-//             .right {
-//                 width: 57%;
-//                 margin-left: 3%;
-//             }
-//         }
-
-//         .joinWrap {
-//             padding: 80px 0;
-//         }
-//     }
-// }
-
-// @media (max-width:980px) {
-//     #other {
-//         >div {
-//             padding-left: 20px;
-//             padding-right: 20px;
-//             width: 100%;
-//         }
-//         .cardWrap {
-//             .card {
-//                 width: 32%;
-
-//                 &:nth-child(4n+4) {
-//                     margin-right: 2%;
-//                 }
-
-//                 &:nth-child(3n+3) {
-//                     margin-right: 0;
-//                 }
-//             }
-//         }
-//         .htmlCode {
-//             .codeWrap {
-//                 font-size: 1rem;
-//             }
-//         }
-//         .docWrap {
-//             .docInner {
-//                 width: 100%;
-//                 flex-wrap: wrap;
-//             }
-//             .left, .right {
-//                 width: 100%;
-//                 margin: 0;
-//             }
-//             .left {
-//                 margin-bottom: 30px;
-//             }
-//         }
-//     }
-// }
-
-// @media (max-width: 690px) {
-//     #intro {
-//         padding: 0 20px;
-
-//         .introWrap {
-//             min-width: 100%;
-//             .introLogo {
-//                 display: none;
-//             }
-
-//             .mintroLogo {
-//                 display: block;
-//             }
-//             .point {
-//                 font-size: 3em;
-
-//                 span {
-//                     text-underline-offset: 15px;
-//                 }
-//             }
-//             .codeWrap {
-//                 width: 100%;
-//                 overflow: auto;
-//             }
-//         }
-//     }
-
-//     #other {
-//         >div {
-//             width: 100%;
-//             padding-top: 100px;
-
-//             div {
-//                 > p {
-//                     display: none;
-//                 }
-//             }
-//         }
-
-//         .packageWrap,
-//         .htmlWrap {
-//             padding-top: 100px;
-
-//             .packageInner,
-//             .htmlInner {
-//                 width: 100%;
-//             }
-//         }
-
-//         .cardWrap {
-//             display: block;
-
-//             .card {
-//                 position: relative;
-//                 width: 100%;
-//                 height: 100%;
-//                 margin-right: unset;
-//                 margin-bottom: 48px;
-//                 border-radius: 8px;
-//                 background-color: unset;
-//                 border: 0;
-//                 box-shadow: unset;
-
-//                 &::after {
-//                     display: none;
-//                 }
-
-//                 .cardInner {
-//                     position: relative;
-//                     padding: unset;
-
-//                     .desc {
-//                         display: none;
-//                     }
-
-//                     .mDesc {
-//                         display: block;
-//                     }
-//                 }
-//             }
-//         }
-
-//         .htmlCode {
-//             .codeWrap {
-//                 overflow: hidden;
-
-//                 .codeInner {
-//                     overflow: auto;
-//                 }
-//             }
-//         }
-
-//         .docWrap {
-//             display: none;
-//         }
-//         .joinWrap {
-//             h2 {
-//                 font-size: 2.5rem;
-//             }
-//         }
-//     }
-// }
-
-// @media (max-width: 420px) {
-//     #intro {
-//         .introWrap {
-//             .point {
-//                 font-size: 2.1rem;
-//             }
-//         }
-//     }
-// }
+@media (max-width:720px) {
+    .docWrap {
+        display: none;
+    }
+}
 </style>

@@ -1,8 +1,6 @@
 <template lang="pug">
-template(v-if="account")
-  EmailCaution(v-if="!account?.email_verified && route.name !== 'home'" @showVerifyEmail="showVerifyEmail=true")
-NavBar(v-if="showNavBar")
-router-view(v-if="!route.params.service")
+NavBar
+router-view
 </template>
 
 <script setup>
@@ -14,16 +12,10 @@ import EmailCaution from '@/components/EmailCaution.vue';
 
 let route = useRoute();
 let router = useRouter();
-let excluded = ['login', 'signup', 'confirmation', 'forgotpassword', 'success', 'bye'];
-let showNavBar = ref(!excluded.includes(route.name));
 let showVerifyEmail = ref(false);
 // let showEmailCaution = ref(account.email_verified);
 
 provide('showVerifyEmail', showVerifyEmail);
-
-watch(() => router.currentRoute.value.name, (newRouteName) => {
-  showNavBar.value = !excluded.includes(newRouteName);
-});
 
 // watch(() => account.value.email_verified, () => {
 //     if(account.value.email_verified) {
