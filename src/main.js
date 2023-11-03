@@ -1,4 +1,4 @@
-import './assets/main.css'
+import './assets/main.less'
 
 import { createApp, ref } from 'vue'
 import App from './App.vue'

@@ -20,6 +20,36 @@ const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
   routes: [
     {
+      path: '/login',
+      name: 'login',
+      component: Login
+    },
+    {
+      path: '/signup',
+      name: 'signup',
+      component: Signup
+    },
+    {
+      path: '/confirmation',
+      name: 'confirmation',
+      component: () => import('@/views/ResendConfirmation.vue')
+    },
+    {
+      path: '/forgotpassword',
+      name: 'forgotpassword',
+      component: () => import('@/views/ForgotPassword.vue')
+    },
+    {
+      path: '/success',
+      name: 'success',
+      component: () => import('@/views/EmailConfirmed.vue')
+    },
+    {
+      path: '/bye',
+      name: 'bye',
+      component: () => import('@/views/Byebye.vue')
+    },
+    {
       path: '/',
       component: Main,
       children: [
@@ -29,26 +59,6 @@ const router = createRouter({
           component: LandingPage
         },
         {
-          path: 'signup',
-          name: 'signup',
-          component: Signup
-        },
-        {
-          path: 'login',
-          name: 'login',
-          component: Login
-        },
-        {
-          path: 'forgotpassword',
-          name: 'forgotpassword',
-          component: () => import('@/views/ForgotPassword.vue')
-        },
-        // {
-        //   path: 'deleteAccount',
-        //   name: 'deleteAccount',
-        //   component: () => import('@/views/dialog/deleteAccount.vue')
-        // },
-        {
           path: 'dashboard',
           name: 'dashboard',
           component: Dashboard
@@ -57,21 +67,6 @@ const router = createRouter({
           path: 'accountSettings',
           name: 'accountSettings',
           component: AccountSettings
-        },
-        {
-          path: 'confirmation',
-          name: 'confirmation',
-          component: () => import('@/views/ResendConfirmation.vue')
-        },
-        {
-          path: 'success',
-          name: 'success',
-          component: () => import('@/views/EmailConfirmed.vue')
-        },
-        {
-          path: 'bye',
-          name: 'bye',
-          component: () => import('@/views/Byebye.vue')
         },
       ]
     },
