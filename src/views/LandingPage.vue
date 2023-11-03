@@ -10,10 +10,10 @@
                 br
 
                 .point
-                    span One Line of Code
-                    |  =&gt;
+                    h1.hightlight One Line of Code
+                    span  =&gt;
                     br
-                    | Full Backend API
+                    h1 Full Backend API
 
                 br
                 br
@@ -40,70 +40,87 @@
                 br
 
                 a(href='https://docs.skapi.com/introduction/getting-started.html' target="_blank") 
-                    h5 Getting Started
+                    h6 Getting Started
                     .material-symbols-outlined.big.arrow arrow_forward
     section#other(ref="other")
         .packageWrap(ref="packageWrap")
             .packageInner
                 h2.title(:class="{'show' : packageShow}") Skapi provides everything in one package
                 br
-                p(:class="{'show' : packageShow}") No more figuring out how to setup, or deploy each of your backend resources.
+                h4.desc(:class="{'show' : packageShow}") No more figuring out how to setup, or deploy each of your backend resources.
                 br
                 br
                 .cardWrap(:class="{'show' : packageShow}") 
-                    .card
-                        .inner
-                            img(src="@/assets/img/icon/icons-03.png")
-                            h4.tit Database
-                            p.desc Simple, yet flexible #[br]database that scales
-                            p.mDesc Simple, yet flexible database that scales
-                    .card
-                        .inner
-                            img(src="@/assets/img/icon/icons-04.png")
-                            h4.tit Cloud Storage
-                            p.desc Secure, #[br]Database integrated, #[br]Expands with no-limit
-                            p.mDesc Secure, Database integrated, #[br]Expands with no-limit
-                    .card
-                        .inner
-                            img(src="@/assets/img/icon/icons-05.png")
-                            h4.tit Security
-                            p.desc Works out-of-the-box, #[br]Fully implemented in #[br]all resources
-                            p.mDesc Works out-of-the-box, Fully #[br]implemented in all resources
-                    .card
-                        .inner
-                            img(src="@/assets/img/icon/icons-06.png")
-                            h4.tit E-Mail service
-                            p.desc Verification, #[br]Sending newsletters, #[br]Notification E-mails
-                            p.mDesc Verification, Sending newsletters, #[br]Notification E-mails
-                    .card
-                        .inner
-                            img(src="@/assets/img/icon/icons-07.png")
-                            h4.tit Hosting
-                            p.desc Immediate website #[br]hosting
-                            p.mDesc Immediate website hosting
-                    .card
-                        .inner
-                            img(src="@/assets/img/icon/icons-08.png")
-                            h4.tit CDN
-                            p.desc Implemented to the #[br]cloud storage by #[br]default
-                            p.mDesc Implemented to the cloud storage by default
-                    .card
-                        .inner
-                            img(src="@/assets/img/icon/icons-09.png")
-                            h4.tit Load balancing
-                            p.desc Everything controlled #[br]internally
-                            p.mDesc Everything controlled internally
-                    .card
-                        .inner
-                            img(src="@/assets/img/icon/icons-10.png")
-                            h4.tit Serverless
-                            p.desc No deployment, #[br]No installation #[br]required
-                            p.mDesc No deployment, No installation required
+                    .cardInner
+                        .card
+                            .inner
+                                img(src="@/assets/img/icon/icons-03.png")
+                                br
+                                h5.tit Database
+                                br
+                                p.des Simple, yet flexible #[br]database that scales
+                                p.mDes Simple, yet flexible database that scales
+                        .card
+                            .inner
+                                img(src="@/assets/img/icon/icons-04.png")
+                                br
+                                h5.tit Cloud Storage
+                                br
+                                p.des Secure, #[br]Database integrated, #[br]Expands with no-limit
+                                p.mDes Secure, Database integrated, #[br]Expands with no-limit
+                        .card
+                            .inner
+                                img(src="@/assets/img/icon/icons-05.png")
+                                br
+                                h5.tit Security
+                                br
+                                p.des Works out-of-the-box, #[br]Fully implemented in #[br]all resources
+                                p.mDes Works out-of-the-box, Fully #[br]implemented in all resources
+                        .card
+                            .inner
+                                img(src="@/assets/img/icon/icons-06.png")
+                                br
+                                h5.tit E-Mail service
+                                br
+                                p.des Verification, #[br]Sending newsletters, #[br]Notification E-mails
+                                p.mDes Verification, Sending newsletters, #[br]Notification E-mails
+                        .card
+                            .inner
+                                img(src="@/assets/img/icon/icons-07.png")
+                                br
+                                h5.tit Hosting
+                                br
+                                p.des Immediate website #[br]hosting
+                                p.mDes Immediate website hosting
+                        .card
+                            .inner
+                                img(src="@/assets/img/icon/icons-08.png")
+                                br
+                                h5.tit CDN
+                                br
+                                p.des Implemented to the #[br]cloud storage by #[br]default
+                                p.mDes Implemented to the cloud storage by default
+                        .card
+                            .inner
+                                img(src="@/assets/img/icon/icons-09.png")
+                                br
+                                h5.tit Load balancing
+                                br
+                                p.des Everything controlled #[br]internally
+                                p.mDes Everything controlled internally
+                        .card
+                            .inner
+                                img(src="@/assets/img/icon/icons-10.png")
+                                br
+                                h5.tit Serverless
+                                br
+                                p.des No deployment, #[br]No installation #[br]required
+                                p.mDes No deployment, No installation required
         .htmlWrap(ref="htmlWrap")
             .htmlInner
                 h2.title(:class="{'show' : htmlShow}") Compatible with either #[br]pure HTML projects or any SPA frameworks
                 br
-                p(:class="{'show' : htmlShow}") No additional settings, Just import Skapi library in your HTML file and you’re ready to go.
+                h4.desc(:class="{'show' : htmlShow}") No additional settings, Just import Skapi library in your HTML file and you’re ready to go.
                 br
                 br
                 .htmlCode(:class="{'show' : htmlShow}") 
@@ -307,6 +324,7 @@ onBeforeUnmount(() => {
 #intro {
     width: 100vw;
     height: 100vh;
+    padding: 0 20px;
     background: linear-gradient(217deg, rgba(0, 255, 170, 1), rgba(255, 0, 0, 0) 70.71%), linear-gradient(54deg, rgba(0, 14, 255, 1), rgba(0, 255, 0, 0) 70.71%), linear-gradient(148deg, rgba(0, 14, 255, 1), rgba(0, 255, 0, 0) 70.71%), linear-gradient(336deg, rgba(252, 208, 75, 1), rgba(0, 0, 255, 1) 70.71%);
     position: relative;
     display: flex;
@@ -320,33 +338,45 @@ onBeforeUnmount(() => {
         }
 
         .introLogo {
-            width: 6em;
+            width: 6rem;
         }
 
         .mintroLogo {
-            width: 193px;
+            // width: 193px;
+            width: 12rem;
             display: none;
         }
 
         .point {
             color: #fff;
-            font-size: 3.5em;
             font-weight: 500;
             line-height: 1.6;
 
+            h1 {
+                font-weight: 500;
+                display: inline-block;
+
+                &.hightlight {
+                    text-decoration-line: underline;
+                    text-underline-offset : 24px;
+                    text-decoration-thickness: 4px;
+                }
+            }
             span {
-                text-decoration-line: underline;
-                text-underline-offset : 24px;
+                font-size: 3.5rem;
             }
         }
 
         .codeWrap {
-            font-size: 1.3em;
+            font-size: 1.2rem;
+
+            .codeInner {
+                overflow: auto;
+            }
         }
 
         .desc {
             color: #FFF;
-            font-size: 1.2em;
             font-weight: 400;
             line-height: 1.5;
         }
@@ -354,19 +384,17 @@ onBeforeUnmount(() => {
         a {
             text-decoration: none;
             display: inline-block;
-            font-size: 1.3em;
             padding: 10px 20px 10px 40px;
             border-radius: 0 30px 30px 0;
             background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.8), rgba(255, 255, 255, 1));
             color: #293FE6;
 
-            h5 {
-                display: inline-block;
-                margin-right: 5px;
-            }
-            .arrow {
+            * {
                 display: inline-block;
                 vertical-align: middle;
+            }
+            .arrow {
+                margin-left: 5px;
             }
         }
     }
@@ -389,86 +417,67 @@ onBeforeUnmount(() => {
     }
 
     > div {
-        width: min(1400px, 70vw);
-        margin: 0 auto;
+        // width: min(1400px, 70vw);
+        padding: 0 20px;
         padding-top: min(330px, 19vw);
+        width: 1400px;
+        margin: 0 auto;
 
         div {
-            > .title {
+            .title {
                 color: #262626;
-                font-size: 1.8rem;
-                font-weight: 700;
-                // transition: all 1s;
+
+                &.big {
+                    font-size: 2.5rem;
+                }
             }
         
-            > p {
+            .desc {
                 color: #000;
-                font-size: 1.4rem;
                 font-weight: 400;
             }
         }
     }
 
     .cardWrap {
-        .card {
-            position: relative;
-            display: inline-block;
-            width: 23.5%;
-            margin-right: 2%;
-            margin-bottom: 2%;
-            border-radius: 8px;
-            background-color: #FAFAFA;
-            border: 1px solid rgba(0, 0, 0, 0.15);
-            box-shadow: 8px 12px 36px rgba(0, 0, 0, 0.10);
+        .cardInner {
+            .card {
+                position: relative;
+                display: inline-block;
+                vertical-align: middle;
+                background-color: #FAFAFA;
+                width: 320px;
+                height: 320px;
+                border-radius: 8px;
+                border: 1px solid rgba(0, 0, 0, 0.15);
+                box-shadow: 8px 12px 36px rgba(0, 0, 0, 0.10);
+                margin-right: 20px;
+                margin-bottom: 20px;
 
-            &:nth-child(4n+4) {
-                margin-right: 0;
-            }
+                .inner {
+                    img {
+                        height: 100px;
+                    }
+                    .tit {
+                        width: 100%;
+                        color: rgba(0, 0, 0, 0.8);
+                        font-weight: 500;
+                        padding-left: 20px;
+                    }
 
-            &::after {
-                display: block;
-                content: "";
-                padding-bottom: 100%;
-            }
+                    .des {
+                        width: 100%;
+                        color: rgba(0, 0, 0, 0.6);
+                        font-weight: 400;
+                        line-height: 1.3;
+                        padding-left: 20px;
+                    }
 
-            .inner {
-                position: absolute;
-                top: 0;
-                left: 0;
-                width: 100%;
-                height: 100%;
-                object-fit: cover;
-                padding: min(28px, 1.2vw);
-
-                img {
-                    height: min(100px, 4.3vw);
-                    margin-bottom: min(36px, 1.5vw);
-                    object-fit: contain;
-                    align-self: start;
-                    margin-top: min(-10px, -0.5vw);
-                    margin-left: min(-10px, -0.5vw);
-                }
-
-                .tit {
-                    width: 100%;
-                    margin-bottom: min(24px, 1vw);
-                    color: rgba(0, 0, 0, 0.8);
-                    font-size: 1.5rem;
-                    font-weight: 500;
-                }
-
-                .desc {
-                    width: 100%;
-                    color: rgba(0, 0, 0, 0.6);
-                    font-size: 1.2rem;
-                    font-weight: 400;
-                    line-height: 1.3;
-                }
-
-                .mDesc {
-                    display: none;
-                    font-size: 1.2rem;
-                    color: rgba(0, 0, 0, 0.6);
+                    .mDes {
+                        display: none;
+                        color: rgba(0, 0, 0, 0.6);
+                        padding-left: 20px;
+                    }
                 }
             }
         }
@@ -486,6 +495,10 @@ onBeforeUnmount(() => {
             padding: 20px;
             font-size: 1.2rem;
             text-align: left;
+
+            .codeInner {
+                overflow: auto;
+            }
         }
     }
 
@@ -502,8 +515,6 @@ onBeforeUnmount(() => {
 
             .title {
                 color: rgba(0, 0, 0, 0.80);
-                // font-size: min(48px, 2.1vw);
-                font-size: 2.6rem;
                 font-weight: 700;
                 line-height: 1.3;
                 opacity: 1;
@@ -511,7 +522,6 @@ onBeforeUnmount(() => {
 
             a {
                 color: #293FE6;
-                font-size: 1.4rem;
                 font-weight: 700;
                 text-decoration-line: underline;
             }
@@ -557,214 +567,222 @@ onBeforeUnmount(() => {
     }
 }
 
-@media (max-width:1500px) {
+@media (max-width:1440px) {
     #other {
-        >div {
-            width: 940px;
-            padding-top: 248px;
-        }
-
-        .cardWrap {
-            .card {
-                .inner {
-                    padding: 20px;
-
-                    img {
-                        height: 80px;
-                        margin-bottom: 8px;
-                    }
-
-                    .tit {
-                        font-size: 1.2rem;
-                        margin-bottom: 12px;
-                    }
-
-                    .desc {
-                        font-size: 1rem;
-                        line-height: 20px;
-                    }
-                }
-            }
-        }
-
-        .htmlWrap {
-            .htmlInner {
-                width: 100%;
-                margin: 0 auto;
-            }
-        }
-
-        .docWrap {
-            width: 100%;
-
-            .docInner {
-                width: 940px;
-                margin: 0 auto;
-            }
-
-            .right {
-                width: 57%;
-                margin-left: 3%;
-            }
-        }
-
-        .joinWrap {
-            padding: 80px 0;
-        }
-    }
-}
-
-@media (max-width:980px) {
-    #other {
-        >div {
-            padding-left: 20px;
-            padding-right: 20px;
+        > div {
             width: 100%;
         }
-        .cardWrap {
-            .card {
-                width: 32%;
-
-                &:nth-child(4n+4) {
-                    margin-right: 2%;
-                }
-
-                &:nth-child(3n+3) {
-                    margin-right: 0;
-                }
-            }
-        }
-        .htmlCode {
-            .codeWrap {
-                font-size: 1rem;
-            }
-        }
-        .docWrap {
-            .docInner {
-                width: 100%;
-                flex-wrap: wrap;
-            }
-            .left, .right {
-                width: 100%;
-                margin: 0;
-            }
-            .left {
-                margin-bottom: 30px;
-            }
-        }
     }
 }
 
-@media (max-width: 690px) {
-    #intro {
-        padding: 0 20px;
+// @media (max-width:1500px) {
+//     #other {
+//         >div {
+//             width: 940px;
+//             padding-top: 248px;
+//         }
 
-        .introWrap {
-            min-width: 100%;
-            .introLogo {
-                display: none;
-            }
+//         .cardWrap {
+//             .card {
+//                 .cardInner {
+//                     padding: 20px;
 
-            .mintroLogo {
-                display: block;
-            }
-            .point {
-                font-size: 3em;
+//                     img {
+//                         height: 80px;
+//                         margin-bottom: 8px;
+//                     }
 
-                span {
-                    text-underline-offset: 15px;
-                }
-            }
-            .codeWrap {
-                width: 100%;
-                overflow: auto;
-            }
-        }
-    }
+//                     .tit {
+//                         font-size: 1.2rem;
+//                         margin-bottom: 12px;
+//                     }
 
-    #other {
-        >div {
-            width: 100%;
-            padding-top: 100px;
+//                     .desc {
+//                         font-size: 1rem;
+//                         line-height: 20px;
+//                     }
+//                 }
+//             }
+//         }
 
-            div {
-                > p {
-                    display: none;
-                }
-            }
-        }
+//         .htmlWrap {
+//             .htmlInner {
+//                 width: 100%;
+//                 margin: 0 auto;
+//             }
+//         }
 
-        .packageWrap,
-        .htmlWrap {
-            padding-top: 100px;
+//         .docWrap {
+//             width: 100%;
 
-            .packageInner,
-            .htmlInner {
-                width: 100%;
-            }
-        }
+//             .docInner {
+//                 width: 940px;
+//                 margin: 0 auto;
+//             }
 
-        .cardWrap {
-            display: block;
+//             .right {
+//                 width: 57%;
+//                 margin-left: 3%;
+//             }
+//         }
 
-            .card {
-                position: relative;
-                width: 100%;
-                height: 100%;
-                margin-right: unset;
-                margin-bottom: 48px;
-                border-radius: 8px;
-                background-color: unset;
-                border: 0;
-                box-shadow: unset;
+//         .joinWrap {
+//             padding: 80px 0;
+//         }
+//     }
+// }
 
-                &::after {
-                    display: none;
-                }
+// @media (max-width:980px) {
+//     #other {
+//         >div {
+//             padding-left: 20px;
+//             padding-right: 20px;
+//             width: 100%;
+//         }
+//         .cardWrap {
+//             .card {
+//                 width: 32%;
 
-                .inner {
-                    position: relative;
-                    padding: unset;
+//                 &:nth-child(4n+4) {
+//                     margin-right: 2%;
+//                 }
 
-                    .desc {
-                        display: none;
-                    }
+//                 &:nth-child(3n+3) {
+//                     margin-right: 0;
+//                 }
+//             }
+//         }
+//         .htmlCode {
+//             .codeWrap {
+//                 font-size: 1rem;
+//             }
+//         }
+//         .docWrap {
+//             .docInner {
+//                 width: 100%;
+//                 flex-wrap: wrap;
+//             }
+//             .left, .right {
+//                 width: 100%;
+//                 margin: 0;
+//             }
+//             .left {
+//                 margin-bottom: 30px;
+//             }
+//         }
+//     }
+// }
 
-                    .mDesc {
-                        display: block;
-                    }
-                }
-            }
-        }
+// @media (max-width: 690px) {
+//     #intro {
+//         padding: 0 20px;
 
-        .htmlCode {
-            .codeWrap {
-                overflow: hidden;
+//         .introWrap {
+//             min-width: 100%;
+//             .introLogo {
+//                 display: none;
+//             }
 
-                .codeInner {
-                    overflow: auto;
-                }
-            }
-        }
+//             .mintroLogo {
+//                 display: block;
+//             }
+//             .point {
+//                 font-size: 3em;
 
-        .docWrap {
-            display: none;
-        }
-        .joinWrap {
-            h2 {
-                font-size: 2.5rem;
-            }
-        }
-    }
-}
+//                 span {
+//                     text-underline-offset: 15px;
+//                 }
+//             }
+//             .codeWrap {
+//                 width: 100%;
+//                 overflow: auto;
+//             }
+//         }
+//     }
 
-@media (max-width: 420px) {
-    #intro {
-        .introWrap {
-            .point {
-                font-size: 2.1rem;
-            }
-        }
-    }
-}
+//     #other {
+//         >div {
+//             width: 100%;
+//             padding-top: 100px;
+
+//             div {
+//                 > p {
+//                     display: none;
+//                 }
+//             }
+//         }
+
+//         .packageWrap,
+//         .htmlWrap {
+//             padding-top: 100px;
+
+//             .packageInner,
+//             .htmlInner {
+//                 width: 100%;
+//             }
+//         }
+
+//         .cardWrap {
+//             display: block;
+
+//             .card {
+//                 position: relative;
+//                 width: 100%;
+//                 height: 100%;
+//                 margin-right: unset;
+//                 margin-bottom: 48px;
+//                 border-radius: 8px;
+//                 background-color: unset;
+//                 border: 0;
+//                 box-shadow: unset;
+
+//                 &::after {
+//                     display: none;
+//                 }
+
+//                 .cardInner {
+//                     position: relative;
+//                     padding: unset;
+
+//                     .desc {
+//                         display: none;
+//                     }
+
+//                     .mDesc {
+//                         display: block;
+//                     }
+//                 }
+//             }
+//         }
+
+//         .htmlCode {
+//             .codeWrap {
+//                 overflow: hidden;
+
+//                 .codeInner {
+//                     overflow: auto;
+//                 }
+//             }
+//         }
+
+//         .docWrap {
+//             display: none;
+//         }
+//         .joinWrap {
+//             h2 {
+//                 font-size: 2.5rem;
+//             }
+//         }
+//     }
+// }
+
+// @media (max-width: 420px) {
+//     #intro {
+//         .introWrap {
+//             .point {
+//                 font-size: 2.1rem;
+//             }
+//         }
+//     }
+// }
 </style>

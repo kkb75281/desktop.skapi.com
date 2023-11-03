@@ -20,12 +20,30 @@
     /* Non-prefixed version, currently supported by Chrome, Edge, Opera and Firefox */
 }
 
+@media all and (min-width:1024px) {
+    html {
+        font-size: 20px;
+    }
+}
+
+/* 테블릿 가로, 테블릿 세로 (해상도 768px ~ 1023px)*/
+@media all and (min-width:768px) and (max-width:1023px) {
+    html {
+        font-size: 18px;
+    }
+}
+
+/* 모바일 가로, 모바일 세로 (해상도 480px ~ 767px)*/
+@media all and (max-width:767px) {
+    html {
+        font-size: 16px; }
+}
+
 body {
     width: 100%;
     height: 100%;
     background-color: #f0f0f0;
     color: rgba(0, 0, 0, 0.80);
-    font-size: 20px;
 
     &.fa {
         background-color: #fafafa;
@@ -33,26 +51,27 @@ body {
 }
 
 h1 {
-    font-size: 2em;
+    font-size: 3.3rem;
 }
 
-@media all and (min-width:1024px) {
-    body {
-        font-size: 18px;
-    }
+h2 {
+    font-size: 1.8rem;
 }
 
-/* 테블릿 가로, 테블릿 세로 (해상도 768px ~ 1023px)*/
-@media all and (min-width:768px) and (max-width:1023px) {
-    body {
-        font-size: 16px;
-    }
+h3 {
+    font-size: 1.6rem;
 }
 
-/* 모바일 가로, 모바일 세로 (해상도 480px ~ 767px)*/
-@media all and (max-width:767px) {
-    body {
-        font-size: 14px; }
+h4 {
+    font-size: 1.4rem;
+}
+
+h5 {
+    font-size: 1.2rem;
+}
+
+h6 {
+    font-size: 1rem;
 }
 
 input,
