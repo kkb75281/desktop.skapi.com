@@ -1,4 +1,5 @@
 <template lang="pug">
+NavBar
 #lending(ref="lending")
     section#intro(ref="intro" @wheel="handleMouseWheel")
         .introWrap 
@@ -20,7 +21,6 @@
 
                 .codeWrap
                     .codeInner
-                        .num 1
                         .line
                             span(style="color:#ff3399") const 
                             span skapi = 
@@ -135,23 +135,11 @@
                     h6.tit index.html 
                     .codeWrap
                         .codeInner
-                            .num
-                                div 1
-                                div 2
-                                div 3
-                                div 4
-                                div 5
-                                div 6
-                                div 7
                             .line
                                 div
                                     span(style="color:#f0f0f0") &lt;
                                     span(style="color:#ff3399") !DOCTYPE 
                                     span(style="color:#a8ff58") html
-                                    span(style="color:#f0f0f0") &gt;
-                                div
-                                    span(style="color:#f0f0f0") &lt;
-                                    span(style="color:#ff3399") head
                                     span(style="color:#f0f0f0") &gt;
                                 div
                                     span(style="color:#f0f0f0") &lt;
@@ -167,15 +155,10 @@
                                     span(style="color:#f0f0f0") &gt;
                                 div
                                     span(style="color:#f0f0f0") &lt;
-                                    span(style="color:#f0f0f0") /
-                                    span(style="color:#ff3399") head
-                                    span(style="color:#f0f0f0") &gt;
-                                div
-                                    span(style="color:#f0f0f0") &lt;
                                     span(style="color:#ff3399") script
                                     span(style="color:#f0f0f0") &gt;
                                 div
-                                    span(style="color:#ff3399") let 
+                                    span(style="color:#ff3399") &nbsp;&nbsp;&nbsp;&nbsp;let 
                                     span skapi 
                                     span = 
                                     span(style="color:#ff3399") new 
@@ -213,6 +196,7 @@
 <script setup>
 import { nextTick, onBeforeUnmount, onMounted, ref } from 'vue';
 import { account } from '@/main.js';
+import NavBar from '@/components/NavBar.vue';
 
 let lending = ref(null);
 let intro = ref(null);
@@ -292,40 +276,6 @@ onBeforeUnmount(() => {
     #intro {
         height: 100%;
         padding: 140px 20px 120px 20px;
-    }
-}
-
-.codeWrap {
-    border-radius: 8px;
-    border: 1px solid rgba(255, 255, 255, 0.10);
-    text-align: center;
-    background: #434343;
-    color: #FFF;
-    padding: 7px 20px;
-    box-shadow: 3px 9px 6px 0px rgba(0, 0, 0, 0.15);
-
-    .codeInner {
-        white-space: nowrap;
-    }
-    .num {
-        position: relative;
-        display: inline-block;
-        margin-right: 2em;
-        color: rgba(170,170,170);
-
-        &::after {
-            position: absolute;
-            content: '';
-            right: -1em;
-            top: 50%;
-            transform: translateY(-50%);
-            width: 1px;
-            height: 100%;
-            background-color: #666;
-        }
-    }
-    .line {
-        display: inline-block;
     }
 }
 
@@ -501,12 +451,8 @@ onBeforeUnmount(() => {
 
         .codeWrap {
             padding: 20px;
-            font-size: 1.2rem;
+            font-size: 1.1rem;
             text-align: left;
-
-            .codeInner {
-                overflow: auto;
-            }
         }
     }
 
@@ -585,6 +531,9 @@ onBeforeUnmount(() => {
 }
 
 @media (max-width:720px) {
+    .introWrap {
+        min-width: 100%;
+    }
     .docWrap {
         display: none;
     }

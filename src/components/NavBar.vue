@@ -105,59 +105,59 @@ let logout = async () => {
 
     router.push({ path: '/' });
 }
-// let getCurrentService = () => {
-//     let srvcId = route.path.split('/')[2];
-//     currentService.value = skapi.services[srvcId];
+let getCurrentService = () => {
+    let srvcId = route.path.split('/')[2];
+    currentService.value = skapi.services[srvcId];
 
-//     if (currentService.value) {
-//         if (!newsletter_sender.value?.[currentService.value.service]?.public) {
-//             if (!newsletter_sender.value?.[currentService.value.service]) {
-//                 newsletter_sender.value[currentService.value.service] = {};
-//             }
-//             skapi.requestNewsletterSender(currentService.value.service, { groupNum: 0 }).then(s => {
-//                 newsletter_sender.value[currentService.value.service]['public'] = s;
-//             });
-//         }
+    if (currentService.value) {
+        if (!newsletter_sender.value?.[currentService.value.service]?.public) {
+            if (!newsletter_sender.value?.[currentService.value.service]) {
+                newsletter_sender.value[currentService.value.service] = {};
+            }
+            skapi.requestNewsletterSender(currentService.value.service, { groupNum: 0 }).then(s => {
+                newsletter_sender.value[currentService.value.service]['public'] = s;
+            });
+        }
 
-//         if (!newsletter_sender.value?.[currentService.value.service]?.authorized) {
-//             if (!newsletter_sender.value?.[currentService.value.service]) {
-//                 newsletter_sender.value[currentService.value.service] = {};
-//             }
-//             skapi.requestNewsletterSender(currentService.value.service, { groupNum: 1 }).then(s => {
-//                 newsletter_sender.value[currentService.value.service]['authorized'] = s;
-//             });
-//         }
+        if (!newsletter_sender.value?.[currentService.value.service]?.authorized) {
+            if (!newsletter_sender.value?.[currentService.value.service]) {
+                newsletter_sender.value[currentService.value.service] = {};
+            }
+            skapi.requestNewsletterSender(currentService.value.service, { groupNum: 1 }).then(s => {
+                newsletter_sender.value[currentService.value.service]['authorized'] = s;
+            });
+        }
 
-//         if (!storageInfo.value[currentService.value.service]) {
-//             storageInfo.value[currentService.value.service] = {};
-//         }
-//         let sd = currentService.value.subdomain;
-//         if (sd && (sd[0] !== '*' || sd[0] !== '+')) {
-//             // get subdomain storage info (404 file info)
-//             skapi.getSubdomainInfo(currentService.value.service, {
-//                 subdomain: sd,
-//             }).then(s =>
-//                 subdomainInfo.value[sd] = s
-//             ).catch(err=>err);
+        if (!storageInfo.value[currentService.value.service]) {
+            storageInfo.value[currentService.value.service] = {};
+        }
+        let sd = currentService.value.subdomain;
+        if (sd && (sd[0] !== '*' || sd[0] !== '+')) {
+            // get subdomain storage info (404 file info)
+            skapi.getSubdomainInfo(currentService.value.service, {
+                subdomain: sd,
+            }).then(s =>
+                subdomainInfo.value[sd] = s
+            ).catch(err=>err);
 
-//             launch(currentService.value.subdomain, f => {
-//                 if (f.length) {
-//                     storageInfo.value[currentService.value.service].host = f[0].size;
-//                 }
-//             }, true);
-//         }
+            launch(currentService.value.subdomain, f => {
+                if (f.length) {
+                    storageInfo.value[currentService.value.service].host = f[0].size;
+                }
+            }, true);
+        }
 
-//         skapi.storageInformation(currentService.value.service).then(i => {
-//             // get storage info
-//             for (let k in i) {
-//                 storageInfo.value[currentService.value.service][k] = i[k];
-//             }
-//         });
-//     }
-//     else {
-//         router.replace({ path: '/dashboard' });
-//     }
-// }
+        skapi.storageInformation(currentService.value.service).then(i => {
+            // get storage info
+            for (let k in i) {
+                storageInfo.value[currentService.value.service][k] = i[k];
+            }
+        });
+    }
+    else {
+        // router.replace({ path: '/dashboard' });
+    }
+}
 
 if (serviceFetching.value instanceof Promise) {
     serviceFetching.value.then(getCurrentService);

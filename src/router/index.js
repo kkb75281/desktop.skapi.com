@@ -20,6 +20,11 @@ const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
   routes: [
     {
+      path: '/',
+      name: 'home',
+      component: LandingPage
+    },
+    {
       path: '/login',
       name: 'login',
       component: Login
@@ -54,91 +59,48 @@ const router = createRouter({
       component: Main,
       children: [
         {
-          path: '',
-          name: 'home',
-          component: LandingPage
+          path: 'accountSettings',
+          name: 'accountSettings',
+          component: AccountSettings
+        },
+        {
+          path: 'dashboard',
+          name: 'dashboard',
+          component: Dashboard
+        },
+        {
+          path: '/dashboard/:service',
+          component: ServiceMain,
+          children: [
+            {
+              path: '',
+              name: 'service',
+              component: Service
+            },
+            {
+              path: 'users',
+              name: 'users',
+              component: Users
+            },
+            {
+              path: 'records',
+              name: 'records',
+              component: Records
+            },
+            {
+              path: 'mail',
+              name: 'mail',
+              component: Mail
+            },
+            {
+              path: 'subdomain',
+              name: 'subdomain',
+              component: Subdomain
+            }
+          ]
         },
       ]
     },
-    // {
-    //   path: '/',
-    //   component: ServiceMain,
-    //   children: [
-    //     {
-    //       path: 'accountSettings',
-    //       name: 'accountSettings',
-    //       component: AccountSettings
-    //     },
-    //     {
-    //       path: 'dashboard',
-    //       // name: 'dashboard',
-    //       // component: Dashboard
-    //       children: [
-    //         {
-    //           path: '',
-    //           name: 'dashboard',
-    //           component: Dashboard
-    //         },
-    //         {
-    //           path: ':service',
-    //           name: 'service',
-    //           component: Service
-    //         },
-    //         {
-    //           path: 'users',
-    //           name: 'users',
-    //           component: Users
-    //         },
-    //         {
-    //           path: 'records',
-    //           name: 'records',
-    //           component: Records
-    //         },
-    //         {
-    //           path: 'mail',
-    //           name: 'mail',
-    //           component: Mail
-    //         },
-    //         {
-    //           path: 'subdomain',
-    //           name: 'subdomain',
-    //           component: Subdomain
-    //         }
-    //       ]
-    //     },
-    //   ]
-    // },
-    // {
-    //   path: '/dashboard/:service',
-    //   component: ServiceMain,
-    //   children: [
-    //     {
-    //       path: '',
-    //       name: 'service',
-    //       component: Service
-    //     },
-    //     {
-    //       path: 'users',
-    //       name: 'users',
-    //       component: Users
-    //     },
-    //     {
-    //       path: 'records',
-    //       name: 'records',
-    //       component: Records
-    //     },
-    //     {
-    //       path: 'mail',
-    //       name: 'mail',
-    //       component: Mail
-    //     },
-    //     {
-    //       path: 'subdomain',
-    //       name: 'subdomain',
-    //       component: Subdomain
-    //     }
-    //   ]
-    // },
   ]
 })
 

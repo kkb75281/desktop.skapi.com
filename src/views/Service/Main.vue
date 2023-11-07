@@ -1,36 +1,32 @@
 <template lang="pug">
-EmailCaution(v-if="!account?.email_verified")
-NavBar
-template(v-if='currentService')
-    #service
-        .left
-            nav.menuWrap 
-                router-link.menu(:to="`/dashboard/${currentService.service}`" :class="{'active': route.name == 'service'}")
-                    .material-symbols-outlined.big home
-                    h3 Home
-                router-link.menu(:to="`/dashboard/${currentService.service}/users`" :class="{'active': route.name == 'users'}")
-                    .material-symbols-outlined.big supervisor_account
-                    h3 Users
-                router-link.menu(:to="`/dashboard/${currentService.service}/records`" :class="{'active': route.name == 'records'}")
-                    .material-symbols-outlined.big database
-                    h3 Database
-                router-link.menu(:to="`/dashboard/${currentService.service}/mail`" :class="{'active': route.name == 'mail'}")
-                    .material-symbols-outlined.big email
-                    h3 Mail
-                router-link.menu(:to="`/dashboard/${currentService.service}/subdomain`" :class="{'active': route.name == 'subdomain'}")
-                    .material-symbols-outlined.big language
-                    h3 Hosting
-        .right 
-            router-view
-router-view(v-else)
+#serviceMain(v-if='currentService')
+    .left
+        nav.menuWrap 
+            router-link.menu(:to="`/dashboard/${currentService.service}`" :class="{'active': route.name == 'service'}")
+                .material-symbols-outlined.big home
+                h3 Home
+            router-link.menu(:to="`/dashboard/${currentService.service}/users`" :class="{'active': route.name == 'users'}")
+                .material-symbols-outlined.big supervisor_account
+                h3 Users
+            router-link.menu(:to="`/dashboard/${currentService.service}/records`" :class="{'active': route.name == 'records'}")
+                .material-symbols-outlined.big database
+                h3 Database
+            router-link.menu(:to="`/dashboard/${currentService.service}/mail`" :class="{'active': route.name == 'mail'}")
+                .material-symbols-outlined.big email
+                h3 Mail
+            router-link.menu(:to="`/dashboard/${currentService.service}/subdomain`" :class="{'active': route.name == 'subdomain'}")
+                .material-symbols-outlined.big language
+                h3 Hosting
+    .right 
+        router-view
 </template>
 
 <script setup>
-import { ref, watch } from 'vue';
+import { nextTick, ref, watch } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 import { services, serviceFetching, currentService, storageInfo, serviceUsers, newsletter_sender } from '@/data.js';
 import { serviceRecords } from '@/views/Service/Records/RecordFetch.js';
-import { launch, serviceHost, subdomainInfo } from './subdomain/SubdomainFetch';
+import { launch, nextPage, serviceHost, subdomainInfo } from './subdomain/SubdomainFetch';
 import { skapi, account, bodyClick } from '@/main.js';
 
 import NavBar from '@/components/NavBar.vue';
@@ -132,7 +128,7 @@ else {
 </script>
 
 <style lang="less" scoped>
-#service {
+#serviceMain {
     margin-top: 60px;
     padding-top: 56px;
 

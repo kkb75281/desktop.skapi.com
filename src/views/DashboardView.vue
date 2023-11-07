@@ -1,7 +1,7 @@
 <template lang="pug">
 main
     .title 
-        h2 Dashboard
+        h3 Dashboard
         span All Services
     .container
         .wrapper(v-if="!serviceFetching")
@@ -109,24 +109,23 @@ const regions = {
 <style lang="less" scoped>
 main {
     position: relative;
-    margin-top: 128px;
-    padding: 0 40px;
+    margin-top: 6.4rem;
+    padding: 0 2rem;
 
     .title {
         width: 1200px;
         margin: 0 auto;
-        padding-bottom: 42px;
+        padding-bottom: 2.1rem;
 
-        h2 {
+        h3 {
             display: inline-block;
-            font-size: 32px;
             font-weight: 700;
-            margin-right: 18px;
         }
 
         span {
-            font-size: 24px;
+            font-size: 1.2rem;
             font-weight: 500;
+            margin-left: 18px;
             color: rgba(0, 0, 0, 0.40);
         }
     }

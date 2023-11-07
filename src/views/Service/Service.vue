@@ -1,5 +1,5 @@
 <template lang="pug">
-template(v-if='currentService')
+#service
     .infoWrap
         .info
             .title 
@@ -23,25 +23,40 @@ template(v-if='currentService')
                     span Disable/Enable
                     .toggleBg(:class="{'nonClickable' : !account?.email_verified}")
                         .toggleBtn(@click="enableDisableToggle")
-            .startCode 
-                .colorscripter-code(style="color:#f0f0f0;font-family:monospace !important; position:relative !important;overflow:auto")
-                    table.colorscripter-code-table(style="width:100%;margin:0;padding:28px;border:none;background-color:#434343;border-radius:8px;font-size:16px;" cellspacing="0" cellpadding="0")
-                        tr
-                            td(style="padding:6px;border-right:2px solid #4f4f4f")
-                                div(style="margin:0;padding:0;word-break:normal;text-align:right;color:#aaa;font-family:Consolas, 'Liberation Mono', Menlo, Courier, monospace !important;line-height:130%")
-                                    div(style="line-height:130%") 1
-                            td(style="padding:6px 0;text-align:left")
-                                div(style="margin:0;padding:0;color:#f0f0f0;font-family:Consolas, 'Liberation Mono', Menlo, Courier, monospace !important;line-height:130%")
-                                    div(style="padding:0 6px; white-space:pre; line-height:130%")
-                                        span(style="color:#ff3399") const 
-                                        span skapi 
-                                        span(style="color:#ff3399") = 
-                                        span(style="color:#ff3399") new 
-                                        span Skapi("
-                                        span(style="color:#ffd500") {{ currentService.service }}
-                                        span ", "
-                                        span(style="color:#ffd500") {{ currentService.owner }}
-                                        span ");
+            .codeWrap
+                .codeInner
+                    .line
+                        div
+                            span(style="color:#f0f0f0") &lt;
+                            span(style="color:#ff3399") script 
+                            span(style="color:#a8ff58") src
+                            span =
+                            span(style="color:#ffd500") "https://cdn.jsdelivr.net/npm/skapi-js@latest/dist/skapi.js"
+                            span(style="color:#ff3399") 
+                            span(style="color:#f0f0f0") &gt;
+                            span(style="color:#f0f0f0") &lt;
+                            span(style="color:#f0f0f0") /
+                            span(style="color:#ff3399") script
+                            span(style="color:#f0f0f0") &gt;
+                        div
+                            span(style="color:#f0f0f0") &lt;
+                            span(style="color:#ff3399") script
+                            span(style="color:#f0f0f0") &gt;
+                        div(style="margin-left: 30px")
+                            span(style="color:#ff3399") let 
+                            span skapi 
+                            span = 
+                            span(style="color:#ff3399") new 
+                            span Skapi("
+                            span(style="color:#ffd500") {{ currentService.service }}
+                            span ", "
+                            span(style="color:#ffd500") {{ currentService.owner }}
+                            span ");
+                        div
+                            span(style="color:#f0f0f0") &lt;
+                            span(style="color:#f0f0f0") /
+                            span(style="color:#ff3399") script
+                            span(style="color:#f0f0f0") &gt;
                 .copy.clickable(@click="copy")
                     .material-symbols-outlined.mid file_copy
             a.question(href="https://docs.skapi.com/introduction/getting-started.html" target="_blank")
@@ -133,9 +148,8 @@ template(v-if='currentService')
         .deleteInner(@click="!account?.email_verified ? false : openDeleteService = true;")
             .material-symbols-outlined.mid delete
             span Delete Service
-    DisableServiceOverlay(v-if="openDisableService" @close="disableService")
-    DeleteService(v-if="openDeleteService" @close="openDeleteService = false;")
-
+DisableServiceOverlay(v-if="openDisableService" @close="disableService")
+DeleteService(v-if="openDeleteService" @close="openDeleteService = false;")
 </template>
 
 <script setup>
@@ -223,7 +237,7 @@ let editKey = () => {
 let copy = (e) => {
     let currentTarget = e.currentTarget;
     let doc = document.createElement('textarea');
-    doc.textContent = currentTarget.previousSibling.textContent.slice(1);
+    doc.textContent = currentTarget.previousSibling.textContent;
     document.body.append(doc);
     doc.select();
     document.execCommand('copy');
@@ -360,6 +374,10 @@ watch(modifyCors, () => {
 </script>
 
 <style lang="less" scoped>
+#service {
+    max-width: 1200px;
+    margin: 0 auto;
+}
 .infoWrap {
     display: flex;
     flex-wrap: wrap;
@@ -490,38 +508,10 @@ watch(modifyCors, () => {
             }
         }
 
-        .startCode {
-            position: relative;
-            margin-top: 40px;
-
-            .copy {
-                position: absolute;
-                right: 28px;
-                top: 50%;
-                transform: translateY(-50%);
-                color: #fff;
-
-                &::after {
-                    position: absolute;
-                    display: block;
-                    right: 30px;
-                    top: 50%;
-                    transform: translateY(-50%);
-                    text-align: center;
-                    font-size: 14px;
-                    font-weight: 400;
-                    background: rgba(255, 255, 255, 0.6);
-                    color: #343434;
-                    padding: 4px;
-                    content: "Copied";
-                    transition: opacity .4s;
-                    opacity: 0;
-                }
-
-                &.copied::after {
-                    opacity: 1;
-                }
-            }
+        .codeWrap {
+            margin-top: 2rem;
+            padding: 1rem 2rem;
+            text-align: left;
         }
 
         .question {
