@@ -512,6 +512,11 @@ watch(modifyCors, () => {
             margin-top: 2rem;
             padding: 1rem 2rem;
             text-align: left;
+
+            .copy {
+                top: 20px;
+                transform: unset;
+            }
         }
 
         .question {
