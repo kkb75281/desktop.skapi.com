@@ -482,15 +482,10 @@ onBeforeUnmount(() => {
             margin-bottom: 10px;
         }
 
-        .code {
-            width: 100%;
-            border-radius: 8px;
-            border: 1px solid rgba(255, 255, 255, 0.10);
-            background: #434343;
-            padding: 20px 10px;
-            font-size: min(20px, 1vw);
-            font-family: Consolas, 'Liberation Mono', Menlo, Courier, monospace !important;
-            overflow: auto;
+        .codeWrap {
+            padding: 20px 25px;
+            font-size: 1.1rem;
+            text-align: left;
         }
     }
 
@@ -685,7 +680,7 @@ onBeforeUnmount(() => {
                 font-size: 16px;
             }
 
-            .code {
+            .codeWrap {
                 font-size: 16px;
             }
         }
@@ -838,22 +833,6 @@ onBeforeUnmount(() => {
         .htmlCode {
             .tit {
                 font-size: 24px;
-            }
-
-            .code {
-                table {
-                    td {
-                        font-size: 16px !important;
-
-                        div {
-                            font-size: 16px !important;
-
-                            span {
-                                font-size: 16px !important;
-                            }
-                        }
-                    }
-                }
             }
         }
 
