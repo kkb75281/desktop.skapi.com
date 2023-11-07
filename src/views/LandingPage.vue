@@ -10,23 +10,17 @@
                     | =&gt;
                     br
                     | Full Backend API
-                .code(style="color:#f0f0f0;font-family:Consolas, 'Liberation Mono', Menlo, Courier, monospace !important; position:relative !important;overflow:auto")
-                    table(style="margin:0;padding:0;border:none;background-color:#434343;border-radius:4px;" cellspacing="0" cellpadding="0")
-                        tr
-                            td(style="padding:6px;border-right:2px solid #4f4f4f")
-                                div(style="margin:0;padding:0;word-break:normal;text-align:right;color:#aaa;font-family:Consolas, 'Liberation Mono', Menlo, Courier, monospace !important;line-height:130%")
-                                    div(style="line-height:130%") 1
-                            td(style="padding:6px 0;text-align:left")
-                                div(style="margin:0;padding:0;color:#f0f0f0;font-family:Consolas, 'Liberation Mono', Menlo, Courier, monospace !important;line-height:130%")
-                                    div(style="padding:0 6px; white-space:pre; line-height:130%")
-                                        span(style="color:#ff3399") const 
-                                        span skapi = 
-                                        span(style="color:#ff3399") new 
-                                        span Skapi( 
-                                        span(style="color:#ffd500") 'SERVICE_ID' 
-                                        span ,
-                                        span(style="color:#ffd500") 'OWNERS_ID' 
-                                        span );
+                .codeWrap
+                    .codeInner
+                        .line
+                            span(style="color:#ff3399") const 
+                            span skapi = 
+                            span(style="color:#ff3399") new 
+                            span Skapi( 
+                            span(style="color:#ffd500") 'SERVICE_ID' 
+                            span ,
+                            span(style="color:#ffd500") 'OWNERS_ID' 
+                            span );
                 .desc
                     | Skapi is a backend API service specially designed for 
                     br
@@ -285,21 +279,7 @@ onBeforeUnmount(() => {
             }
         }
 
-        .code {
-            width: min(782px, 34vw);
-            height: min(58px, 2.5vw);
-            border-radius: 8px;
-            border: 1px solid rgba(255, 255, 255, 0.10);
-            background: #434343;
-            color: #FFF;
-            text-align: center;
-            font-family: monospace;
-            font-size: min(24px, 1.1vw);
-            font-weight: 400;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            box-shadow: 3px 9px 6px 0px rgba(0, 0, 0, 0.15);
+        .codeWrap {
             margin-bottom: min(86px, 3.7vw);
         }
 
@@ -592,10 +572,7 @@ onBeforeUnmount(() => {
                 margin-bottom: 32px;
             }
 
-            .code {
-                width: 500px;
-                height: 38px;
-                font-size: 16px;
+            .codeWrap {
                 margin-bottom: 52px;
             }
 
@@ -725,7 +702,7 @@ onBeforeUnmount(() => {
 
         .introWrap {
             position: relative;
-            width: 100%;
+            min-width: 100%;
 
             .introInner {
                 width: 100%;
@@ -747,10 +724,10 @@ onBeforeUnmount(() => {
                 line-height: 74px;
             }
 
-            .code {
-                width: 100%;
-                padding: 0 10px;
-            }
+            // .codeWrap {
+            //     width: 100%;
+            //     padding: 0 10px;
+            // }
 
             .desc {
                 display: none;
@@ -863,16 +840,16 @@ onBeforeUnmount(() => {
 @media (max-width: 500px) {
     #intro {
         .introWrap {
-            .code {
-                position: relative;
+            // .code {
+            //     position: relative;
 
-                table {
-                    position: absolute;
-                    left: 0;
-                    top: 50%;
-                    transform: translateY(-50%);
-                }
-            }
+            //     table {
+            //         position: absolute;
+            //         left: 0;
+            //         top: 50%;
+            //         transform: translateY(-50%);
+            //     }
+            // }
         }
     }
 }
@@ -883,17 +860,6 @@ onBeforeUnmount(() => {
             .point {
                 font-size: 32px;
                 line-height: 65px;
-            }
-
-            .code {
-                position: relative;
-
-                table {
-                    position: absolute;
-                    left: 0;
-                    top: 50%;
-                    transform: translateY(-50%);
-                }
             }
         }
     }
