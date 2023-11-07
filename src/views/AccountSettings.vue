@@ -1,7 +1,7 @@
 <template lang="pug">
 main(v-if='account')
     .title 
-        h2 Account Setting
+        h3 Account Setting
     .container
         .wrapper 
             .accountWrap 
@@ -225,13 +225,11 @@ main {
     .title {
         width: 1200px;
         margin: 0 auto;
-        padding-bottom: 42px;
+        padding-bottom: 2.1rem;
 
-        h2 {
+        h3 {
             display: inline-block;
-            font-size: 32px;
             font-weight: 700;
-            margin-right: 18px;
         }
     }
 

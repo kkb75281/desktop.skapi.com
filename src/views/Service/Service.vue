@@ -43,7 +43,7 @@
                             span(style="color:#ff3399") script
                             span(style="color:#f0f0f0") &gt;
                         div(style="margin-left: 30px")
-                            span(style="color:#ff3399") let 
+                            span(style="color:#ff3399") const 
                             span skapi 
                             span = 
                             span(style="color:#ff3399") new 
