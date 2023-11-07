@@ -238,7 +238,7 @@ let editKey = () => {
 let copy = (e) => {
     let currentTarget = e.currentTarget;
     let doc = document.createElement('textarea');
-    doc.textContent = currentTarget.previousSibling.textContent.slice(1);
+    doc.textContent = currentTarget.previousSibling.textContent;
     document.body.append(doc);
     doc.select();
     document.execCommand('copy');
@@ -505,37 +505,14 @@ watch(modifyCors, () => {
             }
         }
 
-        .startCode {
-            position: relative;
-            margin-top: 40px;
+        .codeWrap {
+            margin-top: 2rem;
+            padding: 1rem 2rem;
+            text-align: left;
 
             .copy {
-                position: absolute;
-                right: 28px;
-                top: 50%;
-                transform: translateY(-50%);
-                color: #fff;
-
-                &::after {
-                    position: absolute;
-                    display: block;
-                    right: 30px;
-                    top: 50%;
-                    transform: translateY(-50%);
-                    text-align: center;
-                    font-size: 14px;
-                    font-weight: 400;
-                    background: rgba(255, 255, 255, 0.6);
-                    color: #343434;
-                    padding: 4px;
-                    content: "Copied";
-                    transition: opacity .4s;
-                    opacity: 0;
-                }
-
-                &.copied::after {
-                    opacity: 1;
-                }
+                top: 20px;
+                transform: unset;
             }
         }
 
