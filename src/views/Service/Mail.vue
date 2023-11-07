@@ -1,6 +1,6 @@
 <template lang="pug">
-.containerWrap
-    .container
+main#mail
+    section#section
         h2 Automated Emails
         p 
             | Automated emails are sent to your users when certain events occur.
@@ -49,7 +49,7 @@
             .cont 
                 template(v-if="currentService") {{ currentService?.email_triggers?.template_setters?.newsletter_subscription }}
                 template(v-else) loading...
-    .container
+    section#section
         h2 Newsletters
         p 
             | By sending the newsletter email to the addresses below,
@@ -96,11 +96,14 @@ let copy = (e) => {
 </script>
 
 <style lang="less" scoped>
-.containerWrap {
+#mail {
+    max-width: 1200px;
+    margin: 0 auto;
     position: relative;
     display: flex;
     flex-wrap: wrap;
-    .container {
+    
+    #section {
         width: 100%;
         padding: 40px;
         background-color: #fafafa;

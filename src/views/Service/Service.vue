@@ -1,5 +1,5 @@
 <template lang="pug">
-#service
+main#service
     .infoWrap
         .info
             .title 
@@ -14,11 +14,11 @@
                                     button.cancel(type="button" @click="modifyServiceName = false;") Cancel
                                     button.save(type="submit") Save
                     template(v-else)
-                        h2 {{ currentService.name }}
+                        h4 {{ currentService.name }}
                         .material-symbols-outlined.mid.modify.clickable(:class="{'nonClickable' : !account?.email_verified}" @click="editServiceName") edit
                 .date 
                     span Date Created
-                    h5 {{ new Date(currentService.timestamp).toDateString() }}
+                    h6 {{ new Date(currentService.timestamp).toDateString() }}
                 .toggleWrap(:class="{'active': currentService.active >= 1}")
                     span Disable/Enable
                     .toggleBg(:class="{'nonClickable' : !account?.email_verified}")
@@ -64,13 +64,13 @@
                 span Where do I put this code?
         .info 
             .title 
-                h2 Security Setting
+                h4 Security Setting
                 a.question.help(href='https://docs.skapi.com/security/security-settings.html' target="_blank")
                     .material-symbols-outlined.empty.sml help 
                     span Help
             .listWrap
                 .list
-                    span(:class="{ active: modifyCors }") Cors
+                    h6(:class="{ active: modifyCors }") Cors
                     template(v-if="modifyCors")
                         form.modifyForm(style="margin-top: 8px" @submit.prevent="changeCors")
                             input#modifyCors(:disabled="promiseRunningCors || null" type="text" placeholder='https://your.domain.com' :value='inputCors' @input="(e) => {e.target.setCustomValidity(''); inputCors = e.target.value;}")
@@ -85,7 +85,7 @@
                             .material-symbols-outlined.mid.pen.clickable(:class="{'nonClickable' : !account?.email_verified}" @click="editCors") edit
 
                 .list
-                    span(:class="{ active: modifyKey }") Secret Key
+                    h6(:class="{ active: modifyKey }") Secret Key
                     template(v-if="modifyKey")
                         form.modifyForm(style="margin-top: 8px" @submit.prevent="setSecretKey")
                             input#modifyKey(:disabled="promiseRunningSecKey || null" type="text" placeholder="Secret key for external request" :value='inputKey' @input="(e) => inputKey = e.target.value")
@@ -103,46 +103,46 @@
             .titleWrap
                 .title 
                     .material-symbols-outlined.big group
-                    h2 Users
+                    h4 Users
             .listWrap.noWrap
                 .list
-                    span # of Users
+                    h6 # of Users
                     h5 {{ currentService.users }}
         router-link.info.hover.record.clicked(:to='`/dashboard/${currentService.service}/records`')
             .titleWrap
                 .title 
                     .material-symbols-outlined.big database
-                    h2 Database
+                    h4 Database
             .listWrap.noWrap
                 .list
-                    span # of database storage Used
+                    h6 # of database storage Used
                     h5 {{ convertToMb(storageInfo?.[currentService.service]?.database) }}
                 .list
-                    span # of cloud storage Used
+                    h6 # of cloud storage Used
                     h5 {{ convertToMb(storageInfo?.[currentService.service]?.cloud) }}
         router-link.info.hover.mail.clicked(:to='`/dashboard/${currentService.service}/mail`')
             .titleWrap
                 .title 
                     .material-symbols-outlined.big mail
-                    h2 Mail
+                    h4 Mail
             .listWrap.noWrap
                 .list
-                    span # Subscribers
+                    h6 # Subscribers
                     h5 {{ currentService.newsletter_subscribers }}
                 .list 
-                    span # Mail storage used 
+                    h6 # Mail storage used 
                     h5 {{ convertToMb(storageInfo?.[currentService.service]?.email) }}
         router-link.info.hover.domain.clicked(:to='`/dashboard/${currentService.service}/subdomain`')
             .titleWrap
                 .title 
                     .material-symbols-outlined.big language
-                    h2 Hosting
+                    h4 Hosting
             .listWrap.noWrap
                 .list
-                    span Registered Subdomain
+                    h6 Registered Subdomain
                     h5 {{ currentSubdomain }}
                 .list
-                    span Host storage used
+                    h6 Host storage used
                     h5 {{ convertToMb(storageInfo?.[currentService.service]?.host) }}
     .deleteWrap(:class="{'nonClickable' : !account?.email_verified}")
         .deleteInner(@click="!account?.email_verified ? false : openDeleteService = true;")
@@ -449,10 +449,6 @@ watch(modifyCors, () => {
             flex-wrap: nowrap;
             align-items: center;
 
-            h2 {
-                font-size: 24px;
-            }
-
             .name {
                 display: flex;
                 flex-wrap: nowrap;
@@ -468,15 +464,13 @@ watch(modifyCors, () => {
 
                 span {
                     color: rgba(0, 0, 0, 0.40);
-                    font-size: 16px;
+                    font-size: 0.8rem;
                     font-weight: 500;
                     margin-right: 10px;
                 }
 
-                h5 {
+                h6 {
                     color: rgba(0, 0, 0, 0.60);
-                    font-size: 16px;
-                    font-weight: 700;
                 }
             }
 
@@ -512,6 +506,7 @@ watch(modifyCors, () => {
             margin-top: 2rem;
             padding: 1rem 2rem;
             text-align: left;
+            box-shadow: unset;
 
             .copy {
                 top: 20px;
@@ -555,9 +550,8 @@ watch(modifyCors, () => {
                 width: 48%;
                 margin-top: 28px;
 
-                span {
-                    display: block;
-                    font-size: 16px;
+                h6 {
+                    font-weight: 500;
                     color: rgba(0, 0, 0, 0.4);
 
                     &.active {

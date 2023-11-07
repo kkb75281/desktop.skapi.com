@@ -1,6 +1,6 @@
 <template lang="pug">
-.containerWrap
-    .container
+main#database
+    section#section
         // search form
         form(@submit.prevent='searchRecords')
             .searchForm
@@ -96,7 +96,7 @@
                         input.clear(type="reset" value="Clear filter" @click="clearSearchFilter")
                         button.search(type="submit") Search
 
-    .container 
+    section#section 
         // view / edit record / create record
         .viewRecord
             // view | edit | create record
@@ -1110,24 +1110,13 @@ watch(() => selectedRecord.value, () => {
 </script>
 
 <style lang="less" scoped>
-.customCheckBox {
-    // label {
-    //     &::before {
-    //         left: 50%;
-    //         top: 50%;
-    //         transform: translate(-50%, -50%);
-    //     }
-    //     .check {
-    //         left: 22.5px;
-    //         top: -12px;            
-    //     }
-    // }
-}
-.containerWrap {
+#database {
+    max-width: 1200px;
+    margin: 0 auto;
     display: flex;
     flex-wrap: wrap;
 
-    .container {
+    #section {
         width: 100%;
         padding: 28px 40px;
         background-color: #fafafa;

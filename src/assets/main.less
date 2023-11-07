@@ -5,7 +5,12 @@
     font-family: "Radio Canada", sans-serif;
 }
 
-*:not(input):not(textarea):not(button):not(select) {
+// *:not(input):not(textarea):not(button):not(select)
+header,
+h1, h2, h3, h4, h5, h6,
+img, button, a, br,
+table thead th,
+.btn, .copy, .material-symbols-outlined {
     -webkit-touch-callout: none;
     /* iOS Safari */
     -webkit-user-select: none;
@@ -18,6 +23,25 @@
     /* Internet Explorer/Edge */
     user-select: none;
     /* Non-prefixed version, currently supported by Chrome, Edge, Opera and Firefox */
+}
+
+button {
+    cursor: pointer;
+}
+
+input,
+textarea {
+    color: rgba(0, 0, 0, 0.8) !important;
+}
+
+input::placeholder,
+textarea::placeholder {
+    color: rgba(0, 0, 0, 0.4) !important;
+    font-size: 1em !important;
+}
+
+input:focus, select:focus {
+    outline: none;
 }
 
 @media all and (min-width:1024px) {
@@ -59,47 +83,24 @@ h2 {
 }
 
 h3 {
-    font-size: 1.6rem;
-}
-
-h4 {
     font-size: 1.4rem;
 }
 
-h5 {
+h4 {
     font-size: 1.2rem;
 }
 
-h6 {
+h5 {
     font-size: 1rem;
 }
 
-input,
-textarea {
-    color: rgba(0, 0, 0, 0.8) !important;
-}
-
-input::placeholder,
-textarea::placeholder {
-    color: rgba(0, 0, 0, 0.4) !important;
-    font-size: 1em !important;
-}
-
-input:focus {
-    outline: none;
-}
-
-select:focus {
-    outline: none;
+h6 {
+    font-size: 0.8rem;
 }
 
 .userSelect {
     user-select: text !important;
     cursor: text !important;
-}
-
-button {
-    cursor: pointer;
 }
 
 /* error */

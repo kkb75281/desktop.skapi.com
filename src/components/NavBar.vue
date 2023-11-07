@@ -1,5 +1,5 @@
 <template lang="pug">
-#navBar 
+header#navBar 
     nav#top
         .left
             router-link.logo(to="/")
@@ -33,7 +33,7 @@
                     ul
                         li.doc
                             a(href="https://docs.skapi.com" target="_blank") Documentation
-                        li
+                        li.dash
                             router-link(to="/dashboard") Dashboard
                         li.account(@click.stop="accountInfo = !accountInfo") {{ account.email.charAt(0).toUpperCase() }}
                 template(v-else)
@@ -301,7 +301,7 @@ else {
             }
 
             &:last-child {
-                padding-right: 0;
+                padding-right: 0 !important;
             }
 
             li {
@@ -452,6 +452,28 @@ else {
             font-weight: 500;
             color: rgba(0, 0, 0, 0.15);
             padding: 27px 0 10px;
+        }
+    }
+}
+
+@media (max-width:680px) {
+    #top {
+        padding: 10px 20px 10px 20px;
+        .right {
+            .topMenu {
+                ul {
+                    padding: 0 14px;
+
+                    li {
+                        &.doc, &.account {
+                            display: none;
+                        }
+                        &.dash {
+                            margin-right: 0;
+                        }
+                    }
+                }
+            }
         }
     }
 }

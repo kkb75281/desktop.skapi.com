@@ -1,6 +1,6 @@
 <template lang="pug">
 NavBar
-#lending(ref="lending")
+main#lending(ref="lending")
     section#intro(ref="intro" @wheel="handleMouseWheel")
         .introWrap 
             .introInner
@@ -40,7 +40,7 @@ NavBar
                 br
 
                 a(href='https://docs.skapi.com/introduction/getting-started.html' target="_blank") 
-                    h6 Getting Started
+                    h5 Getting Started
                     .material-symbols-outlined.big.arrow arrow_forward
     section#other(ref="other")
         .packageWrap(ref="packageWrap")

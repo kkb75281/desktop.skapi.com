@@ -1,6 +1,6 @@
 <template lang="pug">
-.containerWrap
-    .container
+main#users
+    section#section
         form(@submit.prevent="searchUsers")
             .selectBar
                 .customSelect
@@ -36,7 +36,7 @@
                 .material-symbols-outlined.mid.delete(v-if="searchText" @click="e=>{searchText = ''; if(fetchParams.searchFor !== 'timestamp') { fetchParams = defaultFetchParams; refresh(); }}") close
                 .material-symbols-outlined.mid.modalIcon(v-if="(searchFor === 'timestamp' || searchFor === 'birthdate') && !searchText" @click.stop="showCalendar = !showCalendar") calendar_today
                 .material-symbols-outlined.mid.modalIcon(v-if="searchFor === 'locale' && !searchText" @click.stop="showLocale = !showLocale") arrow_drop_down
-    .container(style="overflow: hidden;")
+    section#section(style="overflow: hidden;")
         .tableHeader 
             .actions 
                 .dropDown(@click.stop="showFilter = !showFilter")
@@ -591,21 +591,9 @@ onMounted(() => {
 </script>
     
 <style lang="less" scoped>
-.customCheckBox {
-    // label {
-    //     &::before {
-    //         left: 50%;
-    //         top: 50%;
-    //         transform: translate(-50%, -50%);
-    //     }
-    //     .check {
-    //         left: 1.5px;
-    //         top: -12px;            
-    //     }
-    // }
-}
-
-.containerWrap {
+#users {
+    max-width: 1200px;
+    margin: 0 auto;
     position: relative;
     display: flex;
     flex-wrap: wrap;
@@ -617,13 +605,12 @@ onMounted(() => {
         top: 80px;
     }
 
-    .container {
+    #section {
         width: 100%;
         padding: 28px 40px;
         background-color: #fafafa;
         border-radius: 8px;
         margin-bottom: 2%;
-        // box-shadow: 8px 12px 36px rgba(0, 0, 0, 0.10);
         box-shadow: 8px 12px 36px rgba(0, 0, 0, 0.10);
     }
 

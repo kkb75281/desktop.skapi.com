@@ -1,16 +1,16 @@
 <template lang="pug">
-main(v-if='account')
+main#accountSetting(v-if='account')
     .title 
-        h3 Account Setting
+        h2 Account Setting
     .container
         .wrapper 
             .accountWrap 
                 // info 변수를 정의하는 경우가 없는것같습니다. info의 역활은?
-                .account(@click="info = true" :class="{'active': info}") Account info
-                .account(:class="{'red': !info, 'nonClickable' : !account.email_verified}" @click="!account.email_verified ? false : openDeleteAccount = true") Delete Account
+                h5.account(@click="info = true" :class="{'active': info}") Account info
+                h5.account(:class="{'red': !info, 'nonClickable' : !account.email_verified}" @click="!account.email_verified ? false : openDeleteAccount = true") Delete Account
             .accountCont(v-if="info")    
                 .row
-                    .tit Email
+                    h6.tit Email
                     .cont 
                         template(v-if="changeEmail")
                             form(@submit.prevent="reqeustEmailChange")
@@ -27,10 +27,11 @@ main(v-if='account')
                                     template(v-else)
                                         button.cancel(type="button" @click="changeEmail = false;") Cancel
                                         button.save(type="submit") Save
-                        template(v-else) {{ account.email }}
+                        template(v-else) 
+                            span {{ account.email }}
                     .btn(v-if="!changeEmail" @click="email=account.email; changeEmail = true;") Change email
                 .row
-                    .tit Verify Email
+                    h6.tit Verify Email
                     .cont
                         .material.verified(v-if="account.email_verified")
                             .material-symbols-outlined.sml check_circle
@@ -40,7 +41,7 @@ main(v-if='account')
                             span Unverified
                     .btn(v-if="!account.email_verified" @click="verifyEmail") Verify email
                 .row
-                    .tit Subscription
+                    h6.tit Subscription
                     .cont 
                         .customCheckBox(:class="{'nonClickable' : !account.email_verified}" :style='{opacity: disableNewsletterCheckbox ? ".5" : "1"}')
                             // !(account.email_verified || false) <- account.email_verified 가 undefined 인 경우도 있어서
@@ -54,7 +55,7 @@ main(v-if='account')
                                 span Subscribe to Skapi newsletter
                                 span.material-symbols-outlined.mid.check(:style="{cursor: disableNewsletterCheckbox ? 'default' : null }") check
                 .row
-                    .tit Password
+                    h6.tit Password
                     .cont(v-if='passwordChanged')
                         .material.verified
                             .material-symbols-outlined.sml check_circle
@@ -213,13 +214,14 @@ watch(() => showVerifyEmail.value, () => {
 </script>
 
 <style lang="less" scoped>
-main {
+#accountSetting {
     position: relative;
     margin-top: 128px;
-    padding: 0 40px;
+    // padding: 0 40px;
 
     .customCheckBox label {
         width: 100%;
+        height: 20px;
     }
 
     .title {
@@ -227,17 +229,16 @@ main {
         margin: 0 auto;
         padding-bottom: 2.1rem;
 
-        h3 {
+        h2 {
             display: inline-block;
             font-weight: 700;
         }
     }
 
     .container {
-        width: calc(100% + 80px);
-        min-height: calc(100vh - 208px);
-        margin-left: -40px;
-        padding: 60px 40px 0 40px;
+        width: 100%;
+        min-height: calc(100vh - 10.1rem);
+        padding: 2rem;
         background-color: #fafafa;
         box-shadow: 8px 12px 36px rgba(0, 0, 0, 0.10);
         border-radius: 8px;
@@ -267,7 +268,6 @@ main {
 
             .account {
                 color: rgba(0, 0, 0, 0.60);
-                font-size: 20px;
                 font-weight: 700;
                 margin-bottom: 32px;
                 cursor: pointer;
@@ -317,7 +317,6 @@ main {
                     vertical-align: middle;
                     min-width: 130px;
                     color: rgba(0, 0, 0, 0.40);
-                    font-size: 16px;
                     font-weight: 500;
                 }
 
@@ -327,6 +326,7 @@ main {
                     vertical-align: middle;
 
                     span {
+                        font-size: 0.8rem;
                         vertical-align: middle;
 
                         &:first-child {
@@ -401,21 +401,29 @@ main {
 }
 
 @media (max-width: 1280px) {
-    main {
+    #accountSetting {
         .title {
             width: 100%;
+            padding-left: 2rem;
         }
 
         .container {
             .wrapper {
                 width: 100%;
+
+                // .accountWrap {
+                //     width: 20%;
+                // }
+                // .accountCont {
+                //     width: 80%;
+                // }
             }
         }
     }
 }
 
 @media (max-width: 800px) {
-    main {
+    #accountSetting {
         .wrapper {
             .accountCont {
                 .row {

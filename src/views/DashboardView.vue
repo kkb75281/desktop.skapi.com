@@ -1,7 +1,7 @@
 <template lang="pug">
-main
+main#dashboard
     .title 
-        h3 Dashboard
+        h2 Dashboard
         span All Services
     .container
         .wrapper(v-if="!serviceFetching")
@@ -10,6 +10,7 @@ main
                 .box.btn(v-if="!create" @click="createService" :class="{'nonClickable' : !account?.email_verified}")
                     .material-symbols-outlined.mid add
                     span Create Service
+
                 .box.create(v-if="create")
                     form(@submit.prevent="addService")
                         h5 Create a new service
@@ -107,7 +108,7 @@ const regions = {
 </script>
 
 <style lang="less" scoped>
-main {
+#dashboard {
     position: relative;
     margin-top: 6.4rem;
     // padding: 0 2rem;
@@ -117,7 +118,7 @@ main {
         margin: 0 auto;
         padding-bottom: 2.1rem;
 
-        h3 {
+        h2 {
             display: inline-block;
             font-weight: 700;
         }
@@ -285,7 +286,6 @@ main {
                                 margin-bottom: 25px;
 
                                 h6 {
-                                    font-size: 0.8rem;
                                     padding-top: 12px;
                                     color: rgba(0, 0, 0, 0.60);
                                 }
@@ -371,7 +371,7 @@ main {
 }
 
 @media (max-width: 1280px) {
-    main {
+    #dashboard {
         .title {
             width: 100%;
             padding-left: 2rem;
@@ -386,7 +386,7 @@ main {
 }
 
 @media (max-width: 1100px) {
-    main {
+    #dashboard {
         .wrapper {
             width: 100%;
 
@@ -413,8 +413,8 @@ main {
     }
 }
 
-@media (max-width: 660px) {
-    main {
+@media (max-width: 680px) {
+    #dashboard {
         .wrapper {
             width: 100%;
             background-color: unset;
@@ -431,7 +431,7 @@ main {
                     }
 
                     &.btn {
-                        // height: 251px;
+                        height: 240px;
                     }
                 }
             }

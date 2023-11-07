@@ -1,6 +1,6 @@
 <template lang="pug">
-.containerWrap
-    .container
+main#subdomain
+    section#section
         // main title
         h2 {{ subdomainState || (computedSubdomain ? computedSubdomain + '.skapi.com' : 'Hosting') }}
 
@@ -59,8 +59,7 @@
                         template(v-else)
                             button(type="submit") Create
 
-
-    .container(v-if="currentService.subdomain")
+    section#section(v-if="currentService.subdomain")
         // path navigation
         .filesHeader
             .filesPathWrap
@@ -583,12 +582,14 @@ function formatBytes(bytes, decimals = 2) {
 </script>
 
 <style lang="less" scoped>
-.containerWrap {
+#subdomain {
+    max-width: 1200px;
+    margin: 0 auto;
     position: relative;
     display: flex;
     flex-wrap: wrap;
 
-    .container {
+    #section {
         position: relative;
         width: 100%;
         padding: 40px;
