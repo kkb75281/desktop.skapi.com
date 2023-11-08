@@ -470,12 +470,13 @@ main#database
                                 label(:for="record.record_id")
                                     .material-symbols-outlined.mid.check check
                         td
-                            .overflow.userSelect.name {{ record.table.name }}
+                            h6.overflow.userSelect.name {{ record.table.name }}
                         td
-                            .overflow.userSelect {{ record.record_id }}
+                            h6.overflow.userSelect {{ record.record_id }}
                         td
-                            .overflow.userSelect.userId {{ record.user_id }}
-                        td.center {{ timeSince(record.uploaded) }}
+                            h6.overflow.userSelect.userId {{ record.user_id }}
+                        td.center 
+                            h6 {{ timeSince(record.uploaded) }}
                         td.center
                             .accessWrap
                                 .hoverWrap(v-if="record.table.access_group == 'private'")
@@ -493,7 +494,7 @@ main#database
                             .featureWrap_v2
                                 .hoverWrap
                                     template(v-if='record?.tags?.length' style='display: inline-block')
-                                        .feature.tag Tag
+                                        h6.feature.tag Tag
                                         .hoverPreview(style="--pos-r: 0; --arr-r:0; max-width: 25vw")
                                             // .tagsWrapper_ext - reference style section below
                                             .tagsWrapper_ext
@@ -501,13 +502,13 @@ main#database
                                     .empty(v-else)
                                 .hoverWrap
                                     template(v-if='record?.index' style='display: inline-block')
-                                        .feature.index Index
+                                        h6.feature.index Index
                                         .hoverPreview(style="--pos-r: 0; --arr-r:0")
                                             span(style='white-space: nowrap') {{ record.index.name }} | {{ typeof record.index.value === 'string' ? '"'+record.index.value+'"' : record.index.value }}
                                     .empty(v-else)
                                 .hoverWrap
                                     template(v-if='record?.reference?.record_id' style='display: inline-block')
-                                        .feature.ref Ref
+                                        h6.feature.ref Ref
                                         .hoverPreview(style="--pos-r: 0; --arr-r:0")
                                             span(style='white-space: nowrap') {{ record?.reference?.record_id }}
                                     .empty(v-else)
@@ -2271,6 +2272,10 @@ watch(() => selectedRecord.value, () => {
 
             td {
                 position: relative;
+
+                h6 {
+                    font-weight: 500;
+                }
 
                 .accessWrap {
                     * {

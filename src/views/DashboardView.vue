@@ -31,13 +31,13 @@ main#dashboard
                             .contWrap 
                                 .cont 
                                     span Locale
-                                    h6 {{ regions?.[service.region] || service.region }}
+                                    p {{ regions?.[service.region] || service.region }}
                                 .cont 
                                     span Date Created
-                                    h6 {{ typeof service.timestamp === 'string' ? service.timestamp : new Date(service.timestamp).toDateString() }}
+                                    p {{ typeof service.timestamp === 'string' ? service.timestamp : new Date(service.timestamp).toDateString() }}
                                 .cont 
                                     span CORS
-                                    h6 {{ service.cors }}
+                                    p {{ service.cors }}
 
                             .serviceActive(v-if='service?.pending')
                                 // 왜 인지 모르겠으나 조건 class가 에니메이션을 영향줌 (생성될때 active가 켜졌다->꺼졌다->서비스 생성 완료되면 다시 켜짐)
@@ -282,23 +282,25 @@ const regions = {
 
                             .cont {
                                 width: 50%;
-                                font-size: 16px;
                                 margin-bottom: 25px;
 
-                                h6 {
+                                span {
+                                    font-size: 0.8rem;
+                                    color: rgba(0, 0, 0, 0.40);
+                                }
+
+                                p {
+                                    font-size: 0.8rem;
+                                    font-weight: 700;
                                     padding-top: 12px;
                                     color: rgba(0, 0, 0, 0.60);
                                 }
 
-                                span {
-                                    color: rgba(0, 0, 0, 0.40);
-                                }
-
                                 &:last-child {
-                                    width: 200px;
+                                    width: 65%;
                                     margin-bottom: 0;
 
-                                    h5 {
+                                    p {
                                         white-space: nowrap;
                                         overflow: hidden;
                                         text-overflow: ellipsis;

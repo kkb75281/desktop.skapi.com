@@ -2,7 +2,7 @@
 #dialogBackground(@click="closeDialog" @mousedown="pendClose = true" style='--max-width: 480px;')
     .center
         .dialog(@mousedown.stop @mouseup='pendClose = false')
-            .title {{ props.title }}
+            h5.title {{ props.title }}
             div(style='padding: 28px;max-width: 100%;box-sizing: content-box;')
                 slot
 </template>
@@ -57,9 +57,6 @@ let closeDialog = () => {
     .title {
         position: relative;
         color: rgba(0, 0, 0, 0.80);
-        font-size: 28px;
-        font-weight: 700;
-        padding: 28px 0;
         padding: 28px;
 
         &::after {

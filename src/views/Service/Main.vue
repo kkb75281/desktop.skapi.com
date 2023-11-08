@@ -205,7 +205,7 @@ else {
     .right {
         display: inline-block;
         width: calc(100vw - 240px);
-        padding-right: 40px;
+        padding: 0 40px 40px 0;
     }
 }
 </style>

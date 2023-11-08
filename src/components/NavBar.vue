@@ -1,5 +1,5 @@
 <template lang="pug">
-header#navBar 
+header#navBar(style='--position: relative;')
     nav#top
         .left
             router-link.logo(to="/")
@@ -169,7 +169,7 @@ else {
 
 <style lang="less" scoped>
 #top {
-    position: absolute;
+    position: var(--position);
     left: 0;
     top: 0;
     width: 100%;
@@ -179,6 +179,7 @@ else {
     display: flex;
     align-items: center;
     justify-content: space-between;
+
     .left {
         position: relative;
         .logo {

@@ -31,6 +31,7 @@ let goVerify = () => {
     align-items: center;
     justify-content: center;
     background: #FFE7E8;
+    font-size: 0.8rem;
 
     .material-symbols-outlined {
         color: rgba(240, 78, 78, 1);

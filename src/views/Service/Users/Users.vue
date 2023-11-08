@@ -36,6 +36,7 @@ main#users
                 .material-symbols-outlined.mid.delete(v-if="searchText" @click="e=>{searchText = ''; if(fetchParams.searchFor !== 'timestamp') { fetchParams = defaultFetchParams; refresh(); }}") close
                 .material-symbols-outlined.mid.modalIcon(v-if="(searchFor === 'timestamp' || searchFor === 'birthdate') && !searchText" @click.stop="showCalendar = !showCalendar") calendar_today
                 .material-symbols-outlined.mid.modalIcon(v-if="searchFor === 'locale' && !searchText" @click.stop="showLocale = !showLocale") arrow_drop_down
+    
     section#section(style="overflow: hidden;")
         .tableHeader 
             .actions 
@@ -107,13 +108,13 @@ main#users
                 .material-symbols-outlined.mid.menu.clickable(:class='{"nonClickable": !checkedUsers.length || !account.email_verified}' @click.stop="!account.email_verified ? false : showUserSetting = !showUserSetting") more_vert
                 .userSettingWrap(v-if="showUserSetting" @click.stop)
                     .nest
-                        .setting(@click="()=>{showBlockUser=true; showUserSetting=false;}")
+                        .setting(@click="()=>{showUserState=true; showUserSetting=false;}")
                             .material-symbols-outlined.mid account_circle_off
                             span block
-                        .setting(@click="()=>{showUnblockUser=true; showUserSetting=false;}")
+                        .setting(@click="()=>{showUserState=true; showUserSetting=false;}")
                             .material-symbols-outlined.mid account_circle
                             span unblock
-                        .setting(@click="()=>{showDeleteUser = true; showUserSetting = false;}")
+                        .setting(@click="()=>{showUserState = true; showUserSetting = false;}")
                             .material-symbols-outlined.mid delete
                             span delete
                 button.create(:class="{'nonClickable' : !account.email_verified}" @click="!account.email_verified ? false : inviteUserShow=true" style='margin-left:1rem') Invite User
@@ -173,31 +174,38 @@ main#users
                             .material-symbols-outlined.mid.enable(v-if="user.group > 0") check_circle
                             .material-symbols-outlined.mid.disable(v-else) cancel
                         td(v-if="filterOptions.userID") 
-                            .overflow.userSelect {{ user.user_id }}
+                            h6.overflow.userSelect {{ user.user_id }}
                         td(v-if="filterOptions.name")
-                            .overflow.userSelect {{ user.name }}
+                            h6.overflow.userSelect {{ user.name }}
                         td(v-if="filterOptions.email")
-                            .overflow.userSelect {{ user.email }}
+                            h6.overflow.userSelect {{ user.email }}
                         td(v-if="filterOptions.address") 
-                            .overflow.userSelect {{ user.address }}
+                            h6.overflow.userSelect {{ user.address }}
                         td(v-if="filterOptions.gender")
-                            .overflow {{ user.gender }}
+                            h6.overflow {{ user.gender }}
                         td(v-if="filterOptions.locale")
                             .overflow {{ Countries[user.locale].flag }}
                         //- td(v-if="filterOptions.group")
-                        //-     .overflow {{ user.group }}
+                        //-     h6.overflow {{ user.group }}
                         td(v-if="filterOptions.timestamp")
-                            .overflow {{ new Date(user.timestamp).toLocaleString() }}
+                            h6.overflow {{ new Date(user.timestamp).toLocaleString() }}
                     tr(v-if="users.length < 10" v-for="i in (10 - users.length)" :key="'extra-' + i")
             .noUsers(v-if="users !== null && !users.length")
-                h2 No Users
-                p There are no users matching your search terms.
+                h3 No Users
+                h5 There are no users matching your search terms.
+    
     Calendar(v-if="showCalendar" @dateClicked="handledateClick" alwaysEmit='true')
     LocaleSelector(v-if="showLocale" @countryClicked="handleCountryClick")
     InviteUserOverlay(v-if='inviteUserShow' @close='(e)=>{inviteUserShow=false;inviteSuccess=e;}')
-    DeleteUserOverlay(v-if='showDeleteUser' @close='userDelete' :checkedUsers='checkedUsers')
-    BlockUserOverlay(v-if='showBlockUser' @close='userBlock' :checkedUsers='checkedUsers')
-    UnblockUserOverlay(v-if='showUnblockUser' @close='userUnblock' :checkedUsers='checkedUsers')
+    userOverlay(state='Delete' v-if='showUserState' @close="userState" :checkedUsers='checkedUsers')
+        p This action will delete {{ checkedUsers.length }} user(s) account and all the user's data, This action cannot be undone.
+    userOverlay(state='Block' v-if='showUserState' @close="userState" :checkedUsers='checkedUsers')
+        p This action will block {{ checkedUsers.length }} user(s) from your service. The user will not be able to access your service anymore.
+    userOverlay(state='Unblock' v-if='showUserState' @close="userState" :checkedUsers='checkedUsers')
+        p This action will unblock {{ checkedUsers.length }} user(s) from your service. The user will have access to your service.
+    //- DeleteUserOverlay(v-if='showDeleteUser' @close='userDelete' :checkedUsers='checkedUsers')
+    //- BlockUserOverlay(v-if='showBlockUser' @close='userBlock' :checkedUsers='checkedUsers')
+    //- UnblockUserOverlay(v-if='showUnblockUser' @close='userUnblock' :checkedUsers='checkedUsers')
     msgOverlay(v-if='inviteSuccess' @close='inviteSuccess = false' title='Success' :preventBackgroundClick='true')
         p Invitation email has been {{inviteSuccess === true ? 'sent' : 'resent' }} to the user.
         br
@@ -206,7 +214,6 @@ main#users
         br
         div(style='text-align: right;')
             button.msgButton(@click='inviteSuccess=false') OK
-
 </template>
     
 <script setup>
@@ -222,6 +229,7 @@ import DeleteUserOverlay from './DeleteUserOverlay.vue';
 import BlockUserOverlay from './BlockUserOverlay.vue';
 import UnblockUserOverlay from './UnblockUserOverlay.vue';
 import msgOverlay from '@/components/msgOverlay.vue';
+import userOverlay from './userOverlay.vue';
 
 import Pager from '@/skapi-extensions/js/pager.js';
 const worker = new Worker(
@@ -336,7 +344,7 @@ bodyClick.userPage = () => {
     showFilter.value = false;
     showCalendar.value = false;
     showLocale.value = false;
-    showDeleteUser.value = false;
+    // showDeleteUser.value = false;
 }
 
 let searchFor = ref('timestamp');
@@ -344,9 +352,10 @@ let showFilter = ref(false);
 let showCalendar = ref(false);
 let showLocale = ref(false);
 let showUserSetting = ref(false);
-let showDeleteUser = ref(false);
-let showBlockUser = ref(false);
-let showUnblockUser = ref(false);
+let showUserState = ref(false);
+// let showDeleteUser = ref(false);
+// let showBlockUser = ref(false);
+// let showUnblockUser = ref(false);
 
 let filterOptions = ref({
     userID: true,
@@ -396,38 +405,17 @@ let userCheckConfirm = (user) => {
     }
     trackSelectedUsers();
 }
-let userBlock = async (blockedUsers) => {
-    showBlockUser.value = false;
-    if (blockedUsers) {
-        for (let u of blockedUsers) {
-            let to_update = userPage.list[u]
-            to_update.approved = 'by_admin:suspended:'
-            await userPage.editItem(to_update);
-        }
-
-        selectNone();
-        getPage(currentPage.value);
-    }
-}
-let userUnblock = async (unblockedUsers) => {
-    showUnblockUser.value = false;
-    if (unblockedUsers) {
-        for (let u of unblockedUsers) {
-            let to_update = userPage.list[u]
-            to_update.approved = 'by_admin:approved:'
-            await userPage.editItem(to_update);
-        }
-
-        selectNone();
-        getPage(currentPage.value);
-    }
-}
-let userDelete = async (deletedUsers) => {
-    showDeleteUser.value = false;
-
-    if (deletedUsers) {
-        for (let u of deletedUsers) {
-            await userPage.deleteItem(u);
+let userState = async (user, state) => {
+    showUserState.value = false;
+    if (user) {
+        for (let u of user) {
+            if(state) {
+                await userPage.deleteItem(u);
+            } else {
+                let to_update = userPage.list[u]
+                to_update.approved = 'by_admin:suspended:'
+                await userPage.editItem(to_update);
+            }
         }
 
         selectNone();
@@ -812,16 +800,13 @@ onMounted(() => {
             transform: translate(-50%, -50%);
             text-align: center;
 
-            h2 {
+            h3 {
                 color: rgba(0, 0, 0, 0.40);
-                font-size: 28px;
-                font-weight: 700;
                 margin-bottom: 28px;
             }
 
-            p {
+            h5 {
                 color: rgba(0, 0, 0, 0.40);
-                font-size: 20px;
                 font-weight: 500;
             }
         }
@@ -932,6 +917,10 @@ onMounted(() => {
                     &.center {
                         padding: 0;
                         text-align: center;
+                    }
+
+                    h6 {
+                        font-weight: 500;
                     }
 
                     .block {

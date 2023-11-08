@@ -1,5 +1,5 @@
 <template lang="pug">
-NavBar
+NavBar(style='--position: absolute;')
 main#lending(ref="lending")
     section#intro(ref="intro" @wheel="handleMouseWheel")
         .introWrap 
