@@ -2,7 +2,7 @@
 #dialogBackground(@click="closeDialog" @mousedown="pendClose = true")
     .center
         .dialog(@mousedown.stop @mouseup='pendClose = false')
-            .title Invite User
+            h5.title Invite User
             form(@submit.prevent="createUser")
                 p Invitation Email includes a temporary password and the acception link.
                 p User must accept the invitation within 7 days.
@@ -154,9 +154,6 @@ let createUser = () => {
     .title {
         position: relative;
         color: rgba(0, 0, 0, 0.80);
-        font-size: 28px;
-        font-weight: 700;
-        padding: 28px 0;
         padding: 28px;
 
         &::after {
@@ -174,14 +171,18 @@ let createUser = () => {
     form {
         padding: 28px;
 
+        p {
+            font-size: 0.8rem;
+            font-weight: 500;
+            line-height: 1.2rem;
+        }
         .input {
-            // margin-bottom: 16px;
 
             .label {
                 display: block;
                 margin-bottom: 8px;
                 color: rgba(0, 0, 0, 0.60);
-                font-size: 16px;
+                font-size: 0.8rem;
                 font-weight: 700;
             }
 
@@ -191,7 +192,7 @@ let createUser = () => {
                 border: 0;
                 padding: 12px 15px;
                 width: 100%;
-                font-size: 16px;
+                font-size: 0.8rem;
                 font-weight: 400;
             }
         }
@@ -201,29 +202,25 @@ let createUser = () => {
             display: flex;
             align-items: center;
             justify-content: space-between;
-            // padding-top: 48px;
             flex-wrap: wrap;
 
-            .cancel {
+            button {
                 height: 44px;
-                border: 0;
-                background-color: unset;
                 color: #293FE6;
-                font-size: 16px;
+                background-color: unset;
+                font-size: 0.8rem;
                 font-weight: 700;
                 cursor: pointer;
-            }
-
-            .ok {
-                padding: 0 28px;
-                height: 44px;
-                border-radius: 8px;
-                border: 2px solid #293FE6;
-                background-color: unset;
-                color: #293FE6;
-                font-size: 16px;
-                font-weight: 700;
-                cursor: pointer;
+                
+                &.cancel {
+                    border: 0;
+                }
+    
+                &.ok {
+                    padding: 0 28px;
+                    border-radius: 8px;
+                    border: 2px solid #293FE6;
+                }
             }
         }
     }

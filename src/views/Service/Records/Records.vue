@@ -331,15 +331,15 @@ main#database
 
                 // right panel top right menu
                 .material-symbols-outlined.mid.menu(v-if="!recordInfoEdit" @click.stop="showEdit = !showEdit") more_vert
-                // drop down menu (no edit)
-                .editMenuWrap(v-if="showEdit" @click.stop)
-                    .nest
-                        .editMenu(@click="recordInfoEdit = true; showEdit = false;")
-                            .material-symbols-outlined.mid edit
-                            span edit   
-                        .editMenu(@click="recordDelete(selectedRecord.record_id); showEdit = false;")
-                            .material-symbols-outlined.mid delete
-                            span delete  
+                    // drop down menu (no edit)
+                    .editMenuWrap(v-if="showEdit" @click.stop)
+                        .innerBox
+                            .editMenu(@click="recordInfoEdit = true; showEdit = false;")
+                                .material-symbols-outlined.mid edit
+                                span edit   
+                            .editMenu(@click="recordDelete(selectedRecord.record_id); showEdit = false;")
+                                .material-symbols-outlined.mid delete
+                                span delete  
 
                 // buttons (edit)
                 .editBtnWrap(v-if="recordInfoEdit" :class="{'smallver' : isSmallScreen}") 
@@ -428,11 +428,11 @@ main#database
             .actions 
                 .material-symbols-outlined.mid.refresh.clickable(@click='()=>{selectedRecord=null; refresh(fetchParams);}' :class='{"rotate_animation": fetching }') cached
                 .material-symbols-outlined.mid.menu.clickable(:class='{"nonClickable": !checkedRecords.length || !account.email_verified}' @click.stop="!account.email_verified ? false : showRecordSetting = !showRecordSetting") more_vert
-                .recordSettingWrap(v-if="showRecordSetting" @click.stop)
-                    .nest
-                        .setting(@click="()=>{recordDelete(); showRecordSetting=false;}")
-                            .material-symbols-outlined.mid delete
-                            span delete
+                    .recordSettingWrap(v-if="showRecordSetting" @click.stop)
+                        .innerBox
+                            .setting(@click="()=>{recordDelete(); showRecordSetting=false;}")
+                                .material-symbols-outlined.mid delete
+                                span delete
                 button.create(:class="{'nonClickable' : !account.email_verified}" @click="()=>{ !account.email_verified ? false : selectedRecord = JSON.parse(JSON.stringify(createRecordTemplate)); recordInfoEdit=true; }") create record
             .pagenator 
                 .material-symbols-outlined.sml.prevPage.clickable(:class='{"nonClickable": currentPage === 1 || fetching }' @click='nextPage(false)') arrow_back_ios
@@ -1475,41 +1475,32 @@ watch(() => selectedRecord.value, () => {
             }
 
             .editMenuWrap {
-                position: relative;
+                position: absolute;
+                right: 0;
+                bottom: -130px;
+                z-index: 10;
 
-                .nest {
-                    position: absolute;
-                    right: 20px;
-                    top: 34px;
-                    border-radius: 8px;
-                    border: 1px solid rgba(0, 0, 0, 0.15);
-                    background: #FAFAFA;
-                    box-shadow: 8px 12px 36px 0px rgba(0, 0, 0, 0.10);
-                    padding: 20px;
-                    width: 134px;
-                    z-index: 2;
+                .editMenu {
+                    width: 100px;
+                    display: flex;
+                    flex-wrap: nowrap;
+                    align-items: center;
+                    cursor: pointer;
 
-                    .editMenu {
-                        display: flex;
-                        flex-wrap: nowrap;
-                        align-items: center;
-                        cursor: pointer;
+                    &:first-child {
+                        margin-bottom: 20px;
+                    }
 
-                        &:first-child {
-                            margin-bottom: 20px;
-                        }
-
-                        &:hover {
-                            span {
-                                font-weight: 700;
-                            }
-                        }
-
+                    &:hover {
                         span {
-                            margin-left: 10px;
-                            font-size: 16px;
-                            font-weight: 500;
+                            font-weight: 700;
                         }
+                    }
+
+                    span {
+                        margin-left: 10px;
+                        font-size: 0.8rem;
+                        font-weight: 500;
                     }
                 }
             }
@@ -2032,6 +2023,9 @@ watch(() => selectedRecord.value, () => {
             .refresh {
                 color: #293FE6;
             }
+            .menu {
+                position: relative;
+            }
 
             .dropDown {
                 display: flex;
@@ -2071,35 +2065,25 @@ watch(() => selectedRecord.value, () => {
             }
 
             .recordSettingWrap {
-                position: relative;
+                position: absolute;
+                left: 0;
+                bottom: -90px;
+                z-index: 10;
 
-                .nest {
-                    position: absolute;
-                    width: 134px;
-                    left: -40px;
-                    bottom: -78px;
-                    padding: 20px;
-                    border-radius: 8px;
-                    border: 1px solid rgba(0, 0, 0, 0.15);
-                    background: #FAFAFA;
-                    color: rgba(0, 0, 0, 0.80);
-                    box-shadow: 8px 12px 36px 0px rgba(0, 0, 0, 0.10);
-                    z-index: 10;
-                    cursor: pointer;
+                .setting {
+                    display: flex;
+                    align-items: center;
+                    width: 100px;
+                    font-size: 0.8rem;
 
-                    .setting {
-                        display: flex;
-                        align-items: center;
-
-                        &:hover {
-                            span {
-                                font-weight: 700;
-                            }
-                        }
-
+                    &:hover {
                         span {
-                            margin-left: 14px;
+                            font-weight: 700;
                         }
+                    }
+
+                    span {
+                        margin-left: 14px;
                     }
                 }
             }

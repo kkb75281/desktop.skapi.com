@@ -4,8 +4,9 @@ header#navBar(style='--position: relative;')
         .left
             router-link.logo(to="/")
                 img(v-if="route.name == 'home'" src="@/assets/img/logo/logo-white.svg")
-                img(v-else-if="route.name == 'dashboard'" src="@/assets/img/logo/logo.png")
+                img(v-else-if="route.name == 'dashboard' || route.name == 'accountSettings'" src="@/assets/img/logo/logo.png")
                 img.small(v-else src="@/assets/img/logo/symbol-logo.png")
+        .right(:class="{'flex' : route.params.service && currentService}")
             .topRoute(v-if="route.params.service && currentService") 
                 ol
                     li 
@@ -20,7 +21,6 @@ header#navBar(style='--position: relative;')
                         router-link(:to="`/dashboard/${currentService.service}/records`") Mail
                     li(v-if="route.name == 'subdomain'" :class="{'active': route.name == 'subdomain'}")
                         router-link(:to="`/dashboard/${currentService.service}/records`") Hosting
-        .right
             .topMenu(:class="{'white' : route.name == 'home'}")
                 template(v-if="account")
                     ul
@@ -175,26 +175,35 @@ else {
     width: 100%;
     height: 60px;
     z-index: 999;
-    padding: 10px 40px;
+    padding: 10px 20px;
     display: flex;
     align-items: center;
     justify-content: space-between;
 
     .left {
         position: relative;
+        width: 220px;
         .logo {
             img {
                 width: 120px;
                 &.small {
                     width: 36px;
+                    vertical-align: middle;
                 }
             }
         }
+    }
+    .right {
+        width: calc(100% - 220px);
+        text-align: right;
+        
+        &.flex {
+            display: flex;
+            flex-wrap: nowrap;
+            align-items: center;
+            justify-content: space-between;
+        }
         .topRoute {
-            position: absolute;
-            left: 200px;
-            top: 50%;
-            transform: translateY(-50%);
             ol {
                 height: 40px;
                 display: flex;
@@ -245,8 +254,7 @@ else {
                 }
             }
         }
-    }
-    .right {
+
         .topMenu {
             &.white {
                 ul {
@@ -457,9 +465,19 @@ else {
     }
 }
 
-@media (max-width:680px) {
+@media (max-width:1023px) {
     #top {
-        padding: 10px 20px 10px 20px;
+        .left {
+            width: 65px;
+        }
+        .right {
+            width: calc(100% - 65px);
+        }
+    }
+}
+
+@media (max-width:767px) {
+    #top {
         .right {
             .topMenu {
                 ul {

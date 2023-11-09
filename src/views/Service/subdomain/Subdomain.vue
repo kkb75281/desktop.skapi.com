@@ -2,7 +2,10 @@
 main#subdomain
     section#section
         // main title
-        h2 {{ subdomainState || (computedSubdomain ? computedSubdomain + '.skapi.com' : 'Hosting') }}
+        h4 {{ subdomainState || (computedSubdomain ? computedSubdomain + '.skapi.com' : 'Hosting') }}
+
+        br
+        br
 
         // head panel when there is subdomain
         template(v-if="currentService.subdomain")
@@ -15,7 +18,7 @@ main#subdomain
                     span Delete
             .settingWrap 
                 .setting
-                    h5.tit Subdomain
+                    h6.tit Subdomain
                     template(v-if="modifySudomain && !subdomainState")
                         form.modifyForm(style="margin-top: 8px" @submit.prevent='registerSubdomain')
                             .input
@@ -28,10 +31,10 @@ main#subdomain
                                     button.save(type="submit" :disabled="subdomainState ? true : null") Save
                     template(v-else)
                         .cont(@click="modifySudomain = true")
-                            h5 {{ computedSubdomain }}
+                            p {{ computedSubdomain }}
                             .material-symbols-outlined.mid.btn.clickable(:class="{'nonClickable' : !account.email_verified || subdomainState}") edit
                 .setting
-                    h5.tit HTML file for 404 page
+                    h6.tit HTML file for 404 page
                     .cont.line 
                         .customFile(:class="{'nonClickable' : !account.email_verified || subdomainState}")
                             p {{ subdomainInfo?.[computedSubdomain]?.['404'] || "Upload a file"}}
@@ -598,12 +601,6 @@ function formatBytes(bytes, decimals = 2) {
         margin-bottom: 2%;
         box-shadow: 8px 12px 36px rgba(0, 0, 0, 0.10);
 
-        h2 {
-            font-size: 24px;
-            font-weight: 700;
-            margin-bottom: 40px;
-        }
-
         .buttonWrap {
             position: absolute;
             right: 40px;
@@ -664,7 +661,6 @@ function formatBytes(bytes, decimals = 2) {
 
                 .tit {
                     color: rgba(0, 0, 0, 0.40);
-                    font-size: 16px;
                     font-weight: 500;
                 }
 
@@ -696,8 +692,8 @@ function formatBytes(bytes, decimals = 2) {
                         }
                     }
 
-                    h5 {
-                        font-size: 16px;
+                    p {
+                        font-size: 0.8rem;
                         font-weight: 700;
                         color: rgba(0, 0, 0, 0.6);
 

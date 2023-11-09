@@ -1,19 +1,26 @@
 <template lang="pug">
 #deleteAccount(@click="closeWindow")
     .wrap(@click.stop)
-        .header Delete Your Account
+        h5.title Delete Your Account
         .content
             template(v-if="step === 1")
                 form(@submit.prevent="acknowledgeCheck")
                     p Are you sure you want to delete your account permanently? 
+                    br
+                    br
                     .warning Warning : this cannot be undone.
-                    .customCheckBox(style="margin-bottom: 16px;")
+                    br
+                    .customCheckBox
                         input#understand(type="checkbox")
                         label(for="understand")
                             span I acknowledge that:
                             span.material-symbols-outlined.mid.check check
-                    .point All the services will be permanently deleted
-                    .point All the information will be permanently deleted
+                    br
+                    ul.pointWrap 
+                        li All the services will be permanently deleted
+                        li All the information will be permanently deleted
+                    br
+                    br
                     .material.error(v-if="acknowledgeError")
                         .material-symbols-outlined.mid error
                         span {{ acknowledgeError }}
@@ -66,13 +73,15 @@
                         template(v-else)
                             button.cancel(type="button" @click="closeWindow") Cancel
                             button.save(type="submit") Delete
+            br
+            br
             .navigator(v-if="step <= 3")
                 .ball(v-for="num in 3" @click="() => { num < step ? step = num : null; password = ''; }" :class="{'active': step === num}")
 </template>
 <script setup>
 import { ref } from "vue";
 import { useRouter } from 'vue-router';
-import { account, skapi } from "../main";
+import { account, skapi } from "@/main";
 
 let emits = defineEmits(['close']);
 let router = useRouter();
@@ -166,14 +175,6 @@ let closeWindow = () => {
     z-index: 99999;
 }
 
-.customCheckBox {
-    margin-bottom: 12px;
-
-    label {
-        width: 100%;
-    }
-}
-
 .wrap {
     position: absolute;
     left: 50%;
@@ -186,7 +187,7 @@ let closeWindow = () => {
     box-shadow: 0px 2px 4px 0px rgba(0, 0, 0, 0.10);
     z-index: 999;
 
-    .header {
+    .title {
         position: relative;
         display: flex;
         flex-wrap: nowrap;
@@ -195,8 +196,6 @@ let closeWindow = () => {
         border-bottom: 1px solid rgba(0, 0, 0, 0.10);
         box-shadow: 0px 1px 3px 0px rgba(0, 0, 0, 0.06);
         color: rgba(240, 78, 78, 1);
-        font-size: 24px;
-        font-weight: 700;
 
         .editWrap {
             cursor: pointer;
@@ -208,38 +207,24 @@ let closeWindow = () => {
 
         p {
             color: rgba(0, 0, 0, 0.60);
-            font-size: 16px;
+            font-size: 0.8rem;
             font-weight: 500;
             line-height: 24px;
-            margin-bottom: 48px;
         }
 
         .warning {
-            margin-bottom: 30px;
             color: rgba(0, 0, 0, 0.60);
-            font-size: 16px;
+            font-size: 0.8rem;
             font-weight: 700;
         }
 
-        .point {
-            position: relative;
-            color: rgba(0, 0, 0, 0.60);
-            font-size: 16px;
-            font-weight: 400;
-            margin-bottom: 4px;
-            margin-left: 8px;
+        .pointWrap {
+            margin-left: 15px;
+            line-height: 1.5;
 
-            &::after {
-                position: absolute;
-                content: '';
-                left: -8px;
-                top: 50%;
-                width: 4px;
-                height: 4px;
-                border-radius: 50%;
-                transform: translateY(-50%);
-                background-color: rgba(0, 0, 0, 0.60);
-                // z-index: 3;
+            li {
+                font-size: 0.8rem;
+                color: rgba(0, 0, 0, 0.60);
             }
         }
 
@@ -271,7 +256,6 @@ let closeWindow = () => {
 
         .buttonWrap {
             width: 100%;
-            margin-top: 52px;
             display: flex;
             flex-wrap: nowrap;
             align-items: center;
@@ -324,7 +308,6 @@ let closeWindow = () => {
 
         .navigator {
             text-align: center;
-            margin-top: 48px;
 
             .ball {
                 display: inline-block;

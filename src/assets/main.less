@@ -213,7 +213,6 @@ h6 {
     }
 }
 
-
 /* checkBox */
 .customCheckBox {
     margin-bottom: 0;
@@ -224,7 +223,7 @@ h6 {
     
     label {
         position: relative;
-        width: 16px;
+        // width: 16px;
         height: 16px;
         display: flex;
         align-items: center;
@@ -314,6 +313,7 @@ form {
     display: flex;
     flex-wrap: nowrap;
     align-items: center;
+    justify-content: end;
     opacity: 1;
 
     &.locked {
@@ -459,4 +459,12 @@ form {
             opacity: 1;
         }
     }
+}
+
+.innerBox {
+    padding: 20px;
+    border-radius: 8px;
+    border: 1px solid rgba(0, 0, 0, 0.15);
+    background: #FAFAFA;
+    box-shadow: 8px 12px 36px 0px rgba(0, 0, 0, 0.10);
 }

@@ -16,13 +16,14 @@ main#service
                     template(v-else)
                         h4 {{ currentService.name }}
                         .material-symbols-outlined.mid.modify.clickable(:class="{'nonClickable' : !account?.email_verified}" @click="editServiceName") edit
-                .date 
-                    span Date Created
-                    h6 {{ new Date(currentService.timestamp).toDateString() }}
-                .toggleWrap(:class="{'active': currentService.active >= 1}")
-                    span Disable/Enable
-                    .toggleBg(:class="{'nonClickable' : !account?.email_verified}")
-                        .toggleBtn(@click="enableDisableToggle")
+                .right
+                    .date 
+                        span Date Created
+                        h6 {{ new Date(currentService.timestamp).toDateString() }}
+                    .toggleWrap(:class="{'active': currentService.active >= 1}")
+                        span Disable/Enable
+                        .toggleBg(:class="{'nonClickable' : !account?.email_verified}")
+                            .toggleBtn(@click="enableDisableToggle")
             .codeWrap
                 .codeInner
                     .line
@@ -430,39 +431,40 @@ watch(modifyCors, () => {
             }
         }
 
-        .titleWrap {
-            display: flex;
-            flex-wrap: nowrap;
-            align-items: center;
-            justify-content: space-between;
-
-            svg {
-                width: 32px;
-                height: 32px;
-                color: rgba(0, 0, 0, 0.4);
-            }
-        }
-
         .title {
             width: 100%;
             display: flex;
             align-items: center;
+            justify-content: space-between;
             flex-wrap: nowrap;
-            align-items: center;
 
             .name {
                 display: flex;
                 flex-wrap: nowrap;
                 align-items: center;
-                width: 50%;
+                width: calc(100% - 480px);
                 height: 44px;
+
+                h4 {
+                    white-space: nowrap;
+                    overflow: hidden;
+                    text-overflow: ellipsis;
+                }
             }
 
-            .date {
+            .right {
                 display: flex;
                 flex-wrap: nowrap;
                 align-items: center;
+                justify-content: space-between;
 
+                > div {
+                    width: 240px;
+                    text-align: right;
+                }
+            }
+
+            .date {
                 span {
                     color: rgba(0, 0, 0, 0.40);
                     font-size: 0.8rem;
@@ -471,14 +473,9 @@ watch(modifyCors, () => {
                 }
 
                 h6 {
+                    display: inline-block;
                     color: rgba(0, 0, 0, 0.60);
                 }
-            }
-
-            .date,
-            .toggleWrap {
-                width: 25%;
-                justify-content: end;
             }
 
             .material-symbols-outlined {
@@ -500,6 +497,22 @@ watch(modifyCors, () => {
                 .material-symbols-outlined {
                     margin: 0;
                 }
+            }
+        }
+
+        .titleWrap {
+            .title {
+                justify-content: start;
+            }
+            
+            h4 {
+                display: inline-block;
+            }
+
+            svg {
+                width: 32px;
+                height: 32px;
+                color: rgba(0, 0, 0, 0.4);
             }
         }
 

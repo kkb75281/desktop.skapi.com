@@ -53,7 +53,7 @@ main#accountSetting(v-if='account')
                             )
                             label(for="subscribeCheckbox")
                                 span Subscribe to Skapi newsletter
-                                span.material-symbols-outlined.mid.check(:style="{cursor: disableNewsletterCheckbox ? 'default' : null }") check
+                                .material-symbols-outlined.mid.check(:style="{cursor: disableNewsletterCheckbox ? 'default' : null }") check
                 .row
                     h6.tit Password
                     .cont(v-if='passwordChanged')

@@ -2,14 +2,14 @@
 #userDialog(@click="closeDialog" @mousedown="pendClose = true" style='--max-width: 376px;')
     .center
         .dialog(@mousedown.stop @mouseup='pendClose = false')
-            h5.title {{ props.state }} User
+            h5.title(:class="{'red' : props.state == 'Delete'}") {{ props.state }} User
             .content(style='padding: 28px;max-width: 100%;box-sizing: content-box;')
                 slot
                 .buttonWrap
                     template(v-if="promiseRunning")
                         img.loading(src="@/assets/img/loading.png")
                     template(v-else)
-                        button.cancel(@click="emits('close')") Cancel
+                        button.cancel(@click="emits('close');") Cancel
                         button.disable(@click="changeUserState") {{ props.state }}
 </template>
     
@@ -22,6 +22,8 @@ let props = defineProps(['state', 'checkedUsers', 'preventBackgroundClick']);
 let emits = defineEmits(['close']);
 let pendClose = false;
 let promiseRunning = ref(false);
+let serviceId = currentService.value.service;
+
 let closeDialog = () => {
     if (props.preventBackgroundClick) {
         return;
@@ -31,51 +33,23 @@ let closeDialog = () => {
     }
 }
 
-let serviceId = currentService.value.service;
 let changeUserState = () => {
-    if(props.state == 'Block') {
-        blockUsers();
-    } else if(props.state == 'Unblock') {
-        unBlockUsers();
-    } else {
-        deleteUsers();
-    }
-}
-let blockUsers = () => {
     promiseRunning.value = true;
     let promises = [];
+
     for (let userId of props.checkedUsers) {
-        promises.push(skapi.blockAccount(serviceId, { userId }))
+        if(props.state == 'Block') {
+            promises.push(skapi.blockAccount(serviceId, { userId }))
+        } else if(props.state == 'Unblock') {
+            promises.push(skapi.unblockAccount(serviceId, { userId }))
+        } else {
+            promises.push(skapi.deleteAccount(serviceId, { userId }))
+        }
     }
+
     Promise.all(promises).then(_ => {
         promiseRunning.value = false;
-        emits('close', props.checkedUsers, 'Block');
-    }).catch(e => {
-        alert(e.message);
-    })
-}
-let unBlockUsers = () => {
-    promiseRunning.value = true;
-    let promises = [];
-    for (let userId of props.checkedUsers) {
-        promises.push(skapi.unblockAccount(serviceId, { userId }))
-    }
-    Promise.all(promises).then(_ => {
-        promiseRunning.value = false;
-        emits('close', props.checkedUsers, 'Unblock');
-    }).catch(e => {
-        alert(e.message);
-    })
-}
-let deleteUsers = () => {
-    promiseRunning.value = true;
-    let promises = [];
-    for (let userId of props.checkedUsers) {
-        promises.push(skapi.deleteAccount(serviceId, { userId }))
-    }
-    Promise.all(promises).then(_ => {
-        promiseRunning.value = false;
-        emits('close', props.checkedUsers, 'Delete');
+        emits('close', props.checkedUsers);
     }).catch(e => {
         alert(e.message);
     })
@@ -130,6 +104,9 @@ let deleteUsers = () => {
             background: rgba(0, 0, 0, 0.10);
             box-shadow: 0px 1px 3px 0px rgba(0, 0, 0, 0.06);
         }
+        &.red {
+            color: #f04e4e;
+        }
     }
 
     .buttonWrap {
@@ -141,7 +118,7 @@ let deleteUsers = () => {
 
         button {
             color: #293FE6;
-            font-size: 16px;
+            font-size: 0.8rem;
             font-weight: 700;
             background-color: unset;
             cursor: pointer;
@@ -161,10 +138,62 @@ let deleteUsers = () => {
 }
 </style>
 
-<style>
+<style lang="less">
 #userDialog p {
-    font-size: 0.8em;
+    font-size: 0.8rem;
     font-weight: 500;
     line-height: 1.2rem;
+}
+
+#userDialog form {
+    display: block !important;
+
+    .input {
+
+        .label {
+            display: block;
+            margin-bottom: 8px;
+            color: rgba(0, 0, 0, 0.60);
+            font-size: 0.8rem;
+            font-weight: 700;
+        }
+
+        input {
+            background-color: rgba(0, 0, 0, 0.05);
+            border-radius: 8px;
+            border: 0;
+            padding: 12px 15px;
+            width: 100%;
+            font-size: 0.8rem;
+            font-weight: 400;
+        }
+    }
+
+    .bottom {
+        min-height: 44px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        flex-wrap: wrap;
+
+        button {
+            height: 44px;
+            color: #293FE6;
+            background-color: unset;
+            font-size: 0.8rem;
+            font-weight: 700;
+            cursor: pointer;
+            
+            &.cancel {
+                border: 0;
+            }
+
+            &.ok {
+                padding: 0 28px;
+                border-radius: 8px;
+                border: 2px solid #293FE6;
+            }
+        }
+    }
 }
 </style>

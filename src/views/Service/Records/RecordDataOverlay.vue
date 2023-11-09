@@ -4,8 +4,8 @@
         template(v-if="editSelectedData")
             // edit
             .header 
-                h4(v-if='dataCopy.tags') Tags
-                h4(v-else) {{ dataCopy.type }} - {{ dataCopy.key }}
+                h6(v-if='dataCopy.tags') Tags
+                h6(v-else) {{ dataCopy.type }} - {{ dataCopy.key }}
             .content 
                 textarea#editData(:value='dataCopy.context' @input='inputData' spellcheck="false" :style='displayFontType()')
                 .material.error(v-if="error")
@@ -18,14 +18,15 @@
         template(v-else)
             // view
             .header 
-                h4 {{ selectedData.type }} - {{ selectedData.key }}
+                h6 {{ selectedData.type }} - {{ selectedData.key }}
 
                 // i don't see the need below...
                 //- .editWrap(v-if="selectedData.type == 'json'" @click="edit")
                 //-     .material-symbols-outlined.mid edit
                 //-     span edit
 
-            .content(:style='displayFontType()') {{ selectedData.context }}
+            .content(:style='displayFontType()') 
+                p {{ selectedData.context }}
 
 </template>
 
@@ -115,6 +116,12 @@ onMounted(() => {
 
     .content {
         padding: 20px 20px 28px;
+
+        p {
+            font-size: 0.7rem;
+            line-height: 1.5;
+            color: rgba(0, 0, 0, 0.60);
+        }
 
         textarea {
             width: 100%;

@@ -43,84 +43,87 @@ main#users
                 .dropDown(@click.stop="showFilter = !showFilter")
                     span Headers
                     .material-symbols-outlined.mid arrow_drop_down
-                .filterWrap(v-if="showFilter" @click.stop)
-                    .filter 
-                        .customCheckBox
-                            input#userID(type="checkbox" :checked="filterOptions.userID" @change="filterOptions.userID = !filterOptions.userID")
-                            label(for="userID")
-                                .material-symbols-outlined.mid.check check
-                                span User ID
-                    .filter 
-                        .customCheckBox
-                            input#name(type="checkbox" :checked="filterOptions.name" @change="filterOptions.name = !filterOptions.name")
-                            label(for="name")
-                                .material-symbols-outlined.mid.check check
-                                span Name
-                    .filter 
-                        .customCheckBox
-                            input#block(type="checkbox" :checked="filterOptions.block" @change="filterOptions.block = !filterOptions.block")
-                            label(for="block")
-                                .material-symbols-outlined.mid.check check
-                                span Block/Unblock
-                    .filter 
-                        .customCheckBox
-                            input#status(type="checkbox" :checked="filterOptions.status" @change="filterOptions.status = !filterOptions.status")
-                            label(for="status")
-                                .material-symbols-outlined.mid.check check
-                                span Status
-                    .filter 
-                        .customCheckBox
-                            input#email(type="checkbox" :checked="filterOptions.email" @change="filterOptions.email = !filterOptions.email")
-                            label(for="email")
-                                .material-symbols-outlined.mid.check check
-                                span Email
-                    .filter 
-                        .customCheckBox
-                            input#address(type="checkbox" :checked="filterOptions.address" @change="filterOptions.address = !filterOptions.address")
-                            label(for="address")
-                                .material-symbols-outlined.mid.check check
-                                span Address
-                    .filter 
-                        .customCheckBox
-                            input#gender(type="checkbox" :checked="filterOptions.gender" @change="filterOptions.gender = !filterOptions.gender")
-                            label(for="gender")
-                                .material-symbols-outlined.mid.check check
-                                span Gender
-                    .filter 
-                        .customCheckBox
-                            input#locale(type="checkbox" :checked="filterOptions.locale" @change="filterOptions.locale = !filterOptions.locale")
-                            label(for="locale")
-                                .material-symbols-outlined.mid.check check
-                                span Locale
-                    //- .filter 
-                    //-     .customCheckBox
-                    //-         input#group(type="checkbox" :checked="filterOptions.group" @change="filterOptions.group = !filterOptions.group")
-                    //-         label(for="group")
-                    //-             .material-symbols-outlined.mid.check check
-                    //-             span Group
-                    .filter 
-                        .customCheckBox
-                            input#timestamp(type="checkbox" :checked="filterOptions.timestamp" @change="filterOptions.timestamp = !filterOptions.timestamp")
-                            label(for="timestamp")
-                                .material-symbols-outlined.mid.check check
-                                span Date Created
+                    .userFilterWrap(v-if="showFilter" @click.stop)
+                        .innerBox
+                            .filter 
+                                .customCheckBox
+                                    input#userID(type="checkbox" :checked="filterOptions.userID" @change="filterOptions.userID = !filterOptions.userID")
+                                    label(for="userID")
+                                        .material-symbols-outlined.mid.check check
+                                        span User ID
+                            .filter 
+                                .customCheckBox
+                                    input#name(type="checkbox" :checked="filterOptions.name" @change="filterOptions.name = !filterOptions.name")
+                                    label(for="name")
+                                        .material-symbols-outlined.mid.check check
+                                        span Name
+                            .filter 
+                                .customCheckBox
+                                    input#block(type="checkbox" :checked="filterOptions.block" @change="filterOptions.block = !filterOptions.block")
+                                    label(for="block")
+                                        .material-symbols-outlined.mid.check check
+                                        span Block/Unblock
+                            .filter 
+                                .customCheckBox
+                                    input#status(type="checkbox" :checked="filterOptions.status" @change="filterOptions.status = !filterOptions.status")
+                                    label(for="status")
+                                        .material-symbols-outlined.mid.check check
+                                        span Status
+                            .filter 
+                                .customCheckBox
+                                    input#email(type="checkbox" :checked="filterOptions.email" @change="filterOptions.email = !filterOptions.email")
+                                    label(for="email")
+                                        .material-symbols-outlined.mid.check check
+                                        span Email
+                            .filter 
+                                .customCheckBox
+                                    input#address(type="checkbox" :checked="filterOptions.address" @change="filterOptions.address = !filterOptions.address")
+                                    label(for="address")
+                                        .material-symbols-outlined.mid.check check
+                                        span Address
+                            .filter 
+                                .customCheckBox
+                                    input#gender(type="checkbox" :checked="filterOptions.gender" @change="filterOptions.gender = !filterOptions.gender")
+                                    label(for="gender")
+                                        .material-symbols-outlined.mid.check check
+                                        span Gender
+                            .filter 
+                                .customCheckBox
+                                    input#locale(type="checkbox" :checked="filterOptions.locale" @change="filterOptions.locale = !filterOptions.locale")
+                                    label(for="locale")
+                                        .material-symbols-outlined.mid.check check
+                                        span Locale
+                            //- .filter 
+                            //-     .customCheckBox
+                            //-         input#group(type="checkbox" :checked="filterOptions.group" @change="filterOptions.group = !filterOptions.group")
+                            //-         label(for="group")
+                            //-             .material-symbols-outlined.mid.check check
+                            //-             span Group
+                            .filter 
+                                .customCheckBox
+                                    input#timestamp(type="checkbox" :checked="filterOptions.timestamp" @change="filterOptions.timestamp = !filterOptions.timestamp")
+                                    label(for="timestamp")
+                                        .material-symbols-outlined.mid.check check
+                                        span Date Created
                 .material-symbols-outlined.mid.refresh.clickable(@click='refresh' :class='{"rotate_animation": fetching }') cached
                 .material-symbols-outlined.mid.menu.clickable(:class='{"nonClickable": !checkedUsers.length || !account.email_verified}' @click.stop="!account.email_verified ? false : showUserSetting = !showUserSetting") more_vert
-                .userSettingWrap(v-if="showUserSetting" @click.stop)
-                    .nest
-                        .setting(@click="()=>{showBlockUser=true; showUserSetting=false;}")
-                            .material-symbols-outlined.mid account_circle_off
-                            span block
-                        .setting(@click="()=>{showUnblockUser=true; showUserSetting=false;}")
-                            .material-symbols-outlined.mid account_circle
-                            span unblock
-                        .setting(@click="()=>{showDeleteUser = true; showUserSetting = false;}")
-                            .material-symbols-outlined.mid delete
-                            span delete
+                    .userSettingWrap(v-if="showUserSetting" @click.stop)
+                        .innerBox
+                            .setting(@click="()=>{stateText='Block'; showBlockUser=true; showUserSetting=false;}")
+                                .material-symbols-outlined.mid account_circle_off
+                                span block
+                            .setting(@click="()=>{stateText='Unblock'; showUnblockUser=true; showUserSetting=false;}")
+                                .material-symbols-outlined.mid account_circle
+                                span unblock
+                            .setting(@click="()=>{stateText='Delete'; showDeleteUser = true; showUserSetting = false;}")
+                                .material-symbols-outlined.mid delete
+                                span delete
                 button.create(:class="{'nonClickable' : !account.email_verified}" @click="!account.email_verified ? false : inviteUserShow=true" style='margin-left:1rem') Invite User
             .pagenator 
                 .material-symbols-outlined.sml.prevPage.clickable(:class='{"nonClickable": currentPage === 1 || fetching }' @click='e=>{currentPage--; nextTick(selectNone)}') arrow_back_ios
                 .material-symbols-outlined.sml.nextPage.clickable(:class='{"nonClickable": maxPage <= currentPage && userPage?.endOfList || fetching }' @click='nextPage') arrow_forward_ios
+        br
+        br
         .tableWrap 
             table#resizeMe.table
                 thead
@@ -192,20 +195,18 @@ main#users
                     tr(v-if="users.length < 10" v-for="i in (10 - users.length)" :key="'extra-' + i")
             .noUsers(v-if="users !== null && !users.length")
                 h3 No Users
-                h5 There are no users matching your search terms.
-    
+                br
+                p There are no users matching your search terms.
+        br
     Calendar(v-if="showCalendar" @dateClicked="handledateClick" alwaysEmit='true')
     LocaleSelector(v-if="showLocale" @countryClicked="handleCountryClick")
     InviteUserOverlay(v-if='inviteUserShow' @close='(e)=>{inviteUserShow=false;inviteSuccess=e;}')
-    userOverlay(state='Delete' v-if='showDeleteUser' @close="userState" :checkedUsers='checkedUsers')
-        p This action will delete {{ checkedUsers.length }} user(s) account and all the user's data, This action cannot be undone.
-    userOverlay(state='Block' v-if='showBlockUser' @close="userState" :checkedUsers='checkedUsers')
+    UserOverlay(v-if='showBlockUser' @close='userState' :state='stateText' :checkedUsers='checkedUsers')
         p This action will block {{ checkedUsers.length }} user(s) from your service. The user will not be able to access your service anymore.
-    userOverlay(state='Unblock' v-if='showUnblockUser' @close="userState" :checkedUsers='checkedUsers')
+    UserOverlay(v-if='showUnblockUser' @close='userState' :state='stateText' :checkedUsers='checkedUsers')
         p This action will unblock {{ checkedUsers.length }} user(s) from your service. The user will have access to your service.
-    //- DeleteUserOverlay(v-if='showDeleteUser' @close='userDelete' :checkedUsers='checkedUsers')
-    //- BlockUserOverlay(v-if='showBlockUser' @close='userBlock' :checkedUsers='checkedUsers')
-    //- UnblockUserOverlay(v-if='showUnblockUser' @close='userUnblock' :checkedUsers='checkedUsers')
+    UserOverlay(v-if='showDeleteUser' @close='userState' :state='stateText' :checkedUsers='checkedUsers')
+        p This action will delete {{ checkedUsers.length }} user(s) account and all the user's data, This action cannot be undone.
     msgOverlay(v-if='inviteSuccess' @close='inviteSuccess = false' title='Success' :preventBackgroundClick='true')
         p Invitation email has been {{inviteSuccess === true ? 'sent' : 'resent' }} to the user.
         br
@@ -224,12 +225,9 @@ import { computed, nextTick, onMounted, onUnmounted, ref, watch } from 'vue';
 import Countries from '@/skapi-extensions/js/countries.js';
 import Calendar from '@/components/Calendar.vue';
 import LocaleSelector from '@/components/LocaleSelector.vue';
-import InviteUserOverlay from './InviteUserOverlay.vue';
-import DeleteUserOverlay from './DeleteUserOverlay.vue';
-import BlockUserOverlay from './BlockUserOverlay.vue';
-import UnblockUserOverlay from './UnblockUserOverlay.vue';
 import msgOverlay from '@/components/msgOverlay.vue';
-import userOverlay from './userOverlay.vue';
+import InviteUserOverlay from '@/views/Service/Users/InviteUserOverlay.vue';
+import UserOverlay from '@/views/Service/Users/UserOverlay.vue';
 
 import Pager from '@/skapi-extensions/js/pager.js';
 const worker = new Worker(
@@ -246,6 +244,7 @@ let fetching = ref(false);
 let searchText = ref('');
 let inviteSuccess = ref(false);
 let inviteUserShow = ref(false);
+
 watch(currentPage, (page) => {
     getPage(page);
 });
@@ -316,6 +315,7 @@ else {
     userPage = serviceUsers[serviceId];
     getPage(currentPage.value);
 }
+
 let nextPage = () => {
     if (currentPage.value === maxPage.value && !userPage.endOfList) {
         users.value = null;
@@ -353,6 +353,7 @@ let showCalendar = ref(false);
 let showLocale = ref(false);
 let showUserSetting = ref(false);
 let showUserState = ref(false);
+let stateText = ref('')
 let showDeleteUser = ref(false);
 let showBlockUser = ref(false);
 let showUnblockUser = ref(false);
@@ -409,10 +410,11 @@ let userCheckConfirm = (user) => {
     }
     trackSelectedUsers();
 }
-let userState = async (user, state) => {
-    if(state == 'Block') {
+
+let userState = async (user) => {
+    if(stateText.value == 'Block') {
         showBlockUser.value = false;
-    } else if(state == 'Unblock') {
+    } else if(stateText.value == 'Unblock') {
         showUnblockUser.value = false;
     } else {
         showDeleteUser.value = false;
@@ -420,12 +422,16 @@ let userState = async (user, state) => {
 
     if (user) {
         for (let u of user) {
-            if(state == 'Delete') {
-                await userPage.deleteItem(u);
-            } else {
-                let to_update = userPage.list[u]
+            let to_update = userPage.list[u];
+
+            if(stateText.value == 'Block') {
                 to_update.approved = 'by_admin:suspended:'
                 await userPage.editItem(to_update);
+            } else if(stateText.value == 'Unblock') {
+                to_update.approved = 'by_admin:approved:'
+                await userPage.editItem(to_update);
+            } else {
+                await userPage.deleteItem(u);
             }
         }
 
@@ -439,6 +445,7 @@ let handleCountryClick = (key) => {
     showLocale.value = false;
     document.querySelector('#searchInput').focus();
 }
+
 let handledateClick = (startDate, endDate) => {
     if (startDate == null && endDate == null) {
         searchText.value = ''
@@ -449,6 +456,7 @@ let handledateClick = (startDate, endDate) => {
     }
     document.querySelector('#searchInput').focus();
 }
+
 let searchForChange = (e) => {
     searchFor.value = e.target.value;
     searchText.value = '';
@@ -456,6 +464,7 @@ let searchForChange = (e) => {
         document.querySelector('#searchInput').focus();
     });
 }
+
 let searchUsers = (e) => {
     let search = searchText.value;
     let searchTarget = searchFor.value;
@@ -624,7 +633,7 @@ onMounted(() => {
             select {
                 height: 44px;
                 background: rgba(0, 0, 0, 0.05);
-                font-size: 16px;
+                font-size: 0.8rem;
                 padding: 0 20px;
                 font-weight: 500;
                 color: rgba(0, 0, 0, 0.80);
@@ -642,7 +651,7 @@ onMounted(() => {
                 border: 0;
                 border-radius: 8px;
                 background: rgba(0, 0, 0, 0.05);
-                font-size: 16px;
+                font-size: 0.8rem;
                 padding-left: 50px;
                 font-weight: 400;
             }
@@ -677,7 +686,6 @@ onMounted(() => {
         justify-content: space-between;
 
         .actions {
-            position: relative;
             display: flex;
             flex-wrap: nowrap;
             align-items: center;
@@ -687,26 +695,32 @@ onMounted(() => {
             }
 
             .dropDown {
+                position: relative;
                 display: flex;
                 align-items: center;
-                font-size: 16px;
+                font-size: 0.8rem;
                 font-weight: 500;
                 margin-right: 20px;
                 color: rgba(0, 0, 0, 0.6);
             }
 
-            .filterWrap {
+            .refresh {
+                margin-right: 20px;
+                color: #293FE6;
+            }
+
+            .menu {
+                position: relative;
+            }
+
+            .userFilterWrap {
                 position: absolute;
                 left: 0;
                 bottom: -330px;
-                padding: 20px;
-                border-radius: 8px;
-                border: 1px solid rgba(0, 0, 0, 0.15);
-                background: #FAFAFA;
-                box-shadow: 8px 12px 36px 0px rgba(0, 0, 0, 0.10);
                 z-index: 10;
 
                 .filter {
+                    width: 135px;
                     display: flex;
                     align-items: center;
                     margin-bottom: 16px;
@@ -715,11 +729,32 @@ onMounted(() => {
                     &:last-child {
                         margin-bottom: 0;
                     }
+                }
+            }
 
-                    .customCheckBox {
-                        label {
-                            width: 100%;
-                        }
+            .userSettingWrap {
+                position: absolute;
+                left: 0;
+                bottom: -162px;
+                z-index: 10;
+
+                .setting {
+                    width: 100px;
+                    display: flex;
+                    align-items: center;
+                    margin-bottom: 16px;
+                    font-size: 0.8rem;
+
+                    &:last-child {
+                        margin-bottom: 0;
+                    }
+
+                    &:hover {
+                        font-weight: 700;
+                    }
+
+                    span {
+                        margin-left: 12px;
                     }
                 }
             }
@@ -731,54 +766,10 @@ onMounted(() => {
                 border-radius: 8px;
                 border: 2px solid #293FE6;
                 color: #293FE6;
-                font-size: 16px;
+                font-size: 0.8rem;
                 font-weight: 700;
                 background-color: unset;
                 cursor: pointer;
-            }
-
-            .userSettingWrap {
-                position: relative;
-
-                .nest {
-                    position: absolute;
-                    right: -120px;
-                    bottom: -162px;
-                    width: 144px;
-                    padding: 20px;
-                    border-radius: 8px;
-                    border: 1px solid rgba(0, 0, 0, 0.15);
-                    background: #FAFAFA;
-                    color: rgba(0, 0, 0, 0.80);
-                    box-shadow: 8px 12px 36px 0px rgba(0, 0, 0, 0.10);
-                    z-index: 10;
-
-                    .setting {
-                        display: flex;
-                        align-items: center;
-                        margin-bottom: 16px;
-
-                        &:last-child {
-                            margin-bottom: 0;
-                        }
-
-                        &:hover {
-                            span {
-                                font-weight: 700;
-                            }
-                        }
-
-                        span {
-                            margin-left: 12px;
-                        }
-                    }
-                }
-
-            }
-
-            .refresh {
-                margin-right: 20px;
-                color: #293FE6;
             }
         }
 
@@ -801,7 +792,6 @@ onMounted(() => {
     .tableWrap {
         position: relative;
         min-height: 660px;
-        margin: 40px 0;
         overflow-x: auto;
 
         .noUsers {
@@ -813,10 +803,9 @@ onMounted(() => {
 
             h3 {
                 color: rgba(0, 0, 0, 0.40);
-                margin-bottom: 28px;
             }
 
-            h5 {
+            p {
                 color: rgba(0, 0, 0, 0.40);
                 font-weight: 500;
             }
@@ -827,14 +816,6 @@ onMounted(() => {
             border-collapse: collapse;
             table-layout: fixed;
 
-            .customCheckBox {
-                label {
-                    &::before {
-                        margin-right: 0;
-                    }
-                }
-            }
-
             thead {
                 text-align: left;
 
@@ -844,7 +825,7 @@ onMounted(() => {
                     th {
                         position: relative;
                         color: rgba(0, 0, 0, 0.40);
-                        font-size: 14px;
+                        font-size: 0.7rem;
                         font-weight: 500;
                         padding-left: 20px;
 

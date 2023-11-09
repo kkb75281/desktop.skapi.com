@@ -129,14 +129,12 @@ else {
 
 <style lang="less" scoped>
 #serviceMain {
-    margin-top: 60px;
-    padding-top: 56px;
-
+    margin-top: 3rem;
+    
     .left {
         display: inline-block;
         vertical-align: top;
-        width: 240px;
-
+        
         .menuWrap {
             padding: 0 16px;
 
@@ -146,26 +144,13 @@ else {
                 padding: 12px;
                 color: #293FE6;
                 text-decoration: none;
+                border-radius: 8px;
                 margin-bottom: 4px;
                 cursor: pointer;
 
                 * {
                     display: inline-block;
                     vertical-align: middle;
-                }
-
-                &::after {
-                    position: absolute;
-                    content: '';
-                    width: 208px;
-                    height: 56px;
-                    left: 50%;
-                    top: 50%;
-                    transform: translate(-50%, -50%);
-                    border-radius: 8px;
-                    background: rgba(0, 0, 0, 0.05);
-                    box-shadow: 0px -1px 1px 0px rgba(0, 0, 0, 0.15) inset;
-                    opacity: 0;
                 }
 
                 &:hover {
@@ -175,9 +160,8 @@ else {
                 }
 
                 &.active {
-                    &::after {
-                        opacity: 1;
-                    }
+                    background: rgba(0, 0, 0, 0.05);
+                    box-shadow: 0px -1px 1px 0px rgba(0, 0, 0, 0.15) inset;
 
                     span {
                         font-weight: 700;
@@ -195,6 +179,7 @@ else {
                 }
 
                 h3 {
+                    padding-right: 50px;
                     margin-left: 13px;
                     font-size: 20px;
                     font-weight: 500;
@@ -206,6 +191,35 @@ else {
         display: inline-block;
         width: calc(100vw - 240px);
         padding: 0 40px 40px 0;
+    }
+}
+
+@media (max-width:1023px) {
+    #serviceMain {
+        .left {
+            .menuWrap {
+                .menu {
+                    h3 {
+                        display: none;
+                    }
+                }
+            }
+        }
+        .right {
+            width: calc(100vw - 88px);
+        }
+    }
+}
+
+@media (max-width:767px) {
+    #serviceMain {
+        .left {
+            display: none;
+        }
+        .right {
+            width: 100%;
+            padding-left: 40px;
+        }
     }
 }
 </style>
