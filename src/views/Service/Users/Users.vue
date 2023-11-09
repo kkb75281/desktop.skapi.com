@@ -108,13 +108,13 @@ main#users
                 .material-symbols-outlined.mid.menu.clickable(:class='{"nonClickable": !checkedUsers.length || !account.email_verified}' @click.stop="!account.email_verified ? false : showUserSetting = !showUserSetting") more_vert
                 .userSettingWrap(v-if="showUserSetting" @click.stop)
                     .nest
-                        .setting(@click="()=>{showUserState=true; showUserSetting=false;}")
+                        .setting(@click="()=>{showBlockUser=true; showUserSetting=false;}")
                             .material-symbols-outlined.mid account_circle_off
                             span block
-                        .setting(@click="()=>{showUserState=true; showUserSetting=false;}")
+                        .setting(@click="()=>{showUnblockUser=true; showUserSetting=false;}")
                             .material-symbols-outlined.mid account_circle
                             span unblock
-                        .setting(@click="()=>{showUserState = true; showUserSetting = false;}")
+                        .setting(@click="()=>{showDeleteUser = true; showUserSetting = false;}")
                             .material-symbols-outlined.mid delete
                             span delete
                 button.create(:class="{'nonClickable' : !account.email_verified}" @click="!account.email_verified ? false : inviteUserShow=true" style='margin-left:1rem') Invite User
@@ -197,11 +197,11 @@ main#users
     Calendar(v-if="showCalendar" @dateClicked="handledateClick" alwaysEmit='true')
     LocaleSelector(v-if="showLocale" @countryClicked="handleCountryClick")
     InviteUserOverlay(v-if='inviteUserShow' @close='(e)=>{inviteUserShow=false;inviteSuccess=e;}')
-    userOverlay(state='Delete' v-if='showUserState' @close="userState" :checkedUsers='checkedUsers')
+    userOverlay(state='Delete' v-if='showDeleteUser' @close="userState" :checkedUsers='checkedUsers')
         p This action will delete {{ checkedUsers.length }} user(s) account and all the user's data, This action cannot be undone.
-    userOverlay(state='Block' v-if='showUserState' @close="userState" :checkedUsers='checkedUsers')
+    userOverlay(state='Block' v-if='showBlockUser' @close="userState" :checkedUsers='checkedUsers')
         p This action will block {{ checkedUsers.length }} user(s) from your service. The user will not be able to access your service anymore.
-    userOverlay(state='Unblock' v-if='showUserState' @close="userState" :checkedUsers='checkedUsers')
+    userOverlay(state='Unblock' v-if='showUnblockUser' @close="userState" :checkedUsers='checkedUsers')
         p This action will unblock {{ checkedUsers.length }} user(s) from your service. The user will have access to your service.
     //- DeleteUserOverlay(v-if='showDeleteUser' @close='userDelete' :checkedUsers='checkedUsers')
     //- BlockUserOverlay(v-if='showBlockUser' @close='userBlock' :checkedUsers='checkedUsers')
@@ -353,9 +353,9 @@ let showCalendar = ref(false);
 let showLocale = ref(false);
 let showUserSetting = ref(false);
 let showUserState = ref(false);
-// let showDeleteUser = ref(false);
-// let showBlockUser = ref(false);
-// let showUnblockUser = ref(false);
+let showDeleteUser = ref(false);
+let showBlockUser = ref(false);
+let showUnblockUser = ref(false);
 
 let filterOptions = ref({
     userID: true,
@@ -377,6 +377,7 @@ let selectAll = (e) => {
     })
     trackSelectedUsers();
 }
+
 let selectNone = () => {
     // page 넘길때 사용
     let checkboxes = document.querySelectorAll('input[type="checkbox"]');
@@ -385,7 +386,9 @@ let selectNone = () => {
     });
     trackSelectedUsers();
 }
+
 let checkedUsers = ref([]);
+
 let trackSelectedUsers = () => {
     let checkboxes = document.querySelectorAll('input[type="checkbox"]');
     let checked = [];
@@ -396,6 +399,7 @@ let trackSelectedUsers = () => {
     })
     checkedUsers.value = checked;
 }
+
 let userCheckConfirm = (user) => {
     let targetInput = document.getElementById(user.user_id);
     if (targetInput.checked) {
@@ -406,10 +410,17 @@ let userCheckConfirm = (user) => {
     trackSelectedUsers();
 }
 let userState = async (user, state) => {
-    showUserState.value = false;
+    if(state == 'Block') {
+        showBlockUser.value = false;
+    } else if(state == 'Unblock') {
+        showUnblockUser.value = false;
+    } else {
+        showDeleteUser.value = false;
+    }
+
     if (user) {
         for (let u of user) {
-            if(state) {
+            if(state == 'Delete') {
                 await userPage.deleteItem(u);
             } else {
                 let to_update = userPage.list[u]

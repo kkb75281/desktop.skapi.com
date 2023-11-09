@@ -49,7 +49,7 @@ let blockUsers = () => {
     }
     Promise.all(promises).then(_ => {
         promiseRunning.value = false;
-        emits('close', props.checkedUsers);
+        emits('close', props.checkedUsers, 'Block');
     }).catch(e => {
         alert(e.message);
     })
@@ -62,7 +62,7 @@ let unBlockUsers = () => {
     }
     Promise.all(promises).then(_ => {
         promiseRunning.value = false;
-        emits('close', props.checkedUsers);
+        emits('close', props.checkedUsers, 'Unblock');
     }).catch(e => {
         alert(e.message);
     })
@@ -75,7 +75,7 @@ let deleteUsers = () => {
     }
     Promise.all(promises).then(_ => {
         promiseRunning.value = false;
-        emits('close', props.checkedUsers, 'delete');
+        emits('close', props.checkedUsers, 'Delete');
     }).catch(e => {
         alert(e.message);
     })
