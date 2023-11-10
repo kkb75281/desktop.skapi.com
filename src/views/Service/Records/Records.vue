@@ -2067,7 +2067,7 @@ watch(() => selectedRecord.value, () => {
             .recordSettingWrap {
                 position: absolute;
                 left: 0;
-                bottom: -90px;
+                top: 40px;
                 z-index: 10;
 
                 .setting {

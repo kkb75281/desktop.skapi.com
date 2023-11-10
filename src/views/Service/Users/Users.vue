@@ -106,19 +106,20 @@ main#users
                                         .material-symbols-outlined.mid.check check
                                         span Date Created
                 .material-symbols-outlined.mid.refresh.clickable(@click='refresh' :class='{"rotate_animation": fetching }') cached
+                .material-symbols-outlined.mid.create.clickable(:class="{'nonClickable' : !account.email_verified}" @click="!account.email_verified ? false : inviteUserShow=true") group_add
                 .material-symbols-outlined.mid.menu.clickable(:class='{"nonClickable": !checkedUsers.length || !account.email_verified}' @click.stop="!account.email_verified ? false : showUserSetting = !showUserSetting") more_vert
                     .userSettingWrap(v-if="showUserSetting" @click.stop)
                         .innerBox
                             .setting(@click="()=>{stateText='Block'; showBlockUser=true; showUserSetting=false;}")
                                 .material-symbols-outlined.mid account_circle_off
-                                span block
+                                span Block
                             .setting(@click="()=>{stateText='Unblock'; showUnblockUser=true; showUserSetting=false;}")
                                 .material-symbols-outlined.mid account_circle
-                                span unblock
+                                span Unblock
                             .setting(@click="()=>{stateText='Delete'; showDeleteUser = true; showUserSetting = false;}")
                                 .material-symbols-outlined.mid delete
-                                span delete
-                button.create(:class="{'nonClickable' : !account.email_verified}" @click="!account.email_verified ? false : inviteUserShow=true" style='margin-left:1rem') Invite User
+                                span Delete
+                //- button.create(:class="{'nonClickable' : !account.email_verified}" @click="!account.email_verified ? false : inviteUserShow=true" style='margin-left:1rem') Invite User
             .pagenator 
                 .material-symbols-outlined.sml.prevPage.clickable(:class='{"nonClickable": currentPage === 1 || fetching }' @click='e=>{currentPage--; nextTick(selectNone)}') arrow_back_ios
                 .material-symbols-outlined.sml.nextPage.clickable(:class='{"nonClickable": maxPage <= currentPage && userPage?.endOfList || fetching }' @click='nextPage') arrow_forward_ios
@@ -615,7 +616,7 @@ onMounted(() => {
 
     #section {
         width: 100%;
-        padding: 28px 40px;
+        padding: 1.4rem 2rem;
         background-color: #fafafa;
         border-radius: 8px;
         margin-bottom: 2%;
@@ -700,13 +701,17 @@ onMounted(() => {
                 align-items: center;
                 font-size: 0.8rem;
                 font-weight: 500;
-                margin-right: 20px;
+                margin-right: 1rem;
                 color: rgba(0, 0, 0, 0.6);
             }
 
             .refresh {
-                margin-right: 20px;
+                margin-right: 1rem;
                 color: #293FE6;
+            }
+
+            .create {
+                margin-right: 1rem;
             }
 
             .menu {
@@ -716,14 +721,14 @@ onMounted(() => {
             .userFilterWrap {
                 position: absolute;
                 left: 0;
-                bottom: -330px;
+                top: 40px;
                 z-index: 10;
 
                 .filter {
                     width: 135px;
                     display: flex;
                     align-items: center;
-                    margin-bottom: 16px;
+                    margin-bottom: 1rem;
                     color: rgba(0, 0, 0, 0.80);
 
                     &:last-child {
@@ -735,7 +740,7 @@ onMounted(() => {
             .userSettingWrap {
                 position: absolute;
                 left: 0;
-                bottom: -162px;
+                top: 40px;
                 z-index: 10;
 
                 .setting {
@@ -759,18 +764,18 @@ onMounted(() => {
                 }
             }
 
-            .create {
-                // create user
-                height: 32px;
-                padding: 0px 12px;
-                border-radius: 8px;
-                border: 2px solid #293FE6;
-                color: #293FE6;
-                font-size: 0.8rem;
-                font-weight: 700;
-                background-color: unset;
-                cursor: pointer;
-            }
+            // .create {
+            //     // create user
+            //     height: 32px;
+            //     padding: 0px 12px;
+            //     border-radius: 8px;
+            //     border: 2px solid #293FE6;
+            //     color: #293FE6;
+            //     font-size: 0.8rem;
+            //     font-weight: 700;
+            //     background-color: unset;
+            //     cursor: pointer;
+            // }
         }
 
         .pagenator {
@@ -778,13 +783,8 @@ onMounted(() => {
             flex-wrap: nowrap;
             align-items: center;
 
-            .page {
-                color: rgba(0, 0, 0, 0.60);
-                margin-right: 10px;
-            }
-
             .prevPage {
-                margin-right: 20px;
+                margin-right: 1rem;
             }
         }
     }
@@ -939,6 +939,30 @@ onMounted(() => {
                         }
                     }
                 }
+            }
+        }
+    }
+}
+
+@media (max-width:767px) {
+    #users {
+        #calendar,
+        #localeSelector {
+            position: absolute;
+            right: 0px;
+            top: 136px;
+        }
+
+        form {
+            flex-wrap: wrap;
+    
+            .selectBar {
+                width: 100%;
+                margin-right: 0;
+                margin-bottom: 1rem;
+            }
+            .searchBar {
+                width: 100%;
             }
         }
     }
