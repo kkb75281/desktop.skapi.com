@@ -7,12 +7,13 @@ header#navBar(style='--position: relative;')
                 img(v-else-if="route.name == 'dashboard' || route.name == 'accountSettings'" src="@/assets/img/logo/logo.png")
                 img.small(v-else src="@/assets/img/logo/symbol-logo.png")
         .right(:class="{'flex' : route.params.service && currentService}")
-            .topRoute(v-if="route.params.service && currentService") 
+            .topRoute(v-if="route.params.service && currentService" ref="topRoute") 
                 ol
                     li 
                         router-link(to="/dashboard") Dashboard
                     li(:class="{'active': route.name == 'service'}")
-                        router-link(:to="`/dashboard/${currentService.service}`") {{ currentService.name }}
+                        router-link(:to="`/dashboard/${currentService.service}`") 
+                            h5 {{ currentService.name }}
                     li(v-if="route.name == 'users'" :class="{'active': route.name == 'users'}")
                         router-link(:to="`/dashboard/${currentService.service}/users`") Users
                     li(v-if="route.name == 'records'" :class="{'active': route.name == 'records'}")
@@ -21,6 +22,7 @@ header#navBar(style='--position: relative;')
                         router-link(:to="`/dashboard/${currentService.service}/records`") Mail
                     li(v-if="route.name == 'subdomain'" :class="{'active': route.name == 'subdomain'}")
                         router-link(:to="`/dashboard/${currentService.service}/records`") Hosting
+                h5.service {{ currentService.name }}
             .topMenu(:class="{'white' : route.name == 'home'}")
                 template(v-if="account")
                     ul
@@ -65,7 +67,7 @@ header#navBar(style='--position: relative;')
 </template>
 
 <script setup>
-import { ref } from 'vue'
+import { onBeforeUnmount, onMounted, ref } from 'vue'
 import { useRouter, useRoute } from 'vue-router';
 import { skapi, account, bodyClick } from '@/main';
 import { services, serviceFetching, currentService, storageInfo, serviceUsers, newsletter_sender } from '@/data';
@@ -74,6 +76,7 @@ import { launch, serviceHost, subdomainInfo } from '@/views/Service/subdomain/Su
 
 let route = useRoute();
 let router = useRouter();
+let topRoute = ref(null);
 let accountInfo = ref(false);
 let servicePage = ref(false);
 
@@ -165,6 +168,21 @@ if (serviceFetching.value instanceof Promise) {
 else {
     getCurrentService()
 }
+
+let resize = () => {
+    if (window.innerWidth < 1024) {
+        topRoute.value.classList.add('service');
+    } else {
+        topRoute.value.classList.remove('service');
+    }
+}
+
+onMounted(() => {
+    window.addEventListener('resize', resize);
+})
+onBeforeUnmount(() => {
+    window.removeEventListener('resize', resize);
+})
 </script>
 
 <style lang="less" scoped>
@@ -215,17 +233,17 @@ else {
                     margin-right: 50px;
     
                     a {
-                        font-size: 20px;
+                        font-size: 1rem;
                         font-weight: 700;
                         text-decoration: none;
                         color: rgba(0, 0, 0, 0.40);
                     }
     
-                    &:nth-child(2) {
-                        // width: 80px;
-                        // white-space: nowrap;
-                        // overflow: hidden;
-                        // text-overflow: ellipsis;
+                    h5 {
+                        max-width: 80px;
+                        white-space: nowrap;
+                        overflow: hidden;
+                        text-overflow: ellipsis;
                     }
     
                     &:last-child {
@@ -253,9 +271,17 @@ else {
                     }
                 }
             }
+            .service {
+                display: none;
+                color: #293FE6;
+            }
         }
 
         .topMenu {
+            display: flex;
+            align-items: center;
+            justify-content: end;
+
             &.white {
                 ul {
                     &:first-child {
@@ -282,102 +308,103 @@ else {
                     }
                 }
             }
-        }
 
-        ul {
-            position: relative;
-            display: inline-block;
-            line-height: 40px;
-            padding: 0 24px;
-
-            &:first-child {
-                vertical-align: middle;
-
-                &::after {
-                    position: absolute;
-                    content: '';
-                    top: 50%;
-                    right: 0;
-                    transform: translateY(-50%);                    
-                    width: 1px;
-                    height: 25px;
-                    background-color: rgba(0,0,0,0.1);
+            ul {
+                position: relative;
+                display: flex;
+                align-items: center;
+                line-height: 40px;
+                padding: 0 1rem;
+    
+                &:first-child {
+                    &::after {
+                        position: absolute;
+                        content: '';
+                        top: 50%;
+                        right: 0;
+                        transform: translateY(-50%);                    
+                        width: 1px;
+                        height: 25px;
+                        background-color: rgba(0,0,0,0.1);
+                    }
+    
+                    li {
+                        margin-right: 16px;
+                    }
                 }
-
-                li {
-                    margin-right: 16px;
-                }
-            }
-
-            &:last-child {
-                padding-right: 0 !important;
-            }
-
-            li {
-                display: inline-block;
-                list-style: none;
-                margin-right: 24px;
-                text-align: center;
-
+    
                 &:last-child {
-                    margin-right: 0;
+                    padding-right: 0 !important;
                 }
-                
-                a {
-                    color: rgba(0,0,0,0.6);
-                    text-decoration: none;
-                    font-size: 20px;
-                    font-weight: 700;
-                    cursor: pointer;
+    
+                li {
+                    list-style: none;
+                    margin-right: 1rem;
+                    text-align: center;
+    
+                    &:last-child {
+                        margin-right: 0;
+                    }
                     
-                    &:hover {
-                        color: rgba(0,0,0,1);
-
-                        img {
-                            opacity: 1;
+                    a {
+                        color: rgba(0,0,0,0.6);
+                        text-decoration: none;
+                        font-size: 1rem;
+                        font-weight: 700;
+                        cursor: pointer;
+                        
+                        &:hover {
+                            color: rgba(0,0,0,1);
+    
+                            img {
+                                opacity: 1;
+                            }
+    
+                            &.signup {
+                                color: #fff;
+                            }
                         }
-
+    
                         &.signup {
                             color: #fff;
+                            padding: 8px 20px;
+                            border-radius: 8px;
+                            font-size: 0.8rem;
+                            font-weight: 700;
+                            background: #293FE6;
+                        }
+    
+                        img {
+                            width: 20px;
+                            height: 20px;
+                            opacity: 0.6;
+                            vertical-align: middle;
+                            margin-bottom: 5px;
                         }
                     }
-
-                    &.signup {
+    
+                    &:last-child {
+                        margin-right: 0;
+                    }
+    
+                    &.account {
+                        position: relative;
+                        margin-right: 0;
+                        width: 2rem;
+                        height: 2rem;
+                        border-radius: 50%;
+                        background-color: #293FE6;
                         color: #fff;
-                        padding: 8px 20px;
-                        border-radius: 8px;
-                        font-size: 16px;
-                        font-weight: 700;
-                        background: #293FE6;
+                        font-size: 1rem;
+                        // display: flex;
+                        // align-items: center;
+                        // justify-content: center;
+                        cursor: pointer;
                     }
-
-                    img {
-                        width: 20px;
-                        height: 20px;
-                        opacity: 0.6;
-                    }
-                }
-
-                &:last-child {
-                    margin-right: 0;
-                }
-
-                &.account {
-                    position: relative;
-                    margin-right: 0;
-                    width: 40px;
-                    height: 40px;
-                    border-radius: 50%;
-                    background-color: #293FE6;
-                    color: #fff;
-                    font-size: 20px;
-                    // display: flex;
-                    // align-items: center;
-                    // justify-content: center;
-                    cursor: pointer;
                 }
             }
         }
+
     }
     .prof {
         position: absolute;
@@ -396,12 +423,12 @@ else {
 
         .member {
             h4 {
-                font-size: 16px;
+                font-size: 0.8rem;
                 font-weight: 700;
             }
 
             span {
-                font-size: 14px;
+                font-size: 0.7rem;
             }
         }
 
@@ -436,7 +463,7 @@ else {
                 align-items: center;
                 margin-bottom: 18px;
                 cursor: pointer;
-                font-size: 16px;
+                font-size: 0.8rem;
                 font-weight: 500;
                 color: #293FE6;
 
@@ -457,7 +484,7 @@ else {
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 12px;
+            font-size: 0.6rem;
             font-weight: 500;
             color: rgba(0, 0, 0, 0.15);
             padding: 27px 0 10px;
@@ -472,6 +499,14 @@ else {
         }
         .right {
             width: calc(100% - 65px);
+            .topRoute {
+                ol {
+                    display: none;
+                }
+                .service {
+                    display: block;
+                }
+            }
         }
     }
 }
@@ -481,8 +516,6 @@ else {
         .right {
             .topMenu {
                 ul {
-                    padding: 0 14px;
-
                     li {
                         &.doc, &.account {
                             display: none;

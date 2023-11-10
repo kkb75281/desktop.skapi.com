@@ -216,8 +216,7 @@ watch(() => showVerifyEmail.value, () => {
 <style lang="less" scoped>
 #accountSetting {
     position: relative;
-    margin-top: 128px;
-    // padding: 0 40px;
+    margin-top: 3.4rem;
 
     .customCheckBox label {
         width: 100%;

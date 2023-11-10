@@ -34,35 +34,8 @@ import EmailCaution from '@/components/EmailCaution.vue';
 
 currentService.value = null;
 
-bodyClick.nav = () => {
-    accountInfo.value = false;
-}
-
 const route = useRoute();
 const router = useRouter();
-let accountInfo = ref(false);
-let navigateToPage = () => {
-    accountInfo.value = false;
-    router.push({ path: '/accountSettings' });
-}
-let logout = async () => {
-    accountInfo.value = false;
-    account.value = null;
-    services.value = [];
-    storageInfo.value = {};
-
-    for (let k in serviceUsers) {
-        delete serviceUsers[k];
-    }
-
-    for (let k in serviceRecords) {
-        delete serviceRecords[k];
-    }
-
-    await skapi.logout();
-
-    router.push({ path: '/' });
-}
 
 let getCurrentService = () => {
     let srvcId = route.path.split('/')[2];
@@ -114,7 +87,11 @@ let getCurrentService = () => {
         });
     }
     else {
-        router.replace({ path: '/dashboard' });
+        if(account.value) {
+            router.replace({ path: '/dashboard' });
+        } else {
+            router.replace({ path: '/login' });
+        }
     }
 }
 
@@ -124,7 +101,6 @@ if (serviceFetching.value instanceof Promise) {
 else {
     getCurrentService()
 }
-
 </script>
 
 <style lang="less" scoped>
@@ -190,7 +166,7 @@ else {
     .right {
         display: inline-block;
         width: calc(100vw - 240px);
-        padding: 0 40px 40px 0;
+        padding: 0 20px 20px 0;
     }
 }
 
@@ -218,7 +194,7 @@ else {
         }
         .right {
             width: 100%;
-            padding-left: 40px;
+            padding-left: 20px;
         }
     }
 }

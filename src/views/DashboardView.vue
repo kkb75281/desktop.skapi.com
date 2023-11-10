@@ -110,8 +110,7 @@ const regions = {
 <style lang="less" scoped>
 #dashboard {
     position: relative;
-    margin-top: 6.4rem;
-    // padding: 0 2rem;
+    margin-top: 3.4rem;
 
     .title {
         width: 1200px;

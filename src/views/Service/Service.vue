@@ -386,7 +386,7 @@ watch(modifyCors, () => {
 
     .info {
         width: 49%;
-        padding: 40px;
+        padding: 2rem;
         background-color: #fafafa;
         border-radius: 8px;
         margin-bottom: 2%;
@@ -432,6 +432,7 @@ watch(modifyCors, () => {
         }
 
         .title {
+            position: relative;
             width: 100%;
             display: flex;
             align-items: center;
@@ -443,7 +444,6 @@ watch(modifyCors, () => {
                 flex-wrap: nowrap;
                 align-items: center;
                 width: calc(100% - 480px);
-                height: 44px;
 
                 h4 {
                     white-space: nowrap;
@@ -453,33 +453,89 @@ watch(modifyCors, () => {
             }
 
             .right {
-                display: flex;
-                flex-wrap: nowrap;
-                align-items: center;
-                justify-content: space-between;
+                text-align: end;
 
                 > div {
-                    width: 240px;
                     text-align: right;
-                }
-            }
-
-            .date {
-                span {
-                    color: rgba(0, 0, 0, 0.40);
-                    font-size: 0.8rem;
-                    font-weight: 500;
-                    margin-right: 10px;
-                }
-
-                h6 {
                     display: inline-block;
-                    color: rgba(0, 0, 0, 0.60);
+                    height: 30px;
+                }
+                .date {        
+                    span {
+                        color: rgba(0, 0, 0, 0.40);
+                        font-size: 0.8rem;
+                        font-weight: 500;
+                        margin-right: 10px;
+                    }
+    
+                    h6 {
+                        display: inline-block;
+                        color: rgba(0, 0, 0, 0.60);
+                    }
+                }
+    
+                .toggleWrap {
+                    display: inline-block;
+                    margin-left: 30px;
+                    opacity: 1;
+    
+                    &.locked {
+                        opacity: 0.4;
+                    }
+    
+                    &.active {
+                        .toggleBg {
+                            background-color: #293FE6;
+    
+                            .toggleBtn {
+                                transform: translate(31px, -50%);
+                                transition: all 1s;
+                            }
+                        }
+                    }
+    
+                    span {
+                        color: rgba(0, 0, 0, 0.40);
+                        font-size: 0.8rem;
+                        font-weight: 500;
+                    }
+    
+                    .toggleBg {
+                        position: relative;
+                        display: inline-block;
+                        vertical-align: middle;
+                        width: 63px;
+                        height: 32px;
+                        margin-left: 1rem;
+                        border-radius: 16px;
+                        background-color: rgba(0, 0, 0, 0.25);
+                        transition: all 1s;
+    
+                        &.nonClickable { 
+                            .toggleBtn {
+                                cursor: default;
+                            }
+                        }
+                        .toggleBtn {
+                            position: absolute;
+                            width: 26px;
+                            height: 26px;
+                            right: unset;
+                            left: 3px;
+                            top: 50%;
+                            transform: translateY(-50%);
+                            border-radius: 50%;
+                            background-color: #eee;
+                            transition: all 1s;
+                            cursor: pointer;
+                        }
+                    }
                 }
             }
 
             .material-symbols-outlined {
                 margin-right: 17px;
+                vertical-align: middle;
             }
 
             .modify {
@@ -508,16 +564,10 @@ watch(modifyCors, () => {
             h4 {
                 display: inline-block;
             }
-
-            svg {
-                width: 32px;
-                height: 32px;
-                color: rgba(0, 0, 0, 0.4);
-            }
         }
 
         .codeWrap {
-            margin-top: 2rem;
+            margin-top: 1.5rem;
             padding: 1rem 2rem;
             text-align: left;
             box-shadow: unset;
@@ -534,11 +584,15 @@ watch(modifyCors, () => {
             align-items: center;
             text-decoration: none;
             color: #293FE6;
-            font-size: 16px;
+            font-size: 0.8rem;
             font-weight: 500;
-            margin-top: 20px;
+            margin-top: 1rem;
 
             &.help {
+                position: absolute;
+                left: 9rem;
+                top: 50%;
+                transform: translateY(-50%);
                 color: rgba(0, 0, 0, 0.40);
             }
 
@@ -694,20 +748,30 @@ watch(modifyCors, () => {
     }
 }
 
-@media (max-width: 1320px) {
+@media (max-width: 1023px) {
+    .infoWrap {
+        .info {
+            width: 100%;
+            margin-right: 0;
+        }
+    }
+}
+
+@media (max-width:767px) {
     .infoWrap {
         .info {
             .title {
+                display: block;
+
                 .name {
-                    width: 45%;
+                    width: 100%;
+                    margin-bottom: 0.8rem;
                 }
 
-                .date {
-                    width: 30%;
-                }
-
-                .toggleWrap {
-                    width: 25%;
+                .right {
+                    > div {
+                        text-align: left;
+                    }
                 }
             }
         }

@@ -308,65 +308,6 @@ form {
     pointer-events: none !important;
 }
 
-/* toggle button */
-.toggleWrap {
-    display: flex;
-    flex-wrap: nowrap;
-    align-items: center;
-    justify-content: end;
-    opacity: 1;
-
-    &.locked {
-        opacity: 0.4;
-    }
-
-    &.active {
-        .toggleBg {
-            background-color: #293FE6;
-
-            .toggleBtn {
-                transform: translate(31px, -50%);
-                transition: all 1s;
-            }
-        }
-    }
-
-    span {
-        margin-right: 20px;
-        color: rgba(0, 0, 0, 0.40);
-        font-size: 16px;
-        font-weight: 500;
-    }
-
-    .toggleBg {
-        position: relative;
-        width: 63px;
-        height: 32px;
-        border-radius: 16px;
-        background-color: rgba(0, 0, 0, 0.25);
-        transition: all 1s;
-
-        &.nonClickable { 
-            .toggleBtn {
-                cursor: default;
-            }
-        }
-        .toggleBtn {
-            position: absolute;
-            width: 26px;
-            height: 26px;
-            right: unset;
-            left: 3px;
-            top: 50%;
-            transform: translateY(-50%);
-            border-radius: 50%;
-            background-color: #eee;
-            transition: all 1s;
-            cursor: pointer;
-        }
-    }
-}
-
 .hoverWrap {
     position: relative;
 
@@ -430,6 +371,7 @@ form {
     .line {
         display: inline-block;
         line-height: 1.4;
+        font-size: 0.9rem;
     }
     .copy {
         position: absolute;
