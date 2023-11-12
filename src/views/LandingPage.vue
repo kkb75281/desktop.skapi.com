@@ -10,23 +10,17 @@
                     | =&gt;
                     br
                     | Full Backend API
-                .code(style="color:#f0f0f0;font-family:Consolas, 'Liberation Mono', Menlo, Courier, monospace !important; position:relative !important;overflow:auto")
-                    table(style="margin:0;padding:0;border:none;background-color:#434343;border-radius:4px;" cellspacing="0" cellpadding="0")
-                        tr
-                            td(style="padding:6px;border-right:2px solid #4f4f4f")
-                                div(style="margin:0;padding:0;word-break:normal;text-align:right;color:#aaa;font-family:Consolas, 'Liberation Mono', Menlo, Courier, monospace !important;line-height:130%")
-                                    div(style="line-height:130%") 1
-                            td(style="padding:6px 0;text-align:left")
-                                div(style="margin:0;padding:0;color:#f0f0f0;font-family:Consolas, 'Liberation Mono', Menlo, Courier, monospace !important;line-height:130%")
-                                    div(style="padding:0 6px; white-space:pre; line-height:130%")
-                                        span(style="color:#ff3399") const 
-                                        span skapi = 
-                                        span(style="color:#ff3399") new 
-                                        span Skapi( 
-                                        span(style="color:#ffd500") 'SERVICE_ID' 
-                                        span ,
-                                        span(style="color:#ffd500") 'OWNERS_ID' 
-                                        span );
+                .codeWrap
+                    .codeInner
+                        .line
+                            span(style="color:#ff3399") const 
+                            span skapi = 
+                            span(style="color:#ff3399") new 
+                            span Skapi( 
+                            span(style="color:#ffd500") 'SERVICE_ID' 
+                            span ,
+                            span(style="color:#ffd500") 'OWNERS_ID' 
+                            span );
                 .desc
                     | Skapi is a backend API service specially designed for 
                     br
@@ -95,65 +89,45 @@
                 p(:class="{'show' : htmlShow}") No additional settings, Just import Skapi library in your HTML file and you’re ready to go.
                 .htmlCode(:class="{'show' : htmlShow}") 
                     .tit index.html 
-                    .code 
-                        table(style="margin:0;border:none;background-color:#434343;" cellspacing="0" cellpadding="0")
-                            tr
-                                td(style="padding:6px;border-right:2px solid #4f4f4f")
-                                    div(style="margin:0;padding:0;word-break:normal;text-align:right;color:#aaa;font-family:Consolas, 'Liberation Mono', Menlo, Courier, monospace !important;line-height:130%")
-                                        div(style="line-height:130%") 1
-                                        div(style="line-height:130%") 2
-                                        div(style="line-height:130%") 3
-                                        div(style="line-height:130%") 4
-                                        div(style="line-height:130%") 5
-                                        div(style="line-height:130%") 6
-                                        div(style="line-height:130%") 7
-                                td(style="padding:6px 0;text-align:left")
-                                    div(style="margin:0;padding:0;color:#f0f0f0;font-family:Consolas, 'Liberation Mono', Menlo, Courier, monospace !important;line-height:130%")
-                                        div(style="padding:0 6px; white-space:pre; line-height:130%") 
-                                            span(style="color:#f0f0f0") &lt;
-                                            span(style="color:#ff3399") !DOCTYPE 
-                                            span(style="color:#a8ff58") html
-                                            span(style="color:#f0f0f0") &gt;
-                                        div(style="padding:0 6px; white-space:pre; line-height:130%") 
-                                            span(style="color:#f0f0f0") &lt;
-                                            span(style="color:#ff3399") head
-                                            span(style="color:#f0f0f0") &gt;
-                                        div(style="padding:0 6px; white-space:pre; line-height:130%") 
-                                            span(style="color:#f0f0f0") &lt;
-                                            span(style="color:#ff3399") script 
-                                            span(style="color:#a8ff58") src
-                                            span =
-                                            span(style="color:#ffd500") "https://cdn.jsdelivr.net/npm/skapi-js@latest/dist/skapi.js"
-                                            span(style="color:#ff3399") 
-                                            span(style="color:#f0f0f0") &gt;
-                                            span(style="color:#f0f0f0") &lt;
-                                            span(style="color:#f0f0f0") /
-                                            span(style="color:#ff3399") script
-                                            span(style="color:#f0f0f0") &gt;
-                                        div(style="padding:0 6px; white-space:pre; line-height:130%") 
-                                            span(style="color:#f0f0f0") &lt;
-                                            span(style="color:#f0f0f0") /
-                                            span(style="color:#ff3399") head
-                                            span(style="color:#f0f0f0") &gt;
-                                        div(style="padding:0 6px; white-space:pre; line-height:130%") 
-                                            span(style="color:#f0f0f0") &lt;
-                                            span(style="color:#ff3399") script
-                                            span(style="color:#f0f0f0") &gt;
-                                        div(style="padding:0 6px; white-space:pre; line-height:130%")   
-                                            span(style="color:#ff3399") let 
-                                            span skapi 
-                                            span = 
-                                            span(style="color:#ff3399") new 
-                                            span Skapi( 
-                                            span(style="color:#ffd500") 'SERVICE_ID' 
-                                            span ,  
-                                            span(style="color:#ffd500") 'OWNERS_ID' 
-                                            span );
-                                        div(style="padding:0 6px; white-space:pre; line-height:130%") 
-                                            span(style="color:#f0f0f0") &lt;
-                                            span(style="color:#f0f0f0") /
-                                            span(style="color:#ff3399") script
-                                            span(style="color:#f0f0f0") &gt;
+                    .codeWrap
+                        .codeInner
+                            .line
+                                div
+                                    span(style="color:#f0f0f0") &lt;
+                                    span(style="color:#ff3399") !DOCTYPE 
+                                    span(style="color:#a8ff58") html
+                                    span(style="color:#f0f0f0") &gt;
+                                div
+                                    span(style="color:#f0f0f0") &lt;
+                                    span(style="color:#ff3399") script 
+                                    span(style="color:#a8ff58") src
+                                    span =
+                                    span(style="color:#ffd500") "https://cdn.jsdelivr.net/npm/skapi-js@latest/dist/skapi.js"
+                                    span(style="color:#ff3399") 
+                                    span(style="color:#f0f0f0") &gt;
+                                    span(style="color:#f0f0f0") &lt;
+                                    span(style="color:#f0f0f0") /
+                                    span(style="color:#ff3399") script
+                                    span(style="color:#f0f0f0") &gt;
+                                div
+                                    span(style="color:#f0f0f0") &lt;
+                                    span(style="color:#ff3399") script
+                                    span(style="color:#f0f0f0") &gt;
+                                div
+                                    span(style="color:#ff3399") &nbsp;&nbsp;&nbsp;&nbsp;let 
+                                    span skapi 
+                                    span = 
+                                    span(style="color:#ff3399") new 
+                                    span Skapi( 
+                                    span(style="color:#ffd500") 'SERVICE_ID' 
+                                    span ,  
+                                    span(style="color:#ffd500") 'OWNERS_ID' 
+                                    span );
+                                div
+                                    span(style="color:#f0f0f0") &lt;
+                                    span(style="color:#f0f0f0") /
+                                    span(style="color:#ff3399") script
+                                    span(style="color:#f0f0f0") &gt;
         .docWrap(ref="docWrap" :class="{'show' : docShow}") 
             .docInner
                 .left 
@@ -305,21 +279,7 @@ onBeforeUnmount(() => {
             }
         }
 
-        .code {
-            width: min(782px, 34vw);
-            height: min(58px, 2.5vw);
-            border-radius: 8px;
-            border: 1px solid rgba(255, 255, 255, 0.10);
-            background: #434343;
-            color: #FFF;
-            text-align: center;
-            font-family: monospace;
-            font-size: min(24px, 1.1vw);
-            font-weight: 400;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            box-shadow: 3px 9px 6px 0px rgba(0, 0, 0, 0.15);
+        .codeWrap {
             margin-bottom: min(86px, 3.7vw);
         }
 
@@ -502,15 +462,10 @@ onBeforeUnmount(() => {
             margin-bottom: 10px;
         }
 
-        .code {
-            width: 100%;
-            border-radius: 8px;
-            border: 1px solid rgba(255, 255, 255, 0.10);
-            background: #434343;
-            padding: 20px 10px;
-            font-size: min(20px, 1vw);
-            font-family: Consolas, 'Liberation Mono', Menlo, Courier, monospace !important;
-            overflow: auto;
+        .codeWrap {
+            padding: 20px 25px;
+            font-size: 1.1rem;
+            text-align: left;
         }
     }
 
@@ -617,10 +572,7 @@ onBeforeUnmount(() => {
                 margin-bottom: 32px;
             }
 
-            .code {
-                width: 500px;
-                height: 38px;
-                font-size: 16px;
+            .codeWrap {
                 margin-bottom: 52px;
             }
 
@@ -705,7 +657,7 @@ onBeforeUnmount(() => {
                 font-size: 16px;
             }
 
-            .code {
+            .codeWrap {
                 font-size: 16px;
             }
         }
@@ -750,7 +702,7 @@ onBeforeUnmount(() => {
 
         .introWrap {
             position: relative;
-            width: 100%;
+            min-width: 100%;
 
             .introInner {
                 width: 100%;
@@ -772,10 +724,10 @@ onBeforeUnmount(() => {
                 line-height: 74px;
             }
 
-            .code {
-                width: 100%;
-                padding: 0 10px;
-            }
+            // .codeWrap {
+            //     width: 100%;
+            //     padding: 0 10px;
+            // }
 
             .desc {
                 display: none;
@@ -859,22 +811,6 @@ onBeforeUnmount(() => {
             .tit {
                 font-size: 24px;
             }
-
-            .code {
-                table {
-                    td {
-                        font-size: 16px !important;
-
-                        div {
-                            font-size: 16px !important;
-
-                            span {
-                                font-size: 16px !important;
-                            }
-                        }
-                    }
-                }
-            }
         }
 
         .docWrap {
@@ -904,16 +840,16 @@ onBeforeUnmount(() => {
 @media (max-width: 500px) {
     #intro {
         .introWrap {
-            .code {
-                position: relative;
+            // .code {
+            //     position: relative;
 
-                table {
-                    position: absolute;
-                    left: 0;
-                    top: 50%;
-                    transform: translateY(-50%);
-                }
-            }
+            //     table {
+            //         position: absolute;
+            //         left: 0;
+            //         top: 50%;
+            //         transform: translateY(-50%);
+            //     }
+            // }
         }
     }
 }
@@ -924,17 +860,6 @@ onBeforeUnmount(() => {
             .point {
                 font-size: 32px;
                 line-height: 65px;
-            }
-
-            .code {
-                position: relative;
-
-                table {
-                    position: absolute;
-                    left: 0;
-                    top: 50%;
-                    transform: translateY(-50%);
-                }
             }
         }
     }
