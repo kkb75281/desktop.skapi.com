@@ -28,7 +28,7 @@
     
     section.intact.leftOnTablet.fullWidthOnTablet(style='text-align:center;padding-top:0;')
         h2(style='opacity:1;text-shadow: -2px -2px 0 WHITE;opacity:1;line-height:2') Single&nbsp;JavaScript&nbsp;Library,
-        h2(style='opacity:1;text-shadow: -2px -2px 0 WHITE;') No&nbsp;Deployment, No&nbsp;Complex&nbsp;Setup, No&nbsp;Configurations
+        h3(style='opacity:1;text-shadow: -2px -2px 0 WHITE;') No&nbsp;Deployment, No&nbsp;Complex&nbsp;Setup, No&nbsp;Configurations
         //- p Just initialize the Skapi JS library, and&nbsp;everything&nbsp;is&nbsp;ready&nbsp;out&nbsp;of&nbsp;the&nbsp;box.
 
         br
