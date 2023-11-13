@@ -441,30 +441,30 @@ main#database
         // record list
         .tableWrap
             table
-                colgroup
-                    col(width="8%")
-                    col(width="12%")
-                    col(width="18%")
-                    col(width="20%")
-                    col(width="8%")
-                    col(width="14%")
-                    col(width="20%")
+                //- colgroup
+                //-     col(width="8%")
+                //-     col(width="12%")
+                //-     col(width="18%")
+                //-     col(width="20%")
+                //-     col(width="8%")
+                //-     col(width="14%")
+                //-     col(width="20%")
                 thead
                     tr
-                        th
+                        th(style="width:30px;")
                             .customCheckBox(:class='{"nonClickable": fetching || records && !records.length}')
                                 input#allRecords(type="checkbox" value='allRecords' @click="selectAll")
                                 label(for="allRecords")
                                     .material-symbols-outlined.mid.check check
-                        th Table Name
-                        th Record ID
-                        th User ID
-                        th.center Date
-                        th.center Access Group
-                        th.center Features
+                        th(style="width:20px;") Table Name
+                        th(style="width:20px;") Record ID
+                        th(style="width:20px;") User ID
+                        th.center(style="width:20px;") Date
+                        th.center(style="width:20px;") Access Group
+                        th.center(style="width:20px;") Features
                 tbody(v-if="records && records.length")
                     tr(v-for="record in records" @click="()=>{ recordInfoEdit=false; if(selectedRecord?.record_id === record?.record_id) selectedRecord = null; else if(selectedRecord?.record_id !== record.record_id) selectedRecord = JSON.parse(JSON.stringify(record)) }" :class="{ active: selectedRecord?.record_id === record.record_id }")
-                        td(@click.stop style="text-align:center;")
+                        td(@click.stop style="text-align:center; min-width:30px;")
                             .customCheckBox
                                 input(type="checkbox" name="record" :id="record.record_id" @change='trackSelectedRecords' :value="record.record_id")
                                 label(:for="record.record_id")
@@ -1124,6 +1124,7 @@ watch(() => selectedRecord.value, () => {
         border-radius: 8px;
         margin-bottom: 2%;
         box-shadow: 8px 12px 36px rgba(0, 0, 0, 0.10);
+        overflow: hidden;
     }
 
     .searchForm {
@@ -1178,16 +1179,16 @@ watch(() => selectedRecord.value, () => {
     .advancedForm {
         margin-top: 30px;
 
-        .left {
+        > div {
             width: 48%;
-            margin-right: 4%;
             display: inline-block;
         }
 
-        .right {
-            width: 48%;
-            display: inline-block;
+        .left {
+            margin-right: 4%;
+        }
 
+        .right {
             .title {
                 color: rgba(0, 0, 0, 0.80);
                 font-size: 14px;
@@ -1239,6 +1240,7 @@ watch(() => selectedRecord.value, () => {
             .textFormWrap {
                 width: calc(100% - 124px);
                 display: inline-block;
+                overflow: hidden;
 
                 input {
                     position: relative;
@@ -1327,6 +1329,7 @@ watch(() => selectedRecord.value, () => {
         }
 
         .buttonWrap {
+            width: 100%;
             text-align: right;
 
             * {
@@ -2120,6 +2123,7 @@ watch(() => selectedRecord.value, () => {
         position: relative;
         min-height: 660px;
         margin: 40px 0;
+        overflow: auto;
 
         .noRecords,
         .noRecordsFound {
@@ -2159,6 +2163,7 @@ watch(() => selectedRecord.value, () => {
             // table-layout: auto;
             // width: 100%;
             table-layout: fixed;
+            // overflow: auto;
 
             .featureWrap {
                 position: relative;
@@ -2424,6 +2429,41 @@ watch(() => selectedRecord.value, () => {
 
         &:last-child {
             margin-right: 0;
+        }
+    }
+}
+
+@media (max-width:1023px) {
+    #database {
+        .advancedForm {
+            > div {
+                width: 100%;
+            }
+            .left {
+                margin-right: 0;
+            }
+            .right {
+                .title {
+                    display: none;
+                }
+            }
+        }
+    }
+}
+
+@media (max-width:767px) {
+    #database {
+        .searchForm {
+            flex-wrap: wrap;
+
+            .selectBar {
+                width: 100%;
+                margin-right: 0;
+                margin-bottom: 1rem;
+            }
+            .searchBar {
+                width: 100%;
+            }
         }
     }
 }
