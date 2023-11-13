@@ -1215,7 +1215,7 @@ watch(() => selectedRecord.value, () => {
             .label {
                 width: 90px;
                 color: rgba(0, 0, 0, 0.80);
-                font-size: max(0.7rem, 13px);
+                font-size: 0.8rem;
                 font-weight: 700;
                 margin-right: 1.7rem;
 
@@ -1797,7 +1797,7 @@ watch(() => selectedRecord.value, () => {
                     position: relative;
                     padding: 0 20px;
                     border-radius: 4px;
-                    font-size: 0.7rem;
+                    font-size: 14px;
                     color: rgba(0, 0, 0, 0.60);
                     font-weight: 500;
                     display: flex;
@@ -2498,26 +2498,6 @@ watch(() => selectedRecord.value, () => {
             }
             .searchBar {
                 width: 100%;
-            }
-        }
-        .viewRecord {
-            .recordForm,
-            .createForm {
-                .content {
-                    .info {
-                        .label {
-                            width: 100%;
-                        }
-                        .value {
-                            width: unset !important;
-                        }
-                    }
-                    .smallInfo {
-                        .smallValue {
-                            width: unset !important;
-                        }
-                    }
-                }
             }
         }
     }

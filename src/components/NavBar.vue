@@ -22,7 +22,8 @@ header#navBar(style='--position: relative;')
                         router-link(:to="`/dashboard/${currentService.service}/records`") Mail
                     li(v-if="route.name == 'subdomain'" :class="{'active': route.name == 'subdomain'}")
                         router-link(:to="`/dashboard/${currentService.service}/records`") Hosting
-                h5.service {{ currentService.name }}
+                router-link.service(:to="`/dashboard/${currentService.service}`") 
+                    h5 {{ currentService.name }}
             .topMenu(:class="{'white' : route.name == 'home'}")
                 template(v-if="account")
                     ul
@@ -173,7 +174,9 @@ let resize = () => {
     if (window.innerWidth < 1024) {
         topRoute.value.classList.add('service');
     } else {
-        topRoute.value.classList.remove('service');
+        if (topRoute.value.classList.contains('service')) {
+            topRoute.value.classList.remove('service')
+        }
     }
 }
 
@@ -273,6 +276,7 @@ onBeforeUnmount(() => {
             }
             .service {
                 display: none;
+                text-decoration: none;
                 color: #293FE6;
             }
         }

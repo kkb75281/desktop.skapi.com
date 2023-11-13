@@ -1,72 +1,69 @@
 <template lang="pug">
 main#subdomain
     section#section
-        // main title
-        h4 {{ subdomainState || (computedSubdomain ? computedSubdomain + '.skapi.com' : 'Hosting') }}
-
-        br
-        br
-
-        // head panel when there is subdomain
-        template(v-if="currentService.subdomain")
-            .buttonWrap 
+        .titleWrap
+            // main title
+            h4 {{ subdomainState || (computedSubdomain ? computedSubdomain + '.skapi.com' : 'Hosting') }}
+            .buttonWrap(v-if="currentService.subdomain") 
                 .refresh.clickable(:class="{'nonClickable' : !account.email_verified || subdomainState || refreshCDNRun}" @click='refreshCdn()')
                     .material-symbols-outlined.mid(:class="{'rotate_animation': refreshCDNRun}") cached
                     span Refresh CDN
                 .delete.clickable(:class="{'nonClickable' : !account.email_verified || subdomainState}" @click='showDeleteSubdomain = true;')
                     .material-symbols-outlined.mid delete
                     span Delete
-            .settingWrap 
-                .setting
-                    h6.tit Subdomain
-                    template(v-if="modifySudomain && !subdomainState")
-                        form.modifyForm(style="margin-top: 8px" @submit.prevent='registerSubdomain')
-                            .input
-                                input#modifySudomain(:disabled="subdomainState || subdomainPromiseRunning ? true : null" type="text" placeholder="Name of Subdomain" required minlength='5' pattern='[a-z0-9]+' title='Subdomain should be lowercase alphanumeric.' :value='inputSubdomain' @input="(e) => {e.target.setCustomValidity(''); inputSubdomain = e.target.value}")
-                            .btnWrap
-                                template(v-if="subdomainPromiseRunning")
-                                    img.loading(src="@/assets/img/loading.png")
-                                template(v-else)
-                                    button.cancel(type="button" @click="modifySudomain = false;") Cancel
-                                    button.save(type="submit" :disabled="subdomainState ? true : null") Save
-                    template(v-else)
-                        .cont(@click="modifySudomain = true")
-                            p {{ computedSubdomain }}
-                            .material-symbols-outlined.mid.btn.clickable(:class="{'nonClickable' : !account.email_verified || subdomainState}") edit
-                .setting
-                    h6.tit HTML file for 404 page
-                    .cont.line 
-                        .customFile(:class="{'nonClickable' : !account.email_verified || subdomainState}")
-                            p {{ subdomainInfo?.[computedSubdomain]?.['404'] || "Upload a file"}}
-                            template(v-if="set404PromiseRunning")
-                                img.loading(style='position: absolute;right: 1em;top: 8px;' src="@/assets/img/loading.png")
+        br
+
+        // head panel when there is subdomain
+        .settingWrap(v-if="currentService.subdomain") 
+            .setting
+                h6.tit Subdomain
+                template(v-if="modifySudomain && !subdomainState")
+                    form.modifyForm(style="margin-top: 8px" @submit.prevent='registerSubdomain')
+                        .input
+                            input#modifySudomain(:disabled="subdomainState || subdomainPromiseRunning ? true : null" type="text" placeholder="Name of Subdomain" required minlength='5' pattern='[a-z0-9]+' title='Subdomain should be lowercase alphanumeric.' :value='inputSubdomain' @input="(e) => {e.target.setCustomValidity(''); inputSubdomain = e.target.value}")
+                        .btnWrap
+                            template(v-if="subdomainPromiseRunning")
+                                img.loading(src="@/assets/img/loading.png")
                             template(v-else)
-                                label.uploadBtn.btn(v-if="subdomainInfo?.[computedSubdomain]?.['404']" @click='removeSet404')
-                                    .material-symbols-outlined.mid cancel
-                                    span Remove
-                                label.uploadBtn.btn(for="file404" v-else)
-                                    .material-symbols-outlined.mid upload
-                                    span Upload
-                                input#file404(hidden type="file" @change="set404" accept='text/html')
+                                button.cancel(type="button" @click="modifySudomain = false;") Cancel
+                                button.save(type="submit" :disabled="subdomainState ? true : null") Save
+                template(v-else)
+                    .cont(@click="modifySudomain = true")
+                        p {{ computedSubdomain }}
+                        .material-symbols-outlined.mid.btn.clickable(:class="{'nonClickable' : !account.email_verified || subdomainState}") edit
+            .setting
+                h6.tit HTML file for 404 page
+                .cont.line 
+                    .customFile(:class="{'nonClickable' : !account.email_verified || subdomainState}")
+                        p {{ subdomainInfo?.[computedSubdomain]?.['404'] || "Upload a file"}}
+                        template(v-if="set404PromiseRunning")
+                            img.loading(style='position: absolute;right: 1em;top: 8px;' src="@/assets/img/loading.png")
+                        template(v-else)
+                            label.uploadBtn.btn(v-if="subdomainInfo?.[computedSubdomain]?.['404']" @click='removeSet404')
+                                .material-symbols-outlined.mid cancel
+                                span Remove
+                            label.uploadBtn.btn(for="file404" v-else)
+                                .material-symbols-outlined.mid upload
+                                span Upload
+                            input#file404(hidden type="file" @change="set404" accept='text/html')
 
         // head panel when there is NO subdomain
-        template(v-else)
-            .create 
-                h3.tit Register Subdomain
-                form.createForm(@submit.prevent='registerSubdomain')
-                    .input
-                        input#modifySudomain(@input='e=>e.target.setCustomValidity("")' :disabled="subdomainPromiseRunning || null" type="text" placeholder="Name of Subdomain" required minlength='5' pattern='[a-z0-9]+' title='Subdomain should be lowercase alphanumeric.')
-                    .btn(:class="{'nonClickable': !account.email_verified}" style='cursor:pointer')
-                        template(v-if="subdomainPromiseRunning")
-                            img.loading(src="@/assets/img/loading.png")
-                        template(v-else)
-                            button(type="submit") Create
+        .create(v-else) 
+            h3.tit Register Subdomain
+            form.createForm(@submit.prevent='registerSubdomain')
+                .input
+                    input#modifySudomain(@input='e=>e.target.setCustomValidity("")' :disabled="subdomainPromiseRunning || null" type="text" placeholder="Name of Subdomain" required minlength='5' pattern='[a-z0-9]+' title='Subdomain should be lowercase alphanumeric.')
+                .btn(:class="{'nonClickable': !account.email_verified}" style='cursor:pointer')
+                    template(v-if="subdomainPromiseRunning")
+                        img.loading(src="@/assets/img/loading.png")
+                    template(v-else)
+                        button(type="submit") Create
 
     section#section(v-if="currentService.subdomain")
         // path navigation
         .filesHeader
             .filesPathWrap
-                .material-symbols-outlined.big.clickable(@click="launch(computedSubdomain)") hard_drive
+                .material-symbols-outlined.mid.clickable(@click="launch(computedSubdomain)") hard_drive
                 span /
                 template(v-for='(p, index) in pathArray')
                     span.clickable(@click='gotoFolder(index)') {{ p }}
@@ -95,9 +92,6 @@ main#subdomain
             @dragover.stop.prevent="e=>{e.dataTransfer.dropEffect = 'copy'}"
             @drop.stop.prevent="onDrop")
             template(v-if="!fetching && (files.length == 0 || files.length === 1 && files[0].name === '!')")
-                //- .noFile
-                //-     h2 No Files 
-                //-     p You have not uploaded any files
                 .dragNdropUpload
                     input(hidden type="file")
                     div
@@ -595,38 +589,40 @@ function formatBytes(bytes, decimals = 2) {
     #section {
         position: relative;
         width: 100%;
-        padding: 40px;
+        padding: 2rem;
         background-color: #fafafa;
         border-radius: 8px;
         margin-bottom: 2%;
         box-shadow: 8px 12px 36px rgba(0, 0, 0, 0.10);
 
-        .buttonWrap {
-            position: absolute;
-            right: 40px;
-            top: 40px;
+        .titleWrap {
             display: flex;
-            flex-wrap: nowrap;
             align-items: center;
+            justify-content: space-between;
+            .buttonWrap {
+                text-align: end;
 
-            * {
-                display: flex;
-                flex-wrap: nowrap;
-                align-items: center;
-
-                span {
-                    font-size: 16px;
-                    font-weight: 700;
-                    margin-left: 12px;
+                > div {
+                    display: inline-block;
+                    vertical-align: middle;
+    
+                    &.refresh {
+                        color: #293FE6;
+                    }
+        
+                    &.delete {
+                        margin-left: 2rem;
+                    }
+                    div {
+                        vertical-align: middle;
+                    }
+                    span {
+                        font-size: 0.8rem;
+                        font-weight: 700;
+                        margin-left: 12px;
+                    }
                 }
-            }
-
-            .refresh {
-                color: #293FE6;
-            }
-
-            .delete {
-                margin-left: 40px;
+    
             }
         }
 
@@ -644,7 +640,7 @@ function formatBytes(bytes, decimals = 2) {
 
             span {
                 margin-left: 3px;
-                font-size: 16px;
+                font-size: 0.8rem;
                 font-weight: 700;
                 color: #293FE6;
             }
@@ -707,8 +703,7 @@ function formatBytes(bytes, decimals = 2) {
                         #fileName {
                             border: 0;
                             background-color: unset;
-                            font-size: 16px;
-                            // color: rgba(0, 0, 0, 0.4);
+                            font-size: 0.8rem;
                             color: rgba(0, 0, 0, 0.6);
                         }
                     }
@@ -749,7 +744,7 @@ function formatBytes(bytes, decimals = 2) {
                             right: 13px;
                             top: 50%;
                             transform: translateY(-50%);
-                            font-size: 16px;
+                            font-size: 0.8rem;
                             font-weight: 400;
                         }
 
@@ -759,7 +754,7 @@ function formatBytes(bytes, decimals = 2) {
                             padding: 13px;
                             height: 44px;
                             background-color: unset;
-                            font-size: 16px;
+                            font-size: 0.8rem;
                             font-weight: 400;
                         }
                     }
@@ -775,7 +770,7 @@ function formatBytes(bytes, decimals = 2) {
                             border: 2px solid #293FE6;
                             border-radius: 8px;
                             padding: 6px 12px;
-                            font-size: 16px;
+                            font-size: 0.8rem;
                             font-weight: 700;
                             cursor: pointer;
 
@@ -800,7 +795,7 @@ function formatBytes(bytes, decimals = 2) {
             flex-wrap: nowrap;
             align-items: center;
             justify-content: space-between;
-            margin-bottom: 28px;
+            margin-bottom: 1.4rem;
 
             .filesPathWrap {
                 display: flex;
@@ -809,9 +804,9 @@ function formatBytes(bytes, decimals = 2) {
                 color: rgba(0, 0, 0, 0.60);
 
                 span {
-                    font-size: 20px;
+                    font-size: 0.8rem;
                     font-weight: 500;
-                    margin-left: 13px;
+                    margin-left: 0.6rem;
                 }
             }
 
@@ -822,7 +817,7 @@ function formatBytes(bytes, decimals = 2) {
 
                 .mid {
                     &:nth-child(2) {
-                        margin: 0 25px;
+                        margin: 0 1.2rem;
                     }
 
                     &.refresh {
@@ -841,7 +836,7 @@ function formatBytes(bytes, decimals = 2) {
                         border: 1px solid rgba(0, 0, 0, 0.15);
                         background: #FAFAFA;
                         box-shadow: 8px 12px 36px 0px rgba(0, 0, 0, 0.10);
-                        padding: 20px;
+                        padding: 1rem;
                         width: 155px;
                         z-index: 2;
 
@@ -852,7 +847,7 @@ function formatBytes(bytes, decimals = 2) {
                             cursor: pointer;
 
                             &:first-child {
-                                margin-bottom: 20px;
+                                margin-bottom: 1rem;
                             }
 
                             &:hover {
@@ -863,7 +858,7 @@ function formatBytes(bytes, decimals = 2) {
 
                             span {
                                 margin-left: 10px;
-                                font-size: 16px;
+                                font-size: 0.8rem;
                                 font-weight: 500;
                             }
                         }
@@ -874,59 +869,43 @@ function formatBytes(bytes, decimals = 2) {
 
         .filesWrapper {
             position: relative;
-            width: 100%;
+            // width: 100%;
             // min-height: 448px;
             height: 450px;
             overflow: hidden;
-            padding: 32px 28px;
+            padding: 1.5rem 1.4rem;
             border-radius: 8px;
             border: 1px solid rgba(0, 0, 0, 0.10);
-
-            .noFile {
-                position: absolute;
-                left: 50%;
-                top: 50%;
-                transform: translate(-50%, -50%);
-                color: rgba(0, 0, 0, 0.40);
-                text-align: center;
-
-                h2 {
-                    font-size: 28px;
-                    font-weight: 700;
-                    margin-bottom: 28px;
-                }
-
-                p {
-                    font-size: 20px;
-                    font-weight: 500;
-                }
-            }
 
             .fileWrapper {
                 height: 100%;
                 overflow: auto;
 
                 .file {
-                    width: 100%;
                     height: 40px;
-                    padding: 10px;
-                    border-radius: 4px;
                     display: flex;
                     flex-wrap: nowrap;
                     align-items: center;
                     color: rgba(0, 0, 0, 0.6);
+                    border-radius: 4px;
+                    padding: 10px;
 
                     &:nth-child(2n+1) {
                         background: rgba(0, 0, 0, 0.05);
                     }
 
                     .type {
-                        margin: 0 20px;
+                        margin: 0 1rem;
+                        padding-left: 1rem;
                     }
 
                     .pathWrapper {
-                        font-size: 14px;
+                        font-size: 0.7rem;
                         font-weight: 500;
+
+                        .path {
+                            white-space: nowrap;
+                        }
                     }
                 }
             }
@@ -942,7 +921,6 @@ function formatBytes(bytes, decimals = 2) {
                 justify-content: center;
 
                 p {
-                    font-size: 20px;
                     font-weight: 500;
                     margin-top: 10px;
                 }
@@ -963,8 +941,8 @@ function formatBytes(bytes, decimals = 2) {
                 height: 60px;
                 border-radius: 4px 4px 0px 0px;
                 background: rgba(41, 63, 230, 0.05);
-                padding: 20px 28px;
-                font-size: 20px;
+                padding: 1rem 1.4rem;
+                font-size: 1rem;
                 font-weight: 500;
             }
 
@@ -977,7 +955,7 @@ function formatBytes(bytes, decimals = 2) {
             .content {
                 width: 100%;
                 height: 320px;
-                padding: 16px 28px;
+                padding: 0.8rem 1.4rem;
                 overflow: hidden;
 
                 .listWrap {
@@ -1009,7 +987,7 @@ function formatBytes(bytes, decimals = 2) {
         .create {
             position: relative;
             width: 100%;
-            padding: 28px;
+            padding: 1.4rem;
             border-radius: 8px;
             background-color: #fff;
             box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.10);
@@ -1017,9 +995,9 @@ function formatBytes(bytes, decimals = 2) {
 
             .tit {
                 color: #293FE6;
-                font-size: 20px;
+                font-size: 1rem;
                 font-weight: 700;
-                margin-bottom: 12px;
+                margin-bottom: 0.6rem;
             }
 
             .createForm {
@@ -1030,7 +1008,7 @@ function formatBytes(bytes, decimals = 2) {
                 .input {
                     position: relative;
                     width: 600px;
-                    margin-right: 20px;
+                    margin-right: 1rem;
 
                     &::before {
                         position: absolute;
@@ -1049,7 +1027,7 @@ function formatBytes(bytes, decimals = 2) {
                         right: 13px;
                         top: 50%;
                         transform: translateY(-50%);
-                        font-size: 16px;
+                        font-size: 0.8rem;
                         font-weight: 400;
                     }
 
@@ -1059,7 +1037,7 @@ function formatBytes(bytes, decimals = 2) {
                         height: 44px;
                         padding: 13px;
                         background-color: unset;
-                        font-size: 16px;
+                        font-size: 0.8rem;
                         font-weight: 400;
                     }
                 }
@@ -1067,11 +1045,11 @@ function formatBytes(bytes, decimals = 2) {
                 .btn {
                     button {
                         border: 0;
-                        padding: 0 28px;
+                        padding: 0 1.4rem;
                         height: 44px;
                         border-radius: 8px;
                         color: #FFF;
-                        font-size: 16px;
+                        font-size: 0.8rem;
                         font-weight: 700;
                         background: #293FE6;
                         box-shadow: 0px -1px 1px 0px rgba(0, 0, 0, 0.15) inset;
@@ -1082,20 +1060,46 @@ function formatBytes(bytes, decimals = 2) {
     }
 }
 
-@media (max-width: 1240px) {
-    .containerWrap {
-        .container {
-            .settingWrap {
-                .setting {
-                    .modifyForm {
-                        .input {
-                            width: calc(100% - 160px);
-                        }
+@media (max-width:767px) {
+    #subdomain {
+        #section {
+            .titleWrap {
+                flex-wrap: wrap;
 
-                        .btnWrap {
-                            width: 42%;
+                .buttonWrap {
+                    > div {
+                        &.delete {
+                            margin-left: 1rem;
+                        }
+                        span {
+                            display: none;
                         }
                     }
+                }
+            }
+            .settingWrap {
+                flex-wrap: wrap;
+    
+                .setting {
+                    width: 100%;
+                    margin-bottom: 2rem;
+
+                    &:last-child {
+                        margin-bottom: 0;
+                    }
+                }
+            }
+            .filesHeader {
+                flex-wrap: wrap;
+                justify-content: flex-end;
+                flex-direction: column-reverse;
+                .filesPathWrap {
+                    width: 100%;
+                }
+                .filesButtonWrap {
+                    width: 100%;
+                    justify-content: end;
+                    margin-bottom: 1rem;
                 }
             }
         }

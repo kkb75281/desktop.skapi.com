@@ -167,4 +167,10 @@ onMounted(() => {
         }
     }
 }
+
+@media (max-width:767px) {
+    .wrap {
+        width: 100%;
+    }
+}
 </style>
