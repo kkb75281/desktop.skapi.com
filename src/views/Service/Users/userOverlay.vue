@@ -1,16 +1,19 @@
 <template lang="pug">
-#userDialog(@click="closeDialog" @mousedown="pendClose = true" style='--max-width: 376px;')
-    .center
-        .dialog(@mousedown.stop @mouseup='pendClose = false')
+#overlayWindow.userDialog(@click="closeDialog" @mousedown="pendClose = true" style='--max-width: 376px;')
+    .overlayWrap(@mousedown.stop @mouseup='pendClose = false')
+        header
             h5.title(:class="{'red' : props.state == 'Delete'}") {{ props.state }} User
-            .content(style='padding: 28px;max-width: 100%;box-sizing: content-box;')
+        main
+            .content
                 slot
+                br
+                br
                 .buttonWrap
                     template(v-if="promiseRunning")
                         img.loading(src="@/assets/img/loading.png")
                     template(v-else)
                         button.cancel(@click="emits('close');") Cancel
-                        button.disable(@click="changeUserState") {{ props.state }}
+                        button.save(@click="changeUserState") {{ props.state }}
 </template>
     
 <script setup>
@@ -55,145 +58,3 @@ let changeUserState = () => {
     })
 }
 </script>
-    
-<style lang="less" scoped>
-#userDialog {
-    z-index: 99999;
-    position: fixed;
-    overflow: hidden;
-    left: 0;
-    top: 0;
-    width: 100vw;
-    height: 100vh;
-    background-color: rgba(26, 26, 26, 0.25);
-
-    display: table;
-    text-align: center;
-}
-
-.center {
-    display: table-cell;
-    vertical-align: middle;
-}
-
-.dialog {
-    display: inline-block;
-    max-height: 100vh;
-    overflow: auto;
-    text-align: left;
-
-    max-width: var(--max-width); // width of the dialog
-
-    border-radius: 8px;
-    border: 1px solid rgba(0, 0, 0, 0.15);
-    background: #FAFAFA;
-    box-shadow: 0px 2px 4px 0px rgba(0, 0, 0, 0.10);
-
-    .title {
-        position: relative;
-        color: #293FE6;
-        padding: 28px;
-
-        &::after {
-            position: absolute;
-            content: '';
-            left: 0;
-            bottom: 0;
-            width: 100%;
-            height: 1px;
-            background: rgba(0, 0, 0, 0.10);
-            box-shadow: 0px 1px 3px 0px rgba(0, 0, 0, 0.06);
-        }
-        &.red {
-            color: #f04e4e;
-        }
-    }
-
-    .buttonWrap {
-        height: 44px;
-        margin-top: 56px;
-        display: flex;
-        flex-wrap: nowrap;
-        justify-content: space-between;
-
-        button {
-            color: #293FE6;
-            font-size: 0.8rem;
-            font-weight: 700;
-            background-color: unset;
-            cursor: pointer;
-        }
-
-        .cancel {
-            border: 0;
-        }
-
-        .disable {
-            height: 100%;
-            border-radius: 8px;
-            border: 2px solid #293FE6;
-            padding: 10px 28px;
-        }
-    }
-}
-</style>
-
-<style lang="less">
-#userDialog p {
-    font-size: 0.8rem;
-    font-weight: 500;
-    line-height: 1.2rem;
-}
-
-#userDialog form {
-    display: block !important;
-
-    .input {
-
-        .label {
-            display: block;
-            margin-bottom: 8px;
-            color: rgba(0, 0, 0, 0.60);
-            font-size: 0.8rem;
-            font-weight: 700;
-        }
-
-        input {
-            background-color: rgba(0, 0, 0, 0.05);
-            border-radius: 8px;
-            border: 0;
-            padding: 12px 15px;
-            width: 100%;
-            font-size: 0.8rem;
-            font-weight: 400;
-        }
-    }
-
-    .bottom {
-        min-height: 44px;
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-        flex-wrap: wrap;
-
-        button {
-            height: 44px;
-            color: #293FE6;
-            background-color: unset;
-            font-size: 0.8rem;
-            font-weight: 700;
-            cursor: pointer;
-            
-            &.cancel {
-                border: 0;
-            }
-
-            &.ok {
-                padding: 0 28px;
-                border-radius: 8px;
-                border: 2px solid #293FE6;
-            }
-        }
-    }
-}
-</style>

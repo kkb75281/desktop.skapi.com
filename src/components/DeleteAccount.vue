@@ -1,82 +1,93 @@
 <template lang="pug">
-#deleteAccount(@click="closeWindow")
-    .wrap(@click.stop)
-        h5.title Delete Your Account
-        .content
-            template(v-if="step === 1")
-                form(@submit.prevent="acknowledgeCheck")
-                    p Are you sure you want to delete your account permanently? 
-                    br
-                    br
-                    .warning Warning : this cannot be undone.
-                    br
-                    .customCheckBox
-                        input#understand(type="checkbox")
-                        label(for="understand")
-                            span I acknowledge that:
-                            span.material-symbols-outlined.mid.check check
-                    br
-                    ul.pointWrap 
-                        li All the services will be permanently deleted
-                        li All the information will be permanently deleted
-                    br
-                    br
-                    .material.error(v-if="acknowledgeError")
-                        .material-symbols-outlined.mid error
-                        span {{ acknowledgeError }}
-                    .buttonWrap.block
-                        button.no(type="button" @click="emits('close')") No, keep my account
-                        button.yes(type="submit") Yes, delete my account
-            template(v-if="step === 2")
-                form(@submit.prevent="reasonCheck" action="")
-                    p Please tell us why you’re leaving :
-                    .customCheckBox
-                        input#unUseful(type="checkbox" value="not_userful" v-model="reasons")
-                        label(for="unUseful")
-                            span I don’t find it useful for my project
-                            span.material-symbols-outlined.mid.check check
-                    .customCheckBox
-                        input#hard(type="checkbox" value="hard_to_use" v-model="reasons")
-                        label(for="hard")
-                            span It’s not easy to use
-                            span.material-symbols-outlined.mid.check check
-                    .customCheckBox
-                        input#safety(type="checkbox" value="security_issue" v-model="reasons")
-                        label(for="safety")
-                            span I have security concerns
-                            span.material-symbols-outlined.mid.check check
-                    .input(style="margin-top: 28px;")
-                        label.normal Other reasons why you might be leaving :
-                        input(type="text"
-                        @input="e=> { reasonText = e.target.value; }")
-                    .material.error(v-if="reasonError")
-                        .material-symbols-outlined.mid error
-                        span {{ reasonError }}
-                    .buttonWrap 
-                        button.cancel(type="button" @click="emits('close')") Cancel
-                        button.save(type="submit") Submit
-            template(v-if="step >= 3")
-                form(@submit.prevent="deleteAccount" action="")
-                    p Please enter your password.
-                    .input
-                        label Enter Password
-                        input(type="password"
-                        @input="e=> { password = e.target.value; }" 
-                        placeholder="Password" 
-                        required)
-                    .material.error(v-if="disableError")
-                        .material-symbols-outlined.mid error
-                        span {{ disableError }}
-                    .buttonWrap(:class="{'running' : promiseRunning}")
-                        template(v-if="promiseRunning")
-                            img.loading(src="@/assets/img/loading.png")
-                        template(v-else)
-                            button.cancel(type="button" @click="closeWindow") Cancel
-                            button.save(type="submit") Delete
-            br
-            br
-            .navigator(v-if="step <= 3")
-                .ball(v-for="num in 3" @click="() => { num < step ? step = num : null; password = ''; }" :class="{'active': step === num}")
+#overlayWindow.deleteAccount(@click="closeWindow" style='--max-width: 480px;')
+    .overlayWrap(@click.stop)
+        header
+            h5.title.red Delete Your Account
+        main
+            .content
+                template(v-if="step === 1")
+                    form(@submit.prevent="acknowledgeCheck")
+                        p Are you sure you want to delete your account permanently? 
+                        br
+                        br
+                        p.warning Warning : this cannot be undone.
+                        br
+                        .customCheckBox
+                            input#understand(type="checkbox")
+                            label(for="understand")
+                                span I acknowledge that:
+                                span.material-symbols-outlined.mid.check check
+                        br
+                        ul.pointWrap 
+                            li All the services will be permanently deleted
+                            li All the information will be permanently deleted
+                        .material.error(v-if="acknowledgeError")
+                            .material-symbols-outlined.mid error
+                            span {{ acknowledgeError }}
+                        br
+                        br
+                        .buttonWrap.block
+                            button.no(type="button" @click="emits('close')") No, keep my account
+                            button.yes(type="submit") Yes, delete my account
+                template(v-if="step === 2")
+                    form.reasonForm(@submit.prevent="reasonCheck" action="")
+                        p Please tell us why you’re leaving :
+                        br
+                        br
+                        .customCheckBox
+                            input#unUseful(type="checkbox" value="not_userful" v-model="reasons")
+                            label(for="unUseful")
+                                span I don’t find it useful for my project
+                                span.material-symbols-outlined.mid.check check
+                        .customCheckBox
+                            input#hard(type="checkbox" value="hard_to_use" v-model="reasons")
+                            label(for="hard")
+                                span It’s not easy to use
+                                span.material-symbols-outlined.mid.check check
+                        .customCheckBox
+                            input#safety(type="checkbox" value="security_issue" v-model="reasons")
+                            label(for="safety")
+                                span I have security concerns
+                                span.material-symbols-outlined.mid.check check
+                        br
+                        br
+                        .input
+                            label.normal Other reasons why you might be leaving :
+                            input(type="text"
+                            @input="e=> { reasonText = e.target.value; }")
+                        .material.error(v-if="reasonError")
+                            .material-symbols-outlined.mid error
+                            span {{ reasonError }}
+                        br
+                        br
+                        .buttonWrap 
+                            button.cancel(type="button" @click="emits('close')") Cancel
+                            button.save(type="submit") Submit
+                template(v-if="step >= 3")
+                    form(@submit.prevent="deleteAccount" action="")
+                        p Please enter your password.
+                        br
+                        br
+                        .input
+                            label Enter Password
+                            input(type="password"
+                            @input="e=> { password = e.target.value; }" 
+                            placeholder="Password" 
+                            required)
+                        .material.error(v-if="disableError")
+                            .material-symbols-outlined.mid error
+                            span {{ disableError }}
+                        br
+                        br
+                        .buttonWrap(:class="{'running' : promiseRunning}")
+                            template(v-if="promiseRunning")
+                                img.loading(src="@/assets/img/loading.png")
+                            template(v-else)
+                                button.cancel(type="button" @click="closeWindow") Cancel
+                                button.save(type="submit") Delete
+                br
+                .navigator(v-if="step <= 3")
+                    .ball(v-for="num in 3" @click="() => { num < step ? step = num : null; password = ''; }" :class="{'active': step === num}")
 </template>
 <script setup>
 import { ref } from "vue";
@@ -164,168 +175,22 @@ let closeWindow = () => {
 
 </script>
 <style lang="less" scoped>
-#deleteAccount {
-    position: fixed;
-    overflow: auto; // 높이가 작을때 스크롤이 생기도록
-    left: 0;
-    top: 0;
-    width: 100vw;
-    height: 100vh;
-    background-color: rgba(26, 26, 26, 0.25);
-    z-index: 99999;
+.pointWrap {
+    margin-left: 1rem;
+    line-height: 1.5;
+
+    li {
+        font-size: 0.8rem;
+        color: rgba(0, 0, 0, 0.60);
+    }
 }
 
-.wrap {
-    position: absolute;
-    left: 50%;
-    top: 50%;
-    transform: translate(-50%, -50%);
-    width: 480px;
-    border-radius: 8px;
-    border: 1px solid rgba(0, 0, 0, 0.15);
-    background: #FAFAFA;
-    box-shadow: 0px 2px 4px 0px rgba(0, 0, 0, 0.10);
-    z-index: 999;
+.reasonForm {
+    .customCheckBox {
+        margin-bottom: 0.5rem;
 
-    .title {
-        position: relative;
-        display: flex;
-        flex-wrap: nowrap;
-        justify-content: space-between;
-        padding: 28px;
-        border-bottom: 1px solid rgba(0, 0, 0, 0.10);
-        box-shadow: 0px 1px 3px 0px rgba(0, 0, 0, 0.06);
-        color: rgba(240, 78, 78, 1);
-
-        .editWrap {
-            cursor: pointer;
-        }
-    }
-
-    .content {
-        padding: 28px;
-
-        p {
-            color: rgba(0, 0, 0, 0.60);
-            font-size: 0.8rem;
-            font-weight: 500;
-            line-height: 24px;
-        }
-
-        .warning {
-            color: rgba(0, 0, 0, 0.60);
-            font-size: 0.8rem;
-            font-weight: 700;
-        }
-
-        .pointWrap {
-            margin-left: 15px;
-            line-height: 1.5;
-
-            li {
-                font-size: 0.8rem;
-                color: rgba(0, 0, 0, 0.60);
-            }
-        }
-
-        .input {
-            margin-bottom: 16px;
-
-            label {
-                display: block;
-                margin-bottom: 8px;
-                color: rgba(0, 0, 0, 0.60);
-                font-size: 16px;
-                font-weight: 700;
-
-                &.normal {
-                    font-weight: 400;
-                }
-            }
-
-            input {
-                background-color: rgba(0, 0, 0, 0.05);
-                border-radius: 8px;
-                border: 0;
-                padding: 12px 15px;
-                width: 100%;
-                font-size: 16px;
-                font-weight: 400;
-            }
-        }
-
-        .buttonWrap {
-            width: 100%;
-            display: flex;
-            flex-wrap: nowrap;
-            align-items: center;
-            justify-content: space-between;
-
-            &.running {
-                height: 44px;
-            }
-            &.block {
-                display: block;
-
-                button {
-                    display: block;
-                    margin: 0 auto;
-                }
-            }
-
-            button {
-                background-color: unset;
-                color: #293FE6;
-                font-size: 16px;
-                font-weight: 700;
-                cursor: pointer;
-
-                &.yes {
-                    border: 0;
-                    color: rgba(240, 78, 78, 1);
-                }
-
-                &.no {
-                    margin-bottom: 28px;
-                    padding: 0 28px;
-                    height: 44px;
-                    border-radius: 8px;
-                    border: 2px solid #293FE6;
-                }
-
-                &.cancel {
-                    border: 0;
-                }
-
-                &.save {
-                    padding: 0 28px;
-                    height: 44px;
-                    border-radius: 8px;
-                    border: 2px solid #293FE6;
-                }
-            }
-        }
-
-        .navigator {
-            text-align: center;
-
-            .ball {
-                display: inline-block;
-                height: 12px;
-                width: 12px;
-                border-radius: 50%;
-                background-color: #D9D9D9;
-                cursor: pointer;
-                margin-right: 12px;
-
-                &.active {
-                    background-color: #293FE6;
-                }
-
-                &:last-child {
-                    margin: 0;
-                }
-            }
+        &:last-child {
+            margin-bottom: 0;
         }
     }
 }
