@@ -171,11 +171,11 @@ else {
 }
 
 let resize = () => {
-    if (window.innerWidth < 1024) {
-        topRoute.value.classList.add('service');
-    } else {
-        if (topRoute.value.classList.contains('service')) {
-            topRoute.value.classList.remove('service')
+    if(topRoute.value) {
+        if (window.innerWidth < 1024) {
+            topRoute.value.classList.add('service');
+        } else {
+            topRoute.value.classList.remove('service');
         }
     }
 }

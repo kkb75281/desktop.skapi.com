@@ -1,8 +1,9 @@
 <template lang="pug">
 main#dashboard
-    .title 
-        h2 Dashboard
-        span All Services
+    .titleWrap
+        .inner 
+            h2 Dashboard
+            span All Services
     .container
         .wrapper(v-if="!serviceFetching")
             // service 로딩이 완료 되면 표시
@@ -112,21 +113,25 @@ const regions = {
     position: relative;
     margin-top: 3.4rem;
 
-    .title {
-        width: 1200px;
-        margin: 0 auto;
-        padding-bottom: 2.1rem;
+    .titleWrap {
+        padding: 0 2rem;
 
-        h2 {
-            display: inline-block;
-            font-weight: 700;
-        }
-
-        span {
-            font-size: 1.2rem;
-            font-weight: 500;
-            margin-left: 18px;
-            color: rgba(0, 0, 0, 0.40);
+        .inner {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding-bottom: 2.1rem;
+    
+            h2 {
+                display: inline-block;
+                font-weight: 700;
+            }
+    
+            span {
+                font-size: 1.2rem;
+                font-weight: 500;
+                margin-left: 18px;
+                color: rgba(0, 0, 0, 0.40);
+            }
         }
     }
 
@@ -140,7 +145,7 @@ const regions = {
     }
     
     .wrapper {
-        width: 1200px;
+        max-width: 1200px;
         margin: 0 auto;
 
         .boxWrap {
@@ -371,26 +376,9 @@ const regions = {
     }
 }
 
-@media (max-width: 1280px) {
-    #dashboard {
-        .title {
-            width: 100%;
-            padding-left: 2rem;
-        }
-
-        .container {
-            .wrapper {
-                width: 100%;
-            }
-        }
-    }
-}
-
-@media (max-width: 1100px) {
+@media (max-width: 1023px) {
     #dashboard {
         .wrapper {
-            width: 100%;
-
             .boxWrap {
                 .box {
                     width: 48%;
@@ -414,13 +402,9 @@ const regions = {
     }
 }
 
-@media (max-width: 680px) {
+@media (max-width: 767px) {
     #dashboard {
         .wrapper {
-            width: 100%;
-            background-color: unset;
-            padding: 0;
-
             .boxWrap {
                 .box {
                     width: 100%;

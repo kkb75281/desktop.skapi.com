@@ -1,7 +1,8 @@
 <template lang="pug">
 main#accountSetting(v-if='account')
-    .title 
-        h2 Account Setting
+    .titleWrap 
+        .inner
+            h2 Account Setting
     .container
         .wrapper 
             .accountWrap 
@@ -30,6 +31,8 @@ main#accountSetting(v-if='account')
                         template(v-else) 
                             span {{ account.email }}
                     .btn(v-if="!changeEmail" @click="email=account.email; changeEmail = true;") Change email
+                    .btnIcon(v-if="!changeEmail" @click="email=account.email; changeEmail = true;")
+                        .material-symbols-outlined.mid.clickable edit
                 .row
                     h6.tit Verify Email
                     .cont
@@ -39,7 +42,9 @@ main#accountSetting(v-if='account')
                         .material(v-else)
                             .material-symbols-outlined.sml error
                             span Unverified
-                    .btn(v-if="!account.email_verified" @click="verifyEmail") Verify email
+                    .btn(v-if="account.email_verified" @click="verifyEmail") Verify email
+                    .btnIcon(v-if="account.email_verified" @click="verifyEmail")
+                        .material-symbols-outlined.mid.clickable send
                 .row
                     h6.tit Subscription
                     .cont 
@@ -61,6 +66,12 @@ main#accountSetting(v-if='account')
                             .material-symbols-outlined.sml check_circle
                             span Password successfully changed
                     .btn(:class="{'nonClickable' : !account.email_verified}" @click="!account.email_verified ? false : openChangePassword = true;") Change Password
+                    .btnIcon(:class="{'nonClickable' : !account.email_verified}" @click="!account.email_verified ? false : openChangePassword = true;")
+                        .material-symbols-outlined.mid.clickable lock_reset
+                .row.delete 
+                    h6.tit Delete Account
+                    .btnIcon(:class="{'nonClickable' : !account.email_verified}" @click="!account.email_verified ? false : openDeleteAccount = true")
+                        .material-symbols-outlined.mid.clickable delete
 ChangePassword(v-if="openChangePassword" @close="(e)=>{ if (e === 'success') { passwordChanged = true } openChangePassword=false; }")
 VerifyEmail(v-if="openVerifyEmail" @close="openVerifyEmail=false;")
 DeleteAccount(v-if="openDeleteAccount" @close="openDeleteAccount=false")
@@ -223,19 +234,21 @@ watch(() => showVerifyEmail.value, () => {
         height: 20px;
     }
 
-    .title {
-        width: 1200px;
-        margin: 0 auto;
-        padding-bottom: 2.1rem;
-
-        h2 {
-            display: inline-block;
-            font-weight: 700;
+    .titleWrap {
+        padding: 0 2rem;
+        .inner {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding-bottom: 2.1rem;
+    
+            h2 {
+                display: inline-block;
+                font-weight: 700;
+            }
         }
     }
 
     .container {
-        width: 100%;
         min-height: calc(100vh - 10.1rem);
         padding: 2rem;
         background-color: #fafafa;
@@ -244,7 +257,7 @@ watch(() => showVerifyEmail.value, () => {
     }
 
     .wrapper {
-        width: 1200px;
+        max-width: 1200px;
         margin: 0 auto;
         display: flex;
         flex-wrap: nowrap;
@@ -288,11 +301,11 @@ watch(() => showVerifyEmail.value, () => {
 
         .accountCont {
             width: calc(100% - 230px);
-            margin-left: 40px;
+            margin-left: 2rem;
 
             .row {
                 position: relative;
-                padding: 30px 0;
+                padding: 1.5rem 0;
 
                 &::after {
                     position: absolute;
@@ -311,6 +324,10 @@ watch(() => showVerifyEmail.value, () => {
                     }
                 }
 
+                &.delete {
+                    display: none;
+                }
+
                 .tit {
                     display: inline-block;
                     vertical-align: middle;
@@ -320,7 +337,6 @@ watch(() => showVerifyEmail.value, () => {
                 }
 
                 .cont {
-                    width: calc(100% - 130px);
                     display: inline-block;
                     vertical-align: middle;
 
@@ -341,37 +357,40 @@ watch(() => showVerifyEmail.value, () => {
                     }
 
                     form {
-                        display: flex;
-                        flex-wrap: nowrap;
-                        align-items: center;
-                        justify-content: space-between;
+                        // display: flex;
+                        // flex-wrap: nowrap;
+                        // align-items: center;
+                        // justify-content: space-between;
                     }
 
                     input#changeEmail {
+                        display: inline-block;
                         width: 280px;
                         height: 44px;
-                        padding-left: 17px;
+                        padding: 0 17px;
                         border-radius: 8px;
                         background-color: rgba(0, 0, 0, 0.05);
                         border: 0;
-                        margin-right: 29px;
-                        font-size: 16px;
+                        font-size: 0.8rem;
                     }
 
                     .buttonWrap {
+                        display: inline-block;
+                        padding-left: 1rem;
+
                         button {
                             display: inline-block;
                             height: 32px;
-                            padding: 0 12px;
+                            padding: 0 0.6rem;
                             border-radius: 8px;
-                            font-size: 16px;
+                            font-size: 0.8rem;
                             font-weight: 700;
                             cursor: pointer;
 
                             &.cancel {
                                 border: 2px solid #293FE6;
                                 background-color: unset;
-                                margin-right: 12px;
+                                margin-right: 0.6rem;
                                 color: #293FE6;
                             }
 
@@ -384,73 +403,89 @@ watch(() => showVerifyEmail.value, () => {
                     }
                 }
 
-                .btn {
+                .btn, .btnIcon {
                     position: absolute;
                     right: 0;
                     top: 50%;
                     transform: translateY(-50%);
-                    color: #293FE6;
-                    font-size: 16px;
+                    font-size: 0.8rem;
                     font-weight: 700;
                     cursor: pointer;
+                }
+
+                .btn {
+                    color: #293FE6;
+                }
+
+                .btnIcon {
+                    display: none;
                 }
             }
         }
     }
 }
 
-@media (max-width: 1280px) {
-    #accountSetting {
-        .title {
-            width: 100%;
-            padding-left: 2rem;
-        }
-
-        .container {
-            .wrapper {
-                width: 100%;
-
-                // .accountWrap {
-                //     width: 20%;
-                // }
-                // .accountCont {
-                //     width: 80%;
-                // }
-            }
-        }
-    }
-}
-
-@media (max-width: 800px) {
+@media (max-width: 1023px) {
     #accountSetting {
         .wrapper {
             .accountCont {
                 .row {
                     .cont {
-                        // width: 100px;
-                        width: calc(100% - 250px);
-                        white-space: nowrap;
-                        overflow: hidden;
-                        text-overflow: ellipsis;
-                    }
-                    &:nth-child(3) {
-                        .cont {
-                            width: calc(100% - 150px);
-                            .customCheckBox {
-                                label {
-                                    span {
-                                        white-space: nowrap;
-                                        overflow: hidden;
-                                        text-overflow: ellipsis;
-                                    }
-                                }
-                            }
+                        display: block;
+                        margin-top: 1rem;
+
+                        input#changeEmail {
+                            width: 60%;
+                        }
+                        .buttonWrap {
+                            width: 40%;
                         }
                     }
                 }
             }
         }
     }
+}
+@media (max-width: 767px) {
+    #accountSetting {
+        .container {
+            margin: 0 20px 20px 20px;
+        }
+        .wrapper {
+            .accountWrap {
+                display: none;
+            }
+            .accountCont {
+                width: 100%;
+                margin: 0;
 
+                .row {
+                    &:first-child {
+                        padding-top: 0;
+                    }
+                    &.delete {
+                        display: block;
+                    }
+                    .cont {
+                        input#changeEmail, .buttonWrap {
+                            display: block;
+                            width: 100%;
+                        }
+                        .buttonWrap {
+                            margin-top: 1rem;
+                            text-align: right;
+                        }
+                    }
+                    .btn {
+                        display: none;
+                    }
+
+                    .btnIcon {
+                        display: block;
+                    }
+                }
+            }
+        }
+    }
 }
 </style>
