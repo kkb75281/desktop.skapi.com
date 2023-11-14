@@ -317,7 +317,7 @@
         
         .faq
             h3 Do I Need Basic&nbsp;Knowledge of Backend&nbsp;Development?
-            p No, Skapi is designed for frontend developers. You can build a complete full stack application without writing a single line of backend code.
+            p No, Skapi is designed for frontend developers. You can build a complete full stack application without&nbsp;writing&nbsp;a&nbsp;single&nbsp;line of backend code.
         
         br
         br
