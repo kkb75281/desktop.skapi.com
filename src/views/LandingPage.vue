@@ -307,7 +307,10 @@
         
         .faq
             h3 What Are the Pricing Plans?
-            p Skapi is currently on free beta. We will announce the pricing plan soon. Sign up while it's free!
+            p
+                | Skapi is currently on free beta. We will announce the pricing plan soon.&nbsp;
+                a(href='/signup') Sign Up&nbsp;
+                | while it's free!
         
         br
         br
@@ -316,6 +319,15 @@
             h3 Do I Need Basic&nbsp;Knowledge of Backend&nbsp;Development?
             p No, Skapi is designed for frontend developers. You can build a complete full stack application without writing a single line of backend code.
         
+        br
+        br
+
+        .faq
+            h3 Where can I get help?
+            p 
+                | You can reach us at our&nbsp;
+                a(href='https://discord.com/channels/1164154380816236626/1164154381269213188') Discord&nbsp;server
+                | . We are happy to help you with any questions you may have.
     br
     br
     br
