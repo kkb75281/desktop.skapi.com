@@ -84,7 +84,6 @@ import ChangePassword from '@/components/ChangePassword.vue';
 import VerifyEmail from '@/components/VerifyEmail.vue';
 import DeleteAccount from '@/components/DeleteAccount.vue';
 
-let showVerifyEmail = inject('showVerifyEmail');
 let info = ref(true);
 let email = ref('');
 let emailConfirmed = ref(false);
@@ -178,12 +177,14 @@ let reqeustEmailChange = () => {
     disableEmail.value = true;
 
     skapi.updateProfile({ email: email.value })
-        .then(u => {
+        .then(async(u) => {
             // success
             account.value = u;
-            disableEmail.value = false;
-            changeEmail.value = false;
-            promiseRunning.value = false;
+            await nextTick(() => {
+                disableEmail.value = false;
+                changeEmail.value = false;
+                promiseRunning.value = false;
+            })
 
         }).catch(err => {
             // error
@@ -216,12 +217,6 @@ let verifyEmail = () => {
     }
     openVerifyEmail.value = true;
 }
-
-watch(() => showVerifyEmail.value, () => {
-    if(showVerifyEmail.value) {
-        verifyEmail();
-    }
-})
 </script>
 
 <style lang="less" scoped>
@@ -376,6 +371,7 @@ watch(() => showVerifyEmail.value, () => {
 
                     .buttonWrap {
                         display: inline-block;
+                        vertical-align: middle;
                         padding-left: 1rem;
 
                         button {

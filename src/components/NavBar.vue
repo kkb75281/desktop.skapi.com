@@ -414,7 +414,7 @@ onBeforeUnmount(() => {
         position: absolute;
         right: 40px;
         top: 70px;
-        width: 265px;
+        min-width: 265px;
         padding: 20px 20px 0;
         overflow: hidden;
         background-color: #fafafa;

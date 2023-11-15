@@ -3,7 +3,7 @@ main#subdomain
     section#section
         .titleWrap
             // main title
-            h4 {{ subdomainState || (computedSubdomain ? computedSubdomain + '.skapi.com' : 'Hosting') }}
+            h4.title {{ subdomainState || (computedSubdomain ? computedSubdomain + '.skapi.com' : 'Hosting') }}
             .buttonWrap(v-if="currentService.subdomain") 
                 .refresh.clickable(:class="{'nonClickable' : !account.email_verified || subdomainState || refreshCDNRun}" @click='refreshCdn()')
                     .material-symbols-outlined.mid(:class="{'rotate_animation': refreshCDNRun}") cached
@@ -30,19 +30,19 @@ main#subdomain
                 template(v-else)
                     .cont(@click="modifySudomain = true")
                         p {{ computedSubdomain }}
-                        .material-symbols-outlined.mid.btn.clickable(:class="{'nonClickable' : !account.email_verified || subdomainState}") edit
+                        .material-symbols-outlined.mid.clickable(:class="{'nonClickable' : !account.email_verified || subdomainState}") edit
             .setting
                 h6.tit HTML file for 404 page
                 .cont.line 
+                    p {{ subdomainInfo?.[computedSubdomain]?.['404'] || "Upload a file"}}
                     .customFile(:class="{'nonClickable' : !account.email_verified || subdomainState}")
-                        p {{ subdomainInfo?.[computedSubdomain]?.['404'] || "Upload a file"}}
-                        template(v-if="set404PromiseRunning")
+                        template(v-if="!set404PromiseRunning")
                             img.loading(style='position: absolute;right: 1em;top: 8px;' src="@/assets/img/loading.png")
                         template(v-else)
-                            label.uploadBtn.btn(v-if="subdomainInfo?.[computedSubdomain]?.['404']" @click='removeSet404')
+                            label.uploadBtn(v-if="subdomainInfo?.[computedSubdomain]?.['404']" @click='removeSet404')
                                 .material-symbols-outlined.mid cancel
                                 span Remove
-                            label.uploadBtn.btn(for="file404" v-else)
+                            label.uploadBtn(for="file404" v-else)
                                 .material-symbols-outlined.mid upload
                                 span Upload
                             input#file404(hidden type="file" @change="set404" accept='text/html')
@@ -82,7 +82,7 @@ main#subdomain
                                 .material-symbols-outlined.mid delete
                                 span Delete
                 .customFile(:class="{'nonClickable' : !account.email_verified || Object.keys(fileList).length}")
-                    label.uploadBtn.btn(for="files")
+                    label.uploadBtn(for="files")
                         .material-symbols-outlined.mid upload
                         span Upload
                     input#files(hidden type="file" @change="e=>onDrop(null,e.target.files)" multiple)
@@ -599,6 +599,13 @@ function formatBytes(bytes, decimals = 2) {
             display: flex;
             align-items: center;
             justify-content: space-between;
+
+            .title {
+                width: 300px;
+                white-space: nowrap;
+                overflow: hidden;
+                text-overflow: ellipsis;
+            }
             .buttonWrap {
                 text-align: end;
 
@@ -626,23 +633,32 @@ function formatBytes(bytes, decimals = 2) {
             }
         }
 
-        .uploadBtn {
-            display: flex;
-            flex-wrap: nowrap;
-            align-items: center;
-            justify-content: center;
-            color: #293FE6;
-            width: 105px;
-            height: 32px;
-            border-radius: 8px;
-            border: 2px solid #293FE6;
+        .customFile {
             cursor: pointer;
-
-            span {
-                margin-left: 3px;
-                font-size: 0.8rem;
-                font-weight: 700;
+            
+            label {
+                display: block;
+                width: 105px;
+                height: 32px;
+                border: 2px solid #293FE6;
+                border-radius: 8px;
+                text-align: center;
                 color: #293FE6;
+                cursor: pointer;
+
+                span {
+                    margin-left: 3px;
+                    font-size: 0.8rem;
+                    font-weight: 700;
+                    color: #293FE6;
+                }
+            }
+
+            #fileName {
+                border: 0;
+                background-color: unset;
+                font-size: 0.8rem;
+                color: rgba(0, 0, 0, 0.6);
             }
         }
 
@@ -664,7 +680,10 @@ function formatBytes(bytes, decimals = 2) {
                     position: relative;
                     width: 100%;
                     height: 44px;
-                    line-height: 44px;
+                    // line-height: 44px;
+                    display: flex;
+                    align-items: center;
+                    justify-content: space-between;
 
                     &::before {
                         position: absolute;
@@ -681,14 +700,13 @@ function formatBytes(bytes, decimals = 2) {
                         &::before {
                             width: calc(100% - 120px);
                         }
-
-                        .btn {
-                            bottom: 0;
-                            transform: translateY(-10px);
-                        }
                     }
 
                     p {
+                        width: 300px;
+                        white-space: nowrap;
+                        overflow: hidden;
+                        text-overflow: ellipsis;
                         font-size: 0.8rem;
                         font-weight: 700;
                         color: rgba(0, 0, 0, 0.6);
@@ -699,22 +717,7 @@ function formatBytes(bytes, decimals = 2) {
                         }
                     }
 
-                    .customFile {
-                        #fileName {
-                            border: 0;
-                            background-color: unset;
-                            font-size: 0.8rem;
-                            color: rgba(0, 0, 0, 0.6);
-                        }
-                    }
-
-                    .btn {
-                        position: absolute;
-                        right: 0;
-                        top: 50%;
-                        transform: translateY(-50%);
-                        cursor: pointer;
-                    }
+                    
                 }
 
                 .modifyForm {
