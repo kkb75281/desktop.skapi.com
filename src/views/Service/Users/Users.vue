@@ -43,8 +43,8 @@ main#users
                 .dropDown(@click.stop="showFilter = !showFilter")
                     span Headers
                     .material-symbols-outlined.mid arrow_drop_down
-                    .userFilterWrap(v-if="showFilter" @click.stop)
-                        .innerBox
+                    #moreVert(v-if="showFilter" @click.stop style="--moreVert-left: 0")
+                        .inner
                             .filter 
                                 .customCheckBox
                                     input#userID(type="checkbox" :checked="filterOptions.userID" @change="filterOptions.userID = !filterOptions.userID")
@@ -108,15 +108,15 @@ main#users
                 .material-symbols-outlined.mid.refresh.clickable(@click='refresh' :class='{"rotate_animation": fetching }') cached
                 .material-symbols-outlined.mid.create.clickable(:class="{'nonClickable' : !account.email_verified}" @click="!account.email_verified ? false : inviteUserShow=true") group_add
                 .material-symbols-outlined.mid.menu.clickable(:class='{"nonClickable": !checkedUsers.length || !account.email_verified}' @click.stop="!account.email_verified ? false : showUserSetting = !showUserSetting") more_vert
-                    .userSettingWrap(v-if="showUserSetting" @click.stop)
-                        .innerBox
-                            .setting(@click="()=>{stateText='Block'; showBlockUser=true; showUserSetting=false;}")
+                    #moreVert(v-if="showUserSetting" @click.stop style="--moreVert-left: 0")
+                        .inner
+                            .more(@click="()=>{stateText='Block'; showBlockUser=true; showUserSetting=false;}")
                                 .material-symbols-outlined.mid account_circle_off
                                 span Block
-                            .setting(@click="()=>{stateText='Unblock'; showUnblockUser=true; showUserSetting=false;}")
+                            .more(@click="()=>{stateText='Unblock'; showUnblockUser=true; showUserSetting=false;}")
                                 .material-symbols-outlined.mid account_circle
                                 span Unblock
-                            .setting(@click="()=>{stateText='Delete'; showDeleteUser = true; showUserSetting = false;}")
+                            .more(@click="()=>{stateText='Delete'; showDeleteUser = true; showUserSetting = false;}")
                                 .material-symbols-outlined.mid delete
                                 span Delete
                 //- button.create(:class="{'nonClickable' : !account.email_verified}" @click="!account.email_verified ? false : inviteUserShow=true" style='margin-left:1rem') Invite User
@@ -178,15 +178,15 @@ main#users
                             .material-symbols-outlined.mid.enable(v-if="user.group > 0") check_circle
                             .material-symbols-outlined.mid.disable(v-else) cancel
                         td(v-if="filterOptions.userID") 
-                            h6.overflow.userSelect {{ user.user_id }}
+                            .overflow {{ user.user_id }}
                         td(v-if="filterOptions.name")
-                            h6.overflow.userSelect {{ user.name }}
+                            .overflow {{ user.name }}
                         td(v-if="filterOptions.email")
-                            h6.overflow.userSelect {{ user.email }}
+                            .overflow {{ user.email }}
                         td(v-if="filterOptions.address") 
-                            h6.overflow.userSelect {{ user.address }}
+                            .overflow {{ user.address }}
                         td(v-if="filterOptions.gender")
-                            h6.overflow {{ user.gender }}
+                            .overflow {{ user.gender }}
                         td(v-if="filterOptions.locale")
                             .overflow {{ Countries[user.locale].flag }}
                         //- td(v-if="filterOptions.group")
@@ -718,52 +718,6 @@ onMounted(() => {
                 position: relative;
             }
 
-            .userFilterWrap {
-                position: absolute;
-                left: 0;
-                top: 40px;
-                z-index: 10;
-
-                .filter {
-                    width: 135px;
-                    display: flex;
-                    align-items: center;
-                    margin-bottom: 1rem;
-                    color: rgba(0, 0, 0, 0.80);
-
-                    &:last-child {
-                        margin-bottom: 0;
-                    }
-                }
-            }
-
-            .userSettingWrap {
-                position: absolute;
-                left: 0;
-                top: 40px;
-                z-index: 10;
-
-                .setting {
-                    width: 100px;
-                    display: flex;
-                    align-items: center;
-                    margin-bottom: 16px;
-                    font-size: 0.8rem;
-
-                    &:last-child {
-                        margin-bottom: 0;
-                    }
-
-                    &:hover {
-                        font-weight: 700;
-                    }
-
-                    span {
-                        margin-left: 12px;
-                    }
-                }
-            }
-
             // .create {
             //     // create user
             //     height: 32px;
@@ -911,8 +865,8 @@ onMounted(() => {
                         text-align: center;
                     }
 
-                    h6 {
-                        font-weight: 500;
+                    > div:not(.material-symbols-outlined) {
+                        font-size: 0.8rem;
                     }
 
                     .block {

@@ -72,15 +72,15 @@ main#subdomain
             .filesButtonWrap
                 // file menu
                 .material-symbols-outlined.mid.refresh.clickable(:class='{"rotate_animation": fetching }' @click='refresh(searchDir)') cached
-                .material-symbols-outlined.mid.clickable(@click.stop="showEdit = !showEdit") more_vert
-                .editMenuWrap(v-if="showEdit" @click.stop)
-                    .nest
-                        .editMenu(@click="showRemoveAllFiles = true; showEdit = false;")
-                            .material-symbols-outlined.mid delete
-                            span Remove All Files
-                        .editMenu(:class='{"nonClickable": !checkedFiles.length || !account.email_verified}' @click="showDeleteFile = true; showEdit = false;")
-                            .material-symbols-outlined.mid delete
-                            span Delete
+                .material-symbols-outlined.mid.menu.clickable(@click.stop="showEdit = !showEdit") more_vert
+                    #moreVert(v-if="showEdit" @click.stop)
+                        .inner
+                            .more(@click="showRemoveAllFiles = true; showEdit = false;")
+                                .material-symbols-outlined.mid delete
+                                span Remove All Files
+                            .more(:class='{"nonClickable": !checkedFiles.length || !account.email_verified}' @click="showDeleteFile = true; showEdit = false;")
+                                .material-symbols-outlined.mid delete
+                                span Delete
                 .customFile(:class="{'nonClickable' : !account.email_verified || Object.keys(fileList).length}")
                     label.uploadBtn.btn(for="files")
                         .material-symbols-outlined.mid upload
@@ -815,54 +815,13 @@ function formatBytes(bytes, decimals = 2) {
                 flex-wrap: nowrap;
                 align-items: center;
 
-                .mid {
-                    &:nth-child(2) {
-                        margin: 0 1.2rem;
-                    }
-
-                    &.refresh {
-                        color: #293FE6;
-                    }
+                .menu {
+                    position: relative;
+                    margin: 0 1rem;
                 }
 
-                .editMenuWrap {
-                    position: relative;
-
-                    .nest {
-                        position: absolute;
-                        right: 20px;
-                        top: 34px;
-                        border-radius: 8px;
-                        border: 1px solid rgba(0, 0, 0, 0.15);
-                        background: #FAFAFA;
-                        box-shadow: 8px 12px 36px 0px rgba(0, 0, 0, 0.10);
-                        padding: 1rem;
-                        width: 155px;
-                        z-index: 2;
-
-                        .editMenu {
-                            display: flex;
-                            flex-wrap: nowrap;
-                            align-items: center;
-                            cursor: pointer;
-
-                            &:first-child {
-                                margin-bottom: 1rem;
-                            }
-
-                            &:hover {
-                                span {
-                                    font-weight: 700;
-                                }
-                            }
-
-                            span {
-                                margin-left: 10px;
-                                font-size: 0.8rem;
-                                font-weight: 500;
-                            }
-                        }
-                    }
+                .refresh {
+                    color: #293FE6;
                 }
             }
         }

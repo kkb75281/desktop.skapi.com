@@ -13,7 +13,7 @@ dialog#deleteAccountDialog(@click="closeDialog")
                         span.material-symbols-outlined.mid.check check
                 .point All the services will be permanently deleted
                 .point All the information will be permanently deleted
-                //- .material.error(v-if="acknowledgError")
+                //- .error(v-if="acknowledgError")
                 //-     .material-symbols-outlined.mid error
                 //-     span {{ acknowledgError }}
                 .buttonWrap.block
@@ -47,7 +47,7 @@ dialog#deleteAccountDialog(@click="closeDialog")
                     input(type="text"
                     :value='reasonText' 
                     @input="e=> { reasonText = e.target.value; }")
-                //- .material.error(v-if="reasonError")
+                //- .error(v-if="reasonError")
                 //-     .material-symbols-outlined.mid error
                 //-     span {{ reasonError }}
                 .buttonWrap 

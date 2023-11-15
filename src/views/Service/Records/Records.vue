@@ -339,12 +339,12 @@ main#database
                 // right panel top right menu
                 .material-symbols-outlined.mid.menu(v-if="!recordInfoEdit" @click.stop="showEdit = !showEdit") more_vert
                     // drop down menu (no edit)
-                    .editMenuWrap(v-if="showEdit" @click.stop)
-                        .innerBox
-                            .editMenu(@click="recordInfoEdit = true; showEdit = false;")
+                    #moreVert(v-if="showEdit" @click.stop style="--moreVert-right: 0")
+                        .inner
+                            .more(@click="recordInfoEdit = true; showEdit = false;")
                                 .material-symbols-outlined.mid edit
                                 span edit
-                            .editMenu(@click="recordDelete(selectedRecord.record_id); showEdit = false;")
+                            .more(@click="recordDelete(selectedRecord.record_id); showEdit = false;")
                                 .material-symbols-outlined.mid delete
                                 span delete
 
@@ -438,9 +438,9 @@ main#database
             .actions 
                 .material-symbols-outlined.mid.refresh.clickable(@click='()=>{selectedRecord=null; refresh(fetchParams);}' :class='{"rotate_animation": fetching }') cached
                 .material-symbols-outlined.mid.menu.clickable(:class='{"nonClickable": !checkedRecords.length || !account.email_verified}' @click.stop="!account.email_verified ? false : showRecordSetting = !showRecordSetting") more_vert
-                    .recordSettingWrap(v-if="showRecordSetting" @click.stop)
-                        .innerBox
-                            .setting(@click="()=>{recordDelete(); showRecordSetting=false;}")
+                    #moreVert(v-if="showRecordSetting" @click.stop style="--moreVert-left: 0")
+                        .inner
+                            .more(@click="()=>{recordDelete(); showRecordSetting=false;}")
                                 .material-symbols-outlined.mid delete
                                 span delete
                 button.create(:class="{'nonClickable' : !account.email_verified}" @click="()=>{ !account.email_verified ? false : selectedRecord = JSON.parse(JSON.stringify(createRecordTemplate)); recordInfoEdit=true; }") create record
@@ -472,13 +472,13 @@ main#database
                                 label(:for="record.record_id")
                                     .material-symbols-outlined.mid.check check
                         td
-                            h6.userSelect.name {{ record.table.name }}
+                            .name {{ record.table.name }}
                         td
-                            h6.userSelect {{ record.record_id }}
+                            .recordId {{ record.record_id }}
                         td
-                            h6.userSelect.userId(style="white-space:none") {{ record.user_id }}
+                            .userId(style="white-space:none") {{ record.user_id }}
                         td.center 
-                            h6 {{ timeSince(record.uploaded) }}
+                            .uploaded {{ timeSince(record.uploaded) }}
                         td.center
                             .accessWrap
                                 .hoverWrap(v-if="record.table.access_group == 'private'")
@@ -2275,18 +2275,18 @@ watch(() => selectedRecord.value, () => {
                     td {
                         position: relative;
                         white-space: nowrap;
-    
+                        
+                        > div {
+                            font-size: 0.8rem;
+                            padding-right: 1rem;
+                        }
+
                         &.center {
                             text-align: center;
 
                             h6 {
                                 padding-right: 0;
                             }
-                        }
-    
-                        h6 {
-                            font-weight: 500;
-                            padding-right: 1rem;
                         }
     
                         .accessWrap {
@@ -2376,6 +2376,51 @@ watch(() => selectedRecord.value, () => {
                 margin-left: 2rem;
             }
         }
+    }
+}
+
+.hoverWrap {
+    position: relative;
+
+    >*:nth-child(2) {
+        /* text bubble initial style */
+        position: absolute;
+        display: none;
+    }
+
+    >*:first-child:hover+* {
+        /* text bubble hover style */
+        display: block;
+    }
+}
+
+.hoverPreview {
+    /* height: 44px; */
+    background-color: #fafafa;
+    border-radius: 8px;
+    box-shadow: 1px 2px 2px rgba(0, 0, 0, 0.25);
+    color: rgba(0, 0, 0, 0.60);
+    font-size: 14px;
+    /* padding: 0 12px; */
+    padding: 15px 12px;
+    font-weight: 700;
+
+    bottom: 150%;
+    /* white-space: nowrap; */
+    left: var(--pos-l);
+    right: var(--pos-r);
+    align-items: center;
+    
+    &::after {
+        position: absolute;
+        content: '';
+        left: var(--arr-l);
+        right: var(--arr-r);
+        top: 50%;
+        border-top: 20px solid transparent;
+        border-right: 20px solid transparent;
+        border-left: 20px solid #fafafa;
+        rotate: -45deg;
     }
 }
 

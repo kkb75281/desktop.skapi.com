@@ -50,7 +50,7 @@
                     label(for="remember")
                         span I agree to receive newsletters from Skapi via Email.
                         .material-symbols-outlined.mid.check check
-            .material.error(v-if="error")
+            .error(v-if="error")
                 .material-symbols-outlined.mid error
                 span {{ error }}
             .bottom
@@ -119,7 +119,7 @@
                     label(for="company")
                         span Company projects
                         .material-symbols-outlined.mid.check check
-            .material.error(v-if="signupError")
+            .error(v-if="signupError")
                 .material-symbols-outlined.mid error
                 span {{ signupError }}
             .bottom.flex

@@ -21,7 +21,7 @@
                         ul.pointWrap 
                             li All the services will be permanently deleted
                             li All the information will be permanently deleted
-                        .material.error(v-if="acknowledgeError")
+                        .error(v-if="acknowledgeError")
                             .material-symbols-outlined.mid error
                             span {{ acknowledgeError }}
                         br
@@ -55,7 +55,7 @@
                             label.normal Other reasons why you might be leaving :
                             input(type="text"
                             @input="e=> { reasonText = e.target.value; }")
-                        .material.error(v-if="reasonError")
+                        .error(v-if="reasonError")
                             .material-symbols-outlined.mid error
                             span {{ reasonError }}
                         br
@@ -74,7 +74,7 @@
                             @input="e=> { password = e.target.value; }" 
                             placeholder="Password" 
                             required)
-                        .material.error(v-if="disableError")
+                        .error(v-if="disableError")
                             .material-symbols-outlined.mid error
                             span {{ disableError }}
                         br

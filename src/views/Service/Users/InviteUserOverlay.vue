@@ -47,7 +47,7 @@
                         type='url'
                     )
 
-                .material.error(v-if="error")
+                .error(v-if="error")
                     .material-symbols-outlined.mid error
                     span {{ error }}
 
