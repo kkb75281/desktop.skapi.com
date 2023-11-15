@@ -8,7 +8,7 @@
                 h4(v-else) {{ dataCopy.type }} - {{ dataCopy.key }}
             .content 
                 textarea#editData(:value='dataCopy.context' @input='inputData' spellcheck="false" :style='displayFontType()')
-                .material.error(v-if="error")
+                .error(v-if="error")
                     .material-symbols-outlined.mid error
                     span {{ error }}
             .buttonWrap 

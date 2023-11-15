@@ -6,7 +6,7 @@
         .message To confirm deletion, enter Service ID
         .service.userSelect {{ currentService.service }}
         input(type="text" :placeholder="currentService.service" @input="(e) => { confirmationCode = e.target.value; error = '';}")
-        .material.error(v-if="error" style='padding-top: 0;')
+        .error(v-if="error" style='padding-top: 0;')
             .material-symbols-outlined.mid(style='font-size: 1.5rem;margin-bottom: 0;') error
             span {{ error }}
         .buttonWrap

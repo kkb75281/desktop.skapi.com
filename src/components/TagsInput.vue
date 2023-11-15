@@ -5,7 +5,7 @@ input(type="hidden" :value="tagArray?.join(',')")
         span {{ tag }}
         .material-symbols-outlined.sml.cancel(@click="removeTag(index)") cancel
     .tagInput(v-if="!props.disabled" ref="input" contenteditable="true" tabindex="0" @keydown.enter.space.prevent="addTag" @input="addTag" @keydown.delete="deleteTag" @blur="addTag")  
-.material.error(v-if="inputError")
+.error(v-if="inputError")
   .material-symbols-outlined.mid error
   span  No special characters are allowed
 </template>
