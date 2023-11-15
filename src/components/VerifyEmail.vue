@@ -24,7 +24,7 @@
                     template(v-else)
                         span Haven’t got any Code?
                         .click(@click="resend") Re-send Code
-                .material.error(v-if="error")
+                .error(v-if="error")
                     .material-symbols-outlined.mid error
                     span {{ error }}
                 .buttonWrap 

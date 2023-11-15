@@ -1,0 +1,105 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    width: 100%;
+    height: 100%;
+    background-color: #f0f0f0;
+    color: rgba(0, 0, 0, 0.80);
+    font-family: "Radio Canada", sans-serif;
+
+    &.fa {
+        background-color: #fafafa;
+    }
+}
+
+h1 {
+    font-size: 3.3rem;
+}
+
+h2 {
+    font-size: 1.8rem;
+}
+
+h3 {
+    font-size: 1.4rem;
+}
+
+h4 {
+    font-size: 1.2rem;
+}
+
+h5 {
+    font-size: 1rem;
+}
+
+h6 {
+    font-size: 0.8rem;
+}
+
+@media all and (min-width:1024px) {
+    html {
+        font-size: 20px;
+    }
+}
+
+/* 테블릿 가로, 테블릿 세로 (해상도 768px ~ 1023px)*/
+@media all and (min-width:768px) and (max-width:1023px) {
+    html {
+        font-size: 18px;
+    }
+}
+
+/* 모바일 가로, 모바일 세로 (해상도 480px ~ 767px)*/
+@media all and (max-width:767px) {
+    html {
+        font-size: 16px;
+    }
+}
+
+@media all and (max-width:479px) {
+    // html {
+    //     font-size: 14px;
+    // }
+}
+
+// *:not(input):not(textarea):not(button):not(select)
+header,
+img, a, br,
+table thead th,
+.btn, .copy, .material-symbols-outlined {
+    -webkit-touch-callout: none;
+    /* iOS Safari */
+    -webkit-user-select: none;
+    /* Safari */
+    -khtml-user-select: none;
+    /* Konqueror HTML */
+    -moz-user-select: none;
+    /* Old versions of Firefox */
+    -ms-user-select: none;
+    /* Internet Explorer/Edge */
+    user-select: none;
+    /* Non-prefixed version, currently supported by Chrome, Edge, Opera and Firefox */
+}
+
+button {
+    cursor: pointer;
+}
+
+input,
+textarea {
+    color: rgba(0, 0, 0, 0.8) !important;
+}
+
+input::placeholder,
+textarea::placeholder {
+    color: rgba(0, 0, 0, 0.4) !important;
+    font-size: 1em !important;
+}
+
+input:focus, select:focus {
+    outline: none;
+}
