@@ -42,8 +42,8 @@ main#accountSetting(v-if='account')
                         .material(v-else)
                             .material-symbols-outlined.sml error
                             span Unverified
-                    .btn(v-if="account.email_verified" @click="verifyEmail") Verify email
-                    .btnIcon(v-if="account.email_verified" @click="verifyEmail")
+                    .btn(v-if="!account.email_verified" @click="verifyEmail") Verify email
+                    .btnIcon(v-if="!account.email_verified" @click="verifyEmail")
                         .material-symbols-outlined.mid.clickable send
                 .row
                     h6.tit Subscription

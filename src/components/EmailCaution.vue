@@ -26,22 +26,20 @@ let goVerify = () => {
 <style lang="less" scoped>
 #emailCaution {
     width: 100%;
-    height: 52px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
+    padding: 0.8rem;
     background: #FFE7E8;
+    font-size: 0.8rem;
+    text-align: center;
 
-    .material-symbols-outlined {
+    > * {
+        display: inline-block;
         color: rgba(240, 78, 78, 1);
     }
     span {
-        color: rgba(240, 78, 78, 1);
         margin: 0 7px;
     }
     a, .click {
         text-decoration: none;
-        color: rgba(240, 78, 78, 1);
         font-weight: 700;
         cursor: pointer;
     }

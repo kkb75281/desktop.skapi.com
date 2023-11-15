@@ -352,7 +352,7 @@ main#database
 
 
                 // buttons (edit)
-                .editBtnWrap(v-if="recordInfoEdit" :class="{'smallver' : isSmallScreen}") 
+                .editBtnWrap(v-if="recordInfoEdit") 
                     template(v-if="promiseRunning")
                         img.loading(src="@/assets/img/loading.png" style="width:20px;height:20px;")
                     template(v-else)
@@ -437,13 +437,13 @@ main#database
         .tableHeader 
             .actions 
                 .material-symbols-outlined.mid.refresh.clickable(@click='()=>{selectedRecord=null; refresh(fetchParams);}' :class='{"rotate_animation": fetching }') cached
+                .material-symbols-outlined.mid.create.clickable(:class="{'nonClickable' : !account.email_verified}" @click="()=>{ !account.email_verified ? false : selectedRecord = JSON.parse(JSON.stringify(createRecordTemplate)); recordInfoEdit=true; }") note_stack_add
                 .material-symbols-outlined.mid.menu.clickable(:class='{"nonClickable": !checkedRecords.length || !account.email_verified}' @click.stop="!account.email_verified ? false : showRecordSetting = !showRecordSetting") more_vert
                     #moreVert(v-if="showRecordSetting" @click.stop style="--moreVert-left: 0")
                         .inner
                             .more(@click="()=>{recordDelete(); showRecordSetting=false;}")
                                 .material-symbols-outlined.mid delete
                                 span delete
-                button.create(:class="{'nonClickable' : !account.email_verified}" @click="()=>{ !account.email_verified ? false : selectedRecord = JSON.parse(JSON.stringify(createRecordTemplate)); recordInfoEdit=true; }") create record
             .pagenator 
                 .material-symbols-outlined.sml.prevPage.clickable(:class='{"nonClickable": currentPage === 1 || fetching }' @click='nextPage(false)') arrow_back_ios
                 .material-symbols-outlined.sml.nextPage.clickable(:class='{"nonClickable": maxPage <= currentPage && recordPage?.endOfList || fetching }' @click='nextPage') arrow_forward_ios
@@ -1451,7 +1451,7 @@ watch(() => selectedRecord.value, () => {
             .editBtnWrap {
                 position: absolute;
                 right: 20px;
-                top: 10px;
+                top: 5px;
 
                 &.smallver {
                     top: 8px;
@@ -1966,17 +1966,12 @@ watch(() => selectedRecord.value, () => {
                 }
 
                 .addDataRow {
-                    display: flex;
-                    flex-wrap: nowrap;
-                    align-items: center;
-                    justify-content: center;
-                    margin-top: 12px;
                     text-align: center;
                     padding: 6px 0;
                     color: #293FE6;
                     background-color: rgba(41, 63, 230, 0.05);
                     border-radius: 4px;
-                    font-size: 14px;
+                    font-size: 0.7rem;
                     font-weight: 500;
                     cursor: pointer;
 
@@ -2047,13 +2042,11 @@ watch(() => selectedRecord.value, () => {
             align-items: center;
 
             .refresh,
-            .menu {
+            .create {
                 margin-right: 1rem;
-            }
-
-            .refresh {
                 color: #293FE6;
             }
+
             .menu {
                 position: relative;
             }
@@ -2117,18 +2110,6 @@ watch(() => selectedRecord.value, () => {
                         margin-left: 0.7rem;
                     }
                 }
-            }
-
-            .create {
-                height: 32px;
-                padding: 0px 12px;
-                border-radius: 8px;
-                border: 2px solid #293FE6;
-                color: #293FE6;
-                font-size: 0.8rem;
-                font-weight: 700;
-                background-color: unset;
-                cursor: pointer;
             }
         }
 

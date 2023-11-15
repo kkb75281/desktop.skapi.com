@@ -1036,15 +1036,32 @@ function formatBytes(bytes, decimals = 2) {
                     }
                 }
             }
+
+            .uploadBtn {
+                width: 24px;
+                border: 0;
+
+                span {
+                    display: none;
+                }
+            }
+
             .settingWrap {
                 flex-wrap: wrap;
-    
+                
                 .setting {
                     width: 100%;
                     margin-bottom: 2rem;
 
                     &:last-child {
                         margin-bottom: 0;
+                    }
+                    .cont {
+                        &.line {
+                            &::before {
+                                width: 100%;
+                            }
+                        }
                     }
                 }
             }

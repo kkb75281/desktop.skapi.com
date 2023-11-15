@@ -119,7 +119,6 @@ main#users
                             .more(@click="()=>{stateText='Delete'; showDeleteUser = true; showUserSetting = false;}")
                                 .material-symbols-outlined.mid delete
                                 span Delete
-                //- button.create(:class="{'nonClickable' : !account.email_verified}" @click="!account.email_verified ? false : inviteUserShow=true" style='margin-left:1rem') Invite User
             .pagenator 
                 .material-symbols-outlined.sml.prevPage.clickable(:class='{"nonClickable": currentPage === 1 || fetching }' @click='e=>{currentPage--; nextTick(selectNone)}') arrow_back_ios
                 .material-symbols-outlined.sml.nextPage.clickable(:class='{"nonClickable": maxPage <= currentPage && userPage?.endOfList || fetching }' @click='nextPage') arrow_forward_ios
@@ -705,31 +704,14 @@ onMounted(() => {
                 color: rgba(0, 0, 0, 0.6);
             }
 
-            .refresh {
+            .refresh, .create {
                 margin-right: 1rem;
                 color: #293FE6;
-            }
-
-            .create {
-                margin-right: 1rem;
             }
 
             .menu {
                 position: relative;
             }
-
-            // .create {
-            //     // create user
-            //     height: 32px;
-            //     padding: 0px 12px;
-            //     border-radius: 8px;
-            //     border: 2px solid #293FE6;
-            //     color: #293FE6;
-            //     font-size: 0.8rem;
-            //     font-weight: 700;
-            //     background-color: unset;
-            //     cursor: pointer;
-            // }
         }
 
         .pagenator {

@@ -1,4 +1,5 @@
 <template lang="pug">
+NavBar(style='--position: absolute;')
 #landing
     section.intro.gradback
         .introInner(ref="intro")
@@ -334,6 +335,10 @@
     br
 
 </template>
+
+<script setup>
+import NavBar from '@/components/NavBar.vue';
+</script>
 
 <style lang="less" scoped>
 .faq {
