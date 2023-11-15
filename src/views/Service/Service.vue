@@ -240,6 +240,7 @@ let copy = (e) => {
     let currentTarget = e.currentTarget;
     let doc = document.createElement('textarea');
     doc.textContent = currentTarget.previousSibling.textContent;
+    doc.textContent = currentTarget.previousSibling.textContent;
     document.body.append(doc);
     doc.select();
     document.execCommand('copy');
@@ -573,6 +574,8 @@ watch(modifyCors, () => {
             box-shadow: unset;
 
             .copy {
+                top: 20px;
+                transform: unset;
                 top: 20px;
                 transform: unset;
             }

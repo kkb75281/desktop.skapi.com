@@ -18,11 +18,7 @@
 </template>
 
 <script setup>
-window.dataLayer = window.dataLayer || [];
-function gtag(){dataLayer.push(arguments);}
-gtag('js', new Date());
 
-gtag('config', 'AW-313027987');
 </script>
 
 <style lang="less" scoped>
