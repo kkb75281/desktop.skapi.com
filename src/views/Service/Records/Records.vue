@@ -2379,51 +2379,6 @@ watch(() => selectedRecord.value, () => {
     }
 }
 
-.hoverWrap {
-    position: relative;
-
-    >*:nth-child(2) {
-        /* text bubble initial style */
-        position: absolute;
-        display: none;
-    }
-
-    >*:first-child:hover+* {
-        /* text bubble hover style */
-        display: block;
-    }
-}
-
-.hoverPreview {
-    /* height: 44px; */
-    background-color: #fafafa;
-    border-radius: 8px;
-    box-shadow: 1px 2px 2px rgba(0, 0, 0, 0.25);
-    color: rgba(0, 0, 0, 0.60);
-    font-size: 14px;
-    /* padding: 0 12px; */
-    padding: 15px 12px;
-    font-weight: 700;
-
-    bottom: 150%;
-    /* white-space: nowrap; */
-    left: var(--pos-l);
-    right: var(--pos-r);
-    align-items: center;
-    
-    &::after {
-        position: absolute;
-        content: '';
-        left: var(--arr-l);
-        right: var(--arr-r);
-        top: 50%;
-        border-top: 20px solid transparent;
-        border-right: 20px solid transparent;
-        border-left: 20px solid #fafafa;
-        rotate: -45deg;
-    }
-}
-
 .tagsWrapper_ext {
     width: 100%;
     white-space: nowrap;
