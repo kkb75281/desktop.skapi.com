@@ -5,32 +5,26 @@
             img.introLogo(src="@/assets/img/logo/text-logo-white.svg")
             br
             br
+
             h1.underline One Line of Code&nbsp;=&gt;
+
             br
+
             h1 Complete Backend&nbsp;API
-            br
-            br
-            p Integrate Your Website with a Robust Backend&nbsp;API
-            br
-            br
-            br
-            .mobileCenter
-                a.customButton.shadow(href='/signup' style='background-color:white;color:black;margin: 0 1rem 1rem 0;') Try Out For Free
-                a.customButton.outline(href='https://docs.skapi.com' target="_blank" style='color:white;margin: 0 1rem 1rem 0;') Documentation
 
-    br
-
-    section.intact.fullWidthOnMobile(style='text-align:center;')
-        .inline(style='width:50%')
-            h2(style='text-align:left') Skapi
             br
-            h3(style='text-align:left;')
-                | Instant 
-                span(style='color:#293FE6') Backend API Service&nbsp;
-                | for Your HTML Web&nbsp;Application.
-        img(src="@/assets/img/Skapi_Img1.jpg" style='width:50%;vertical-align:middle;')
+            br
 
-    br
+            p(style='font-weight:700') Integrate Your Website with a Robust Backend&nbsp;API
+
+            br
+            br
+            br
+
+            .tabletCenter
+                a.customButton.shadow(href='/signup' style='background-color:white;color:black;margin: 0 .5rem 1rem .5rem;') Try Out For Free
+                a.customButton.outline(href='https://docs.skapi.com/introduction/getting-started.html' target="_blank" style='color:white;margin: 0 .5rem 1rem .5rem;') Getting Started
+
     br
     br
 
@@ -38,18 +32,58 @@
         .frameShine(src="@/assets/img/FrameShine.png")
         img.frameLogo(src="@/assets/img/FrameLogo.png")
 
+    section.intact.leftOnTablet.fullWidthOnTablet(style='text-align:center;padding-top:0;')
+        h2(style='opacity:1;text-shadow: -2px -2px 0 WHITE;opacity:1;line-height:2') Single&nbsp;JavaScript&nbsp;Library,
+        h3(style='opacity:1;text-shadow: -2px -2px 0 WHITE;') No&nbsp;Deployment, No&nbsp;Complex&nbsp;Setup, No&nbsp;Configurations
+
+        br
+        br
+
+        .code
+            span(style="color:#33adff") &lt;
+            span(style="color:#33adff") !DOCTYPE 
+            span(style="color:#58dfff") html
+            span(style="color:#33adff") &gt;
+
+            br
+
+            span(style="color:#33adff") &lt;
+            span(style="color:#33adff") script 
+            span(style="color:#58dfff") src
+            span =
+            span(style="color:#ffa600") "https://cdn.jsdelivr.net/npm/skapi-js@latest/dist/skapi.js"
+            span(style="color:#33adff") 
+            span(style="color:#33adff") &gt;
+            span(style="color:#33adff") &lt;/
+            span(style="color:#33adff") script
+            span(style="color:#33adff") &gt;
+
+            br
+
+            span(style="color:#33adff") &lt;
+            span(style="color:#33adff") script
+            span(style="color:#33adff") &gt;
+
+            br
+
+            span(style="color:#33adff") &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;const 
+            span skapi 
+            span = 
+            span(style="color:#33adff") new 
+            span Skapi( 
+            span(style="color:#ffa600") "YOUR_SERVICE_ID"
+            span ,  
+            span(style="color:#ffa600") "YOUR_OWNER_ID" 
+            span );
+
+            br
+
+            span(style="color:#33adff") &lt;/
+            span(style="color:#33adff") script
+            span(style="color:#33adff") &gt;
+
+
     section.intact
-        h2 Your Backend, Simplified
-
-        br
-        br
-
-        p
-            | Skapi bundles everything you expect from a backend server into a single, 
-            span ready-to-go package.
-
-        br
-        br
         .fullWidthOnTablet
             .featureCollection
                 .inline.circle
@@ -67,14 +101,14 @@
                 .inline.circle
                     img(src="@/assets/img/icon/icons-05.png")
                 .inline.desc
-                    h3 Security
+                    h3 Authentication
                     p Solid security for your users and data.
             .featureCollection
                 .inline.circle
-                    img(src="@/assets/img/icon/icons-06.png")
+                    img(src="@/assets/img/icon/icons-08.png")
                 .inline.desc
-                    h3 Email System
-                    p Simplified email automation and newsletters
+                    h3 CDN
+                    p Fast content delivery across the globe
             .featureCollection
                 .inline.circle
                     img(src="@/assets/img/icon/icons-07.png")
@@ -83,10 +117,10 @@
                     p Host your HTML content swiftly
             .featureCollection
                 .inline.circle
-                    img(src="@/assets/img/icon/icons-08.png")
+                    img(src="@/assets/img/icon/icons-06.png")
                 .inline.desc
-                    h3 CDN
-                    p Fast content delivery across the globe
+                    h3 Auto Email System
+                    p Email automation and newsletters
             .featureCollection
                 .inline.circle
                     img(src="@/assets/img/icon/icons-11.png")
@@ -96,80 +130,42 @@
 
     br
     br
+
+    section.intact.fullWidthOnTablet(style='text-align:center;')
+        img(src="@/assets/img/landingpage/1.png" style='padding: 2rem;padding-top:0;width:50%;vertical-align:middle;')
+
+        .inline(style='width:50%;text-align:left;vertical-align:middle;')
+            h2
+                span(style='color:#293FE6') Backend API Service&nbsp;
+                | for&nbsp;Your&nbsp;HTML
+
+            p From&nbsp;static&nbsp;HTML to full&nbsp;SPA, Skapi is compatible with any&nbsp;type of projects, without the need for additional learning or installing frameworks.
+
+    br
+    br
+    br
+    br
+    br
+    br
+    br
     br
 
     section.intact
-        h2 No&nbsp;Deployment, No&nbsp;Complex&nbsp;Setup, No&nbsp;Configuration&nbsp;Puzzles
+        img.loginExamplePic.hideOnTablet(src="@/assets/img/landingpage/4.png")
+        .leftOnTablet.fullWidthOnTablet
+            h2 
+                span(style='color:#293FE6') Write Less Javascript,&nbsp;
+                | Do&nbsp;It&nbsp;With&nbsp;HTML
 
-        br
-        br
+            br
 
-        p Just initialize the Skapi JS library from your index.html, and everything is ready out of the box.
+            p(style='position:relative;') Tailored for frontend web&nbsp;developers,
+            p(style='position:relative;') Skapi seamlessly integrates with vanilla&nbsp;HTML&nbsp;forms.
+            p(style='position:relative;') No more writing tedious&nbsp;AJAX&nbsp;requests.
 
-        br
-
-        pre(style='opacity:0.5;font-size:.8rem;margin-bottom:.5em;') index.html 
-
-        .code
-            div
-                span(style="color:#33adff") &lt;
-                span(style="color:#33adff") !DOCTYPE 
-                span(style="color:#58dfff") html
-                span(style="color:#33adff") &gt;
-            div
-                span(style="color:#33adff") &lt;
-                span(style="color:#33adff") script 
-                span(style="color:#58dfff") src
-                span =
-                span(style="color:#ffa600") "https://cdn.jsdelivr.net/npm/skapi-js@latest/dist/skapi.js"
-                span(style="color:#33adff") 
-                span(style="color:#33adff") &gt;
-                span(style="color:#33adff") &lt;/
-                span(style="color:#33adff") script
-                span(style="color:#33adff") &gt;
-            div
-                span(style="color:#33adff") &lt;
-                span(style="color:#33adff") script
-                span(style="color:#33adff") &gt;
-            div
-                span(style="color:#33adff") &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;const 
-                span skapi 
-                span = 
-                span(style="color:#33adff") new 
-                span Skapi( 
-                span(style="color:#ffa600") 'YOUR_SERVICE_ID' 
-                span ,  
-                span(style="color:#ffa600") 'YOUR_OWNER_ID' 
-                span );
-            div
-                span(style="color:#33adff") &lt;/
-                span(style="color:#33adff") script
-                span(style="color:#33adff") &gt;
-
-        br
-
-    br
-    br
-    br
-
-    section.intact 
-        h2 Designed for Frontend Developers
-
-        br
-        br
-
-        p Skapi is designed for anyone with a basic HTML/JavaScript knowleadge.
-        p Compatible with both classic HTML and SPA frameworks, it ensures HTML forms functions as intended.
-
-        br
-        p Witness how simple it is to integrate your HTML forms with Skapi's backend API.
-
-        br
-
-        pre(style='opacity:0.5;font-size:.8rem;margin-bottom:.5em') Example: Login form
-
-        .code
-            div
+            br
+            pre(style='opacity:.5;margin-bottom:.2em;font-size:12px') Example: Login Form
+            .code.loginExample(style='position:relative;')
                 span(style="color:#33adff") &lt;
                 span(style="color:#33adff") form
                 span(style="color:#58dfff")  onsubmit
@@ -179,7 +175,9 @@
                 | =
                 span(style="color:#ffa600") "login-success.html"
                 span(style="color:#33adff") &gt;
-            div
+
+                br
+
                 span(style="color:#33adff") &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;
                 span(style="color:#33adff") input
                 span(style="color:#58dfff")  name
@@ -189,7 +187,9 @@
                 | =
                 span(style="color:#ffa600") "email"
                 span(style="color:#33adff") &gt;
-            div
+
+                br
+
                 span(style="color:#33adff") &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;
                 span(style="color:#33adff") input
                 span(style="color:#58dfff")  name
@@ -199,67 +199,172 @@
                 | =
                 span(style="color:#ffa600") "password"
                 span(style="color:#33adff") &gt;
-            div
+
+                br
+
                 span(style="color:#33adff") &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;
                 span(style="color:#33adff") input
                 span(style="color:#58dfff")  type
                 | =
-                span(style="color:#ffa600") "submit"
+                span(style="color:#ffa600") "submit" 
+                span(style="color:#58dfff")  value
+                | =
+                span(style="color:#ffa600") "Login"
                 span(style="color:#33adff") &gt;
-            div
+
+                br
+
                 span(style="color:#33adff") &lt;/
                 span(style="color:#33adff") form
                 span(style="color:#33adff") &gt;
 
-        br
-        br
-
-        div(style='text-align:right;')
-            p.inline(style='vertical-align:middle') Want to know more?
-            a.customButton(href='https://docs.skapi.com/introduction/getting-started.html' target="_blank" style='margin: .25rem 0 .25rem 1rem;vertical-align:middle;background-color:black;color:white;') Documentation
-
+    br
+    br
+    br
     br
     br
     br
 
-    section.intact.fullWidthOnMobile(style='text-align:center;')
-        img(src="@/assets/img/Skapi_Img2.jpg" style='width:50%;vertical-align:middle;')
+    section.intact.fullWidthOnTablet(style='text-align:center;')
         .inline(style='width:50%;vertical-align:middle;')
             h2(style='text-align:left') Database:
-            h2(style='text-align:left') Simple, Flexible, Scalable
-            br
-            br
-            p(style='text-align:left') Skapi's unique database design provides both scalability and flexibility without the need for manual schema design.
-            br
-            p(style='text-align:left') The index structure is thoughtfully engineered, crafted to cater a diverse range of applications with such simplicity.
+            h2(style='text-align:left')
+                span(style='color:#293FE6') Minimized Costly&nbsp;Errors,&nbsp;
+                | Maximized&nbsp;Scalability
+            
+            br.hideOnTablet
+            img.showOnTablet(src="@/assets/img/landingpage/2.png" style='padding: 2rem;width:100%;vertical-align:middle;display:none;')
 
-    section.intact.fullWidthOnMobile(style='text-align:center;')
+            p(style='text-align:left') Skapi's thoughtfully engineered auto-indexing system delivers scalability and flexibility without requiring manual schema design. 
+            br
+            p(style='text-align:left') The database is optimized for a diverse range of applications with simplicity, while preventing cost overruns and performance issues.
+        img.hideOnTablet(src="@/assets/img/landingpage/2.png" style='padding: 2rem;padding-top:0;width:50%;vertical-align:middle;')
+
+    br
+    br
+    br
+    br
+    br
+    br
+
+    section.intact(style='padding-bottom:0')
+        h2 
+            | Cloud Storage: 
+            span(style='color:#293FE6') Huge Files,&nbsp;
+            | Fast Delivery
+
+    br
+    br
+
+    section.intact.fullWidthOnTablet(style='text-align:center;padding-top:0')
+        img(src="@/assets/img/landingpage/3.png" style='padding: 2rem;padding-top: 0;width:50%;vertical-align:middle;')
         .inline(style='width:50%;vertical-align:middle;')
-            h2(style='text-align:left') Cloud Storage:
-            h2(style='text-align:left') Database Integrated
-            br
-            br
-            p(style='text-align:left') Cloud storage integrated with the database and served through the CDN without any extra coding or configuration.
-            br
-            p(style='text-align:left') Provides direct secure upload via HTML forms up to file size of 5tb.
-        img(src="@/assets/img/Skapi_Img2.jpg" style='width:50%;vertical-align:middle;')
+            p(style='text-align:left') Skapi provides direct secure upload via HTML forms up to 5tb per upload. Your data is served through the CDN network, without any extra configuration.
 
-    section.gradback.fullWidthOnMobile(style='text-align:center;padding:4rem 0;')
+            br
+            br
 
-        h2.inline(style='color:white;opacity:1') We are on Public Beta
+            .mobileCenter(style='text-align:left;')
+                p.inline(style='font-weight:700;color:#293FE6;margin:.5rem 0') Curious for more?&nbsp;&nbsp;&nbsp;&nbsp;
+                a.customButton.outline(href='https://docs.skapi.com/introduction/getting-started.html' target="_blank" style='padding: 0.8em 1em;vertical-align:middle;color:#293FE6;') Explore our Documentation
+
+
+    br
+    br
+
+    section.gradback(style='text-align:center;padding:4rem 0;')
+        h2.inline(style='color:white;opacity:1') Skapi is on Free Beta
         br
-        h2.inline(style='color:white;opacity:1') Sign up while it's free!
+        br
+        a.customButton.shadow(href='/signup' style='background-color:black;color:white;') Sign-up
+
+    br
+    br
+    br
+    br
+
+    section.intact
+
+        h2 FAQ 
+
+        br
+
+        .faq
+            h3 What Can You Build With Skapi?
+            p.
+                Photo-sharing websites, file-sharing applications, social media platforms, newsletter subscription services, or&nbsp;any&nbsp;other&nbsp;application that requires a web server.
+                Skapi is a complete backend API service that provides everything you'd expect from a backend server.
+        
         br
         br
-        a.customButton.shadow(href='/signup' style='background-color:black;color:white;') Sign Up
+
+        .faq
+            h3 Is Skapi Typescript Supported?
+            p Yes, Skapi is written in Typescript and is fully compatible with Typescript.
+        
+        br
+        br
+        
+        .faq
+            h3 What Are the Pricing Plans?
+            p
+                | Skapi is currently on free beta. We will announce the pricing plan soon.&nbsp;
+                a(href='/signup') Sign Up&nbsp;
+                | while it's free!
+        
+        br
+        br
+        
+        .faq
+            h3 Do I Need Basic&nbsp;Knowledge of Backend&nbsp;Development?
+            p No, Skapi is designed for frontend developers. You can build a complete full stack application without&nbsp;writing&nbsp;a&nbsp;single&nbsp;line of backend code.
+        
+        br
+        br
+
+        .faq
+            h3 Where can I get help?
+            p 
+                | You can reach us at our&nbsp;
+                a(href='https://discord.com/channels/1164154380816236626/1164154381269213188') Discord&nbsp;server
+                | . We are happy to help you with any questions you may have.
+    br
+    br
+    br
+    br
+
 </template>
 
 <style lang="less" scoped>
+.faq {
+    h3 {
+        line-height: 1.5;
+        &::after {
+            content: '';
+            display: block;
+            width: 100%;
+            height: 1px;
+            background-color: rgba(0, 0, 0, 0.6);
+            margin: .5em 0;
+        }
+    }
+}
+
 #landing {
     max-width: 100vw;
 }
 
+.loginExamplePic {
+    width: 300px;
+    position: absolute;
+    right: 0;
+    bottom: -3rem;
+    padding: 0.5rem;
+}
+
 .code {
+    display: inline-block;
+    text-align: left;
     padding: 1rem;
     background-color: rgba(0, 0, 0, 0.8);
     color: white;
@@ -267,6 +372,13 @@
     white-space: pre;
     border-radius: 8px;
     font-family: monospace;
+    max-width: 100%;
+    width: 702px;
+    box-shadow: inset -3px -3px 4px 0px rgba(255, 255, 255, 0.2);
+
+    &>* {
+        display: inline-block;
+    }
 }
 
 span {
@@ -285,17 +397,17 @@ section.intact {
     max-width: 960px;
     box-sizing: content-box;
     position: relative;
-    padding: 1rem;
+    padding: 0 1rem 2rem 1rem;
     margin: auto;
 }
 
 img {
     display: inline-block;
+    max-width: 400px;
 }
 
 h1 {
     font-size: 2.4em;
-    // font-weight: 500;
     line-height: 1.2;
 }
 
@@ -310,14 +422,18 @@ h3 {
     line-height: 1.5;
 }
 
+p {
+    color: rgba(0, 0, 0, 0.6)
+}
+
 .outline {
-    box-shadow: inset 0 0 0 2px #FFF;
+    box-shadow: inset 0 0 0 2px;
+    font-weight: 600;
 }
 
 .customButton {
     font-size: 14px;
     min-width: 169px;
-    max-width: 100px;
     box-sizing: border-box;
     padding: 0.8em 2.3em;
     text-decoration: none;
@@ -334,6 +450,24 @@ h3 {
         &>* {
             width: 100% !important;
         }
+    }
+
+    .leftOnTablet {
+        &>* {
+            text-align: left !important;
+        }
+    }
+
+    .hideOnTablet {
+        display: none !important;
+    }
+
+    .showOnTablet {
+        display: inline-block !important;
+    }
+
+    .tabletCenter {
+        text-align: center !important;
     }
 }
 
@@ -354,8 +488,7 @@ h3 {
 }
 
 section.intro {
-    padding: 10rem 1em 8rem;
-
+    padding: 10rem 1em 6rem;
     text-align: center;
     line-height: 1;
 
@@ -386,9 +519,10 @@ section.intro {
         color: #fff;
         line-height: 1.5;
         padding: 4px 1rem;
-        // background-color: #434343;
+        opacity: 1;
         background-color: rgba(0, 0, 0, 0.6);
         border-radius: 4px;
+        border: black solid 1px;
     }
 }
 
@@ -398,7 +532,7 @@ section.intro {
     position: relative;
 
     img.frameLogo {
-        width: 162px;
+        width: 9rem;
         position: absolute;
         transform: translateX(-50%);
     }
@@ -418,7 +552,7 @@ section.intro {
             background: linear-gradient(135deg, rgba(112, 169, 255, 0.15) 0%, rgba(134, 255, 240, 0) 75vw);
             transform-origin: top left;
             transform: rotate(45deg);
-            top: 64px;
+            top: 3.5rem;
         }
     }
 }
@@ -428,6 +562,7 @@ section.intro {
     width: 50%;
     margin-bottom: 1.5rem;
     position: relative;
+    min-height: 5.2rem;
 
     &>* {
         vertical-align: text-top;
@@ -446,6 +581,7 @@ section.intro {
             width: 100%;
         }
 
+        border: 1px solid rgba(0, 0, 0, 0.05);
         margin-right: 1rem;
         box-shadow: 8px 8px 36px rgba(0, 0, 0, 0.1);
         border-radius: 100%;
@@ -459,13 +595,8 @@ section.intro {
         h3,
         p {
             padding: 2px 0.25em;
-        }
-
-        h3 {
-            margin-bottom: 0.25rem;
-            background-color: white;
-            border-radius: 8px;
-            display: inline-block;
+            opacity: 1;
+            line-height: 1.2;
         }
     }
 }
