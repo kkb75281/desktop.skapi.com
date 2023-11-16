@@ -3,8 +3,11 @@ main#subdomain
     section#section
         .titleWrap
             // main title
-            a(:href="'http://' + computedSubdomain + '.skapi.com'")
-            h4.title {{ subdomainState || (computedSubdomain ? computedSubdomain + '.skapi.com' : 'Hosting') }}
+            template(v-if="computedSubdomain")
+                a(:href="'http://' + computedSubdomain + '.skapi.com'" target="_blank")
+                    h4.title {{ subdomainState || (computedSubdomain ? computedSubdomain + '.skapi.com' : 'Hosting') }}
+            template(v-else)
+                h4.title Hosting
             .buttonWrap(v-if="currentService.subdomain") 
                 .refresh.clickable(:class="{'nonClickable' : !account.email_verified || subdomainState || refreshCDNRun}" @click='refreshCdn()')
                     .material-symbols-outlined.mid(:class="{'rotate_animation': refreshCDNRun}") cached
@@ -601,6 +604,10 @@ function formatBytes(bytes, decimals = 2) {
             align-items: center;
             justify-content: space-between;
 
+            a {
+                // text-decoration: none;
+                color: #000;
+            }
             .title {
                 width: 300px;
                 white-space: nowrap;
@@ -669,7 +676,7 @@ function formatBytes(bytes, decimals = 2) {
             justify-content: space-between;
 
             .setting {
-                width: 47%;
+                width: 48%;
 
                 .tit {
                     color: rgba(0, 0, 0, 0.40);
@@ -697,7 +704,7 @@ function formatBytes(bytes, decimals = 2) {
                     }
 
                     &.line {
-                        &::before {
+                        &::before, p {
                             width: calc(100% - 120px);
                         }
                     }
@@ -1027,8 +1034,11 @@ function formatBytes(bytes, decimals = 2) {
         #section {
             .titleWrap {
                 flex-wrap: wrap;
-
+                .title {
+                    margin-bottom: 1rem;
+                }
                 .buttonWrap {
+                    width: 100%;
                     > div {
                         &.delete {
                             margin-left: 1rem;
