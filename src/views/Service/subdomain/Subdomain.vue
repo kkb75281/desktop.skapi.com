@@ -3,6 +3,7 @@ main#subdomain
     section#section
         .titleWrap
             // main title
+            a(:href="'http://' + computedSubdomain + '.skapi.com'")
             h4.title {{ subdomainState || (computedSubdomain ? computedSubdomain + '.skapi.com' : 'Hosting') }}
             .buttonWrap(v-if="currentService.subdomain") 
                 .refresh.clickable(:class="{'nonClickable' : !account.email_verified || subdomainState || refreshCDNRun}" @click='refreshCdn()')
@@ -36,7 +37,7 @@ main#subdomain
                 .cont.line 
                     p {{ subdomainInfo?.[computedSubdomain]?.['404'] || "Upload a file"}}
                     .customFile(:class="{'nonClickable' : !account.email_verified || subdomainState}")
-                        template(v-if="!set404PromiseRunning")
+                        template(v-if="set404PromiseRunning")
                             img.loading(style='position: absolute;right: 1em;top: 8px;' src="@/assets/img/loading.png")
                         template(v-else)
                             label.uploadBtn(v-if="subdomainInfo?.[computedSubdomain]?.['404']" @click='removeSet404')
@@ -639,7 +640,6 @@ function formatBytes(bytes, decimals = 2) {
             label {
                 display: block;
                 width: 105px;
-                height: 32px;
                 border: 2px solid #293FE6;
                 border-radius: 8px;
                 text-align: center;
@@ -1040,12 +1040,14 @@ function formatBytes(bytes, decimals = 2) {
                 }
             }
 
-            .uploadBtn {
-                width: 24px;
-                border: 0;
+            .customFile {
+                label {
+                    width: unset;
+                    border: 0;
 
-                span {
-                    display: none;
+                    span {
+                        display: none;
+                    }
                 }
             }
 
@@ -1060,6 +1062,9 @@ function formatBytes(bytes, decimals = 2) {
                         margin-bottom: 0;
                     }
                     .cont {
+                        .material-symbols-outlined {
+                            padding-right: 1rem;
+                        }
                         &.line {
                             &::before {
                                 width: 100%;
