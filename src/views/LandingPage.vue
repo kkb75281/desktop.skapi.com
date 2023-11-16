@@ -66,7 +66,7 @@
 
             br
 
-            span(style="color:#33adff") &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;const 
+            span(style="color:#33adff") &nbsp;&nbsp;&nbsp;&nbsp;const 
             span skapi 
             span = 
             span(style="color:#33adff") new 
@@ -90,7 +90,7 @@
                     img(src="@/assets/img/icon/icons-03.png")
                 .inline.desc
                     h3 Database
-                    p Simple, scalable, yet flexible database at your service
+                    p Auto-indexed database that scales
             .featureCollection
                 .inline.circle
                     img(src="@/assets/img/icon/icons-04.png")
@@ -139,7 +139,12 @@
                 span(style='color:#293FE6') Backend API Service&nbsp;
                 | for&nbsp;Your&nbsp;HTML
 
-            p From&nbsp;static&nbsp;HTML to full&nbsp;SPA, Skapi is compatible with any&nbsp;type of projects, without the need for additional learning or installing frameworks.
+            br
+
+            p 
+                | From&nbsp;static&nbsp;HTML to full&nbsp;SPA, Skapi is 
+                b compatible&nbsp;with&nbsp;any type of projects
+                |, without the need for additional learning or installing frameworks.
 
     br
     br
@@ -153,14 +158,15 @@
     section.intact
         img.loginExamplePic.hideOnTablet(src="@/assets/img/landingpage/4.png")
         .leftOnTablet.fullWidthOnTablet
-            h2 
-                span(style='color:#293FE6') Write Less Javascript,&nbsp;
-                | Do&nbsp;It&nbsp;With&nbsp;HTML
+            h2(style='color:#293FE6') Write Less Javascript,
+            h2 Do&nbsp;It&nbsp;With&nbsp;HTML
 
             br
 
             p(style='position:relative;') Tailored for frontend web&nbsp;developers,
-            p(style='position:relative;') Skapi seamlessly integrates with vanilla&nbsp;HTML&nbsp;forms.
+            p(style='position:relative;')
+                | Skapi seamlessly 
+                b integrates with vanilla&nbsp;HTML&nbsp;forms.
             p(style='position:relative;') No more writing tedious&nbsp;AJAX&nbsp;requests.
 
             br
@@ -178,7 +184,7 @@
 
                 br
 
-                span(style="color:#33adff") &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;
+                span(style="color:#33adff") &nbsp;&nbsp;&nbsp;&nbsp;&lt;
                 span(style="color:#33adff") input
                 span(style="color:#58dfff")  name
                 | =
@@ -190,7 +196,7 @@
 
                 br
 
-                span(style="color:#33adff") &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;
+                span(style="color:#33adff") &nbsp;&nbsp;&nbsp;&nbsp;&lt;
                 span(style="color:#33adff") input
                 span(style="color:#58dfff")  name
                 | =
@@ -202,7 +208,7 @@
 
                 br
 
-                span(style="color:#33adff") &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;
+                span(style="color:#33adff") &nbsp;&nbsp;&nbsp;&nbsp;&lt;
                 span(style="color:#33adff") input
                 span(style="color:#58dfff")  type
                 | =
@@ -231,11 +237,15 @@
             h2(style='text-align:left')
                 span(style='color:#293FE6') Minimized Costly&nbsp;Errors,&nbsp;
                 | Maximized&nbsp;Scalability
-            
+
             br.hideOnTablet
             img.showOnTablet(src="@/assets/img/landingpage/2.png" style='padding: 2rem;width:100%;vertical-align:middle;display:none;')
 
-            p(style='text-align:left') Skapi's thoughtfully engineered auto-indexing system delivers scalability and flexibility without requiring manual schema design. 
+            p(style='text-align:left')
+                | Skapi's thoughtfully engineered 
+                b auto&nbsp;indexing&nbsp;system 
+                | delivers full scalability and flexibility 
+                b without&nbsp;any&nbsp;manual&nbsp;schema&nbsp;design. 
             br
             p(style='text-align:left') The database is optimized for a diverse range of applications with simplicity, while preventing cost overruns and performance issues.
         img.hideOnTablet(src="@/assets/img/landingpage/2.png" style='padding: 2rem;padding-top:0;width:50%;vertical-align:middle;')
@@ -257,10 +267,17 @@
     br
 
     section.intact.fullWidthOnTablet(style='text-align:center;padding-top:0')
-        img(src="@/assets/img/landingpage/3.png" style='padding: 2rem;padding-top: 0;width:50%;vertical-align:middle;')
-        .inline(style='width:50%;vertical-align:middle;')
-            p(style='text-align:left') Skapi provides direct secure upload via HTML forms up to 5tb per upload. Your data is served through the CDN network, without any extra configuration.
+        img(src="@/assets/img/landingpage/3.png" style='padding: 2rem;width:50%;vertical-align:top;')
+        .inline(style='width:50%;vertical-align:top;')
+            p(style='text-align:left')
+                | You can upload huge files up to 
+                b 5tb 
+                | directly via&nbsp;HTML&nbsp;forms.
+                | Your data is served through the CDN network, 
+                b without any extra configuration.
 
+            br
+            br
             br
             br
 
@@ -294,31 +311,31 @@
             p.
                 Photo-sharing websites, file-sharing applications, social media platforms, newsletter subscription services, or&nbsp;any&nbsp;other&nbsp;application that requires a web server.
                 Skapi is a complete backend API service that provides everything you'd expect from a backend server.
-        
+
         br
         br
 
         .faq
             h3 Is Skapi Typescript Supported?
             p Yes, Skapi is written in Typescript and is fully compatible with Typescript.
-        
+
         br
         br
-        
+
         .faq
             h3 What Are the Pricing Plans?
             p
                 | Skapi is currently on free beta. We will announce the pricing plan soon.&nbsp;
                 a(href='/signup') Sign Up&nbsp;
                 | while it's free!
-        
+
         br
         br
-        
+
         .faq
             h3 Do I Need Basic&nbsp;Knowledge of Backend&nbsp;Development?
             p No, Skapi is designed for frontend developers. You can build a complete full stack application without&nbsp;writing&nbsp;a&nbsp;single&nbsp;line of backend code.
-        
+
         br
         br
 
@@ -339,6 +356,7 @@
 .faq {
     h3 {
         line-height: 1.5;
+
         &::after {
             content: '';
             display: block;
@@ -373,8 +391,9 @@
     border-radius: 8px;
     font-family: monospace;
     max-width: 100%;
-    width: 702px;
+    width: 830px;
     box-shadow: inset -3px -3px 4px 0px rgba(255, 255, 255, 0.2);
+    font-size: 16px;
 
     &>* {
         display: inline-block;
@@ -394,7 +413,7 @@ span {
 }
 
 section.intact {
-    max-width: 960px;
+    max-width: 1080px;
     box-sizing: content-box;
     position: relative;
     padding: 0 1rem 2rem 1rem;
@@ -403,7 +422,7 @@ section.intact {
 
 img {
     display: inline-block;
-    max-width: 400px;
+    max-width: 500px;
 }
 
 h1 {
@@ -432,7 +451,7 @@ p {
 }
 
 .customButton {
-    font-size: 14px;
+    font-size: 16px;
     min-width: 169px;
     box-sizing: border-box;
     padding: 0.8em 2.3em;
@@ -594,7 +613,7 @@ section.intro {
 
         h3,
         p {
-            padding: 2px 0.25em;
+            padding: 2px 0;
             opacity: 1;
             line-height: 1.2;
         }
