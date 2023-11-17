@@ -337,8 +337,9 @@ main#database
                             span Add data
 
                 // right panel top right menu
-                .material-symbols-outlined.mid.menu(v-if="!recordInfoEdit" @click.stop="showEdit = !showEdit") more_vert
+                .menu(v-if="!recordInfoEdit" @click.stop="showEdit = !showEdit") 
                     // drop down menu (no edit)
+                    .material-symbols-outlined.mid.clickable more_vert
                     #moreVert(v-if="showEdit" @click.stop style="--moreVert-right: 0")
                         .inner
                             .more(@click="recordInfoEdit = true; showEdit = false;")
@@ -438,7 +439,8 @@ main#database
             .actions 
                 .material-symbols-outlined.mid.refresh.clickable(@click='()=>{selectedRecord=null; refresh(fetchParams);}' :class='{"rotate_animation": fetching }') cached
                 .material-symbols-outlined.mid.create.clickable(:class="{'nonClickable' : !account.email_verified}" @click="()=>{ !account.email_verified ? false : selectedRecord = JSON.parse(JSON.stringify(createRecordTemplate)); recordInfoEdit=true; }") note_stack_add
-                .material-symbols-outlined.mid.menu.clickable(:class='{"nonClickable": !checkedRecords.length || !account.email_verified}' @click.stop="!account.email_verified ? false : showRecordSetting = !showRecordSetting") more_vert
+                .menu(@click.stop="!account.email_verified ? false : showRecordSetting = !showRecordSetting") 
+                    .material-symbols-outlined.mid.clickable(:class='{"nonClickable": !checkedRecords.length || !account.email_verified}') more_vert
                     #moreVert(v-if="showRecordSetting" @click.stop style="--moreVert-left: 0")
                         .inner
                             .more(@click="()=>{recordDelete(); showRecordSetting=false;}")
@@ -1444,7 +1446,6 @@ watch(() => selectedRecord.value, () => {
                 position: absolute;
                 right: 14px;
                 top: 7.5px;
-                color: rgba(0, 0, 0, 0.6);
                 cursor: pointer;
             }
 

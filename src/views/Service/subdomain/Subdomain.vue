@@ -76,8 +76,9 @@ main#subdomain
             .filesButtonWrap
                 // file menu
                 .material-symbols-outlined.mid.refresh.clickable(:class='{"rotate_animation": fetching }' @click='refresh(searchDir)') cached
-                .material-symbols-outlined.mid.menu.clickable(@click.stop="showEdit = !showEdit") more_vert
-                    #moreVert(v-if="showEdit" @click.stop)
+                .menu(@click.stop="showEdit = !showEdit")
+                    .material-symbols-outlined.mid.clickable(:class='{"nonClickable": !checkedFiles.length || !account.email_verified}') more_vert
+                    #moreVert(v-if="showEdit" @click.stop style="--moreVert-right: 0;")
                         .inner
                             .more(@click="showRemoveAllFiles = true; showEdit = false;")
                                 .material-symbols-outlined.mid delete

@@ -159,7 +159,7 @@ import { computed, nextTick, ref, watch } from 'vue';
 import { useRouter } from 'vue-router';
 import { currentService, storageInfo } from '@/data.js';
 import { skapi, account } from '@/main.js';
-import DisableServiceOverlay from '@/views/Service/Records/DisableServiceOverlay.vue';
+import DisableServiceOverlay from '@/views/Service/DisableServiceOverlay.vue';
 import DeleteService from '@/components/DeleteService.vue';
 
 const router = useRouter();
