@@ -28,36 +28,36 @@ main#service
                 .codeInner
                     .line
                         div
-                            span(style="color:#f0f0f0") &lt;
-                            span(style="color:#ff3399") script 
-                            span(style="color:#a8ff58") src
+                            span(style="color:#33adff") &lt;
+                            span(style="color:#33adff") script 
+                            span(style="color:#58dfff") src
                             span =
-                            span(style="color:#ffd500") "https://cdn.jsdelivr.net/npm/skapi-js@latest/dist/skapi.js"
-                            span(style="color:#ff3399") 
-                            span(style="color:#f0f0f0") &gt;
-                            span(style="color:#f0f0f0") &lt;
-                            span(style="color:#f0f0f0") /
-                            span(style="color:#ff3399") script
-                            span(style="color:#f0f0f0") &gt;
+                            span(style="color:#ffa600") "https://cdn.jsdelivr.net/npm/skapi-js@latest/dist/skapi.js"
+                            span(style="color:#33adff") 
+                            span(style="color:#33adff") &gt;
+                            span(style="color:#33adff") &lt;
+                            span(style="color:#33adff") /
+                            span(style="color:#33adff") script
+                            span(style="color:#33adff") &gt;
                         div
-                            span(style="color:#f0f0f0") &lt;
-                            span(style="color:#ff3399") script
-                            span(style="color:#f0f0f0") &gt;
+                            span(style="color:#33adff") &lt;
+                            span(style="color:#33adff") script
+                            span(style="color:#33adff") &gt;
                         div(style="margin-left: 30px")
-                            span(style="color:#ff3399") const 
+                            span(style="color:#33adff") const 
                             span skapi 
                             span = 
-                            span(style="color:#ff3399") new 
-                            span Skapi("
-                            span(style="color:#ffd500") {{ currentService.service }}
-                            span ", "
-                            span(style="color:#ffd500") {{ currentService.owner }}
-                            span ");
+                            span(style="color:#33adff") new 
+                            span Skapi(
+                            span(style="color:#ffa600") "{{ currentService.service }}"
+                            span , 
+                            span(style="color:#ffa600") "{{ currentService.owner }}"
+                            span );
                         div
-                            span(style="color:#f0f0f0") &lt;
-                            span(style="color:#f0f0f0") /
-                            span(style="color:#ff3399") script
-                            span(style="color:#f0f0f0") &gt;
+                            span(style="color:#33adff") &lt;
+                            span(style="color:#33adff") /
+                            span(style="color:#33adff") script
+                            span(style="color:#33adff") &gt;
                 .copy.clickable(@click="copy")
                     .material-symbols-outlined.mid file_copy
             a.question(href="https://docs.skapi.com/introduction/getting-started.html" target="_blank")
@@ -568,6 +568,7 @@ watch(modifyCors, () => {
         }
 
         .codeWrap {
+            font-family: monospace;
             margin-top: 1.5rem;
             padding: 1rem 2rem;
             text-align: left;
