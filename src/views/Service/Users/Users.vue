@@ -105,10 +105,11 @@ main#users
                                     label(for="timestamp")
                                         .material-symbols-outlined.mid.check check
                                         span Date Created
-                .material-symbols-outlined.mid.refresh.clickable(@click='refresh' :class='{"rotate_animation": fetching }') cached
-                .material-symbols-outlined.mid.create.clickable(:class="{'nonClickable' : !account.email_verified}" @click="!account.email_verified ? false : inviteUserShow=true") mail
-                .material-symbols-outlined.mid.create.clickable(:class="{'nonClickable' : !account.email_verified}" @click="!account.email_verified ? false : createUserShow=true") person_add
-                .material-symbols-outlined.mid.menu.clickable(:class='{"nonClickable": !checkedUsers.length || !account.email_verified}' @click.stop="!account.email_verified ? false : showUserSetting = !showUserSetting") more_vert
+                .material-symbols-outlined.mid.refresh(@click='refresh' :class='{"rotate_animation": fetching }') cached
+                .material-symbols-outlined.mid.create(:class="{'nonClickable' : !account.email_verified}" @click="!account.email_verified ? false : inviteUserShow=true") mail
+                .material-symbols-outlined.mid.create(:class="{'nonClickable' : !account.email_verified}" @click="!account.email_verified ? false : createUserShow=true") person_add
+                .menu(@click.stop="!account.email_verified ? false : showUserSetting = !showUserSetting")
+                    .material-symbols-outlined.mid.clickable(:class='{"nonClickable": !checkedUsers.length || !account.email_verified}') more_vert
                     #moreVert(v-if="showUserSetting" @click.stop style="--moreVert-left: 0")
                         .inner
                             .more(@click="()=>{stateText='Block'; showBlockUser=true; showUserSetting=false;}")
@@ -202,7 +203,7 @@ main#users
     Calendar(v-if="showCalendar" @dateClicked="handledateClick" alwaysEmit='true')
     LocaleSelector(v-if="showLocale" @countryClicked="handleCountryClick")
     InviteUserOverlay(v-if='inviteUserShow' @close='(e)=>{inviteUserShow=false;inviteSuccess=e;}')
-    CreateUserOverlay(v-if='createUserShow' @close='(e)=>{createUserShow=false;createSuccess=true;}')
+    CreateUserOverlay(v-if='createUserShow' @close='(e)=>{ createUserShow=false; createSuccess=e; if(e) userPage.insertItems([e]).then(()=>getPage(currentPage)) }')
     UserOverlay(v-if='showBlockUser' @close='userState' :state='stateText' :checkedUsers='checkedUsers')
         p This action will block {{ checkedUsers.length }} user(s) from your service. The user will not be able to access your service anymore.
     UserOverlay(v-if='showUnblockUser' @close='userState' :state='stateText' :checkedUsers='checkedUsers')

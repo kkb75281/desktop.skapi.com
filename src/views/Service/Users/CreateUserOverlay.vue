@@ -36,6 +36,8 @@
                             @input="e => password = e.target.value"
                             placeholder="User's Password"
                             type='Password'
+                            minlength="6"
+                            required
                         )
 
                     .error(v-if="error")
@@ -82,13 +84,13 @@ let createUser = () => {
         name,
         password,
         service: currentService.value.service
-    }, {
-        signup_confirmation: false
     }).then((res) => {
+        console.log(res)
         promiseRunning.value = false;
-        emits('close');
+        emits('close', res);
     }).catch((err) => {
-        
+        promiseRunning.value = false;
+        error.value = err.message;
     });
 }
 </script>
