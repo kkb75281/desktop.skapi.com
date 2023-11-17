@@ -249,7 +249,7 @@ NavBar(style='--position: absolute;')
                 b without&nbsp;any&nbsp;manual&nbsp;schema&nbsp;design. 
             br
             p(style='text-align:left') The database is optimized for a diverse range of applications with simplicity, while preventing cost overruns and performance issues.
-        img.hideOnTablet(src="@/assets/img/landingpage/2.png" style='padding: 2rem;padding-top:0;width:50%;vertical-align:middle;')
+        img.hideOnTablet(src="@/assets/img/landingpage/2.png" style='padding: 2rem;width:50%;vertical-align:middle;')
 
     br
     br
@@ -268,7 +268,7 @@ NavBar(style='--position: absolute;')
     br
 
     section.intact.fullWidthOnTablet(style='text-align:center;padding-top:0')
-        img(src="@/assets/img/landingpage/3.png" style='padding: 2rem;width:50%;vertical-align:top;')
+        img(src="@/assets/img/landingpage/3.png" style='padding: 2rem;padding-top:0;width:50%;vertical-align:top;')
         .inline(style='width:50%;vertical-align:top;')
             p(style='text-align:left')
                 | You can upload huge files up to 
@@ -381,7 +381,7 @@ import NavBar from '@/components/NavBar.vue';
     width: 300px;
     position: absolute;
     right: 0;
-    bottom: -3rem;
+    top: -3rem;
     padding: 0.5rem;
 }
 
