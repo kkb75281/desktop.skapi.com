@@ -1,5 +1,5 @@
 <template lang="pug">
-template(v-if='currentService')
+main#service
     .infoWrap
         .info
             .title 
@@ -14,15 +14,16 @@ template(v-if='currentService')
                                     button.cancel(type="button" @click="modifyServiceName = false;") Cancel
                                     button.save(type="submit") Save
                     template(v-else)
-                        h2 {{ currentService.name }}
+                        h4 {{ currentService.name }}
                         .material-symbols-outlined.mid.modify.clickable(:class="{'nonClickable' : !account?.email_verified}" @click="editServiceName") edit
-                .date 
-                    span Date Created
-                    h5 {{ new Date(currentService.timestamp).toDateString() }}
-                .toggleWrap(:class="{'active': currentService.active >= 1}")
-                    span Disable/Enable
-                    .toggleBg(:class="{'nonClickable' : !account?.email_verified}")
-                        .toggleBtn(@click="enableDisableToggle")
+                .right
+                    .date 
+                        span Date Created
+                        h6 {{ new Date(currentService.timestamp).toDateString() }}
+                    .toggleWrap(:class="{'active': currentService.active >= 1}")
+                        span Disable/Enable
+                        .toggleBg(:class="{'nonClickable' : !account?.email_verified}")
+                            .toggleBtn(@click="enableDisableToggle")
             .codeWrap
                 .codeInner
                     .line
@@ -62,15 +63,16 @@ template(v-if='currentService')
             a.question(href="https://docs.skapi.com/introduction/getting-started.html" target="_blank")
                 .material-symbols-outlined.empty.sml help 
                 span Where do I put this code?
+        
         .info 
             .title 
-                h2 Security Setting
+                h4 Security Setting
                 a.question.help(href='https://docs.skapi.com/security/security-settings.html' target="_blank")
                     .material-symbols-outlined.empty.sml help 
                     span Help
             .listWrap
                 .list
-                    span(:class="{ active: modifyCors }") Cors
+                    h6(:class="{ active: modifyCors }") Cors
                     template(v-if="modifyCors")
                         form.modifyForm(style="margin-top: 8px" @submit.prevent="changeCors")
                             input#modifyCors(:disabled="promiseRunningCors || null" type="text" placeholder='https://your.domain.com' :value='inputCors' @input="(e) => {e.target.setCustomValidity(''); inputCors = e.target.value;}")
@@ -85,7 +87,7 @@ template(v-if='currentService')
                             .material-symbols-outlined.mid.pen.clickable(:class="{'nonClickable' : !account?.email_verified}" @click="editCors") edit
 
                 .list
-                    span(:class="{ active: modifyKey }") Secret Key
+                    h6(:class="{ active: modifyKey }") Secret Key
                     template(v-if="modifyKey")
                         form.modifyForm(style="margin-top: 8px" @submit.prevent="setSecretKey")
                             input#modifyKey(:disabled="promiseRunningSecKey || null" type="text" placeholder="Secret key for external request" :value='inputKey' @input="(e) => inputKey = e.target.value")
@@ -103,54 +105,53 @@ template(v-if='currentService')
             .titleWrap
                 .title 
                     .material-symbols-outlined.big group
-                    h2 Users
+                    h4 Users
             .listWrap.noWrap
                 .list
-                    span # of Users
+                    h6 # of Users
                     h5 {{ currentService.users }}
         router-link.info.hover.record.clicked(:to='`/dashboard/${currentService.service}/records`')
             .titleWrap
                 .title 
                     .material-symbols-outlined.big database
-                    h2 Database
+                    h4 Database
             .listWrap.noWrap
                 .list
-                    span # of database storage Used
+                    h6 # of database storage Used
                     h5 {{ convertToMb(storageInfo?.[currentService.service]?.database) }}
                 .list
-                    span # of cloud storage Used
+                    h6 # of cloud storage Used
                     h5 {{ convertToMb(storageInfo?.[currentService.service]?.cloud) }}
         router-link.info.hover.mail.clicked(:to='`/dashboard/${currentService.service}/mail`')
             .titleWrap
                 .title 
                     .material-symbols-outlined.big mail
-                    h2 Mail
+                    h4 Mail
             .listWrap.noWrap
                 .list
-                    span # Subscribers
+                    h6 # Subscribers
                     h5 {{ currentService.newsletter_subscribers }}
                 .list 
-                    span # Mail storage used 
+                    h6 # Mail storage used 
                     h5 {{ convertToMb(storageInfo?.[currentService.service]?.email) }}
         router-link.info.hover.domain.clicked(:to='`/dashboard/${currentService.service}/subdomain`')
             .titleWrap
                 .title 
                     .material-symbols-outlined.big language
-                    h2 Hosting
+                    h4 Hosting
             .listWrap.noWrap
                 .list
-                    span Registered Subdomain
+                    h6 Registered Subdomain
                     h5 {{ currentSubdomain }}
                 .list
-                    span Host storage used
+                    h6 Host storage used
                     h5 {{ convertToMb(storageInfo?.[currentService.service]?.host) }}
     .deleteWrap(:class="{'nonClickable' : !account?.email_verified}")
         .deleteInner(@click="!account?.email_verified ? false : openDeleteService = true;")
             .material-symbols-outlined.mid delete
             span Delete Service
-    DisableServiceOverlay(v-if="openDisableService" @close="disableService")
-    DeleteService(v-if="openDeleteService" @close="openDeleteService = false;")
-
+DisableServiceOverlay(v-if="openDisableService" @close="disableService")
+DeleteService(v-if="openDeleteService" @close="openDeleteService = false;")
 </template>
 
 <script setup>
@@ -238,6 +239,7 @@ let editKey = () => {
 let copy = (e) => {
     let currentTarget = e.currentTarget;
     let doc = document.createElement('textarea');
+    doc.textContent = currentTarget.previousSibling.textContent;
     doc.textContent = currentTarget.previousSibling.textContent;
     document.body.append(doc);
     doc.select();
@@ -375,13 +377,17 @@ watch(modifyCors, () => {
 </script>
 
 <style lang="less" scoped>
+#service {
+    max-width: 1200px;
+    margin: 0 auto;
+}
 .infoWrap {
     display: flex;
     flex-wrap: wrap;
 
     .info {
         width: 49%;
-        padding: 40px;
+        padding: 2rem;
         background-color: #fafafa;
         border-radius: 8px;
         margin-bottom: 2%;
@@ -426,65 +432,111 @@ watch(modifyCors, () => {
             }
         }
 
-        .titleWrap {
-            display: flex;
-            flex-wrap: nowrap;
-            align-items: center;
-            justify-content: space-between;
-
-            svg {
-                width: 32px;
-                height: 32px;
-                color: rgba(0, 0, 0, 0.4);
-            }
-        }
-
         .title {
+            position: relative;
             width: 100%;
             display: flex;
             align-items: center;
+            justify-content: space-between;
             flex-wrap: nowrap;
-            align-items: center;
-
-            h2 {
-                font-size: 24px;
-            }
 
             .name {
                 display: flex;
                 flex-wrap: nowrap;
                 align-items: center;
-                width: 50%;
-                height: 44px;
-            }
+                width: calc(100% - 480px);
 
-            .date {
-                display: flex;
-                flex-wrap: nowrap;
-                align-items: center;
-
-                span {
-                    color: rgba(0, 0, 0, 0.40);
-                    font-size: 16px;
-                    font-weight: 500;
-                    margin-right: 10px;
-                }
-
-                h5 {
-                    color: rgba(0, 0, 0, 0.60);
-                    font-size: 16px;
-                    font-weight: 700;
+                h4 {
+                    white-space: nowrap;
+                    overflow: hidden;
+                    text-overflow: ellipsis;
                 }
             }
 
-            .date,
-            .toggleWrap {
-                width: 25%;
-                justify-content: end;
+            .right {
+                text-align: end;
+
+                > div {
+                    text-align: right;
+                    display: inline-block;
+                    height: 30px;
+                }
+                .date {        
+                    span {
+                        color: rgba(0, 0, 0, 0.40);
+                        font-size: 0.8rem;
+                        font-weight: 500;
+                        margin-right: 10px;
+                    }
+    
+                    h6 {
+                        display: inline-block;
+                        color: rgba(0, 0, 0, 0.60);
+                    }
+                }
+    
+                .toggleWrap {
+                    display: inline-block;
+                    margin-left: 30px;
+                    opacity: 1;
+    
+                    &.locked {
+                        opacity: 0.4;
+                    }
+    
+                    &.active {
+                        .toggleBg {
+                            background-color: #293FE6;
+    
+                            .toggleBtn {
+                                transform: translate(31px, -50%);
+                                transition: all 1s;
+                            }
+                        }
+                    }
+    
+                    span {
+                        color: rgba(0, 0, 0, 0.40);
+                        font-size: 0.8rem;
+                        font-weight: 500;
+                    }
+    
+                    .toggleBg {
+                        position: relative;
+                        display: inline-block;
+                        vertical-align: middle;
+                        width: 63px;
+                        height: 32px;
+                        margin-left: 1rem;
+                        border-radius: 16px;
+                        background-color: rgba(0, 0, 0, 0.25);
+                        transition: all 1s;
+    
+                        &.nonClickable { 
+                            .toggleBtn {
+                                cursor: default;
+                            }
+                        }
+                        .toggleBtn {
+                            position: absolute;
+                            width: 26px;
+                            height: 26px;
+                            right: unset;
+                            left: 3px;
+                            top: 50%;
+                            transform: translateY(-50%);
+                            border-radius: 50%;
+                            background-color: #eee;
+                            transition: all 1s;
+                            cursor: pointer;
+                        }
+                    }
+                }
             }
 
             .material-symbols-outlined {
                 margin-right: 17px;
+                vertical-align: middle;
             }
 
             .modify {
@@ -505,13 +557,26 @@ watch(modifyCors, () => {
             }
         }
 
+        .titleWrap {
+            .title {
+                justify-content: start;
+            }
+            
+            h4 {
+                display: inline-block;
+            }
+        }
+
         .codeWrap {
             font-family: monospace;
-            margin-top: 2rem;
+            margin-top: 1.5rem;
             padding: 1rem 2rem;
             text-align: left;
+            box-shadow: unset;
 
             .copy {
+                top: 20px;
+                transform: unset;
                 top: 20px;
                 transform: unset;
             }
@@ -523,11 +588,15 @@ watch(modifyCors, () => {
             align-items: center;
             text-decoration: none;
             color: #293FE6;
-            font-size: 16px;
+            font-size: 0.8rem;
             font-weight: 500;
-            margin-top: 20px;
+            margin-top: 1rem;
 
             &.help {
+                position: absolute;
+                left: 9rem;
+                top: 50%;
+                transform: translateY(-50%);
                 color: rgba(0, 0, 0, 0.40);
             }
 
@@ -553,9 +622,8 @@ watch(modifyCors, () => {
                 width: 48%;
                 margin-top: 28px;
 
-                span {
-                    display: block;
-                    font-size: 16px;
+                h6 {
+                    font-weight: 500;
                     color: rgba(0, 0, 0, 0.4);
 
                     &.active {
@@ -684,20 +752,30 @@ watch(modifyCors, () => {
     }
 }
 
-@media (max-width: 1320px) {
+@media (max-width: 1023px) {
+    .infoWrap {
+        .info {
+            width: 100%;
+            margin-right: 0;
+        }
+    }
+}
+
+@media (max-width:767px) {
     .infoWrap {
         .info {
             .title {
+                display: block;
+
                 .name {
-                    width: 45%;
+                    width: 100%;
+                    margin-bottom: 0.8rem;
                 }
 
-                .date {
-                    width: 30%;
-                }
-
-                .toggleWrap {
-                    width: 25%;
+                .right {
+                    > div {
+                        text-align: left;
+                    }
                 }
             }
         }

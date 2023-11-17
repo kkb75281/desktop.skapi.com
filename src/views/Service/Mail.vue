@@ -1,7 +1,7 @@
 <template lang="pug">
-.containerWrap
-    .container
-        h2 Automated Emails
+main#mail
+    section#section
+        h4 Automated Emails
         p 
             | Automated emails are sent to your users when certain events occur.
             br
@@ -49,8 +49,8 @@
             .cont 
                 template(v-if="currentService") {{ currentService?.email_triggers?.template_setters?.newsletter_subscription }}
                 template(v-else) loading...
-    .container
-        h2 Newsletters
+    section#section
+        h4 Newsletters
         p 
             | By sending the newsletter email to the addresses below,
             br
@@ -96,50 +96,49 @@ let copy = (e) => {
 </script>
 
 <style lang="less" scoped>
-.containerWrap {
+#mail {
+    max-width: 1200px;
+    margin: 0 auto;
     position: relative;
     display: flex;
     flex-wrap: wrap;
-    .container {
+    
+    #section {
         width: 100%;
-        padding: 40px;
+        padding: 2rem;
         background-color: #fafafa;
         border-radius: 8px;
         margin-bottom: 2%;
         box-shadow: 8px 12px 36px rgba(0, 0, 0, 0.10);
 
-        h2 {
-            font-size: 24px;
-            font-weight: 700;
-        }
         p {
-            margin-top: 28px;
-            margin-bottom: 56px;
+            margin-top: 1.4rem;
+            margin-bottom: 2.8rem;
             color: rgba(0, 0, 0, 0.60);
-            font-size: 16px;
+            font-size: 0.8rem;
             font-weight: 500;
-            line-height: 24px;
+            line-height: 1.5;
             a {
                 color: #293FE6;
-                font-size: 16px;
+                font-size: 0.8rem;
                 font-weight: 700;
             }
         }
         .email {
-            padding: 28px;
-            margin-bottom: 28px;
+            padding: 1.4rem;
+            margin-bottom: 1.4rem;
             background-color: rgba(0, 0, 0, 0.05);
             border-radius: 8px;
             .tit {
                 display: flex;
                 flex-wrap: nowrap;
                 color: rgba(0,0,0,0.6);
-                margin-bottom: 12px;
-                font-size: 16px;
+                margin-bottom: 0.6rem;
+                font-size: 0.8rem;
                 font-weight: 700;
 
                 span {
-                    margin-left: 16px;
+                    margin-left: 0.8rem;
                     vertical-align: middle;
                 }
                 .copy {
@@ -151,7 +150,7 @@ let copy = (e) => {
                         top: 10px;
                         transform: translateY(-50%);
                         text-align: center;
-                        font-size: 14px;
+                        font-size: 0.7rem;
                         font-weight: 400;
                         color: rgba(0, 0, 0, 0.5);
                         padding: 4px;
@@ -167,8 +166,10 @@ let copy = (e) => {
             }
             .cont {
                 color: rgba(0, 0, 0, 0.40);
-                font-size: 16px;
+                font-size: 0.8rem;
                 font-weight: 400;
+                overflow: auto;
+                white-space: nowrap;
             }
             &:last-child {
                 margin-bottom: 0;

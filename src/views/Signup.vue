@@ -49,7 +49,7 @@
                     input#remember(type="checkbox" @input="(e)=> form.subscribe = e.target.checked" checked)
                     label(for="remember")
                         span I agree to receive newsletters from Skapi via Email.
-                        span.material-symbols-outlined.mid.check check
+                        .material-symbols-outlined.mid.check check
             .error(v-if="error")
                 .material-symbols-outlined.mid error
                 span {{ error }}

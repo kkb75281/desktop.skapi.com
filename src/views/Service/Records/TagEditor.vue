@@ -3,7 +3,7 @@
     .wrap(@click.stop)
         // edit
         .header 
-            h4 Tags
+            h6 Tags
         .content 
             TagsInput(:editTagsData = "true" :value='dataCopy' @change='e=>dataCopy=e')
         .buttonWrap 
