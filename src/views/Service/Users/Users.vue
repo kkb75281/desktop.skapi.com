@@ -106,7 +106,8 @@ main#users
                                         .material-symbols-outlined.mid.check check
                                         span Date Created
                 .material-symbols-outlined.mid.refresh.clickable(@click='refresh' :class='{"rotate_animation": fetching }') cached
-                .material-symbols-outlined.mid.create.clickable(:class="{'nonClickable' : !account.email_verified}" @click="!account.email_verified ? false : inviteUserShow=true") group_add
+                .material-symbols-outlined.mid.create.clickable(:class="{'nonClickable' : !account.email_verified}" @click="!account.email_verified ? false : inviteUserShow=true") mail
+                .material-symbols-outlined.mid.create.clickable(:class="{'nonClickable' : !account.email_verified}" @click="!account.email_verified ? false : createUserShow=true") person_add
                 .material-symbols-outlined.mid.menu.clickable(:class='{"nonClickable": !checkedUsers.length || !account.email_verified}' @click.stop="!account.email_verified ? false : showUserSetting = !showUserSetting") more_vert
                     #moreVert(v-if="showUserSetting" @click.stop style="--moreVert-left: 0")
                         .inner
@@ -201,6 +202,7 @@ main#users
     Calendar(v-if="showCalendar" @dateClicked="handledateClick" alwaysEmit='true')
     LocaleSelector(v-if="showLocale" @countryClicked="handleCountryClick")
     InviteUserOverlay(v-if='inviteUserShow' @close='(e)=>{inviteUserShow=false;inviteSuccess=e;}')
+    CreateUserOverlay(v-if='createUserShow' @close='(e)=>{createUserShow=false;createSuccess=true;}')
     UserOverlay(v-if='showBlockUser' @close='userState' :state='stateText' :checkedUsers='checkedUsers')
         p This action will block {{ checkedUsers.length }} user(s) from your service. The user will not be able to access your service anymore.
     UserOverlay(v-if='showUnblockUser' @close='userState' :state='stateText' :checkedUsers='checkedUsers')
@@ -215,6 +217,12 @@ main#users
         br
         div(style='text-align: right;')
             button.msgButton(@click='inviteSuccess=false') OK
+    msgOverlay(v-if='createSuccess' @close='createSuccess = false' title='Success' :preventBackgroundClick='true')
+        p A user was successfully created       
+        br
+        br
+        div(style='text-align: right;')
+            button.msgButton(@click='createSuccess=false') OK
 </template>
     
 <script setup>
@@ -227,6 +235,7 @@ import Calendar from '@/components/Calendar.vue';
 import LocaleSelector from '@/components/LocaleSelector.vue';
 import msgOverlay from '@/components/msgOverlay.vue';
 import InviteUserOverlay from '@/views/Service/Users/InviteUserOverlay.vue';
+import CreateUserOverlay from '@/views/Service/Users/CreateUserOverlay.vue';
 import UserOverlay from '@/views/Service/Users/UserOverlay.vue';
 
 import Pager from '@/skapi-extensions/js/pager.js';
@@ -244,6 +253,8 @@ let fetching = ref(false);
 let searchText = ref('');
 let inviteSuccess = ref(false);
 let inviteUserShow = ref(false);
+let createSuccess = ref(false);
+let createUserShow = ref(false);
 
 watch(currentPage, (page) => {
     getPage(page);

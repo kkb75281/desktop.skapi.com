@@ -1,66 +1,68 @@
 <template lang="pug">
-#dialogBackground(@click="closeDialog" @mousedown="pendClose = true")
-    .center
-        .dialog(@mousedown.stop @mouseup='pendClose = false')
+#overlayWindow.dialogBackground(@click="closeDialog" @mousedown="pendClose = true" style='--max-width: 480px;')
+    .overlayWrap(@mousedown.stop @mouseup='pendClose = false')
+        header
             h5.title Invite User
-            form(@submit.prevent="createUser")
-                p Invitation Email includes a temporary password and the acception link.
-                p User must accept the invitation within 7 days.
+        main
+            .content
+                form(@submit.prevent="createUser")
+                    p Invitation Email includes a temporary password and the acception link.
+                    p User must accept the invitation within 7 days.
 
-                br
+                    br
 
-                p For more information, refer:&nbsp;
-                    a(href="https://docs.skapi.com/email/email-templates.html" target="_blank" style='white-space: nowrap') E-Mail Templates
+                    p For more information, refer:&nbsp;
+                        a(href="https://docs.skapi.com/email/email-templates.html" target="_blank" style='white-space: nowrap') E-Mail Templates
 
-                br
-                br
+                    br
+                    br
 
-                input(hidden name="service" :value="currentService.service")
+                    input(hidden name="service" :value="currentService.service")
 
-                .input
-                    label.label User's Email 
-                    input(
-                        type="email"
-                        @input="e => email = e.target.value"
-                        pattern="[a-zA-Z0-9\+]+[@][a-zA-Z0-9]+[.]+[a-zA-Z]+[.]*[a-zA-Z]*" 
-                        title="Please enter a valid email address." 
-                        placeholder="anonymous@anonymous.com"
-                        required
-                    )
-                br
+                    .input
+                        label.label User's Email 
+                        input(
+                            type="email"
+                            @input="e => email = e.target.value"
+                            pattern="[a-zA-Z0-9\+]+[@][a-zA-Z0-9]+[.]+[a-zA-Z]+[.]*[a-zA-Z]*" 
+                            title="Please enter a valid email address." 
+                            placeholder="anonymous@anonymous.com"
+                            required
+                        )
+                    br
 
-                .input
-                    label.label Name 
-                    input(
-                        @input="e => name = e.target.value"
-                        placeholder="User's Name" 
-                        required
-                    )
+                    .input
+                        label.label Name 
+                        input(
+                            @input="e => name = e.target.value"
+                            placeholder="User's Name" 
+                            required
+                        )
 
-                br
+                    br
 
-                .input
-                    label.label Redirect URL 
-                    input(
-                        @input="e => redirect = e.target.value"
-                        placeholder="URL to redirect when accepted. (optional)"
-                        type='url'
-                    )
+                    .input
+                        label.label Redirect URL 
+                        input(
+                            @input="e => redirect = e.target.value"
+                            placeholder="URL to redirect when accepted. (optional)"
+                            type='url'
+                        )
 
-                .error(v-if="error")
-                    .material-symbols-outlined.mid error
-                    span {{ error }}
+                    .error(v-if="error")
+                        .material-symbols-outlined.mid error
+                        span {{ error }}
 
-                br
-                br
+                    br
+                    br
 
-                .bottom
-                    template(v-if="promiseRunning")
-                        img.loading(src="@/assets/img/loading.png")
+                    .buttonWrap
+                        template(v-if="promiseRunning")
+                            img.loading(src="@/assets/img/loading.png")
 
-                    template(v-else)
-                        button.cancel(type="button" @click="emits('close')") Cancel
-                        button.ok Create User
+                        template(v-else)
+                            button.cancel(type="button" @click="emits('close')") Cancel
+                            button.save Create User
 </template>
 
 <script setup>
@@ -118,7 +120,7 @@ let createUser = () => {
 }
 </script>
 
-<style lang="less" scoped>
+<!-- <style lang="less" scoped>
 #dialogBackground {
     z-index: 99999;
     position: fixed;
@@ -225,4 +227,4 @@ let createUser = () => {
         }
     }
 }
-</style>
+</style> -->
