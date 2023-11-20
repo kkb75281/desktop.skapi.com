@@ -105,6 +105,7 @@ else {
 
 <style lang="less" scoped>
 #serviceMain {
+    display: flex;
     margin-top: 3rem;
     
     .left {
@@ -122,6 +123,7 @@ else {
                 text-decoration: none;
                 border-radius: 8px;
                 margin-bottom: 4px;
+                white-space: pre;
                 cursor: pointer;
 
                 * {
@@ -165,8 +167,9 @@ else {
     }
     .right {
         display: inline-block;
-        width: calc(100vw - 240px);
+        // width: calc(100vw - 240px);
         padding: 0 20px 20px 0;
+        flex-grow: 1;
     }
 }
 
@@ -182,7 +185,7 @@ else {
             }
         }
         .right {
-            width: calc(100vw - 88px);
+            // width: calc(100vw - 88px);
         }
     }
 }
