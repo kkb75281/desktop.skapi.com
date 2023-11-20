@@ -567,21 +567,6 @@ watch(modifyCors, () => {
             }
         }
 
-        .codeWrap {
-            font-family: monospace;
-            margin-top: 1.5rem;
-            padding: 1rem 2rem;
-            text-align: left;
-            box-shadow: unset;
-
-            .copy {
-                top: 20px;
-                transform: unset;
-                top: 20px;
-                transform: unset;
-            }
-        }
-
         .question {
             display: flex;
             flex-wrap: nowrap;
@@ -666,6 +651,57 @@ watch(modifyCors, () => {
                 font-size: 16px;
                 font-weight: 500;
             }
+        }
+    }
+}
+
+.codeWrap {
+    position: relative;
+    border-radius: 8px;
+    border: 1px solid rgba(255, 255, 255, 0.10);
+    background: rgba(0,0,0,0.8);
+    font-family: monospace;
+    color: #FFF;
+    box-shadow: 3px 9px 6px 0px rgba(0, 0, 0, 0.15);
+    margin-top: 1.5rem;
+    user-select: text !important;
+
+    .codeInner {
+        white-space: nowrap;
+        overflow: auto;
+        padding: 1rem;
+    }
+    .line {
+        display: inline-block;
+        line-height: 1.4;
+        font-size: 0.9rem;
+    }
+    .copy {
+        position: absolute;
+        right: 20px;
+        top: 28px;
+        transform: translateY(-50%);
+        color: #fff;
+
+        &::after {
+            position: absolute;
+            display: block;
+            right: 30px;
+            top: 50%;
+            transform: translateY(-50%);
+            text-align: center;
+            font-size: 14px;
+            font-weight: 400;
+            background: rgba(255, 255, 255, 0.6);
+            color: #343434;
+            padding: 4px;
+            content: "Copied";
+            transition: opacity .4s;
+            opacity: 0;
+        }
+
+        &.copied::after {
+            opacity: 1;
         }
     }
 }
