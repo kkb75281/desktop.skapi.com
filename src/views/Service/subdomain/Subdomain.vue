@@ -588,8 +588,6 @@ function formatBytes(bytes, decimals = 2) {
     max-width: 1200px;
     margin: 0 auto;
     position: relative;
-    display: flex;
-    flex-wrap: wrap;
 
     #section {
         position: relative;
