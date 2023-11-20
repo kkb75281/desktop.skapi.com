@@ -185,7 +185,7 @@ else {
             }
         }
         .right {
-            // width: calc(100vw - 88px);
+            width: calc(100vw - 88px);
         }
     }
 }
