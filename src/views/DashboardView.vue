@@ -1,8 +1,9 @@
 <template lang="pug">
-main
-    .title 
-        h2 Dashboard
-        span All Services
+main#dashboard
+    .titleWrap
+        .inner 
+            h2 Dashboard
+            span All Services
     .container
         .wrapper(v-if="!serviceFetching")
             // service 로딩이 완료 되면 표시
@@ -10,9 +11,10 @@ main
                 .box.btn(v-if="!create" @click="createService" :class="{'nonClickable' : !account?.email_verified}")
                     .material-symbols-outlined.mid add
                     span Create Service
+
                 .box.create(v-if="create")
                     form(@submit.prevent="addService")
-                        h3 Create a new service
+                        h5 Create a new service
                         input#serviceName(type="text" @input='e=>newServiceName=e.target.value' placeholder="Name of Service" required)
                         .buttons
                             template(v-if="promiseRunning")
@@ -25,18 +27,18 @@ main
                     router-link.box.service.clicked(v-for="service in services" :to="'/dashboard/' + service.service" :style='{opacity: service?.pending ? ".5" : null}')
                         .inner
                             .tit 
-                                h3 {{ service.name }}
+                                h5 {{ service.name }}
                                 .material-symbols-outlined.mid arrow_forward_ios
                             .contWrap 
                                 .cont 
                                     span Locale
-                                    h5 {{ regions?.[service.region] || service.region }}
+                                    p {{ regions?.[service.region] || service.region }}
                                 .cont 
                                     span Date Created
-                                    h5 {{ typeof service.timestamp === 'string' ? service.timestamp : new Date(service.timestamp).toDateString() }}
+                                    p {{ typeof service.timestamp === 'string' ? service.timestamp : new Date(service.timestamp).toDateString() }}
                                 .cont 
                                     span CORS
-                                    h5 {{ service.cors }}
+                                    p {{ service.cors }}
 
                             .serviceActive(v-if='service?.pending')
                                 // 왜 인지 모르겠으나 조건 class가 에니메이션을 영향줌 (생성될때 active가 켜졌다->꺼졌다->서비스 생성 완료되면 다시 켜짐)
@@ -107,42 +109,43 @@ const regions = {
 </script>
 
 <style lang="less" scoped>
-main {
+#dashboard {
     position: relative;
-    margin-top: 68px;
-    padding: 0 40px;
+    margin-top: 3.4rem;
 
-    .title {
-        width: 1200px;
-        margin: 0 auto;
-        padding-bottom: 42px;
+    .titleWrap {
+        padding: 0 2rem;
 
-        h2 {
-            display: inline-block;
-            font-size: 32px;
-            font-weight: 700;
-            margin-right: 18px;
-        }
-
-        span {
-            font-size: 24px;
-            font-weight: 500;
-            color: rgba(0, 0, 0, 0.40);
+        .inner {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding-bottom: 2.1rem;
+    
+            h2 {
+                display: inline-block;
+                font-weight: 700;
+            }
+    
+            span {
+                font-size: 1.2rem;
+                font-weight: 500;
+                margin-left: 18px;
+                color: rgba(0, 0, 0, 0.40);
+            }
         }
     }
 
     .container {
-        width: calc(100% + 80px);
-        min-height: calc(100vh - 208px);
-        margin-left: -40px;
-        padding: 40px;
+        width: 100%;
+        min-height: calc(100vh - 10.1rem);
+        padding: 2rem;
         background-color: #fafafa;
         box-shadow: 8px 12px 36px rgba(0, 0, 0, 0.10);
         border-radius: 8px;
     }
-
+    
     .wrapper {
-        width: 1200px;
+        max-width: 1200px;
         margin: 0 auto;
 
         .boxWrap {
@@ -153,12 +156,11 @@ main {
 
             .box {
                 width: 31%;
-                // width: 352.5px;
-                height: 254px;
+                // height: 254px;
                 margin-right: 3.5%;
                 margin-bottom: 3.5%;
                 border-radius: 8px;
-                padding: 27px 29px;
+                padding: 1.5rem;
                 background-color: #fafafa;
                 box-shadow: 0px 2px 4px 0px rgba(0, 0, 0, 0.10);
                 transition: all 0.1s;
@@ -172,7 +174,7 @@ main {
                     display: flex;
                     align-items: center;
                     justify-content: center;
-                    font-size: 20px;
+                    font-size: 1rem;
                     font-weight: 700;
                     color: #293FE6;
                     cursor: pointer;
@@ -186,9 +188,8 @@ main {
                     box-shadow: 0 0 0 4px #A5AFFF inset;
 
                     form {
-                        h3 {
+                        h5 {
                             color: #293FE6;
-                            font-size: 24px;
                             font-weight: 500;
                             margin-bottom: 20px;
                         }
@@ -199,7 +200,7 @@ main {
                             background: rgba(0, 0, 0, 0.05);
                             border: 0;
                             padding: 15px 20px;
-                            font-size: 16px;
+                            font-size: 0.8rem;
                             margin-bottom: 45px;
                         }
 
@@ -214,7 +215,7 @@ main {
                                 border: 0;
                                 padding: 0 28px;
                                 border-radius: 8px;
-                                font-size: 16px;
+                                font-size: 0.8rem;
                                 font-weight: 700;
                                 cursor: pointer;
 
@@ -262,9 +263,8 @@ main {
                             justify-content: space-between;
                             margin-bottom: 45px;
 
-                            h3,
+                            > h5,
                             span {
-                                font-size: 24px;
                                 font-weight: 500;
                             }
 
@@ -286,24 +286,25 @@ main {
 
                             .cont {
                                 width: 50%;
-                                font-size: 16px;
                                 margin-bottom: 25px;
 
-                                h5 {
-                                    font-size: 16px;
+                                span {
+                                    font-size: 0.8rem;
+                                    color: rgba(0, 0, 0, 0.40);
+                                }
+
+                                p {
+                                    font-size: 0.8rem;
+                                    font-weight: 700;
                                     padding-top: 12px;
                                     color: rgba(0, 0, 0, 0.60);
                                 }
 
-                                span {
-                                    color: rgba(0, 0, 0, 0.40);
-                                }
-
                                 &:last-child {
-                                    width: 200px;
+                                    width: 65%;
                                     margin-bottom: 0;
 
-                                    h5 {
+                                    p {
                                         white-space: nowrap;
                                         overflow: hidden;
                                         text-overflow: ellipsis;
@@ -375,25 +376,9 @@ main {
     }
 }
 
-@media (max-width: 1280px) {
-    main {
-        .title {
-            width: 100%;
-        }
-
-        .container {
-            .wrapper {
-                width: 100%;
-            }
-        }
-    }
-}
-
-@media (max-width: 1100px) {
-    main {
+@media (max-width: 1023px) {
+    #dashboard {
         .wrapper {
-            width: 100%;
-
             .boxWrap {
                 .box {
                     width: 48%;
@@ -417,13 +402,9 @@ main {
     }
 }
 
-@media (max-width: 660px) {
-    main {
+@media (max-width: 767px) {
+    #dashboard {
         .wrapper {
-            width: 100%;
-            background-color: unset;
-            padding: 0;
-
             .boxWrap {
                 .box {
                     width: 100%;
@@ -435,7 +416,7 @@ main {
                     }
 
                     &.btn {
-                        height: 251px;
+                        height: 240px;
                     }
                 }
             }

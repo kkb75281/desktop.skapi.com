@@ -1,62 +1,87 @@
 <template lang="pug">
-.navBar(:class="{'home' : route.name == 'home'}")
-    router-link(to="/")
-        template(v-if="route.name == 'home'")
-            img.logo(src="@/assets/img/logo/logo-white.svg")
-            img.mlogo(src="@/assets/img/logo/symbol-logo-white.png")
-        template(v-else)
-            img.logo(src="@/assets/img/logo/logo.png")
-    .menu
-        template(v-if="account")
-            ul
-                li
-                    a(href="https://twitter.com/skapijs" target="_blank")
-                        img(src="@/assets/img/icon/twitter.svg")
-                li
-                    a(href="https://discord.gg/3QdZzQwR" target="_blank")
-                        img(src="@/assets/img/icon/discord.svg")
-            ul
-                li.doc
-                    a(href="https://docs.skapi.com" target="_blank") Documentation
-                li
-                    router-link(to="/dashboard") Dashboard
-                li.account(@click.stop="accountInfo = !accountInfo") {{ account.email.charAt(0).toUpperCase() }}
-        template(v-else)
-            ul
-                li
-                    a(href="https://twitter.com/skapijs" target="_blank")
-                        img(src="@/assets/img/icon/twitter.svg")
-                li
-                    a(href="https://discord.com/channels/1164154380816236626/1164154380816236628" target="_blank")
-                        img(src="@/assets/img/icon/discord.svg")
-            ul
-                li.doc 
-                    a(href="https://docs.skapi.com" target="_blank") Documentation
-                li.login
-                    router-link(to="/login") Login
-                li 
-                    router-link.signup(to="/signup") Sign-up
-    .prof(v-if="accountInfo && account" @click.stop)
-        .member 
-            span {{ account.email }}
-        .settings 
-            .setting(@click="navigateToPage")
-                span.material-symbols-outlined.sml settings
-                span Account Settings
-            .setting(@click="logout")
-                span.material-symbols-outlined.sml logout
-                span Logout
-        .policy terms of service ● privacy policy
+header#navBar(style='--position: relative;')
+    nav#top
+        .left
+            router-link.logo(to="/")
+                img(v-if="route.name == 'home'" src="@/assets/img/logo/logo-white.svg")
+                img(v-else-if="route.name == 'dashboard' || route.name == 'accountSettings'" src="@/assets/img/logo/logo.png")
+                img.small(v-else src="@/assets/img/logo/symbol-logo.png")
+        .right(:class="{'flex' : route.params.service && currentService}")
+            .topRoute(v-if="route.params.service && currentService" ref="topRoute") 
+                ol
+                    li 
+                        router-link(to="/dashboard") Dashboard
+                    li(:class="{'active': route.name == 'service'}")
+                        router-link(:to="`/dashboard/${currentService.service}`") 
+                            h5 {{ currentService.name }}
+                    li(v-if="route.name == 'users'" :class="{'active': route.name == 'users'}")
+                        router-link(:to="`/dashboard/${currentService.service}/users`") Users
+                    li(v-if="route.name == 'records'" :class="{'active': route.name == 'records'}")
+                        router-link(:to="`/dashboard/${currentService.service}/records`") Records
+                    li(v-if="route.name == 'mail'" :class="{'active': route.name == 'mail'}")
+                        router-link(:to="`/dashboard/${currentService.service}/records`") Mail
+                    li(v-if="route.name == 'subdomain'" :class="{'active': route.name == 'subdomain'}")
+                        router-link(:to="`/dashboard/${currentService.service}/records`") Hosting
+                router-link.service(:to="`/dashboard/${currentService.service}`") 
+                    h5 {{ currentService.name }}
+            .topMenu(:class="{'white' : route.name == 'home'}")
+                template(v-if="account")
+                    ul
+                        li
+                            a(href="https://twitter.com/skapijs" target="_blank")
+                                img(src="@/assets/img/icon/twitter.svg")
+                        li
+                            a(href="https://discord.gg/3QdZzQwR" target="_blank")
+                                img(src="@/assets/img/icon/discord.svg")
+                    ul
+                        li.doc
+                            a(href="https://docs.skapi.com" target="_blank") Documentation
+                        li.dash
+                            router-link(to="/dashboard") Dashboard
+                        li.account(@click.stop="accountInfo = !accountInfo") {{ account.email.charAt(0).toUpperCase() }}
+                template(v-else)
+                    ul
+                        li
+                            a(href="https://twitter.com/skapijs" target="_blank")
+                                img(src="@/assets/img/icon/twitter.svg")
+                        li
+                            a(href="https://discord.com/channels/1164154380816236626/1164154380816236628" target="_blank")
+                                img(src="@/assets/img/icon/discord.svg")
+                    ul
+                        li.doc 
+                            a(href="https://docs.skapi.com" target="_blank") Documentation
+                        li.login
+                            router-link(to="/login") Login
+                        li 
+                            router-link.signup(to="/signup") Sign-up
+        .prof(v-if="accountInfo && account" @click.stop)
+            .member 
+                span {{ account.email }}
+            .settings 
+                .setting(@click="navigateToPage")
+                    span.material-symbols-outlined.sml settings
+                    span Account Settings
+                .setting(@click="logout")
+                    span.material-symbols-outlined.sml logout
+                    span Logout
+            .policy terms of service ● privacy policy
 </template>
 
 <script setup>
-import { ref } from 'vue'
+import { onBeforeUnmount, onMounted, ref } from 'vue'
 import { useRouter, useRoute } from 'vue-router';
-import { skapi, account, bodyClick } from '@/main.js';
+import { skapi, account, bodyClick } from '@/main';
+import { services, serviceFetching, currentService, storageInfo, serviceUsers, newsletter_sender } from '@/data';
+import { serviceRecords } from '@/views/Service/Records/RecordFetch';
+import { launch, serviceHost, subdomainInfo } from '@/views/Service/subdomain/SubdomainFetch';
 
 let route = useRoute();
 let router = useRouter();
+let topRoute = ref(null);
 let accountInfo = ref(false);
+let servicePage = ref(false);
+
+currentService.value = null;
 
 bodyClick.nav = ()=>{
     accountInfo.value = false;
@@ -69,182 +94,327 @@ let navigateToPage = () => {
 let logout = async () => {
     accountInfo.value = false;
     account.value = null;
+    services.value = [];
+    storageInfo.value = {};
+
+    for (let k in serviceUsers) {
+        delete serviceUsers[k];
+    }
+
+    for (let k in serviceRecords) {
+        delete serviceRecords[k];
+    }
+
     await skapi.logout();
+
     router.push({ path: '/' });
 }
+let getCurrentService = () => {
+    let srvcId = route.path.split('/')[2];
+    currentService.value = skapi.services[srvcId];
+
+    if (currentService.value) {
+        if (!newsletter_sender.value?.[currentService.value.service]?.public) {
+            if (!newsletter_sender.value?.[currentService.value.service]) {
+                newsletter_sender.value[currentService.value.service] = {};
+            }
+            skapi.requestNewsletterSender(currentService.value.service, { groupNum: 0 }).then(s => {
+                newsletter_sender.value[currentService.value.service]['public'] = s;
+            });
+        }
+
+        if (!newsletter_sender.value?.[currentService.value.service]?.authorized) {
+            if (!newsletter_sender.value?.[currentService.value.service]) {
+                newsletter_sender.value[currentService.value.service] = {};
+            }
+            skapi.requestNewsletterSender(currentService.value.service, { groupNum: 1 }).then(s => {
+                newsletter_sender.value[currentService.value.service]['authorized'] = s;
+            });
+        }
+
+        if (!storageInfo.value[currentService.value.service]) {
+            storageInfo.value[currentService.value.service] = {};
+        }
+        let sd = currentService.value.subdomain;
+        if (sd && (sd[0] !== '*' || sd[0] !== '+')) {
+            // get subdomain storage info (404 file info)
+            skapi.getSubdomainInfo(currentService.value.service, {
+                subdomain: sd,
+            }).then(s =>
+                subdomainInfo.value[sd] = s
+            ).catch(err=>err);
+
+            launch(currentService.value.subdomain, f => {
+                if (f.length) {
+                    storageInfo.value[currentService.value.service].host = f[0].size;
+                }
+            }, true);
+        }
+
+        skapi.storageInformation(currentService.value.service).then(i => {
+            // get storage info
+            for (let k in i) {
+                storageInfo.value[currentService.value.service][k] = i[k];
+            }
+        });
+    }
+    else {
+        // router.replace({ path: '/dashboard' });
+    }
+}
+
+if (serviceFetching.value instanceof Promise) {
+    serviceFetching.value.then(getCurrentService);
+}
+else {
+    getCurrentService()
+}
+
+let resize = () => {
+    if(topRoute.value) {
+        if (window.innerWidth < 1024) {
+            topRoute.value.classList.add('service');
+        } else {
+            topRoute.value.classList.remove('service');
+        }
+    }
+}
+
+onMounted(() => {
+    window.addEventListener('resize', resize);
+})
+onBeforeUnmount(() => {
+    window.removeEventListener('resize', resize);
+})
 </script>
 
 <style lang="less" scoped>
-.navBar {
-    position: relative;
-    padding: 10px 40px 10px 40px;
+#top {
+    position: var(--position);
+    left: 0;
+    top: 0;
     width: 100%;
     height: 60px;
+    z-index: 999;
+    padding: 10px 20px;
     display: flex;
-    flex-wrap: nowrap;
     align-items: center;
     justify-content: space-between;
 
-    &.home {
-        position: absolute;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 60px;
-        z-index: 9999;
-
-        .menu {
-            ul {
-                &:first-child {
-                    &::after {
-                        background-color: rgba(255,255,255,0.4);
-                    }
-                }
-                li {
-                    a {
-                        color: #fff;
-
-                        &:hover {
-                            color: #293FE6;
-
-                            img {
-                                filter: invert(28%) sepia(100%) saturate(5415%) hue-rotate(234deg) brightness(89%) contrast(102%);
-                            }
-                        }
-                        img {
-                            filter: invert(100%) sepia(0%) saturate(7500%) hue-rotate(355deg) brightness(107%) contrast(106%);
-                            opacity: 1;
-                        }
-                    }
+    .left {
+        position: relative;
+        width: 220px;
+        .logo {
+            img {
+                width: 120px;
+                &.small {
+                    width: 36px;
+                    vertical-align: middle;
                 }
             }
         }
     }
-    &.fixed {
-        position: fixed;
-        left: 0;
-        top: 0;
-        z-index: 9999999;
-        background-color: #f0f0f0;
-        box-shadow: 8px 12px 36px 0px rgba(0, 0, 0, 0.10);
-    }
-
-    :first-child {
-        display: flex;
-        align-items: center;
-    }
-
-    .logo {
-        width: 120px;
-    }
-
-    .mlogo {
-        width: 32px;
-        display: none;
-    }
-
-    .menu {
-        display: flex;
-        flex-wrap: nowrap;
-
-        ul {
-            position: relative;
+    .right {
+        width: calc(100% - 220px);
+        text-align: right;
+        
+        &.flex {
             display: flex;
             flex-wrap: nowrap;
             align-items: center;
-            padding: 0 24px;
-
-            &:first-child {
-                &::after {
-                    position: absolute;
-                    content: '';
-                    top: 50%;
-                    right: 0;
-                    transform: translateY(-50%);                    
-                    width: 1px;
-                    height: 25px;
-                    background-color: rgba(0,0,0,0.1);
-                }
-
+            justify-content: space-between;
+        }
+        .topRoute {
+            ol {
+                height: 40px;
+                display: flex;
+                align-items: center;
+    
                 li {
-                    margin-right: 16px;
-                }
-            }
-
-            &:last-child {
-                padding-right: 0;
-            }
-
-            li {
-                list-style: none;
-                margin-right: 24px;
-
-                &:last-child {
-                    margin-right: 0;
-                }
-                
-                a {
-                    color: rgba(0,0,0,0.6);
-                    text-decoration: none;
-                    font-size: 20px;
-                    font-weight: 700;
-                    cursor: pointer;
-                    
-                    &:hover {
-                        color: rgba(0,0,0,1);
-
-                        img {
-                            opacity: 1;
+                    position: relative;
+                    list-style: none;
+                    margin-right: 50px;
+    
+                    a {
+                        font-size: 1rem;
+                        font-weight: 700;
+                        text-decoration: none;
+                        color: rgba(0, 0, 0, 0.40);
+                    }
+    
+                    h5 {
+                        max-width: 80px;
+                        white-space: nowrap;
+                        overflow: hidden;
+                        text-overflow: ellipsis;
+                    }
+    
+                    &:last-child {
+                        margin-right: 0;
+                    }
+    
+                    &::before {
+                        position: absolute;
+                        content: '>';
+                        right: -30px;
+                        top: 50%;
+                        transform: translateY(-50%);
+                        font-size: 20px;
+                        color: rgba(0, 0, 0, 0.40);
+                    }
+    
+                    &.active {
+                        a {
+                            color: #293FE6;
                         }
+                    }
+    
+                    &.active::before {
+                        display: none;
+                    }
+                }
+            }
+            .service {
+                display: none;
+                text-decoration: none;
+                color: #293FE6;
+            }
+        }
 
+        .topMenu {
+            display: flex;
+            align-items: center;
+            justify-content: end;
+
+            &.white {
+                ul {
+                    &:first-child {
+                        &::after {
+                            background-color: rgba(255,255,255,0.4);
+                        }
+                    }
+                    li {
+                        a {
+                            color: #fff;
+
+                            &:hover {
+                                color: #293FE6;
+
+                                img {
+                                    filter: invert(28%) sepia(100%) saturate(5415%) hue-rotate(234deg) brightness(89%) contrast(102%);
+                                }
+                            }
+                            img {
+                                filter: invert(100%) sepia(0%) saturate(7500%) hue-rotate(355deg) brightness(107%) contrast(106%);
+                                opacity: 1;
+                            }
+                        }
+                    }
+                }
+            }
+
+            ul {
+                position: relative;
+                display: flex;
+                align-items: center;
+                line-height: 40px;
+                padding: 0 1rem;
+    
+                &:first-child {
+                    &::after {
+                        position: absolute;
+                        content: '';
+                        top: 50%;
+                        right: 0;
+                        transform: translateY(-50%);                    
+                        width: 1px;
+                        height: 25px;
+                        background-color: rgba(0,0,0,0.1);
+                    }
+    
+                    li {
+                        margin-right: 16px;
+                    }
+                }
+    
+                &:last-child {
+                    padding-right: 0 !important;
+                }
+    
+                li {
+                    list-style: none;
+                    margin-right: 1rem;
+                    text-align: center;
+    
+                    &:last-child {
+                        margin-right: 0;
+                    }
+                    
+                    a {
+                        color: rgba(0,0,0,0.6);
+                        text-decoration: none;
+                        font-size: 1rem;
+                        font-weight: 700;
+                        cursor: pointer;
+                        
+                        &:hover {
+                            color: rgba(0,0,0,1);
+    
+                            img {
+                                opacity: 1;
+                            }
+    
+                            &.signup {
+                                color: #fff;
+                            }
+                        }
+    
                         &.signup {
                             color: #fff;
+                            padding: 8px 20px;
+                            border-radius: 8px;
+                            font-size: 0.8rem;
+                            font-weight: 700;
+                            background: #293FE6;
+                        }
+    
+                        img {
+                            width: 20px;
+                            height: 20px;
+                            opacity: 0.6;
+                            vertical-align: middle;
+                            margin-bottom: 5px;
                         }
                     }
-
-                    &.signup {
+    
+                    &:last-child {
+                        margin-right: 0;
+                    }
+    
+                    &.account {
+                        position: relative;
+                        margin-right: 0;
+                        width: 2rem;
+                        height: 2rem;
+                        border-radius: 50%;
+                        background-color: #293FE6;
                         color: #fff;
-                        padding: 8px 20px;
-                        border-radius: 8px;
-                        font-size: 16px;
-                        font-weight: 700;
-                        background: #293FE6;
+                        font-size: 1rem;
+                        // display: flex;
+                        // align-items: center;
+                        // justify-content: center;
+                        cursor: pointer;
                     }
-
-                    img {
-                        width: 20px;
-                        height: 20px;
-                        opacity: 0.6;
-                    }
-                }
-
-                &:last-child {
-                    margin-right: 0;
-                }
-
-                &.account {
-                    position: relative;
-                    margin-right: 0;
-                    width: 40px;
-                    height: 40px;
-                    border-radius: 50%;
-                    background-color: #293FE6;
-                    color: #fff;
-                    font-size: 20px;
-                    display: flex;
-                    align-items: center;
-                    justify-content: center;
-                    cursor: pointer;
                 }
             }
         }
-    }
 
+    }
     .prof {
         position: absolute;
         right: 40px;
         top: 70px;
-        width: 265px;
+        min-width: 265px;
         padding: 20px 20px 0;
         overflow: hidden;
         background-color: #fafafa;
@@ -257,12 +427,12 @@ let logout = async () => {
 
         .member {
             h4 {
-                font-size: 16px;
+                font-size: 0.8rem;
                 font-weight: 700;
             }
 
             span {
-                font-size: 14px;
+                font-size: 0.7rem;
             }
         }
 
@@ -297,7 +467,7 @@ let logout = async () => {
                 align-items: center;
                 margin-bottom: 18px;
                 cursor: pointer;
-                font-size: 16px;
+                font-size: 0.8rem;
                 font-weight: 500;
                 color: #293FE6;
 
@@ -318,7 +488,7 @@ let logout = async () => {
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 12px;
+            font-size: 0.6rem;
             font-weight: 500;
             color: rgba(0, 0, 0, 0.15);
             padding: 27px 0 10px;
@@ -326,45 +496,40 @@ let logout = async () => {
     }
 }
 
-@media (max-width: 1420px) {
-    .navBar {
-        width: 100%;
-    }
-}
-@media (max-width: 680px) {
-    .navBar {
-        padding: 0 20px;
-        &.home {
-            .logo {
-                display: none;
-            }
-            .mlogo {
-                display: block;
+@media (max-width:1023px) {
+    #top {
+        .left {
+            width: 65px;
+        }
+        .right {
+            width: calc(100% - 65px);
+            .topRoute {
+                ol {
+                    display: none;
+                }
+                .service {
+                    display: block;
+                }
             }
         }
-        .menu {
-            ul {
-                &:last-child {
-                    padding-right: 4px;
+    }
+}
 
+@media (max-width:767px) {
+    #top {
+        .right {
+            .topMenu {
+                ul {
                     li {
-                        margin-right: 0;
-                        &.doc, &.login, &.account {
+                        &.doc, &.account {
                             display: none;
+                        }
+                        &.dash {
+                            margin-right: 0;
                         }
                     }
                 }
             }
-            // ul {
-            //     display: inline-block;
-            //     text-align: right;
-            //     li {
-            //         margin-right: 0;
-            //         .doc, .login, &.account {
-            //             display: none;
-            //         }
-            //     }
-            // }
         }
     }
 }

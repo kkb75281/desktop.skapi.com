@@ -28,7 +28,7 @@
                 input#remember(type="checkbox" @change="e => {form.remember = e.target.checked}" checked)
                 label(for="remember")
                     span Remember Me
-                    span.material-symbols-outlined.mid.check check
+                    .material-symbols-outlined.mid.check check
             RouterLink.forgot(:to="{name: 'forgotpassword'}") Forgot Email & Password?
         .error(v-if="error")
             .material-symbols-outlined.mid error

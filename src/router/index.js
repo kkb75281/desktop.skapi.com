@@ -21,91 +21,86 @@ const router = createRouter({
   routes: [
     {
       path: '/',
+      name: 'home',
+      component: LandingPage
+    },
+    {
+      path: '/login',
+      name: 'login',
+      component: Login
+    },
+    {
+      path: '/signup',
+      name: 'signup',
+      component: Signup
+    },
+    {
+      path: '/confirmation',
+      name: 'confirmation',
+      component: () => import('@/views/ResendConfirmation.vue')
+    },
+    {
+      path: '/forgotpassword',
+      name: 'forgotpassword',
+      component: () => import('@/views/ForgotPassword.vue')
+    },
+    {
+      path: '/success',
+      name: 'success',
+      component: () => import('@/views/EmailConfirmed.vue')
+    },
+    {
+      path: '/bye',
+      name: 'bye',
+      component: () => import('@/views/Byebye.vue')
+    },
+    {
+      path: '/',
       component: Main,
       children: [
-        {
-          path: '',
-          name: 'home',
-          component: LandingPage
-        },
-        {
-          path: 'signup',
-          name: 'signup',
-          component: Signup
-        },
-        {
-          path: 'login',
-          name: 'login',
-          component: Login
-        },
-        {
-          path: 'forgotpassword',
-          name: 'forgotpassword',
-          component: () => import('@/views/ForgotPassword.vue')
-        },
-        // {
-        //   path: 'deleteAccount',
-        //   name: 'deleteAccount',
-        //   component: () => import('@/views/dialog/deleteAccount.vue')
-        // },
-        {
-          path: 'dashboard',
-          name: 'dashboard',
-          component: Dashboard
-        },
         {
           path: 'accountSettings',
           name: 'accountSettings',
           component: AccountSettings
         },
         {
-          path: 'confirmation',
-          name: 'confirmation',
-          component: () => import('@/views/ResendConfirmation.vue')
+          path: 'dashboard',
+          name: 'dashboard',
+          component: Dashboard
         },
         {
-          path: 'success',
-          name: 'success',
-          component: () => import('@/views/EmailConfirmed.vue')
-        },
-        {
-          path: 'bye',
-          name: 'bye',
-          component: () => import('@/views/Byebye.vue')
+          path: '/dashboard/:service',
+          component: ServiceMain,
+          children: [
+            {
+              path: '',
+              name: 'service',
+              component: Service
+            },
+            {
+              path: 'users',
+              name: 'users',
+              component: Users
+            },
+            {
+              path: 'records',
+              name: 'records',
+              component: Records
+            },
+            {
+              path: 'mail',
+              name: 'mail',
+              component: Mail
+            },
+            {
+              path: 'subdomain',
+              name: 'subdomain',
+              component: Subdomain
+            }
+          ]
         },
       ]
     },
-    {
-      path: '/dashboard/:service',
-      component: ServiceMain,
-      children: [
-        {
-          path: '',
-          name: 'service',
-          component: Service
-        },
-        {
-          path: 'users',
-          name: 'users',
-          component: Users
-        },
-        {
-          path: 'records',
-          name: 'records',
-          component: Records
-        },
-        {
-          path: 'mail',
-          name: 'mail',
-          component: Mail
-        },
-        {
-          path: 'subdomain',
-          name: 'subdomain',
-          component: Subdomain
-        }
-      ]
-    }
   ]
 })
 

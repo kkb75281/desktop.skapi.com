@@ -1,6 +1,6 @@
 <template lang="pug">
-.containerWrap
-    .container
+main#database
+    section#section
         // search form
         form(@submit.prevent='searchRecords')
             .searchForm
@@ -96,7 +96,7 @@
                         input.clear(type="reset" value="Clear filter" @click="clearSearchFilter")
                         button.search(type="submit") Search
 
-    .container 
+    section#section 
         // view / edit record / create record
         .viewRecord
             // view | edit | create record
@@ -257,6 +257,7 @@
                             .tit Type
                             .tit Key Name 
                             .tit Context
+                            .tit.small Data List
                     .content(:class="{'disabled' : promiseRunning}")
                         .noData(v-if="selectedRecord.data && selectedRecord.data.hasOwnProperty('__is_private__')")
                             .material-symbols-outlined.big lock
@@ -268,7 +269,13 @@
                                 // data display
                                 template(v-if="records_data.length && !recordInfoEdit")
                                     .row(@click="()=>{ if(data.download) data.download(); else if((data.type === 'json' || data.type === 'string') && ellipsisCheck('data-context-' + index)) showRecordDataValue=data}" :class="{'disabled' : ['boolean', 'number', 'string'].includes(data.type), 'file': data.download}")
-                                        .data {{ data.type }}
+                                        //- .data {{ data.type }}
+                                        .data 
+                                            .material-symbols-outlined.mid(v-if="data.type == 'string'") text_format
+                                            .material-symbols-outlined.mid(v-else-if="data.type == 'binary'") draft
+                                            .material-symbols-outlined.mid(v-else-if="data.type == 'json'") data_object
+                                            .material-symbols-outlined.mid(v-else-if="data.type == 'boolean'") stroke_partial
+                                            .material-symbols-outlined.mid(v-else="data.type == 'number'") 123
                                         .data
                                             .overflow(v-if="data?.key") {{ data.key }}
                                             .overflow(v-else) -
@@ -330,19 +337,23 @@
                             span Add data
 
                 // right panel top right menu
-                .material-symbols-outlined.mid.menu(v-if="!recordInfoEdit" @click.stop="showEdit = !showEdit") more_vert
-                // drop down menu (no edit)
-                .editMenuWrap(v-if="showEdit" @click.stop)
-                    .nest
-                        .editMenu(@click="recordInfoEdit = true; showEdit = false;")
-                            .material-symbols-outlined.mid edit
-                            span edit   
-                        .editMenu(@click="recordDelete(selectedRecord.record_id); showEdit = false;")
-                            .material-symbols-outlined.mid delete
-                            span delete  
+                .menu(v-if="!recordInfoEdit" @click.stop="showEdit = !showEdit") 
+                    // drop down menu (no edit)
+                    .material-symbols-outlined.mid.clickable more_vert
+                    #moreVert(v-if="showEdit" @click.stop style="--moreVert-right: 0")
+                        .inner
+                            .more(@click="recordInfoEdit = true; showEdit = false;")
+                                .material-symbols-outlined.mid edit
+                                span edit
+                            .more(@click="recordDelete(selectedRecord.record_id); showEdit = false;")
+                                .material-symbols-outlined.mid delete
+                                span delete
+
+                //- .material-symbols-outlined.mid.editMenuWrap_v2 menu
+
 
                 // buttons (edit)
-                .editBtnWrap(v-if="recordInfoEdit" :class="{'smallver' : isSmallScreen}") 
+                .editBtnWrap(v-if="recordInfoEdit") 
                     template(v-if="promiseRunning")
                         img.loading(src="@/assets/img/loading.png" style="width:20px;height:20px;")
                     template(v-else)
@@ -427,13 +438,14 @@
         .tableHeader 
             .actions 
                 .material-symbols-outlined.mid.refresh.clickable(@click='()=>{selectedRecord=null; refresh(fetchParams);}' :class='{"rotate_animation": fetching }') cached
-                .material-symbols-outlined.mid.menu.clickable(:class='{"nonClickable": !checkedRecords.length || !account.email_verified}' @click.stop="!account.email_verified ? false : showRecordSetting = !showRecordSetting") more_vert
-                .recordSettingWrap(v-if="showRecordSetting" @click.stop)
-                    .nest
-                        .setting(@click="()=>{recordDelete(); showRecordSetting=false;}")
-                            .material-symbols-outlined.mid delete
-                            span delete
-                button.create(:class="{'nonClickable' : !account.email_verified}" @click="()=>{ !account.email_verified ? false : selectedRecord = JSON.parse(JSON.stringify(createRecordTemplate)); recordInfoEdit=true; }") create record
+                .material-symbols-outlined.mid.create.clickable(:class="{'nonClickable' : !account.email_verified}" @click="()=>{ !account.email_verified ? false : selectedRecord = JSON.parse(JSON.stringify(createRecordTemplate)); recordInfoEdit=true; }") note_stack_add
+                .menu(@click.stop="!account.email_verified ? false : showRecordSetting = !showRecordSetting") 
+                    .material-symbols-outlined.mid.clickable(:class='{"nonClickable": !checkedRecords.length || !account.email_verified}') more_vert
+                    #moreVert(v-if="showRecordSetting" @click.stop style="--moreVert-left: 0")
+                        .inner
+                            .more(@click="()=>{recordDelete(); showRecordSetting=false;}")
+                                .material-symbols-outlined.mid delete
+                                span delete
             .pagenator 
                 .material-symbols-outlined.sml.prevPage.clickable(:class='{"nonClickable": currentPage === 1 || fetching }' @click='nextPage(false)') arrow_back_ios
                 .material-symbols-outlined.sml.nextPage.clickable(:class='{"nonClickable": maxPage <= currentPage && recordPage?.endOfList || fetching }' @click='nextPage') arrow_forward_ios
@@ -441,41 +453,34 @@
         // record list
         .tableWrap
             table
-                colgroup
-                    col(width="8%")
-                    col(width="12%")
-                    col(width="18%")
-                    col(width="20%")
-                    col(width="8%")
-                    col(width="14%")
-                    col(width="20%")
                 thead
                     tr
-                        th
+                        th(style="min-width:50px; padding-left:5px;")
                             .customCheckBox(:class='{"nonClickable": fetching || records && !records.length}')
                                 input#allRecords(type="checkbox" value='allRecords' @click="selectAll")
                                 label(for="allRecords")
                                     .material-symbols-outlined.mid.check check
-                        th Table Name
-                        th Record ID
-                        th User ID
-                        th.center Date
-                        th.center Access Group
-                        th.center Features
+                        th(style="min-width:150px;") Table Name
+                        th(style="min-width:150px;") Record ID
+                        th(style="min-width:305px;") User ID
+                        th.center(style="min-width:100px;") Date
+                        th.center(style="min-width:150px;") Access Group
+                        th.center(style="min-width:200px;") Features
                 tbody(v-if="records && records.length")
                     tr(v-for="record in records" @click="()=>{ recordInfoEdit=false; if(selectedRecord?.record_id === record?.record_id) selectedRecord = null; else if(selectedRecord?.record_id !== record.record_id) selectedRecord = JSON.parse(JSON.stringify(record)) }" :class="{ active: selectedRecord?.record_id === record.record_id }")
-                        td(@click.stop style="text-align:center;")
+                        td(@click.stop style="padding-left:5px;")
                             .customCheckBox
                                 input(type="checkbox" name="record" :id="record.record_id" @change='trackSelectedRecords' :value="record.record_id")
                                 label(:for="record.record_id")
                                     .material-symbols-outlined.mid.check check
                         td
-                            .overflow.userSelect.name {{ record.table.name }}
+                            .name {{ record.table.name }}
                         td
-                            .overflow.userSelect {{ record.record_id }}
+                            .recordId {{ record.record_id }}
                         td
-                            .overflow.userSelect.userId {{ record.user_id }}
-                        td.center {{ timeSince(record.uploaded) }}
+                            .userId(style="white-space:none") {{ record.user_id }}
+                        td.center 
+                            .uploaded {{ timeSince(record.uploaded) }}
                         td.center
                             .accessWrap
                                 .hoverWrap(v-if="record.table.access_group == 'private'")
@@ -490,10 +495,10 @@
 
                         // indexes
                         td
-                            .featureWrap_v2
+                            .featureWrap
                                 .hoverWrap
                                     template(v-if='record?.tags?.length' style='display: inline-block')
-                                        .feature.tag Tag
+                                        h6.feature.tag Tag
                                         .hoverPreview(style="--pos-r: 0; --arr-r:0; max-width: 25vw")
                                             // .tagsWrapper_ext - reference style section below
                                             .tagsWrapper_ext
@@ -501,13 +506,13 @@
                                     .empty(v-else)
                                 .hoverWrap
                                     template(v-if='record?.index' style='display: inline-block')
-                                        .feature.index Index
+                                        h6.feature.index Index
                                         .hoverPreview(style="--pos-r: 0; --arr-r:0")
                                             span(style='white-space: nowrap') {{ record.index.name }} | {{ typeof record.index.value === 'string' ? '"'+record.index.value+'"' : record.index.value }}
                                     .empty(v-else)
                                 .hoverWrap
                                     template(v-if='record?.reference?.record_id' style='display: inline-block')
-                                        .feature.ref Ref
+                                        h6.feature.ref Ref
                                         .hoverPreview(style="--pos-r: 0; --arr-r:0")
                                             span(style='white-space: nowrap') {{ record?.reference?.record_id }}
                                     .empty(v-else)
@@ -517,7 +522,7 @@
             .noRecordsFound(v-if="records && !records.length")
                 .tit 
                     .material-symbols-outlined.big search
-                    h2 No Records Found
+                    h3 No Records Found
                 p There was no record matching query
 
     TagEditor(v-if="editTags" @close="editTags = null" :tags="editTags")
@@ -1110,30 +1115,20 @@ watch(() => selectedRecord.value, () => {
 </script>
 
 <style lang="less" scoped>
-.customCheckBox {
-    // label {
-    //     &::before {
-    //         left: 50%;
-    //         top: 50%;
-    //         transform: translate(-50%, -50%);
-    //     }
-    //     .check {
-    //         left: 22.5px;
-    //         top: -12px;            
-    //     }
-    // }
-}
-.containerWrap {
+#database {
+    max-width: 1200px;
+    margin: 0 auto;
     display: flex;
     flex-wrap: wrap;
 
-    .container {
+    #section {
         width: 100%;
-        padding: 28px 40px;
+        padding: 1.4rem 2rem;
         background-color: #fafafa;
         border-radius: 8px;
         margin-bottom: 2%;
         box-shadow: 8px 12px 36px rgba(0, 0, 0, 0.10);
+        overflow: hidden;
     }
 
     .searchForm {
@@ -1142,13 +1137,13 @@ watch(() => selectedRecord.value, () => {
 
         .selectBar {
             width: 200px;
-            margin-right: 20px;
+            margin-right: 1rem;
 
             select {
                 height: 44px;
                 background: rgba(0, 0, 0, 0.05);
-                font-size: 16px;
-                padding: 0 20px;
+                font-size: 0.8rem;
+                padding: 0 1rem;
                 font-weight: 500;
                 color: rgba(0, 0, 0, 0.80);
             }
@@ -1156,7 +1151,7 @@ watch(() => selectedRecord.value, () => {
 
         .searchBar {
             position: relative;
-            width: calc(100% - 220px);
+            width: calc(100% - 200px - 1rem);
 
             input {
                 width: 100%;
@@ -1164,7 +1159,7 @@ watch(() => selectedRecord.value, () => {
                 border: 0;
                 border-radius: 8px;
                 background: rgba(0, 0, 0, 0.05);
-                font-size: 16px;
+                font-size: 0.8rem;
                 padding-left: 50px;
                 font-weight: 400;
             }
@@ -1186,31 +1181,31 @@ watch(() => selectedRecord.value, () => {
     }
 
     .advancedForm {
-        margin-top: 30px;
+        margin-top: 1.5rem;
 
-        .left {
+        > div {
             width: 48%;
-            margin-right: 4%;
             display: inline-block;
         }
 
-        .right {
-            width: 48%;
-            display: inline-block;
+        .left {
+            margin-right: 4%;
+        }
 
+        .right {
             .title {
                 color: rgba(0, 0, 0, 0.80);
-                font-size: 14px;
+                font-size: 0.7rem;
                 font-weight: 700;
                 margin-bottom: 20px;
             }
         }
 
         .condition {
-            margin-bottom: 20px;
+            margin-bottom: 1rem;
 
             &:last-child {
-                margin-bottom: 28px;
+                margin-bottom: 1.4rem;
             }
 
             .label,
@@ -1222,9 +1217,9 @@ watch(() => selectedRecord.value, () => {
             .label {
                 width: 90px;
                 color: rgba(0, 0, 0, 0.80);
-                font-size: 14px;
+                font-size: max(0.7rem, 13px);
                 font-weight: 700;
-                margin-right: 34px;
+                margin-right: 1.7rem;
 
                 &.disabled {
                     color: rgba(0, 0, 0, 0.25);
@@ -1237,18 +1232,19 @@ watch(() => selectedRecord.value, () => {
                     border: 0;
                     background: unset;
                     color: rgba(0, 0, 0, 0.60);
-                    font-size: 14px;
+                    font-size: 0.7rem;
                     font-weight: 700;
                 }
             }
 
             .radio {
-                margin-right: 20px;
+                margin-right: 1rem;
             }
 
             .textFormWrap {
-                width: calc(100% - 124px);
+                width: calc(100% - 6.7rem);
                 display: inline-block;
+                overflow: hidden;
 
                 input {
                     position: relative;
@@ -1290,7 +1286,7 @@ watch(() => selectedRecord.value, () => {
 
                         input {
                             padding-right: 0;
-                            margin-left: 80px;
+                            margin-left: 4rem;
                             border: 0;
                         }
 
@@ -1312,7 +1308,7 @@ watch(() => selectedRecord.value, () => {
                     }
 
                     input {
-                        padding-right: 80px;
+                        padding-right: 4rem;
                     }
 
                     .customSelect {
@@ -1324,7 +1320,7 @@ watch(() => selectedRecord.value, () => {
 
                         select {
                             border: 0;
-                            padding-left: 20px;
+                            padding-left: 1rem;
                             background-color: unset;
                         }
 
@@ -1337,12 +1333,13 @@ watch(() => selectedRecord.value, () => {
         }
 
         .buttonWrap {
+            width: 100%;
             text-align: right;
 
             * {
-                padding: 12px 28px;
+                padding: 0.6rem 1.4rem;
                 border: 0;
-                font-size: 16px;
+                font-size: 0.8rem;
                 font-weight: 700;
                 border-radius: 8px;
                 background-color: unset;
@@ -1365,7 +1362,7 @@ watch(() => selectedRecord.value, () => {
         width: 100%;
         border-radius: 8px;
         border: 1px solid rgba(0, 0, 0, 0.10);
-        margin-bottom: 40px;
+        margin-bottom: 2rem;
 
         .searchInfo {
             padding: 1.5rem;
@@ -1396,7 +1393,7 @@ watch(() => selectedRecord.value, () => {
 
                 &+.data {
                     display: inline-block;
-                    font-size: 14px;
+                    font-size: 0.7rem;
                 }
             }
 
@@ -1424,7 +1421,7 @@ watch(() => selectedRecord.value, () => {
             .recordData {
                 width: 50%;
                 overflow: hidden;
-                padding-bottom: 20px;
+                padding-bottom: 1rem;
 
                 .content {
                     &.disabled {
@@ -1435,7 +1432,7 @@ watch(() => selectedRecord.value, () => {
 
             .recordData {
                 .header {
-                    padding-left: 40px;
+                    padding-left: 2rem;
 
                     .tit {
                         min-width: 84px;
@@ -1449,14 +1446,13 @@ watch(() => selectedRecord.value, () => {
                 position: absolute;
                 right: 14px;
                 top: 7.5px;
-                color: rgba(0, 0, 0, 0.6);
                 cursor: pointer;
             }
 
             .editBtnWrap {
                 position: absolute;
                 right: 20px;
-                top: 10px;
+                top: 5px;
 
                 &.smallver {
                     top: 8px;
@@ -1467,7 +1463,7 @@ watch(() => selectedRecord.value, () => {
                 }
 
                 button {
-                    font-size: 16px;
+                    font-size: 0.8rem;
                     font-weight: 700;
                     border: 0;
                     background-color: unset;
@@ -1475,7 +1471,7 @@ watch(() => selectedRecord.value, () => {
 
                     &.cancel {
                         color: rgba(0, 0, 0, 0.80);
-                        margin-right: 20px;
+                        margin-right: 1rem;
                     }
 
                     &.save {
@@ -1485,43 +1481,46 @@ watch(() => selectedRecord.value, () => {
             }
 
             .editMenuWrap {
-                position: relative;
+                position: absolute;
+                right: 0;
+                bottom: -130px;
+                z-index: 10;
 
-                .nest {
-                    position: absolute;
-                    right: 20px;
-                    top: 34px;
-                    border-radius: 8px;
-                    border: 1px solid rgba(0, 0, 0, 0.15);
-                    background: #FAFAFA;
-                    box-shadow: 8px 12px 36px 0px rgba(0, 0, 0, 0.10);
-                    padding: 20px;
-                    width: 134px;
-                    z-index: 2;
+                .editMenu {
+                    width: 100px;
+                    display: flex;
+                    flex-wrap: nowrap;
+                    align-items: center;
+                    cursor: pointer;
 
-                    .editMenu {
-                        display: flex;
-                        flex-wrap: nowrap;
-                        align-items: center;
-                        cursor: pointer;
+                    &:first-child {
+                        margin-bottom: 1rem;
+                    }
 
-                        &:first-child {
-                            margin-bottom: 20px;
-                        }
-
-                        &:hover {
-                            span {
-                                font-weight: 700;
-                            }
-                        }
-
+                    &:hover {
                         span {
-                            margin-left: 10px;
-                            font-size: 16px;
-                            font-weight: 500;
+                            font-weight: 700;
                         }
                     }
+
+                    span {
+                        margin-left: 10px;
+                        font-size: 0.8rem;
+                        font-weight: 500;
+                    }
                 }
+            }
+
+            .editMenuWrap_v2 {
+                position: absolute;
+                right: 20px;
+                bottom: 20px;
+                border-radius: 50%;
+                background-color: #293FE6;
+                color: #fff;
+                padding: 7px;
+                cursor: pointer;
+                display: none;
             }
 
             .header {
@@ -1546,20 +1545,30 @@ watch(() => selectedRecord.value, () => {
                     margin-right: 20px;
                     display: inline-block;
                     color: rgba(0, 0, 0, 0.40);
-                    font-size: 14px;
+                    font-size: 0.7rem;
                     font-weight: 700;
-                    padding-left: 20px;
+                    padding-left: 1rem;
 
+                    &:first-child {
+                        min-width: 40px;
+                        text-align: center;
+                    }
+                    
                     &:last-child {
                         margin-right: 0;
+                    }
+
+                    &.small {
+                        font-weight: 700;
+                        display: none;
                     }
                 }
             }
 
             .content {
                 height: 404px;
-                padding: 16px 20px 0 20px;
-                overflow-y: auto;
+                padding: 0.8rem 1rem 0 1rem;
+                overflow: auto;
 
                 .info,
                 .smallInfo {
@@ -1570,14 +1579,14 @@ watch(() => selectedRecord.value, () => {
                         display: inline-block;
                         vertical-align: middle;
                         color: rgba(0, 0, 0, 0.40);
-                        font-size: 14px;
+                        font-size: 0.7rem;
                     }
 
                     .value,
                     .smallValue {
                         display: inline-block;
                         vertical-align: middle;
-                        font-size: 14px;
+                        font-size: 0.7rem;
                         font-weight: 500;
                         white-space: nowrap;
                         overflow: hidden;
@@ -1651,7 +1660,7 @@ watch(() => selectedRecord.value, () => {
                             right: 25px;
                             transform: translateY(-50%);
                             text-align: center;
-                            font-size: 12px;
+                            font-size: 0.6rem;
                             font-weight: 400;
                             color: rgba(0, 0, 0, 0.5);
                             background-color: rgba(250, 250, 250, 0.9);
@@ -1788,9 +1797,8 @@ watch(() => selectedRecord.value, () => {
                 .row {
                     position: relative;
                     padding: 0 20px;
-                    height: 40px;
                     border-radius: 4px;
-                    font-size: 14px;
+                    font-size: 0.7rem;
                     color: rgba(0, 0, 0, 0.60);
                     font-weight: 500;
                     display: flex;
@@ -1922,13 +1930,14 @@ watch(() => selectedRecord.value, () => {
                 }
 
                 .data {
+                    height: 40px;
+                    line-height: 40px;
                     margin-right: 20px;
                     display: inline-block;
 
-
-
                     &:first-child {
-                        width: 84px;
+                        width: 40px;
+                        text-align: center;
                         flex-shrink: 0;
                     }
 
@@ -1944,6 +1953,10 @@ watch(() => selectedRecord.value, () => {
                         overflow: hidden;
                     }
 
+                    .material-symbols-outlined {
+                        vertical-align: middle;
+                    }
+
                     .overflow {
                         width: 100%;
                         white-space: nowrap;
@@ -1954,17 +1967,12 @@ watch(() => selectedRecord.value, () => {
                 }
 
                 .addDataRow {
-                    display: flex;
-                    flex-wrap: nowrap;
-                    align-items: center;
-                    justify-content: center;
-                    margin-top: 12px;
                     text-align: center;
                     padding: 6px 0;
                     color: #293FE6;
                     background-color: rgba(41, 63, 230, 0.05);
                     border-radius: 4px;
-                    font-size: 14px;
+                    font-size: 0.7rem;
                     font-weight: 500;
                     cursor: pointer;
 
@@ -1997,7 +2005,7 @@ watch(() => selectedRecord.value, () => {
             .header {
                 .tit {
                     color: #293FE6;
-                    font-size: 16px;
+                    font-size: 0.8rem;
                     font-weight: 700;
                 }
             }
@@ -2007,7 +2015,7 @@ watch(() => selectedRecord.value, () => {
                     padding-right: 2px;
 
                     &:last-child {
-                        margin-bottom: 42px;
+                        margin-bottom: 2.1rem;
                     }
                 }
             }
@@ -2018,7 +2026,7 @@ watch(() => selectedRecord.value, () => {
             text-align: center;
             line-height: 100px;
             color: rgba(0, 0, 0, 0.40);
-            font-size: 16px;
+            font-size: 0.8rem;
             font-weight: 500;
         }
     }
@@ -2035,27 +2043,28 @@ watch(() => selectedRecord.value, () => {
             align-items: center;
 
             .refresh,
-            .menu {
-                margin-right: 20px;
+            .create {
+                margin-right: 1rem;
+                color: #293FE6;
             }
 
-            .refresh {
-                color: #293FE6;
+            .menu {
+                position: relative;
             }
 
             .dropDown {
                 display: flex;
                 align-items: center;
-                font-size: 16px;
+                font-size: 0.8rem;
                 font-weight: 500;
-                margin-right: 20px;
+                margin-right: 1rem;
             }
 
             .filterWrap {
                 position: absolute;
                 left: 0;
                 bottom: -330px;
-                padding: 20px;
+                padding: 1rem;
                 border-radius: 8px;
                 border: 1px solid rgba(0, 0, 0, 0.15);
                 background: #FAFAFA;
@@ -2065,7 +2074,7 @@ watch(() => selectedRecord.value, () => {
                 .filter {
                     display: flex;
                     align-items: center;
-                    margin-bottom: 16px;
+                    margin-bottom: 0.8rem;
                     color: rgba(0, 0, 0, 0.80);
 
                     &:last-child {
@@ -2075,55 +2084,33 @@ watch(() => selectedRecord.value, () => {
                     input {
                         width: 20px;
                         height: 20px;
-                        margin-right: 12px;
+                        margin-right: 0.6rem;
                     }
                 }
             }
 
             .recordSettingWrap {
-                position: relative;
+                position: absolute;
+                left: 0;
+                top: 40px;
+                z-index: 10;
 
-                .nest {
-                    position: absolute;
-                    width: 134px;
-                    left: -40px;
-                    bottom: -78px;
-                    padding: 20px;
-                    border-radius: 8px;
-                    border: 1px solid rgba(0, 0, 0, 0.15);
-                    background: #FAFAFA;
-                    color: rgba(0, 0, 0, 0.80);
-                    box-shadow: 8px 12px 36px 0px rgba(0, 0, 0, 0.10);
-                    z-index: 10;
-                    cursor: pointer;
+                .setting {
+                    display: flex;
+                    align-items: center;
+                    width: 100px;
+                    font-size: 0.8rem;
 
-                    .setting {
-                        display: flex;
-                        align-items: center;
-
-                        &:hover {
-                            span {
-                                font-weight: 700;
-                            }
-                        }
-
+                    &:hover {
                         span {
-                            margin-left: 14px;
+                            font-weight: 700;
                         }
                     }
-                }
-            }
 
-            .create {
-                height: 32px;
-                padding: 0px 12px;
-                border-radius: 8px;
-                border: 2px solid #293FE6;
-                color: #293FE6;
-                font-size: 16px;
-                font-weight: 700;
-                background-color: unset;
-                cursor: pointer;
+                    span {
+                        margin-left: 0.7rem;
+                    }
+                }
             }
         }
 
@@ -2133,7 +2120,7 @@ watch(() => selectedRecord.value, () => {
             align-items: center;
 
             .prevPage {
-                margin-right: 20px;
+                margin-right: 1rem;
             }
 
             svg {
@@ -2145,7 +2132,8 @@ watch(() => selectedRecord.value, () => {
     .tableWrap {
         position: relative;
         min-height: 660px;
-        margin: 40px 0;
+        margin: 2rem 0;
+        overflow: auto;
 
         .noRecords,
         .noRecordsFound {
@@ -2163,64 +2151,21 @@ watch(() => selectedRecord.value, () => {
                 justify-content: center;
 
                 .material-symbols-outlined {
-                    margin-right: 12px;
+                    margin-right: 0.6rem;
                 }
             }
 
-            h2 {
-                font-size: 28px;
-                font-weight: 700;
-            }
-
             p {
-                font-size: 20px;
                 font-weight: 500;
-                margin-top: 28px;
+                margin-top: 1.4rem;
             }
         }
 
         table {
-            min-width: 100%;
             border-collapse: collapse;
-            // table-layout: auto;
-            // width: 100%;
             table-layout: fixed;
 
             .featureWrap {
-                position: relative;
-                width: 100%;
-
-                .feature {
-                    display: inline-block;
-                    height: 24px;
-                    padding: 2px 12px;
-                    border-radius: 4px;
-                    box-shadow: 0px -1px 1px 0px rgba(0, 0, 0, 0.15) inset;
-                    margin-right: 8px;
-                    color: #fff;
-                    cursor: pointer;
-                    opacity: 0;
-
-                    &.active {
-                        opacity: 1;
-                    }
-
-                    &:first-child {
-                        background: #FCA642;
-                    }
-
-                    &:nth-child(2) {
-                        background: #52D687;
-                    }
-
-                    &:last-child {
-                        background: #B881FF;
-                        margin-right: 0;
-                    }
-                }
-            }
-
-            .featureWrap_v2 {
                 position: relative;
                 width: 100%;
                 display: flex;
@@ -2242,6 +2187,7 @@ watch(() => selectedRecord.value, () => {
                     height: 24px;
                     border-radius: 4px;
                     box-shadow: 0px -1px 1px 0px rgba(0, 0, 0, 0.15) inset;
+                    padding-right: 0;
                     color: #fff;
                     cursor: pointer;
 
@@ -2268,7 +2214,6 @@ watch(() => selectedRecord.value, () => {
                 height: 60px;
                 border-bottom: 1px solid rgba(0, 0, 0, 0.10);
                 border-radius: 8px;
-                // cursor: pointer;
                 overflow: hidden;
 
                 &.active {
@@ -2277,115 +2222,6 @@ watch(() => selectedRecord.value, () => {
 
                 &:hover {
                     background-color: rgba(41, 63, 230, 0.05);
-                }
-            }
-
-            td {
-                position: relative;
-
-                .accessWrap {
-                    * {
-                        cursor: pointer;
-                    }
-                }
-
-                .featurePreview,
-                .accessPreview {
-                    position: absolute;
-                    left: 0;
-                    top: -33px;
-
-                    .preview {
-                        position: relative;
-                        height: 44px;
-                        background-color: #fafafa;
-                        border-radius: 8px;
-                        box-shadow: 1px 2px 2px rgba(0, 0, 0, 0.25);
-                        color: rgba(0, 0, 0, 0.60);
-                        font-size: 14px;
-                        padding: 0 12px;
-                        font-weight: 700;
-                        display: none;
-
-                        &::after {
-                            position: absolute;
-                            content: '';
-                            left: 2vw;
-                            top: 50%;
-                            border-top: 20px solid transparent;
-                            border-right: 20px solid transparent;
-                            border-left: 20px solid #fafafa;
-                            rotate: -45deg;
-                        }
-
-                        &.active {
-                            display: block;
-                        }
-
-                        &.fir {
-                            left: 10%;
-                        }
-
-                        &.sec {
-                            left: 50%;
-                        }
-
-                        &.last {
-                            left: 90%;
-                        }
-
-                        div {
-                            width: 150px;
-                            line-height: 44px;
-                            white-space: nowrap;
-                            text-overflow: ellipsis;
-                            overflow: hidden;
-                            display: none;
-
-                            &.active {
-                                display: block;
-                            }
-                        }
-                    }
-                }
-
-                .accessPreview {
-                    .preview {
-                        &::after {
-                            left: 50%;
-                        }
-
-                        div {
-                            width: 100px;
-                        }
-                    }
-                }
-            }
-
-            td,
-            th {
-                &:first-child {
-                    padding-left: 20px;
-                }
-
-                &.center {
-                    text-align: center;
-                }
-
-                .overflow {
-                    width: 180px;
-                    white-space: nowrap;
-                    overflow: hidden;
-                    text-overflow: ellipsis;
-                    display: block;
-
-                    &.name {
-                        width: 90px;
-                    }
-
-                    &.userId {
-                        width: 210px;
-                    }
                 }
             }
 
@@ -2400,8 +2236,13 @@ watch(() => selectedRecord.value, () => {
                     }
 
                     th {
-                        font-size: 14px;
+                        font-size: 0.7rem;
                         font-weight: 500;
+                        white-space: nowrap;
+
+                        &.center {
+                            text-align: center;
+                        }
                     }
                 }
             }
@@ -2412,13 +2253,109 @@ watch(() => selectedRecord.value, () => {
 
                 tr {
                     cursor: pointer;
+
+                    td {
+                        position: relative;
+                        white-space: nowrap;
+                        
+                        > div {
+                            font-size: 0.8rem;
+                            padding-right: 1rem;
+                        }
+
+                        &.center {
+                            text-align: center;
+
+                            h6 {
+                                padding-right: 0;
+                            }
+                        }
+    
+                        .accessWrap {
+                            * {
+                                cursor: pointer;
+                            }
+                        }
+    
+                        .featurePreview,
+                        .accessPreview {
+                            position: absolute;
+                            left: 0;
+                            top: -33px;
+    
+                            .preview {
+                                position: relative;
+                                height: 44px;
+                                background-color: #fafafa;
+                                border-radius: 8px;
+                                box-shadow: 1px 2px 2px rgba(0, 0, 0, 0.25);
+                                color: rgba(0, 0, 0, 0.60);
+                                font-size: 0.7rem;
+                                padding: 0 12px;
+                                font-weight: 700;
+                                display: none;
+    
+                                &::after {
+                                    position: absolute;
+                                    content: '';
+                                    left: 2vw;
+                                    top: 50%;
+                                    border-top: 20px solid transparent;
+                                    border-right: 20px solid transparent;
+                                    border-left: 20px solid #fafafa;
+                                    rotate: -45deg;
+                                }
+    
+                                &.active {
+                                    display: block;
+                                }
+    
+                                &.fir {
+                                    left: 10%;
+                                }
+    
+                                &.sec {
+                                    left: 50%;
+                                }
+    
+                                &.last {
+                                    left: 90%;
+                                }
+    
+                                div {
+                                    width: 150px;
+                                    line-height: 44px;
+                                    white-space: nowrap;
+                                    text-overflow: ellipsis;
+                                    overflow: hidden;
+                                    display: none;
+    
+                                    &.active {
+                                        display: block;
+                                    }
+                                }
+                            }
+                        }
+    
+                        .accessPreview {
+                            .preview {
+                                &::after {
+                                    left: 50%;
+                                }
+    
+                                div {
+                                    width: 100px;
+                                }
+                            }
+                        }
+                    }
                 }
             }
 
             input {
                 width: 20px;
                 height: 20px;
-                margin-left: 20px;
+                margin-left: 2rem;
             }
         }
     }
@@ -2446,6 +2383,124 @@ watch(() => selectedRecord.value, () => {
 
         &:last-child {
             margin-right: 0;
+        }
+    }
+}
+
+@media (max-width:1023px) {
+    #database {
+        .advancedForm {
+            .condition {
+                .textFormWrap {
+                    width: 100%;
+                    margin-top: 0.7rem;
+                }
+            }
+        }
+
+        .viewRecord {
+            .recordForm,
+            .createForm {
+                flex-wrap: wrap;
+
+                .recordInfo,
+                .recordData {
+                    width: 100%;
+                }
+
+                &::after {
+                    position: absolute;
+                    content: '';
+                    left: 50%;
+                    top: 50%;
+                    width: 100%;
+                    height: 1px;
+                    transform: translate(-50%, -50%);
+                    background: rgba(0, 0, 0, 0.1);
+                    box-shadow: 0px 1px 3px rgba(0, 0, 0, 0.06);
+                }
+
+                .menu {
+                    // display: none;
+                }
+                .editMenuWrap_v2 {
+                    display: block;
+                }
+                .recordData {
+                    .header {
+                        padding-left: 20px;
+                        .tit {
+                            display: none;
+                            &.small {
+                                display: block;
+                            }
+                        }
+                    }
+                }
+
+                .content {
+                    .row {
+                        flex-wrap: wrap;
+                    }
+                    .data {
+                        width: 100% !important;
+
+                        &:first-child {
+                            text-align: left;
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
+
+@media (max-width:767px) {
+    #database {
+        .advancedForm {
+            > div {
+                width: 100%;
+            }
+            .left {
+                margin-right: 0;
+            }
+            .right {
+                .title {
+                    display: none;
+                }
+            }
+        }
+        .searchForm {
+            flex-wrap: wrap;
+
+            .selectBar {
+                width: 100%;
+                margin-right: 0;
+                margin-bottom: 1rem;
+            }
+            .searchBar {
+                width: 100%;
+            }
+        }
+        .viewRecord {
+            .recordForm,
+            .createForm {
+                .content {
+                    .info {
+                        .label {
+                            width: 100%;
+                        }
+                        .value {
+                            width: unset !important;
+                        }
+                    }
+                    .smallInfo {
+                        .smallValue {
+                            width: unset !important;
+                        }
+                    }
+                }
+            }
         }
     }
 }

@@ -187,7 +187,7 @@ let createdDate = (date) => {
     }
 
     .timeWrap {
-        padding: 28px;
+        padding: 1.4rem;
 
         .timeNav {
             display: flex;
@@ -219,7 +219,7 @@ let createdDate = (date) => {
 
             .year {
                 width: 25%;
-                font-size: 16px;
+                font-size: 0.8rem;
             }
 
             .month {
@@ -227,7 +227,7 @@ let createdDate = (date) => {
                 background-color: unset;
                 border: 0;
                 cursor: pointer;
-                font-size: 20px;
+                font-size: 1rem;
 
                 // &.year {
                 //     width: 25%;
@@ -248,7 +248,7 @@ let createdDate = (date) => {
                     text-align: center;
                     width: calc(100% / 7);
                     color: rgba(0, 0, 0, 0.25);
-                    font-size: 14px;
+                    font-size: 0.7rem;
                     font-weight: 500;
                 }
             }
@@ -263,7 +263,7 @@ let createdDate = (date) => {
                     align-items: center;
                     justify-content: center;
                     text-align: center;
-                    font-size: 14px;
+                    font-size: 0.7rem;
                     width: calc(100% / 7);
                     line-height: 32px;
                     cursor: pointer;
@@ -327,12 +327,12 @@ let createdDate = (date) => {
             line-height: 40px;
             border-radius: 8px;
             background: rgba(0, 0, 0, 0.05);
-            font-size: 16px;
+            font-size: 0.8rem;
             opacity: 0.4;
         }
 
         span {
-            font-size: 20px;
+            font-size: 1rem;
             padding: 0 10px;
         }
     }

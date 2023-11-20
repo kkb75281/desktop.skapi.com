@@ -10,6 +10,7 @@ import { watch } from 'vue';
 import { dataInit, serviceFetching, } from '@/data.js';
 import { recordFetchInit } from './views/Service/Records/RecordFetch';
 import { subdomainInit } from './views/Service/subdomain/SubdomainFetch';
+
 const router = useRouter();
 let route = useRoute();
 

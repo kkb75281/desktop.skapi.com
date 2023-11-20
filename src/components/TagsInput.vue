@@ -88,6 +88,7 @@ let removeTag = (index) => {
     align-items: center;
     border-bottom: 1px solid rgba(0, 0, 0, 0.80);
     overflow-x: auto;
+    font-size: 0.7rem;
 
     &:not([disabled]) {
         cursor: text;
@@ -122,7 +123,7 @@ let removeTag = (index) => {
     box-shadow: 0px -1px 1px 0px rgba(0, 0, 0, 0.15) inset;
     margin-right: 8px;
     text-align: center;
-    font-size: 14px;
+    font-size: 0.7rem;
     font-weight: 400;
 
     .cancel {
