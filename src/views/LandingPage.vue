@@ -157,7 +157,7 @@ NavBar(style='--position: absolute;')
         br
 
         ul(style='padding-left: 1rem;')
-            li
+            li(style='color:#293FE6')
                 h4(style='color:#293FE6;margin-bottom: .25em;') Lower Your Costs By 10x
                 p Thanks to our well-architected serverless system, Skapi significantly reduces backend operational costs, accelerating your project development.
             
