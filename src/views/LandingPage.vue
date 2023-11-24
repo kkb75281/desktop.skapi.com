@@ -7,11 +7,11 @@ NavBar(style='--position: absolute;')
             br
             br
 
-            h1.underline One Line of Code&nbsp;=&gt;
+            h1.underline(style='font-size:2.2em') One Line of Code&nbsp;=&gt;
 
             br
 
-            h1 Instant Backend&nbsp;API
+            h1(style='font-size:2.1em') Instant Backend&nbsp;API
 
             br
             br
