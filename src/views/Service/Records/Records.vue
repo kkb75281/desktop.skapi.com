@@ -535,11 +535,11 @@ import { bodyClick } from '@/main.js';
 import { computed, nextTick, onBeforeMount, onBeforeUnmount, onMounted, reactive, ref, watch } from 'vue';
 import RecordDataOverlay from '@/views/Service/Records/RecordDataOverlay.vue';
 import DeleteRecordOverlay from '@/views/Service/Records/DeleteRecordOverlay.vue';
-import TagEditor from './TagEditor.vue';
-import { account, skapi } from '../../../main';
+import TagEditor from '@/views/Service/Records/TagEditor.vue';
+import { account, skapi } from '@/main.js';
 import { currentService } from '@/data.js';
-import { selectedRecord, records_data, indexValueType, remove_bin, specialChars } from './RecordEdit';
-import { searchInfo, launch, serviceRecords, getPage, records, selectNone, recordPage, currentPage, maxPage, fetching, refresh, nextPage, timeSince, fetchParams } from './RecordFetch';
+import { selectedRecord, records_data, indexValueType, remove_bin, specialChars } from '@/views/Service/Records/RecordEdit';
+import { searchInfo, launch, serviceRecords, getPage, records, selectNone, recordPage, currentPage, maxPage, fetching, refresh, nextPage, timeSince, fetchParams } from '@/views/Service/Records/RecordFetch';
 
 selectedRecord.value = null;
 launch();

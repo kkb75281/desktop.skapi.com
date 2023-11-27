@@ -180,8 +180,8 @@ import { skapi, account, bodyClick } from '@/main.js';
 import { currentService } from '@/data.js';
 import UploadFileList from '@/views/Service/Subdomain/UploadFileList.vue';
 import DeleteFileOverlay from '@/views/Service/Subdomain/DeleteFileOverlay.vue';
-import { launch, currentPage, fetching, searchDir, files, refresh, fileList, dirPage, getPage, selectNone, subdomainInfo, uploading, uploadWholeProgress } from './SubdomainFetch';
-import { img, vid } from './extensions';
+import { launch, currentPage, fetching, searchDir, files, refresh, fileList, dirPage, getPage, selectNone, subdomainInfo, uploading, uploadWholeProgress } from '@/views/Service/Subdomain/SubdomainFetch';
+import { img, vid } from '@/views/Service/Subdomain/extensions';
 
 let route = useRoute();
 let currnetPath = route.path.split('/')[2];
