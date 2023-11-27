@@ -162,9 +162,6 @@ let getCurrentService = () => {
             }
         });
     }
-    else {
-        // router.replace({ path: '/dashboard' });
-    }
 }
 
 if (serviceFetching.value instanceof Promise) {

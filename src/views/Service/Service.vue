@@ -26,38 +26,42 @@ main#service
                             .toggleBtn(@click="enableDisableToggle")
             .codeWrap
                 .codeInner
-                    .line
-                        div
-                            span(style="color:#33adff") &lt;
-                            span(style="color:#33adff") script 
-                            span(style="color:#58dfff") src
-                            span =
-                            span(style="color:#ffa600") "https://cdn.jsdelivr.net/npm/skapi-js@latest/dist/skapi.js"
-                            span(style="color:#33adff") 
-                            span(style="color:#33adff") &gt;
-                            span(style="color:#33adff") &lt;
-                            span(style="color:#33adff") /
-                            span(style="color:#33adff") script
-                            span(style="color:#33adff") &gt;
-                        div
-                            span(style="color:#33adff") &lt;
-                            span(style="color:#33adff") script
-                            span(style="color:#33adff") &gt;
-                        div(style="margin-left: 30px")
-                            span(style="color:#33adff") const 
-                            span skapi 
-                            span = 
-                            span(style="color:#33adff") new 
-                            span Skapi(
-                            span(style="color:#ffa600") "{{ currentService.service }}"
-                            span , 
-                            span(style="color:#ffa600") "{{ currentService.owner }}"
-                            span );
-                        div
-                            span(style="color:#33adff") &lt;
-                            span(style="color:#33adff") /
-                            span(style="color:#33adff") script
-                            span(style="color:#33adff") &gt;
+                    span(style="color:#33adff") &lt;
+                    span(style="color:#33adff") script 
+                    span(style="color:#58dfff") src
+                    span =
+                    span(style="color:#ffa600") "https://cdn.jsdelivr.net/npm/skapi-js@latest/dist/skapi.js"
+                    span(style="color:#33adff") 
+                    span(style="color:#33adff") &gt;
+                    span(style="color:#33adff") &lt;
+                    span(style="color:#33adff") /
+                    span(style="color:#33adff") script
+                    span(style="color:#33adff") &gt;
+
+                    br
+
+                    span(style="color:#33adff") &lt;
+                    span(style="color:#33adff") script
+                    span(style="color:#33adff") &gt;
+
+                    br
+
+                    span(style="color:#33adff")     const 
+                    span skapi 
+                    span = 
+                    span(style="color:#33adff") new 
+                    span Skapi(
+                    span(style="color:#ffa600") "{{ currentService.service }}"
+                    span , 
+                    span(style="color:#ffa600") "{{ currentService.owner }}"
+                    span );
+
+                    br
+
+                    span(style="color:#33adff") &lt;
+                    span(style="color:#33adff") /
+                    span(style="color:#33adff") script
+                    span(style="color:#33adff") &gt;
                 .copy.clickable(@click="copy")
                     .material-symbols-outlined.mid file_copy
             a.question(href="https://docs.skapi.com/introduction/getting-started.html" target="_blank")
@@ -665,14 +669,12 @@ watch(modifyCors, () => {
     box-shadow: 3px 9px 6px 0px rgba(0, 0, 0, 0.15);
     margin-top: 1.5rem;
     user-select: text !important;
-
+    
     .codeInner {
-        white-space: nowrap;
-        overflow: auto;
+        width: 100%;
+        white-space: pre;
+        overflow-x: auto;
         padding: 1rem;
-    }
-    .line {
-        display: inline-block;
         line-height: 1.4;
         font-size: 0.9rem;
     }
