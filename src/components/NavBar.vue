@@ -3,8 +3,13 @@ header#navBar(style='--position: relative;')
     nav#top
         .left
             router-link.logo(to="/")
-                img(v-if="route.name == 'home'" src="@/assets/img/logo/logo-white.svg")
-                img(v-else-if="route.name == 'dashboard' || route.name == 'accountSettings'" src="@/assets/img/logo/logo.png")
+                template(v-if="route.name == 'home'")
+                    img.full(src="@/assets/img/logo/logo-white.svg")
+                    img.symbol(src="@/assets/img/logo/symbol-logo-white.png")
+                template(v-else-if="route.name == 'dashboard' || route.name == 'accountSettings'")
+                    img.full(src="@/assets/img/logo/logo.png")
+                    img.symbol(src="@/assets/img/logo/symbol-logo.png")
+                //- img(v-else-if="route.name == 'dashboard' || route.name == 'accountSettings'" src="@/assets/img/logo/logo.png")
                 img.small(v-else src="@/assets/img/logo/symbol-logo.png")
         .right(:class="{'flex' : route.params.service && currentService}")
             .topRoute(v-if="route.params.service && currentService" ref="topRoute") 
@@ -205,10 +210,18 @@ onBeforeUnmount(() => {
         position: relative;
         width: 220px;
         .logo {
+            display: block;
+            height: 40px;
+
             img {
-                width: 120px;
+                height: 100%;
+                
+                &.symbol {
+                    height: 85%;
+                    display: none;
+                }
                 &.small {
-                    width: 36px;
+                    height: 85%;
                     vertical-align: middle;
                 }
             }
@@ -527,6 +540,23 @@ onBeforeUnmount(() => {
                         &.dash {
                             margin-right: 0;
                         }
+                    }
+                }
+            }
+        }
+    }
+}
+
+@media (max-width:479px) {
+    #top {
+        .left {
+            .logo {
+                img {
+                    &.full {
+                        display: none;
+                    }
+                    &.symbol {
+                        display: block;
                     }
                 }
             }

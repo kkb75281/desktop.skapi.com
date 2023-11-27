@@ -1118,8 +1118,6 @@ watch(() => selectedRecord.value, () => {
 #database {
     max-width: 1200px;
     margin: 0 auto;
-    display: flex;
-    flex-wrap: wrap;
 
     #section {
         width: 100%;

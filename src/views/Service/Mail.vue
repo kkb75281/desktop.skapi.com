@@ -100,8 +100,6 @@ let copy = (e) => {
     max-width: 1200px;
     margin: 0 auto;
     position: relative;
-    display: flex;
-    flex-wrap: wrap;
     
     #section {
         width: 100%;
