@@ -26,7 +26,7 @@ import { nextTick, ref, watch } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 import { services, serviceFetching, currentService, storageInfo, serviceUsers, newsletter_sender } from '@/data.js';
 import { serviceRecords } from '@/views/Service/Records/RecordFetch.js';
-import { launch, nextPage, serviceHost, subdomainInfo } from './subdomain/SubdomainFetch';
+import { launch, nextPage, serviceHost, subdomainInfo } from './Subdomain/SubdomainFetch';
 import { skapi, account, bodyClick } from '@/main.js';
 
 import NavBar from '@/components/NavBar.vue';

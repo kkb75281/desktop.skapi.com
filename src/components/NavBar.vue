@@ -78,13 +78,12 @@ import { useRouter, useRoute } from 'vue-router';
 import { skapi, account, bodyClick } from '@/main';
 import { services, serviceFetching, currentService, storageInfo, serviceUsers, newsletter_sender } from '@/data';
 import { serviceRecords } from '@/views/Service/Records/RecordFetch';
-import { launch, serviceHost, subdomainInfo } from '@/views/Service/subdomain/SubdomainFetch';
+import { launch, subdomainInfo } from '@/views/Service/Subdomain/SubdomainFetch';
 
 let route = useRoute();
 let router = useRouter();
 let topRoute = ref(null);
 let accountInfo = ref(false);
-let servicePage = ref(false);
 
 currentService.value = null;
 

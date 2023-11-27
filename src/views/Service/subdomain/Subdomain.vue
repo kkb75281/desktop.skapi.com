@@ -178,8 +178,8 @@ import { computed, inject, nextTick, ref, watch } from 'vue';
 import { useRoute } from 'vue-router';
 import { skapi, account, bodyClick } from '@/main.js';
 import { currentService } from '@/data.js';
-import UploadFileList from '@/views/Service/subdomain/UploadFileList.vue';
-import DeleteFileOverlay from '@/views/Service/subdomain/DeleteFileOverlay.vue';
+import UploadFileList from '@/views/Service/Subdomain/UploadFileList.vue';
+import DeleteFileOverlay from '@/views/Service/Subdomain/DeleteFileOverlay.vue';
 import { launch, currentPage, fetching, searchDir, files, refresh, fileList, dirPage, getPage, selectNone, subdomainInfo, uploading, uploadWholeProgress } from './SubdomainFetch';
 import { img, vid } from './extensions';
 
