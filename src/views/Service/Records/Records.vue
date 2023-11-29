@@ -71,7 +71,7 @@ main#database
                                     option(value="<") &lt;
                                     option(value="<=") &lt;=
                                     option(value="~") ~
-                                .material-symbols-outlined.mid.selectArrowDown arrow_drop_down
+                                .material-symbols-outlined.mid.selectArrowDown(:class="{'disabled' : advancedForm.index.name === '$user_id'}") arrow_drop_down
                             input#indexValueSearchInput(
                                 type="text"
                                 name='index_value'
@@ -1290,6 +1290,12 @@ watch(() => selectedRecord.value, () => {
 
                         .customSelect {
                             left: 0;
+
+                            .selectArrowDown {
+                                &.disabled {
+                                    color: rgba(0, 0, 0, 0.25);
+                                }
+                            }
                         }
                     }
 
