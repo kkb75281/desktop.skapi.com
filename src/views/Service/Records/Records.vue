@@ -1980,10 +1980,10 @@ watch(() => selectedRecord.value, () => {
                 }
 
                 .noData {
-                    position: absolute;
-                    left: 75%;
-                    top: 50%;
-                    transform: translate(-50%, -50%);
+                    // position: absolute;
+                    // left: 75%;
+                    // top: 50%;
+                    // transform: translate(-50%, -50%);
                     text-align: center;
                     font-size: 28px;
                     font-weight: 700;
