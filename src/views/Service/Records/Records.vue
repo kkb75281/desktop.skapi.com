@@ -2261,6 +2261,12 @@ watch(() => selectedRecord.value, () => {
                             padding-right: 1rem;
                         }
 
+                        &.center, &:last-child {
+                            > div {
+                                padding-right: 0;
+                            }
+                        }
+
                         &.center {
                             text-align: center;
 
