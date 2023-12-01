@@ -27,7 +27,7 @@
                 //-     span edit
             main
                 .content(:style='displayFontType()') 
-                    p {{ selectedData.context }}
+                    p(style="word-wrap: break-word;") {{ selectedData.context }}
 
 </template>
 

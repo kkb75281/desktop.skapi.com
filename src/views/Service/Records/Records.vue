@@ -242,7 +242,7 @@ main#database
 
                         .info 
                             .label Tags 
-                            .value(style="width: calc(100% - 170px);")
+                            .value.tags(style="width: calc(100% - 170px);")
                                 .tagsWrapper#tagsWrapper(@click.stop="e=>{if(recordInfoEdit && !promiseRunning) editTags=(()=>{if(!selectedRecord?.tags) {selectedRecord.tags = []} return selectedRecord.tags;})(); else if(ellipsisCheck('tagsWrapper')) hiddenTags=true;}")
                                     template(v-if="selectedRecord?.tags?.length")
                                         .tag(v-for="tag in selectedRecord?.tags") {{ tag }}
@@ -2459,6 +2459,15 @@ watch(() => selectedRecord.value, () => {
                             text-align: left;
                         }
                     }
+                    .hidden {
+                        &.tags {
+                            left: unset;
+                            bottom: unset;
+                            right: 0;
+                            top: 50%;
+                            transform: translateY(-50%);
+                        }
+                    }
                 }
             }
         }
@@ -2497,11 +2506,22 @@ watch(() => selectedRecord.value, () => {
             .createForm {
                 .content {
                     .info {
+                        // &:last-child {
+                        //     .value {
+                        //         width: 100% !important;
+                        //         margin-top: 1rem;
+                        //     }
+                        // }
                         .label {
                             width: 100%;
                         }
                         .value {
                             width: unset !important;
+
+                            &.tags {
+                                width: 100% !important;
+                                margin-top: 1rem;
+                            }
                         }
                     }
                     .smallInfo {
