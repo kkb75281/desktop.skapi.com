@@ -10,7 +10,6 @@
                 input(type="text" 
                 :value='form.email' 
                 @input="e=> { form.email = e.target.value; }"
-                pattern="[a-zA-Z0-9\+]+[@][a-zA-Z0-9]+[.]+[a-zA-Z]+[.]*[a-zA-Z]*" 
                 title="Please enter a valid email address." 
                 placeholder="Enter your email" 
                 required)
@@ -180,7 +179,7 @@ let checkExist = ()=>{
             error.value = "Too many requests. Please try again later.";
         }
         else {
-            error.value = "Something went wrong please try again.";
+            error.value = err.message;
             throw err;
         }
     }).finally(() => {
@@ -221,7 +220,7 @@ let skip = async () => {
                 step.value = 1;
                 break;
             default:
-                error.value = "Something went wrong please try again.";
+                error.value = err.message;
                 throw e;
         }
     });
