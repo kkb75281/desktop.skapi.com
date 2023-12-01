@@ -271,11 +271,11 @@ main#database
                                     .row(@click="()=>{ if(data.download) data.download(); else if((data.type === 'json' || data.type === 'string') && ellipsisCheck('data-context-' + index)) showRecordDataValue=data}" :class="{'disabled' : ['boolean', 'number', 'string'].includes(data.type), 'file': data.download}")
                                         //- .data {{ data.type }}
                                         .data 
-                                            .material-symbols-outlined.mid(v-if="data.type == 'string'") text_format
+                                            .material-symbols-outlined.mid(v-if="data.type == 'string'") font_download
                                             .material-symbols-outlined.mid(v-else-if="data.type == 'binary'") draft
                                             .material-symbols-outlined.mid(v-else-if="data.type == 'json'") data_object
-                                            .material-symbols-outlined.mid(v-else-if="data.type == 'boolean'") stroke_partial
-                                            .material-symbols-outlined.mid(v-else="data.type == 'number'") 123
+                                            .material-symbols-outlined.mid(v-else-if="data.type == 'boolean'") flaky
+                                            .material-symbols-outlined.mid(v-else="data.type == 'number'") pin
                                         .data
                                             .overflow(v-if="data?.key") {{ data.key }}
                                             .overflow(v-else) -
