@@ -109,7 +109,7 @@ main#database
                         template(v-if='selectedRecord?.record_id')
                             .info 
                                 .label Record ID 
-                                .value(:class="{ disabled: recordInfoEdit }" :value="selectedRecord.record_id" style="width: calc(100% - 170px);") {{ selectedRecord.record_id }}
+                                .value(:class="{ disabled: recordInfoEdit }" :value="selectedRecord.record_id" style="width: calc(100% - 200px);") {{ selectedRecord.record_id }}
                                 .copy(v-if="!recordInfoEdit" @click="copy")
                                     .material-symbols-outlined.sml file_copy
 
@@ -1647,10 +1647,10 @@ watch(() => selectedRecord.value, () => {
 
                     .copy {
                         position: absolute;
-                        top: 65%;
+                        // top: -2px;
                         right: 0;
-                        transform: translateY(-50%);
-                        color: rgba(0, 0, 0, 0.4);
+                        display: inline;
+                        color: rgba(0, 0, 0, 0.6);
                         cursor: pointer;
 
                         svg {
