@@ -126,7 +126,7 @@ NavBar(style='--position: absolute;')
     br
     br
 
-    section.intact(style="text-align:center;")
+    section.intact.video(style="text-align:center;")
         h2 Backend Server, Simplified
 
         br
@@ -139,7 +139,7 @@ NavBar(style='--position: absolute;')
     br
     br
     
-    section.intact(style="text-align:center;")
+    section.intact.technology(style="text-align:center;")
         h2 Powered by Serverless Technology 
 
         br
@@ -148,26 +148,26 @@ NavBar(style='--position: absolute;')
         .techWrap 
             .tech 
                 br
-                .img
+                img(src="@/assets/img/landingpage/tech1.svg")
                 br
                 br
-                h4 Lower Your Costs By 10x
+                h5 Lower Your Costs By 10x
                 br
                 p Thanks to our well-architected serverless system, Skapi significantly reduces backend operational costs, accelerating your project development.
             .tech
                 br 
-                .img
+                img(src="@/assets/img/landingpage/tech2.svg")
                 br
                 br
-                h4 Scale Without Limits 
+                h5 Scale Without Limits 
                 br
                 p Built to scale effortlessly, Skapi handles your concurrent connections without any manual intervention.
             .tech
                 br
-                .img
+                img(src="@/assets/img/landingpage/tech3.svg")
                 br
                 br
-                h4 No Setup, No Deployment 
+                h5 No Setup, No Deployment 
                 br
                 p Farewell to complex backend deployment hassles. Everything is managed from the frontend, streamlining your development process.
 
@@ -176,7 +176,7 @@ NavBar(style='--position: absolute;')
     br
     br
 
-    section.intact
+    section.intact.database
         .data(style="margin-right:2%;")
             h2 Flexible,#[br]Schemaless Database
 
@@ -194,7 +194,45 @@ NavBar(style='--position: absolute;')
                 .btn(:class="{'active' : showCode == 'get'}" @click="showCode = 'get'") Get Record 
             .code 
                 template(v-if="showCode == 'post'")
-                    p post
+                    span(style="color:#999999") // Data to be saved in key:value pairs
+                    
+                    br
+                    
+                    span(style="color:#33adff") let 
+                    span(style="color:#58dfff") data 
+                    | = 
+                    span(style="color:#f9d849") {
+                    
+                    br
+
+                    span(style="color:#58dfff") &nbsp;&nbsp;myData: 
+                    span(style="color:#ffa600") "Hello World"
+
+                    br
+
+                    span(style="color:#f9d849") }
+
+                    br
+                    br
+
+                    span(style="color:#999999") // Configuration for the record to be uploaded
+
+                    br
+
+                    span(style="color:#33adff") let 
+                    span(style="color:#58dfff") config 
+                    | = 
+                    span(style="color:#f9d849") {
+
+                    br
+
+                    span(style="color:#58dfff") &nbsp;&nbsp;table: 
+                    span(style="color:#ffa600") "my_collection"
+
+                    br
+
+                    span(style="color:#f9d849") }
+                    
                 template(v-else)
                     p get
     br
@@ -215,38 +253,162 @@ NavBar(style='--position: absolute;')
     br
     br
 
-    section.intact
+    section.intact.features
         h2 Skapi Features 
 
         br
         br
 
         .cardWrap 
-            .card.min
+            .card(style="width:250px")
                 .titWrap 
-                    .img
+                    .icon
+                        img(src="@/assets/img/landingpage/database.png")
                     h5 Database
                 
                 br
 
                 p Simple, scalable, yet flexible database at your service.
-            .card.min
+                img.background(src="@/assets/img/landingpage/database_bg.png" style="right: 0px;bottom: 0px; height: 150px;")
+            .card(style="width:250px")
                 .titWrap 
-                    .img
+                    .icon 
+                        img(src="@/assets/img/landingpage/security.png")
                     h5 Security
                 
                 br
 
                 p Solid security for your users and data.
-            .card(style="margin-right:0")
+                img.background(src="@/assets/img/landingpage/security_bg.png" style="left: 20px;bottom: 20px; height: 80px;")
+                img.background(src="@/assets/img/landingpage/security_bg2.png" style="right: -45px;bottom: 20px; height: 80px;")
+            .card(style="width:calc(100% - 540px); margin-right:0")
                 .titWrap 
-                    .img 
+                    .icon 
+                        img(src="@/assets/img/landingpage/cloud.png")
                     h5 Cloud Storage 
                 
                 br
 
                 p Robust storage solutions for any data size.
+                img.background(src="@/assets/img/landingpage/cloud_bg.svg" style="right: -40px;bottom: 10px; height: 150px;")
+            .card(style="width:50%;")
+                .titWrap 
+                    .icon 
+                        img(src="@/assets/img/landingpage/cdn.png")
+                    h5 CDN
+                
+                br
+
+                p Swift content delivery across the globe.
+                img.background(src="@/assets/img/landingpage/cdn_bg.svg" style="right: -50px;bottom: -100px;")
+            .card(style="width:calc(50% - 20px); margin-right:0;")
+                .titWrap 
+                    .icon 
+                        img(src="@/assets/img/landingpage/hosting.png")
+                    h5 Instant Hosting 
+                
+                br
+
+                p Host your HTML content swiftly.
+                img.background(src="@/assets/img/landingpage/hosting_bg.svg" style="right: -70px;bottom: -15px; height: 200px;")
+            .card(style="width:calc(100% - 540px);")
+                .titWrap 
+                    .icon 
+                        img(src="@/assets/img/landingpage/email.png")
+                    h5 Automated E-Mail Service
+                
+                br
+
+                p Simplified email automation and newsletters.
+                img.background(src="@/assets/img/landingpage/email_bg.png" style="right: 30px;bottom: 15px; height: 120px;")
+            .card(style="width:250px")
+                .titWrap 
+                    .icon 
+                        img(src="@/assets/img/landingpage/api.png")
+                    h5 API Bridge
+                
+                br
+
+                p Expand with your own custom APIs.
+                img.background(src="@/assets/img/landingpage/api_bg.svg" style="right: -25px;bottom: 25px;")
+            .card(style="width:250px; margin-right:0;")
+                .titWrap 
+                    .icon 
+                        img(src="@/assets/img/landingpage/realtime.png")
+                    h5 Realtime Data
+                
+                br
+
+                p Build chat, games, push notifications in no time.
+                img.background(src="@/assets/img/landingpage/realtime_bg.svg" style="right: -130px;bottom: -60px;")
             
+    br
+    br
+    br
+    br
+
+    section.intact(style="text-align:center;")
+        h2 What you Can Build with Skapi
+
+        br
+        br
+
+        p(style="color:rgba(0, 0, 0, 0.60)") Basic HTML and JavaScript skills is all you need. 
+        p(style="color:rgba(0, 0, 0, 0.60)") Withness how simple it is to build a login form with Skapi: 
+
+        br
+        br
+
+        .buildWrap 
+            .build(style="display:inline-block; width:300px; height:300px; border-radius:12px; background-color:#d9d9d9; margin-right:30px;")
+            .build(style="display:inline-block; width:300px; height:300px; border-radius:12px; background-color:#d9d9d9; margin-right:30px;")
+            .build(style="display:inline-block; width:300px; height:300px; border-radius:12px; background-color:#d9d9d9;")
+        
+    br
+    br
+    br
+    br
+
+    section.line
+        h2(style="width:100%;") Sign-up while it's free!
+
+        br
+
+        a.customButton(href="/" style="background-color:#293FE6;color:white;") Start my project
+
+    br
+    br
+    br
+    br
+
+    section.intact 
+        h2(style="text-align:center;") FAQ 
+
+        br
+        br
+
+        details
+            summary What is Skapi and how to use it?
+            p(style="color: rgba(0,0,0,0.6);") Photo-sharing websites, chat application, file-sharing applications, social media platforms, newsletter subscription services, or any other application that requires a web server. Skapi is a complete backend API service that provides everything you'd expect from a backend server.
+
+        details
+            summary How much does it cost?
+            p(style="color: rgba(0,0,0,0.6);") dddd
+
+        details
+            summary Do I need at least of basic backend knowledge to use Skapi?
+            p(style="color: rgba(0,0,0,0.6);") dddd
+
+        details
+            summary Can I use my own domain using Skapi?
+            p(style="color: rgba(0,0,0,0.6);") dddd
+
+    br
+    br
+    br
+    br
+
+
 </template>
 
 <script setup>
@@ -260,6 +422,45 @@ console.log(showCode.value)
 </script>
 
 <style lang="less" scoped>
+summary::-webkit-details-marker { /* Safari 브라우저용 사용자 정의 스타일 */
+    display: none;
+}
+summary {
+    position: relative;
+    list-style-type: none; /* 그 외의 브라우저용 사용자 정의 스타일 */
+    cursor: pointer;
+    padding: 20px 0;
+    margin-bottom: 20px;
+    font-size: 1.2rem;
+
+    ::marker {
+        content: '';
+    }
+    &::before {
+        position: absolute;
+        content: '';
+        left: 0;
+        bottom: 0;
+        width: 100%;
+        height: 1px;
+        background-color: #000;
+    }
+    &:after {
+        position: absolute;
+        content: '';
+        background: url('@/assets/img/landingpage/plus.png') no-repeat;
+        right: 0;
+        width: 30px;
+        height: 30px;
+        background-size: contain;
+    }
+}
+details[open] summary:after {
+    background: url('@/assets/img/landingpage/minus.png') no-repeat;
+    width: 30px;
+    height: 30px;
+    background-size: contain;
+}
 
 #landing {
     max-width: 100vw;
@@ -312,14 +513,20 @@ console.log(showCode.value)
         .code {
             width: 100%;
             margin-top: 10px;
-            padding: 20px;
-            font-family: monospace;
-            font-size: 14px;
             border-radius: 20px;
             background-color: #262626;
-            color: #fff;
         }
     }
+}
+
+.code {
+    font-family: monospace;
+    background-color: #434343;
+    color: #fff;
+    padding: 20px;
+    font-size: 14px;
+    line-height: 1.7; 
+    border-radius: 8px;
 }
 
 section {    
@@ -396,108 +603,159 @@ section {
     &.banner {
         width: 100%;
         height: 300px;
-        background-color: #999;
+        background: url(@/assets/img/landingpage/intro_banner.png);
+        background-size: cover;
+        background-position-y: -560px;
     }
-    .techWrap {
-        .tech {
-            display: inline-block;
-            vertical-align: middle;
-            width: 32%;
-            min-width: 300px;
-            margin-right: 20px;
-            margin-bottom: 20px;
-            padding: 1rem;
-            border-radius: 12px;
-            border: 1px solid rgba(0, 0, 0, 0.05);
-            background-color: #E5E9F3;
-            box-shadow: 0px 2px 4px 0px rgba(0, 0, 0, 0.10);
-
-            &:last-child {
-                margin-right: 0;
-            }
-            .img {
-                width: 120px;
-                height: 120px;
-                background-color: #888;
-                display: inline-block;
-                text-align: center;
-            }
-            p {
-                font-size: max(0.8rem, 14px);
-                color: rgba(0,0,0,0.6);
-            }
-        }
+    &.line {
+        text-align: center;
+        background-color: #e5e9f3;
+        padding: 5rem 0;
     }
-    .data, .dataCode {
+}
+.techWrap {
+    .tech {
         display: inline-block;
         vertical-align: middle;
-        width: 49%;
-        text-align: left;
-    }
-    .dataCode {
-        .btn {
-            display: inline-block;
-            border-radius: 8px;
-            border: 2px solid #434343;
-            color: #434343;
-            padding: 2px 12px;
-            margin-right: 10px;
-            margin-bottom: 20px;
-            border-radius: 8px;
-            font-size: 16px;
-            font-weight: 700;
-            cursor: pointer;
-            
-            &.active {
-                background: #434343;
-                color: #fff;
-            }
+        width: 32%;
+        height: 372px;
+        min-width: 300px;
+        margin-right: 20px;
+        margin-bottom: 20px;
+        padding: 1rem;
+        border-radius: 12px;
+        border: 1px solid rgba(0, 0, 0, 0.05);
+        background-color: #E5E9F3;
+        box-shadow: 0px 2px 4px 0px rgba(0, 0, 0, 0.10);
+
+        &:last-child {
+            margin-right: 0;
         }
-        .code {
-            width: 100%;
-            height: 256px;
-            background-color: #434343;
-            border-radius: 8px;
+        h5 {
+            font-weight: 700;
+        }
+        img {
+            width: 120px;
+            height: 120px;
+            display: inline-block;
+            text-align: center;
+        }
+        p {
+            font-size: max(0.8rem, 14px);
+            color: rgba(0,0,0,0.6);
+        }
+    }
+}
+.data, .dataCode {
+    display: inline-block;
+    vertical-align: middle;
+    width: 49%;
+    text-align: left;
+}
+.dataCode {
+    .btn {
+        display: inline-block;
+        border-radius: 8px;
+        border: 2px solid #434343;
+        color: #434343;
+        padding: 2px 12px;
+        margin-right: 10px;
+        margin-bottom: 20px;
+        border-radius: 8px;
+        font-size: 16px;
+        font-weight: 700;
+        cursor: pointer;
+        
+        &.active {
+            background: #434343;
             color: #fff;
         }
     }
-    .cardWrap {
-        display: flex;
-        flex-wrap: wrap;
+}
+.cardWrap {
+    display: flex;
+    flex-wrap: wrap;
 
-        .card {
-            min-width: 250px;
-            border-radius: 12px;
-            border: 1px solid rgba(0, 0, 0, 0.05);
-            background: #E5E9F3;
-            box-shadow: 0px 2px 4px 0px rgba(0, 0, 0, 0.10);
-            margin-right: 25px;
-            margin-bottom: 25px;
-            padding: 20px;
+    .card {
+        position: relative;
+        min-width: 250px;
+        height: 284px;
+        border-radius: 12px;
+        border: 1px solid rgba(0, 0, 0, 0.05);
+        background: #E5E9F3;
+        box-shadow: 0px 2px 4px 0px rgba(0, 0, 0, 0.10);
+        margin-right: 20px;
+        margin-bottom: 20px;
+        padding: 20px;
+        overflow: hidden;
+        .background {
+            position: absolute;
+            opacity: 0.7;
+        }
+        .titWrap {
+            display: flex;
+            align-items: center;
+        }
+        .icon {
+            position: relative;
+            width: 45px;
+            height: 45px;
+            background-color: #fff;
+            border-radius: 50%;
+            box-shadow: 0px 12px 36px rgba(69, 77, 255, 0.10);
+            margin-right: 18px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
 
-            &.min {
-                width: 250px;
-            }
-            .titWrap {
-                display: flex;
-                align-items: center;
-            }
-            .img {
+            img {
                 width: 45px;
-                height: 45px;
-                border-radius: 50%;
-                margin-right: 16px;
-                background-color: #fff;
-                filter: drop-shadow(0px 12px 36px rgba(69, 77, 255, 0.10));
+                scale: 0.9;
             }
-            p {
-                max-width: 296px;
-                line-height: 20px;
-                font-size: 16px;
-                color: rgba(0,0,0,0.6);
+        }
+        p {
+            max-width: 296px;
+            line-height: 20px;
+            font-size: 16px;
+            color: rgba(0,0,0,0.6);
+        }
+    }
+}
+
+@media (max-width: 825px) {
+    .cardWrap {
+        .card {
+            &:nth-child(1),&:nth-child(7) {
+                width: 50% !important;
+            }
+            &:nth-child(2),&:nth-child(8) {
+                width: calc(50% - 20px) !important;
+                margin-right: 0;
+            }
+            &:nth-child(3), &:nth-child(6) {
+                width: 100% !important;
+                margin-right: 0;
             }
         }
     }
 }
 
+@media (max-width: 650px) {
+    .techWrap {
+        .tech {
+            margin-right: 0;
+        }
+    }
+}
+
+@media (max-width: 580px) {
+    .cardWrap {
+        .card {
+            &:nth-child(1),&:nth-child(2),&:nth-child(4),&:nth-child(5),&:nth-child(7),&:nth-child(8) {
+                width: 100% !important;
+                margin-right: 0 !important;
+            }
+        }
+    }
+}
 </style>
