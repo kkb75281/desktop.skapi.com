@@ -4,9 +4,13 @@ NavBar(style='--position: absolute;')
     section.intro.gradback
         .introInner
             .introTop.intact
-                h1 Mastering#[br]Backend&nbsp;Developemnt,#[br]Do It With HTML
+                h1.long Mastering#[br]Backend&nbsp;Developemnt,#[br]Do It With HTML
+                h1.mobile Mastering#[br]Backend Developemnt,#[br]Do It With HTML
                 .side
                     p Instantly Power Your Application with a&nbsp;Robust Backend API
+
+                    br
+
                     .tabletCenter
                         a.customButton.shadow(v-if='!account' href='/signup' style='background-color:white;color:#293FE6;') Try Out For Free
                         a.customButton.shadow(v-else href='/dashboard' style='background-color:white;color:#293FE6;') Go To Dashboard
@@ -188,6 +192,7 @@ NavBar(style='--position: absolute;')
             br
             
             p(style="color:rgba(0,0,0,0.6);") The database is optimized for a diverse range of applications with simplicity, while preventing cost overruns and performance issues.
+
         .dataCode 
             .btnWrap 
                 .btn(:class="{'active' : showCode == 'post'}" @click="showCode = 'post'") Post Record
@@ -443,7 +448,7 @@ summary {
         bottom: 0;
         width: 100%;
         height: 1px;
-        background-color: #000;
+        background-color: rgba(0,0,0,0.6);
     }
     &:after {
         position: absolute;
@@ -560,6 +565,10 @@ section {
                 display: inline-block;
                 margin-right: 3rem;
                 font-size: 2.6rem;
+
+                &.mobile {
+                    display: none;
+                }
             }
             .side {
                 display: inline-block;
@@ -741,10 +750,40 @@ section {
 }
 
 @media (max-width: 650px) {
+    section {
+        &.intro {
+            .introTop {
+                text-align: center;
+
+                h1 {
+                    margin: 0 auto;
+                    &.long {
+                        display: none;
+                    }
+                    &.mobile {
+                        display: block;
+                    }
+                }
+            }
+            .side {
+                margin-bottom: 6rem;
+            }
+            .introBottom {
+                display: none;
+            }
+        }
+    }
     .techWrap {
         .tech {
             margin-right: 0;
         }
+    }
+    .data, .dataCode {
+        width: 100%;
+        margin-right: 0;
+    }
+    .data {
+        margin-bottom: 3rem;
     }
 }
 
