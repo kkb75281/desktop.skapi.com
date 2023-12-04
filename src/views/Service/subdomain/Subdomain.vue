@@ -22,7 +22,7 @@ main#subdomain
             .setting
                 h6.tit Subdomain
                 template(v-if="modifySudomain && !subdomainState")
-                    form.modifyForm(style="margin-top: 8px" @submit.prevent='registerSubdomain')
+                    form.modifyForm(@submit.prevent='registerSubdomain')
                         .input
                             input#modifySudomain(:disabled="subdomainState || subdomainPromiseRunning ? true : null" type="text" placeholder="Name of Subdomain" required minlength='5' pattern='[a-z0-9]+' title='Subdomain should be lowercase alphanumeric.' :value='inputSubdomain' @input="(e) => {e.target.setCustomValidity(''); inputSubdomain = e.target.value}")
                         .btnWrap
@@ -702,6 +702,7 @@ function formatBytes(bytes, decimals = 2) {
                 .tit {
                     color: rgba(0, 0, 0, 0.40);
                     font-weight: 500;
+                    margin-bottom: 8px;
                 }
 
                 .cont {
@@ -810,6 +811,7 @@ function formatBytes(bytes, decimals = 2) {
                         }
                         .icon {
                             display: none;
+                            cursor: pointer;
                         }
                     }
                 }
