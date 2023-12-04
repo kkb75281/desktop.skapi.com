@@ -365,8 +365,8 @@ NavBar(style='--position: absolute;')
         br
 
         .buildWrap 
-            .build(style="display:inline-block; width:300px; height:300px; border-radius:12px; background-color:#d9d9d9; margin-right:30px;")
-            .build(style="display:inline-block; width:300px; height:300px; border-radius:12px; background-color:#d9d9d9; margin-right:30px;")
+            .build(style="display:inline-block; width:300px; height:300px; border-radius:12px; background-color:#d9d9d9; margin-right:20px;")
+            .build(style="display:inline-block; width:300px; height:300px; border-radius:12px; background-color:#d9d9d9; margin-right:20px;")
             .build(style="display:inline-block; width:300px; height:300px; border-radius:12px; background-color:#d9d9d9;")
         
     br
