@@ -11,17 +11,115 @@ NavBar(style='--position: absolute;')
                         a.customButton.shadow(v-if='!account' href='/signup' style='background-color:white;color:#293FE6;') Try Out For Free
                         a.customButton.shadow(v-else href='/dashboard' style='background-color:white;color:#293FE6;') Go To Dashboard
             .introBottom 
-                .slider 
-                    img.login(src="@/assets/img/landingpage/intro_login.png")
-                    img.users(src="@/assets/img/landingpage/intro_user.png")
-                    .codeWindow
-                        .windowInner 
-                            .circle 
-                                .cir
-                                .cir
-                                .cir
-                            .code
+                //- .slider 
+                //-     img.login(src="@/assets/img/landingpage/intro_login.png")
+                //-     img.users(src="@/assets/img/landingpage/intro_user.png")
+                //-     .codeWindow
+                //-         .windowInner 
+                //-             .circle 
+                //-                 .cir
+                //-                 .cir
+                //-                 .cir
+                //-             .code
+                //-                 span(style="color:#33adff") &lt;
+                //-                 span(style="color:#33adff") form
+                //-                 span(style="color:#58dfff")  onsubmit
+                //-                 | =
+                //-                 span(style="color:#ffa600") "skapi.login(event)"
+                //-                 span(style="color:#58dfff")  action
+                //-                 | =
+                //-                 span(style="color:#ffa600") "login-success.html"
+                //-                 span(style="color:#33adff") &gt;
 
+                //-                 br
+
+                //-                 span(style="color:#33adff") &nbsp;&nbsp;&nbsp;&nbsp;&lt;
+                //-                 span(style="color:#33adff") input
+                //-                 span(style="color:#58dfff")  name
+                //-                 | =
+                //-                 span(style="color:#ffa600") "email"
+                //-                 span(style="color:#58dfff")  type
+                //-                 | =
+                //-                 span(style="color:#ffa600") "email"
+                //-                 span(style="color:#33adff") &gt;
+
+                //-                 br
+
+                //-                 span(style="color:#33adff") &nbsp;&nbsp;&nbsp;&nbsp;&lt;
+                //-                 span(style="color:#33adff") input
+                //-                 span(style="color:#58dfff")  name
+                //-                 | =
+                //-                 span(style="color:#ffa600") "password"
+                //-                 span(style="color:#58dfff")  type
+                //-                 | =
+                //-                 span(style="color:#ffa600") "password"
+                //-                 span(style="color:#33adff") &gt;
+
+                //-                 br
+
+                //-                 span(style="color:#33adff") &nbsp;&nbsp;&nbsp;&nbsp;&lt;
+                //-                 span(style="color:#33adff") input
+                //-                 span(style="color:#58dfff")  type
+                //-                 | =
+                //-                 span(style="color:#ffa600") "submit" 
+                //-                 span(style="color:#58dfff") value
+                //-                 | =
+                //-                 span(style="color:#ffa600") "Login"
+                //-                 span(style="color:#33adff") &gt;
+
+                //-                 br
+
+                //-                 span(style="color:#33adff") &lt;/
+                //-                 span(style="color:#33adff") form
+                //-                 span(style="color:#33adff") &gt;
+                .slider 
+                    img.upload(src="@/assets/img/landingpage/intro_upload.png")
+                    img.comment(src="@/assets/img/landingpage/intro_comment.png")
+                    .codeWindow
+                        .windowInner
+                            .circle 
+                                .cir 
+                                .cir 
+                                .cir 
+                            .code
+                                span(style="color:#33adff") &lt;
+                                span(style="color:#33adff") form
+                                span(style="color:#58dfff")  onsubmit
+                                | =
+                                span(style="color:#ffa600") "skapi.postRecord(event, { table:
+                                span(style="color:#ffa600")  'my_collection'}).then(record =>
+                                span(style="color:#ffa600")  console.log(record))"
+                                span(style="color:#33adff") &gt;
+
+                                br
+
+                                span(style="color:#33adff") &nbsp;&nbsp;&nbsp;&nbsp;&lt;
+                                span(style="color:#33adff") input
+                                span(style="color:#58dfff")  type
+                                | =
+                                span(style="color:#ffa600") "text" 
+                                span(style="color:#58dfff") name
+                                | =
+                                span(style="color:#ffa600") "myData"
+                                span(style="color:#33adff") &gt;
+
+                                br
+
+                                span(style="color:#33adff") &nbsp;&nbsp;&nbsp;&nbsp;&lt;
+                                span(style="color:#33adff") input
+                                span(style="color:#58dfff")  type
+                                | =
+                                span(style="color:#ffa600") "submit" 
+                                span(style="color:#58dfff") value
+                                | =
+                                span(style="color:#ffa600") "Submit"
+                                span(style="color:#33adff") &gt;
+
+                                br
+
+                                span(style="color:#33adff") &lt;/
+                                span(style="color:#33adff") form
+                                span(style="color:#33adff") &gt;
     
     br
     br
@@ -184,14 +282,19 @@ console.log(showCode.value)
 }
 
 .codeWindow {
-    width: 560px;
-    height: 240px;
-    padding: 10px;
-    border-radius: 20px;
-    background-color: #434343;
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%);
+    bottom: 50px;
     .windowInner {
+        width: 500px;
+        padding: 10px 15px 15px;
+        border-radius: 20px;
+        background-color: #434343;
+        box-shadow: 8px 12px 16px 8px rgba(0, 0, 0, 0.20);
         .circle {
             .cir {
+                display: inline-block;
                 width: 14px;
                 height: 14px;
                 margin-right: 10px;
@@ -205,6 +308,16 @@ console.log(showCode.value)
                     background-color: #8DE585;
                 }
             }
+        }
+        .code {
+            width: 100%;
+            margin-top: 10px;
+            padding: 20px;
+            font-family: monospace;
+            font-size: 14px;
+            border-radius: 20px;
+            background-color: #262626;
+            color: #fff;
         }
     }
 }
@@ -255,25 +368,27 @@ section {
             }
         }   
         .introBottom {
-            text-align: center;
+            max-width: 1000px;
+            margin: 0 auto;
+            margin-bottom: -20px;
+            text-align: left;
+            overflow: hidden;
             .slider {
                 position: relative;
-                height: 550px;
 
-                * {
-                    position: absolute;
-                }
                 .login {
-                    left: 30px;
-                    width: 357px;
+                    width: 28%;
+                    margin-right: 4%;
                 }
                 .users {
-                    right: 40px;
-                    width: 614px;
+                    width: 68%;
                 }
-                .codeWindow {
-                    right: 200px;
-                    bottom: 40px;
+                .upload {
+                    width: 38%;
+                    margin-right: 4%;
+                }
+                .comment {
+                    width: 58%;
                 }
             }
         }
