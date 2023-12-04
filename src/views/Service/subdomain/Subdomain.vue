@@ -30,7 +30,9 @@ main#subdomain
                                 img.loading(src="@/assets/img/loading.png")
                             template(v-else)
                                 button.cancel(type="button" @click="modifySudomain = false;") Cancel
+                                .material-symbols-outlined.mid.icon(type="button" @click="modifySudomain = false;" style="margin-right:5px") close
                                 button.save(type="submit" :disabled="subdomainState ? true : null") Save
+                                .material-symbols-outlined.mid.icon(type="submit" :disabled="subdomainState ? true : null" style="color: #293FE6;") check
                 template(v-else)
                     .cont(@click="modifySudomain = true")
                         p {{ computedSubdomain }}
@@ -755,19 +757,8 @@ function formatBytes(bytes, decimals = 2) {
                     height: 44px;
 
                     .input {
-                        width: 65%;
                         position: relative;
-
-                        &::before {
-                            position: absolute;
-                            content: '';
-                            width: 100%;
-                            height: 100%;
-                            border-radius: 8px;
-                            background: rgba(0, 0, 0, 0.05);
-                            // z-index: -1;
-                            pointer-events: none;
-                        }
+                        width: calc(100% - 170px);
 
                         &::after {
                             position: absolute;
@@ -780,18 +771,19 @@ function formatBytes(bytes, decimals = 2) {
                         }
 
                         input {
+                            width: 100%;
                             border: 0;
-                            width: calc(100% - 87px);
-                            padding: 13px;
                             height: 44px;
-                            background-color: unset;
+                            background: rgba(0, 0, 0, 0.05);
+                            border-radius: 8px;
+                            padding: 13px 95px 13px 13px;
                             font-size: 0.8rem;
                             font-weight: 400;
                         }
                     }
 
                     .btnWrap {
-                        width: 35%;
+                        width: 170px;
                         display: flex;
                         flex-wrap: nowrap;
                         align-items: center;
@@ -815,6 +807,9 @@ function formatBytes(bytes, decimals = 2) {
                                 background-color: #293FE6;
                                 color: #fff;
                             }
+                        }
+                        .icon {
+                            display: none;
                         }
                     }
                 }
@@ -1049,7 +1044,31 @@ function formatBytes(bytes, decimals = 2) {
         }
     }
 }
+@media (max-width:1200px) {
+    #subdomain {
+        #section {
+            .settingWrap {
+                .setting {
+                    .modifyForm {
+                        .input {
+                            width: calc(100% - 70px);
+                        }
+                        .btnWrap {
+                            width: 70px;
 
+                            button {
+                                display: none;
+                            }
+                            .icon {
+                                display: inline-block;
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
 @media (max-width:767px) {
     #subdomain {
         #section {
