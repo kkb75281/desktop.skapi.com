@@ -140,8 +140,8 @@ msgOverlay(v-if="fileInfo" @close="fileInfo = null" :title="fileInfo?.name" styl
     .fileInfo
         span
             b Filename:&nbsp;
-        a(target="_blank" :href='`https://${ computedSubdomain }.skapi.com/${ fileInfo?.path.split(computedSubdomain).slice(1).join("") }${ encodeURI(fileInfo.name) }`') {{ fileInfo.name }}
-        
+        a(target="_blank" :href='selectedFileUrl') {{ fileInfo.name }}
+
         br
         br
 
@@ -161,7 +161,7 @@ msgOverlay(v-if="fileInfo" @close="fileInfo = null" :title="fileInfo?.name" styl
 
         span
             b URL:&nbsp;
-        span.value https://{{ computedSubdomain }}.skapi.com/{{ fileInfo?.path.split(computedSubdomain + '/').slice(1).join('') }}{{ encodeURI(fileInfo.name) }}
+        span.value {{ selectedFileUrl }}
 
         br
         br
@@ -318,6 +318,22 @@ let fileInfo = ref(null);
 let viewFileInfo = f => {
     fileInfo.value = f;
 }
+
+let selectedFileUrl = computed(() => {
+    if (!fileInfo.value) {
+        return '';
+    }
+    let path = fileInfo.value.path.split(computedSubdomain.value).slice(1).join('');
+
+    if (path[0] === '/') {
+        path = path.slice(1);
+    }
+
+    let filename = encodeURI(fileInfo.value.name);
+    path = path ? encodeURI(path) + '/' + filename : filename;
+
+    return 'https://' + computedSubdomain.value + '.skapi.com/' + path;
+});
 
 // let downloadFile = (f) => {
 //     let path = f.path + '/' + f.name;
@@ -607,42 +623,46 @@ function formatBytes(bytes, decimals = 2) {
                 // text-decoration: none;
                 color: #000;
             }
+
             .title {
                 width: 300px;
                 white-space: nowrap;
                 overflow: hidden;
                 text-overflow: ellipsis;
             }
+
             .buttonWrap {
                 text-align: end;
 
-                > div {
+                >div {
                     display: inline-block;
                     vertical-align: middle;
-    
+
                     &.refresh {
                         color: #293FE6;
                     }
-        
+
                     &.delete {
                         margin-left: 2rem;
                     }
+
                     div {
                         vertical-align: middle;
                     }
+
                     span {
                         font-size: 0.8rem;
                         font-weight: 700;
                         margin-left: 12px;
                     }
                 }
-    
+
             }
         }
 
         .customFile {
             cursor: pointer;
-            
+
             label {
                 display: block;
                 width: 105px;
@@ -703,7 +723,9 @@ function formatBytes(bytes, decimals = 2) {
                     }
 
                     &.line {
-                        &::before, p {
+
+                        &::before,
+                        p {
                             width: calc(100% - 120px);
                         }
                     }
@@ -723,7 +745,7 @@ function formatBytes(bytes, decimals = 2) {
                         }
                     }
 
-                    
+
                 }
 
                 .modifyForm {
@@ -1033,15 +1055,19 @@ function formatBytes(bytes, decimals = 2) {
         #section {
             .titleWrap {
                 flex-wrap: wrap;
+
                 .title {
                     margin-bottom: 1rem;
                 }
+
                 .buttonWrap {
                     width: 100%;
-                    > div {
+
+                    >div {
                         &.delete {
                             margin-left: 1rem;
                         }
+
                         span {
                             display: none;
                         }
@@ -1062,7 +1088,7 @@ function formatBytes(bytes, decimals = 2) {
 
             .settingWrap {
                 flex-wrap: wrap;
-                
+
                 .setting {
                     width: 100%;
                     margin-bottom: 2rem;
@@ -1070,10 +1096,12 @@ function formatBytes(bytes, decimals = 2) {
                     &:last-child {
                         margin-bottom: 0;
                     }
+
                     .cont {
                         .material-symbols-outlined {
                             padding-right: 1rem;
                         }
+
                         &.line {
                             &::before {
                                 width: 100%;
@@ -1082,13 +1110,16 @@ function formatBytes(bytes, decimals = 2) {
                     }
                 }
             }
+
             .filesHeader {
                 flex-wrap: wrap;
                 justify-content: flex-end;
                 flex-direction: column-reverse;
+
                 .filesPathWrap {
                     width: 100%;
                 }
+
                 .filesButtonWrap {
                     width: 100%;
                     justify-content: end;
@@ -1103,8 +1134,10 @@ function formatBytes(bytes, decimals = 2) {
 <style lang="less">
 .fileInfo {
     user-select: text;
-    
-    a, span, b {
+
+    a,
+    span,
+    b {
         display: inline-block;
         word-break: break-all;
         user-select: text;
