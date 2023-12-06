@@ -14,117 +14,120 @@ NavBar(style='--position: fixed; --background-color:#262626')
                     .tabletCenter
                         a.customButton.shadow(v-if='!account' href='/signup' style='background-color:white;color:#293FE6;') Try Out For Free
                         a.customButton.shadow(v-else href='/dashboard' style='background-color:white;color:#293FE6;') Go To Dashboard
-            .introBottom 
-                //- .slider 
-                //-     img.login(src="@/assets/img/landingpage/intro_login.png")
-                //-     img.users(src="@/assets/img/landingpage/intro_user.png")
-                //-     .codeWindow
-                //-         .windowInner 
-                //-             .circle 
-                //-                 .cir
-                //-                 .cir
-                //-                 .cir
-                //-             .code
-                //-                 span(style="color:#33adff") &lt;
-                //-                 span(style="color:#33adff") form
-                //-                 span(style="color:#58dfff")  onsubmit
-                //-                 | =
-                //-                 span(style="color:#ffa600") "skapi.login(event)"
-                //-                 span(style="color:#58dfff")  action
-                //-                 | =
-                //-                 span(style="color:#ffa600") "login-success.html"
-                //-                 span(style="color:#33adff") &gt;
+            .introBottom
+                Swiper.swiper(:modules="[Autoplay]" :autoplay="{delay: 2500,disableOnInteraction: false}" :loop="true") 
+                    SwiperSlide.slider 
+                      .sliderInner
+                        img.upload(src="@/assets/img/landingpage/intro_upload.png")
+                        img.comment(src="@/assets/img/landingpage/intro_comment.png")
+                        .codeWindow
+                            .windowInner
+                                .circle 
+                                    .cir 
+                                    .cir 
+                                    .cir 
+                                .code
+                                    span(style="color:#33adff") &lt;
+                                    span(style="color:#33adff") form
+                                    span(style="color:#58dfff")  onsubmit
+                                    | =
+                                    span(style="color:#ffa600") "skapi.postRecord(event, { table:
+                                    span(style="color:#ffa600")  'my_collection'}).then(record =>
+                                    span(style="color:#ffa600")  console.log(record))"
+                                    span(style="color:#33adff") &gt;
 
-                //-                 br
+                                    br
 
-                //-                 span(style="color:#33adff") &nbsp;&nbsp;&nbsp;&nbsp;&lt;
-                //-                 span(style="color:#33adff") input
-                //-                 span(style="color:#58dfff")  name
-                //-                 | =
-                //-                 span(style="color:#ffa600") "email"
-                //-                 span(style="color:#58dfff")  type
-                //-                 | =
-                //-                 span(style="color:#ffa600") "email"
-                //-                 span(style="color:#33adff") &gt;
+                                    span(style="color:#33adff") &nbsp;&nbsp;&nbsp;&nbsp;&lt;
+                                    span(style="color:#33adff") input
+                                    span(style="color:#58dfff")  type
+                                    | =
+                                    span(style="color:#ffa600") "text" 
+                                    span(style="color:#58dfff") name
+                                    | =
+                                    span(style="color:#ffa600") "myData"
+                                    span(style="color:#33adff") &gt;
 
-                //-                 br
+                                    br
 
-                //-                 span(style="color:#33adff") &nbsp;&nbsp;&nbsp;&nbsp;&lt;
-                //-                 span(style="color:#33adff") input
-                //-                 span(style="color:#58dfff")  name
-                //-                 | =
-                //-                 span(style="color:#ffa600") "password"
-                //-                 span(style="color:#58dfff")  type
-                //-                 | =
-                //-                 span(style="color:#ffa600") "password"
-                //-                 span(style="color:#33adff") &gt;
+                                    span(style="color:#33adff") &nbsp;&nbsp;&nbsp;&nbsp;&lt;
+                                    span(style="color:#33adff") input
+                                    span(style="color:#58dfff")  type
+                                    | =
+                                    span(style="color:#ffa600") "submit" 
+                                    span(style="color:#58dfff") value
+                                    | =
+                                    span(style="color:#ffa600") "Submit"
+                                    span(style="color:#33adff") &gt;
 
-                //-                 br
+                                    br
 
-                //-                 span(style="color:#33adff") &nbsp;&nbsp;&nbsp;&nbsp;&lt;
-                //-                 span(style="color:#33adff") input
-                //-                 span(style="color:#58dfff")  type
-                //-                 | =
-                //-                 span(style="color:#ffa600") "submit" 
-                //-                 span(style="color:#58dfff") value
-                //-                 | =
-                //-                 span(style="color:#ffa600") "Login"
-                //-                 span(style="color:#33adff") &gt;
+                                    span(style="color:#33adff") &lt;/
+                                    span(style="color:#33adff") form
+                                    span(style="color:#33adff") &gt;
+                    SwiperSlide.slider
+                      .sliderInner
+                        img.login(src="@/assets/img/landingpage/intro_login.png")
+                        img.users(src="@/assets/img/landingpage/intro_user.png")
+                        .codeWindow
+                            .windowInner 
+                                .circle 
+                                    .cir
+                                    .cir
+                                    .cir
+                                .code
+                                    span(style="color:#33adff") &lt;
+                                    span(style="color:#33adff") form
+                                    span(style="color:#58dfff")  onsubmit
+                                    | =
+                                    span(style="color:#ffa600") "skapi.login(event)"
+                                    span(style="color:#58dfff")  action
+                                    | =
+                                    span(style="color:#ffa600") "login-success.html"
+                                    span(style="color:#33adff") &gt;
 
-                //-                 br
+                                    br
 
-                //-                 span(style="color:#33adff") &lt;/
-                //-                 span(style="color:#33adff") form
-                //-                 span(style="color:#33adff") &gt;
-                .slider 
-                    img.upload(src="@/assets/img/landingpage/intro_upload.png")
-                    img.comment(src="@/assets/img/landingpage/intro_comment.png")
-                    .codeWindow
-                        .windowInner
-                            .circle 
-                                .cir 
-                                .cir 
-                                .cir 
-                            .code
-                                span(style="color:#33adff") &lt;
-                                span(style="color:#33adff") form
-                                span(style="color:#58dfff")  onsubmit
-                                | =
-                                span(style="color:#ffa600") "skapi.postRecord(event, { table:
-                                span(style="color:#ffa600")  'my_collection'}).then(record =>
-                                span(style="color:#ffa600")  console.log(record))"
-                                span(style="color:#33adff") &gt;
+                                    span(style="color:#33adff") &nbsp;&nbsp;&nbsp;&nbsp;&lt;
+                                    span(style="color:#33adff") input
+                                    span(style="color:#58dfff")  name
+                                    | =
+                                    span(style="color:#ffa600") "email"
+                                    span(style="color:#58dfff")  type
+                                    | =
+                                    span(style="color:#ffa600") "email"
+                                    span(style="color:#33adff") &gt;
 
-                                br
+                                    br
 
-                                span(style="color:#33adff") &nbsp;&nbsp;&nbsp;&nbsp;&lt;
-                                span(style="color:#33adff") input
-                                span(style="color:#58dfff")  type
-                                | =
-                                span(style="color:#ffa600") "text" 
-                                span(style="color:#58dfff") name
-                                | =
-                                span(style="color:#ffa600") "myData"
-                                span(style="color:#33adff") &gt;
+                                    span(style="color:#33adff") &nbsp;&nbsp;&nbsp;&nbsp;&lt;
+                                    span(style="color:#33adff") input
+                                    span(style="color:#58dfff")  name
+                                    | =
+                                    span(style="color:#ffa600") "password"
+                                    span(style="color:#58dfff")  type
+                                    | =
+                                    span(style="color:#ffa600") "password"
+                                    span(style="color:#33adff") &gt;
 
-                                br
+                                    br
 
-                                span(style="color:#33adff") &nbsp;&nbsp;&nbsp;&nbsp;&lt;
-                                span(style="color:#33adff") input
-                                span(style="color:#58dfff")  type
-                                | =
-                                span(style="color:#ffa600") "submit" 
-                                span(style="color:#58dfff") value
-                                | =
-                                span(style="color:#ffa600") "Submit"
-                                span(style="color:#33adff") &gt;
+                                    span(style="color:#33adff") &nbsp;&nbsp;&nbsp;&nbsp;&lt;
+                                    span(style="color:#33adff") input
+                                    span(style="color:#58dfff")  type
+                                    | =
+                                    span(style="color:#ffa600") "submit" 
+                                    span(style="color:#58dfff") value
+                                    | =
+                                    span(style="color:#ffa600") "Login"
+                                    span(style="color:#33adff") &gt;
 
-                                br
+                                    br
 
-                                span(style="color:#33adff") &lt;/
-                                span(style="color:#33adff") form
-                                span(style="color:#33adff") &gt;
-    
+                                    span(style="color:#33adff") &lt;/
+                                    span(style="color:#33adff") form
+                                    span(style="color:#33adff") &gt;       
+
     br
     br
     br
@@ -496,408 +499,431 @@ NavBar(style='--position: fixed; --background-color:#262626')
 </template>
 
 <script setup>
-import NavBar from '@/components/NavBar.vue';
-import { onBeforeUnmount, onMounted, ref } from 'vue';
-import { account } from '@/main';
+import NavBar from "@/components/NavBar.vue";
+import { onBeforeUnmount, onMounted, ref } from "vue";
+import { Swiper, SwiperSlide } from "swiper/vue";
+import { Autoplay } from "swiper/modules";
+import "swiper/css";
+import { account } from "@/main";
 
-let showCode = ref('post');
+let showCode = ref("post");
 
 let showNavBar = (e) => {
-    let navBar = document.getElementById('top');
+  let navBar = document.getElementById("top");
 
-    if (e.deltaY > 0) {
-        navBar.style.top = '-60px';
-    } else {
-        navBar.style.top = '0';
-    }
-}
+  if (e.deltaY > 0) {
+    navBar.style.top = "-60px";
+  } else {
+    navBar.style.top = "0";
+  }
+};
 
 onMounted(() => {
-    window.addEventListener('wheel', showNavBar);
+  window.addEventListener("wheel", showNavBar);
 });
 onBeforeUnmount(() => {
-    window.removeEventListener('wheel', showNavBar);
+  window.removeEventListener("wheel", showNavBar);
 });
 </script>
 
 <style lang="less" scoped>
-summary::-webkit-details-marker { /* Safari 브라우저용 사용자 정의 스타일 */
-    display: none;
+summary::-webkit-details-marker {
+  /* Safari 브라우저용 사용자 정의 스타일 */
+  display: none;
 }
 summary {
-    position: relative;
-    list-style-type: none; /* 그 외의 브라우저용 사용자 정의 스타일 */
-    cursor: pointer;
-    padding: 20px 0;
-    margin-bottom: 20px;
-    font-size: 1.2rem;
-    font-weight: 500;
+  position: relative;
+  list-style-type: none; /* 그 외의 브라우저용 사용자 정의 스타일 */
+  cursor: pointer;
+  padding: 20px 0;
+  margin-bottom: 20px;
+  font-size: 1.2rem;
+  font-weight: 500;
 
-    ::marker {
-        content: '';
-    }
-    &::before {
-        position: absolute;
-        content: '';
-        left: 0;
-        bottom: 0;
-        width: 100%;
-        height: 1px;
-        background-color: rgba(0,0,0,0.6);
-    }
-    &:after {
-        position: absolute;
-        content: '';
-        background: url('@/assets/img/landingpage/plus.png') no-repeat;
-        right: 0;
-        width: 30px;
-        height: 30px;
-        background-size: contain;
-    }
-}
-details[open] summary:after {
-    background: url('@/assets/img/landingpage/minus.png') no-repeat;
+  ::marker {
+    content: "";
+  }
+  &::before {
+    position: absolute;
+    content: "";
+    left: 0;
+    bottom: 0;
+    width: 100%;
+    height: 1px;
+    background-color: rgba(0, 0, 0, 0.6);
+  }
+  &:after {
+    position: absolute;
+    content: "";
+    background: url("@/assets/img/landingpage/plus.png") no-repeat;
+    right: 0;
     width: 30px;
     height: 30px;
     background-size: contain;
+  }
+}
+details[open] summary:after {
+  background: url("@/assets/img/landingpage/minus.png") no-repeat;
+  width: 30px;
+  height: 30px;
+  background-size: contain;
 }
 
 #landing {
-    max-width: 100vw;
-    background-color: #f0f0f0;
+  max-width: 100vw;
+  background-color: #f0f0f0;
 }
 
 .gradback {
-    background: linear-gradient(217deg, rgba(0, 255, 170, 1), rgba(255, 0, 0, 0) 70.71%), linear-gradient(54deg, rgba(0, 14, 255, 1), rgba(0, 255, 0, 0) 70.71%), linear-gradient(148deg, rgba(0, 14, 255, 1), rgba(0, 255, 0, 0) 70.71%), linear-gradient(336deg, rgba(252, 208, 75, 1), rgba(0, 0, 255, 1) 70.71%);
+  background: linear-gradient(217deg, rgba(0, 255, 170, 1), rgba(255, 0, 0, 0) 70.71%),
+    linear-gradient(54deg, rgba(0, 14, 255, 1), rgba(0, 255, 0, 0) 70.71%),
+    linear-gradient(148deg, rgba(0, 14, 255, 1), rgba(0, 255, 0, 0) 70.71%),
+    linear-gradient(336deg, rgba(252, 208, 75, 1), rgba(0, 0, 255, 1) 70.71%);
 }
 
 .customButton {
-    font-size: 16px;
-    font-weight: 700;
-    min-width: 169px;
-    box-sizing: border-box;
-    padding: 0.8em 2.3em;
-    text-decoration: none;
-    border-radius: 8px;
-    display: inline-block;
+  font-size: 16px;
+  font-weight: 700;
+  min-width: 169px;
+  box-sizing: border-box;
+  padding: 0.8em 2.3em;
+  text-decoration: none;
+  border-radius: 8px;
+  display: inline-block;
 }
 
 .codeWindow {
-    position: absolute;
-    left: 50%;
-    transform: translateX(-50%);
-    bottom: 50px;
-    .windowInner {
-        width: 500px;
-        padding: 10px 15px 15px;
-        border-radius: 20px;
-        background-color: #434343;
-        box-shadow: 8px 12px 16px 8px rgba(0, 0, 0, 0.20);
-        .circle {
-            .cir {
-                display: inline-block;
-                width: 14px;
-                height: 14px;
-                margin-right: 10px;
-                border-radius: 50%;
-                background-color: #FFCC80;
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+  bottom: 50px;
+  .windowInner {
+    width: 500px;
+    padding: 10px 15px 15px;
+    border-radius: 20px;
+    background-color: #434343;
+    box-shadow: 8px 12px 16px 8px rgba(0, 0, 0, 0.2);
+    .circle {
+      .cir {
+        display: inline-block;
+        width: 14px;
+        height: 14px;
+        margin-right: 10px;
+        border-radius: 50%;
+        background-color: #ffcc80;
 
-                &:first-child {
-                    background-color: #FF8686;
-                }
-                &:last-child {
-                    background-color: #8DE585;
-                }
-            }
+        &:first-child {
+          background-color: #ff8686;
         }
-        .code {
-            width: 100%;
-            margin-top: 10px;
-            border-radius: 20px;
-            background-color: #262626;
+        &:last-child {
+          background-color: #8de585;
         }
+      }
     }
+    .code {
+      width: 100%;
+      margin-top: 10px;
+      border-radius: 20px;
+      background-color: #262626;
+    }
+  }
 }
 
 .code {
-    font-family: monospace;
-    background-color: #434343;
-    color: #fff;
-    padding: 20px;
-    font-size: 14px;
-    line-height: 1.7; 
-    border-radius: 8px;
+  font-family: monospace;
+  background-color: #434343;
+  color: #fff;
+  padding: 20px;
+  font-size: 14px;
+  line-height: 1.7;
+  border-radius: 8px;
 }
 
-section {    
-    width: 100vw;
-    margin: 0 auto;
+section {
+  width: 100vw;
+  margin: 0 auto;
 
-    h1, h2, h5 {
-        font-weight: 500;
+  h1,
+  h2,
+  h5 {
+    font-weight: 500;
+  }
+  p {
+    font-weight: 300;
+    line-height: 1.5;
+  }
+  &.intact {
+    max-width: 1080px;
+    position: relative;
+    padding: 0 1rem 2rem 1rem;
+  }
+  &.intro {
+    width: 100%;
+    text-align: center;
+    padding: 10rem 40px 0 40px;
+    overflow: hidden;
+    .introInner {
+      display: inline-block;
+      margin: 0 auto;
     }
-    p {
-        font-weight: 300;
-        line-height: 1.5;
+    .introTop {
+      text-align: left;
+      color: #fff;
+      h1 {
+        display: inline-block;
+        margin-right: 3rem;
+        font-size: 2.6rem;
+
+        &.mobile {
+          display: none;
+        }
+      }
+      .side {
+        display: inline-block;
+      }
+      p {
+        max-width: 470px;
+        padding-top: 2rem;
+        margin-bottom: 1rem;
+        font-size: 1.2rem;
+      }
+      .customButton {
+        margin-bottom: 2rem;
+      }
     }
-    &.intact {
-        max-width: 1080px;
+    .introBottom {
+      max-width: calc(100vw - 80px);
+      margin: 0 auto;
+      margin-bottom: -20px;
+      text-align: left;
+      overflow: hidden;
+      .slider {
         position: relative;
-        padding: 0 1rem 2rem 1rem;
-    }
-    &.intro {
-        width: 100%;
-        text-align: center;
-        padding: 10rem 40px 0 40px;
-        overflow: hidden;
-        .introInner {
-            display: inline-block;
+        
+        .sliderInner {
+            width: 1000px;
             margin: 0 auto;
         }
-        .introTop {
-            text-align: left;
-            color: #fff;
-            h1 {
-                display: inline-block;
-                margin-right: 3rem;
-                font-size: 2.6rem;
-
-                &.mobile {
-                    display: none;
-                }
-            }
-            .side {
-                display: inline-block;
-            }
-            p {
-                max-width: 470px;
-                padding-top: 2rem;
-                margin-bottom: 1rem;
-                font-size: 1.2rem;
-            }
-            .customButton {
-                margin-bottom: 2rem;
-            }
-        }   
-        .introBottom {
-            max-width: 1000px;
-            margin: 0 auto;
-            margin-bottom: -20px;
-            text-align: left;
-            overflow: hidden;
-            .slider {
-                position: relative;
-
-                .login {
-                    width: 28%;
-                    margin-right: 4%;
-                }
-                .users {
-                    width: 68%;
-                }
-                .upload {
-                    width: 38%;
-                    margin-right: 4%;
-                }
-                .comment {
-                    width: 58%;
-                }
-            }
+        .login {
+          width: 28%;
+          margin-right: 4%;
         }
+        .users {
+          width: 68%;
+        }
+        .upload {
+          width: 38%;
+          margin-right: 4%;
+        }
+        .comment {
+          width: 58%;
+        }
+      }
     }
-    &.banner {
-        width: 100%;
-        height: 300px;
-        background: url(@/assets/img/landingpage/intro_banner.png);
-        background-size: cover;
-        background-position-y: -560px;
-    }
-    &.line {
-        text-align: center;
-        background-color: #e5e9f3;
-        padding: 5rem 0;
-    }
+  }
+  &.banner {
+    width: 100%;
+    height: 300px;
+    background: url(@/assets/img/landingpage/intro_banner.png);
+    background-size: cover;
+    background-position-y: -560px;
+  }
+  &.line {
+    text-align: center;
+    background-color: #e5e9f3;
+    padding: 5rem 0;
+  }
 }
 .techWrap {
-    .tech {
-        display: inline-block;
-        vertical-align: middle;
-        width: 32%;
-        height: 372px;
-        min-width: 300px;
-        margin-right: 20px;
-        margin-bottom: 20px;
-        padding: 1rem;
-        border-radius: 12px;
-        border: 1px solid rgba(0, 0, 0, 0.05);
-        background-color: #E5E9F3;
-        box-shadow: 0px 2px 4px 0px rgba(0, 0, 0, 0.10);
-
-        &:last-child {
-            margin-right: 0;
-        }
-        img {
-            width: 120px;
-            height: 120px;
-            display: inline-block;
-            text-align: center;
-        }
-        p {
-            font-size: max(0.8rem, 14px);
-            color: rgba(0,0,0,0.6);
-        }
-    }
-}
-.data, .dataCode {
+  .tech {
     display: inline-block;
     vertical-align: middle;
-    width: 49%;
-    text-align: left;
+    width: 32%;
+    height: 372px;
+    min-width: 300px;
+    margin-right: 20px;
+    margin-bottom: 20px;
+    padding: 1rem;
+    border-radius: 12px;
+    border: 1px solid rgba(0, 0, 0, 0.05);
+    background-color: #e5e9f3;
+    box-shadow: 0px 2px 4px 0px rgba(0, 0, 0, 0.1);
+
+    &:last-child {
+      margin-right: 0;
+    }
+    img {
+      width: 120px;
+      height: 120px;
+      display: inline-block;
+      text-align: center;
+    }
+    p {
+      font-size: max(0.8rem, 14px);
+      color: rgba(0, 0, 0, 0.6);
+    }
+  }
+}
+.data,
+.dataCode {
+  display: inline-block;
+  vertical-align: middle;
+  width: 49%;
+  text-align: left;
 }
 .dataCode {
-    .btn {
-        display: inline-block;
-        border-radius: 8px;
-        border: 2px solid #434343;
-        color: #434343;
-        padding: 2px 12px;
-        margin-right: 10px;
-        margin-bottom: 20px;
-        border-radius: 8px;
-        font-size: 16px;
-        font-weight: 700;
-        cursor: pointer;
-        
-        &.active {
-            background: #434343;
-            color: #fff;
-        }
+  .btn {
+    display: inline-block;
+    border-radius: 8px;
+    border: 2px solid #434343;
+    color: #434343;
+    padding: 2px 12px;
+    margin-right: 10px;
+    margin-bottom: 20px;
+    border-radius: 8px;
+    font-size: 16px;
+    font-weight: 700;
+    cursor: pointer;
+
+    &.active {
+      background: #434343;
+      color: #fff;
     }
+  }
 }
 .cardWrap {
-    display: flex;
-    flex-wrap: wrap;
+  display: flex;
+  flex-wrap: wrap;
 
-    .card {
-        position: relative;
-        min-width: 250px;
-        height: 284px;
-        border-radius: 12px;
-        border: 1px solid rgba(0, 0, 0, 0.05);
-        background: #E5E9F3;
-        box-shadow: 0px 2px 4px 0px rgba(0, 0, 0, 0.10);
-        margin-right: 20px;
-        margin-bottom: 20px;
-        padding: 20px;
-        overflow: hidden;
-        .background {
-            position: absolute;
-            opacity: 0.7;
-        }
-        .titWrap {
-            display: flex;
-            align-items: center;
-        }
-        .icon {
-            position: relative;
-            width: 45px;
-            height: 45px;
-            background-color: #fff;
-            border-radius: 50%;
-            box-shadow: 0px 12px 36px rgba(69, 77, 255, 0.10);
-            margin-right: 18px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-
-            img {
-                width: 45px;
-                scale: 0.9;
-            }
-        }
-        p {
-            max-width: 296px;
-            line-height: 20px;
-            font-size: 16px;
-            color: rgba(0,0,0,0.6);
-        }
+  .card {
+    position: relative;
+    min-width: 250px;
+    height: 284px;
+    border-radius: 12px;
+    border: 1px solid rgba(0, 0, 0, 0.05);
+    background: #e5e9f3;
+    box-shadow: 0px 2px 4px 0px rgba(0, 0, 0, 0.1);
+    margin-right: 20px;
+    margin-bottom: 20px;
+    padding: 20px;
+    overflow: hidden;
+    .background {
+      position: absolute;
+      opacity: 0.7;
     }
+    .titWrap {
+      display: flex;
+      align-items: center;
+    }
+    .icon {
+      position: relative;
+      width: 45px;
+      height: 45px;
+      background-color: #fff;
+      border-radius: 50%;
+      box-shadow: 0px 12px 36px rgba(69, 77, 255, 0.1);
+      margin-right: 18px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+
+      img {
+        width: 45px;
+        scale: 0.9;
+      }
+    }
+    p {
+      max-width: 296px;
+      line-height: 20px;
+      font-size: 16px;
+      color: rgba(0, 0, 0, 0.6);
+    }
+  }
 }
 
 @media (max-width: 825px) {
-    .cardWrap {
-        .card {
-            &:nth-child(1),&:nth-child(7) {
-                width: 50% !important;
-            }
-            &:nth-child(2),&:nth-child(8) {
-                width: calc(50% - 20px) !important;
-                margin-right: 0;
-            }
-            &:nth-child(3), &:nth-child(6) {
-                width: 100% !important;
-                margin-right: 0;
-            }
-        }
+  .cardWrap {
+    .card {
+      &:nth-child(1),
+      &:nth-child(7) {
+        width: 50% !important;
+      }
+      &:nth-child(2),
+      &:nth-child(8) {
+        width: calc(50% - 20px) !important;
+        margin-right: 0;
+      }
+      &:nth-child(3),
+      &:nth-child(6) {
+        width: 100% !important;
+        margin-right: 0;
+      }
     }
+  }
 }
 
 @media (max-width: 650px) {
-    section {
-        &.intro {
-            .introTop {
-                text-align: center;
+  section {
+    &.intro {
+      .introTop {
+        text-align: center;
 
-                h1 {
-                    margin: 0 auto;
-                    &.long {
-                        display: none;
-                    }
-                    &.mobile {
-                        display: block;
-                    }
-                }
-            }
-            .side {
-                margin-bottom: 6rem;
-            }
-            .introBottom {
-                display: none;
-            }
+        h1 {
+          margin: 0 auto;
+          &.long {
+            display: none;
+          }
+          &.mobile {
+            display: block;
+          }
         }
+      }
+      .side {
+        margin-bottom: 6rem;
+      }
+      .introBottom {
+        display: none;
+      }
     }
-    .techWrap {
-        .tech {
-            margin-right: 0;
-        }
+  }
+  .techWrap {
+    .tech {
+      margin-right: 0;
     }
-    .data, .dataCode {
-        width: 100%;
-        margin-right: 0;
-    }
-    .data {
-        margin-bottom: 3rem;
-    }
+  }
+  .data,
+  .dataCode {
+    width: 100%;
+    margin-right: 0;
+  }
+  .data {
+    margin-bottom: 3rem;
+  }
 }
 
 @media (max-width: 580px) {
-    section {
-        &.banner {
-            height: 500px;
-        }
+  section {
+    &.banner {
+      height: 500px;
     }
-    .techWrap {
-        .tech {
-            width: 100%;
-        }
+  }
+  .techWrap {
+    .tech {
+      width: 100%;
     }
-    .cardWrap {
-        .card {
-            &:nth-child(1),&:nth-child(2),&:nth-child(4),&:nth-child(5),&:nth-child(7),&:nth-child(8) {
-                width: 100% !important;
-                margin-right: 0 !important;
-            }
-        }
+  }
+  .cardWrap {
+    .card {
+      &:nth-child(1),
+      &:nth-child(2),
+      &:nth-child(4),
+      &:nth-child(5),
+      &:nth-child(7),
+      &:nth-child(8) {
+        width: 100% !important;
+        margin-right: 0 !important;
+      }
     }
+  }
 }
 </style>
