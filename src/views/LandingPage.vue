@@ -7,7 +7,7 @@ NavBar(style='--position: fixed; --background-color:#262626')
                 h1.long Mastering#[br]Backend&nbsp;Developemnt,#[br]Do It With HTML
                 h1.mobile Mastering#[br]Backend Developemnt,#[br]Do It With HTML
                 .side
-                    p Instantly Power Your Application with a&nbsp;Robust Backend API
+                    p(style="font-weight:400;") Instantly Power Your Application with a&nbsp;Robust Backend API
 
                     br
 
@@ -207,7 +207,7 @@ NavBar(style='--position: fixed; --background-color:#262626')
             .btnWrap 
                 .btn(:class="{'active' : showCode == 'post'}" @click="showCode = 'post'") Post Record
                 .btn(:class="{'active' : showCode == 'get'}" @click="showCode = 'get'") Get Record 
-            .code(style="height:255px; overflow:scroll;")
+            .code(style="height:270px; overflow:scroll;")
                 template(v-if="showCode == 'post'")
                     span(style="color:#999999") // Data to be saved in key:value pairs
                     
@@ -316,9 +316,14 @@ NavBar(style='--position: fixed; --background-color:#262626')
 
         br
 
-        p You can upload huge files directly from HTML forms.
-        p Your data is served through the CDN network, without any extra configuration.
+        p(style="color:rgba(0,0,0,0.6);") You can upload huge files directly from HTML forms. #[br]Your data is served through the CDN network, without any extra configuration.
 
+    br
+    br
+    br
+    br
+    br
+    br
     br
     br
     br
@@ -461,18 +466,26 @@ NavBar(style='--position: fixed; --background-color:#262626')
         details
             summary What is Skapi and how to use it?
             p(style="color: rgba(0,0,0,0.6);") Photo-sharing websites, chat application, file-sharing applications, social media platforms, newsletter subscription services, or any other application that requires a web server. Skapi is a complete backend API service that provides everything you'd expect from a backend server.
-
+            br
+            br
+            
         details
             summary How much does it cost?
             p(style="color: rgba(0,0,0,0.6);") dddd
+            br
+            br
 
         details
             summary Do I need at least of basic backend knowledge to use Skapi?
             p(style="color: rgba(0,0,0,0.6);") dddd
+            br
+            br
 
         details
             summary Can I use my own domain using Skapi?
             p(style="color: rgba(0,0,0,0.6);") dddd
+            br
+            br
 
     br
     br
@@ -518,6 +531,7 @@ summary {
     padding: 20px 0;
     margin-bottom: 20px;
     font-size: 1.2rem;
+    font-weight: 500;
 
     ::marker {
         content: '';
@@ -623,7 +637,8 @@ section {
         font-weight: 500;
     }
     p {
-        line-height: 1.3;
+        font-weight: 300;
+        line-height: 1.5;
     }
     &.intact {
         max-width: 1080px;
@@ -720,9 +735,6 @@ section {
 
         &:last-child {
             margin-right: 0;
-        }
-        h5 {
-            font-weight: 700;
         }
         img {
             width: 120px;

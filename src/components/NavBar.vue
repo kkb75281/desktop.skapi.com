@@ -208,7 +208,7 @@ onBeforeUnmount(() => {
         width: 220px;
         .logo {
             display: block;
-            height: 40px;
+            height: 32px;
 
             img {
                 height: 100%;
