@@ -201,7 +201,8 @@ onBeforeUnmount(() => {
     display: flex;
     align-items: center;
     justify-content: space-between;
-
+    background-color: var(--background-color);
+    transition: all 0.3s;
     .left {
         position: relative;
         width: 220px;

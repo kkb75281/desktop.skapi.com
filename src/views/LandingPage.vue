@@ -1,5 +1,5 @@
 <template lang="pug">
-NavBar(style='--position: absolute;')
+NavBar(style='--position: fixed; --background-color:#262626')
 #landing
     section.intro.gradback
         .introInner
@@ -484,12 +484,27 @@ NavBar(style='--position: absolute;')
 
 <script setup>
 import NavBar from '@/components/NavBar.vue';
-import { ref } from 'vue';
+import { onBeforeUnmount, onMounted, ref } from 'vue';
 import { account } from '@/main';
 
 let showCode = ref('post');
 
-console.log(showCode.value)
+let showNavBar = (e) => {
+    let navBar = document.getElementById('top');
+
+    if (e.deltaY > 0) {
+        navBar.style.top = '-60px';
+    } else {
+        navBar.style.top = '0';
+    }
+}
+
+onMounted(() => {
+    window.addEventListener('wheel', showNavBar);
+});
+onBeforeUnmount(() => {
+    window.removeEventListener('wheel', showNavBar);
+});
 </script>
 
 <style lang="less" scoped>
