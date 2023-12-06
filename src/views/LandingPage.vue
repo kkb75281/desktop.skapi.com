@@ -129,6 +129,8 @@ NavBar(style='--position: absolute;')
     br
     br
     br
+    br
+    br
 
     section.intact.video(style="text-align:center;")
         h2 Backend Server, Simplified
@@ -138,6 +140,8 @@ NavBar(style='--position: absolute;')
 
         div(style="width:100%; height:400px; background-color:#999; border-radius:8px;")
 
+    br
+    br
     br
     br
     br
@@ -179,6 +183,12 @@ NavBar(style='--position: absolute;')
     br
     br
     br
+    br
+    br
+    br
+    br
+    br
+    br
 
     section.intact.database
         .data(style="margin-right:2%;")
@@ -197,7 +207,7 @@ NavBar(style='--position: absolute;')
             .btnWrap 
                 .btn(:class="{'active' : showCode == 'post'}" @click="showCode = 'post'") Post Record
                 .btn(:class="{'active' : showCode == 'get'}" @click="showCode = 'get'") Get Record 
-            .code 
+            .code(style="height:255px; overflow:scroll;")
                 template(v-if="showCode == 'post'")
                     span(style="color:#999999") // Data to be saved in key:value pairs
                     
@@ -239,7 +249,63 @@ NavBar(style='--position: absolute;')
                     span(style="color:#f9d849") }
                     
                 template(v-else)
-                    p get
+                    span(style="color:#33adff") let 
+                    span(style="color:#58dfff") query 
+                    | = 
+                    span(style="color:#f9d849") {
+                    
+                    br
+
+                    span(style="color:#58dfff") &nbsp;&nbsp;table: 
+                    span(style="color:#ffa600") "my_collection"
+
+                    br
+
+                    span(style="color:#f9d849") }
+
+                    br
+                    br
+
+                    span(style="color:#58dfff") skapi
+                    | .
+                    span(style="color:#f9d849") getRecords(
+                    span(style="color:#58dfff") query
+                    span(style="color:#f9d849") )
+                    | .
+                    span(style="color:#f9d849") then(
+                    span(style="color:#58dfff") response 
+                    span(style="color:#33adff") => 
+                    span(style="color:#cc76d1") {
+
+                    br
+                    
+                    span(style="color:#999999") &nbsp;&nbsp;/** 
+                    br
+                    span(style="color:#999999") &nbsp;&nbsp;&nbsp;* endOfList: true,
+                    br
+                    span(style="color:#999999") &nbsp;&nbsp;&nbsp;* list: [
+                    br
+                    span(style="color:#999999") &nbsp;&nbsp;&nbsp;*&nbsp;&nbsp;...
+                    br
+                    span(style="color:#999999") &nbsp;&nbsp;&nbsp;* ],
+                    br
+                    span(style="color:#999999") &nbsp;&nbsp;&nbsp;* startKey: 'end',
+                    br
+                    span(style="color:#999999") &nbsp;&nbsp;&nbsp;* ...
+                    br
+                    span(style="color:#999999") &nbsp;&nbsp;&nbsp;*/
+
+                    br
+
+                    span(style="color:#cc76d1") }
+                    span(style="color:#f9d849") )
+                    span ;
+    br
+    br
+    br
+    br
+    br
+    br
     br
     br
     br
@@ -364,10 +430,10 @@ NavBar(style='--position: absolute;')
         br
         br
 
-        .buildWrap 
-            .build(style="display:inline-block; width:300px; height:300px; border-radius:12px; background-color:#d9d9d9; margin-right:20px;")
-            .build(style="display:inline-block; width:300px; height:300px; border-radius:12px; background-color:#d9d9d9; margin-right:20px;")
-            .build(style="display:inline-block; width:300px; height:300px; border-radius:12px; background-color:#d9d9d9;")
+        //- .buildWrap 
+        //-     .build(style="display:inline-block; width:300px; height:300px; border-radius:12px; background-color:#d9d9d9; margin-right:20px;")
+        //-     .build(style="display:inline-block; width:300px; height:300px; border-radius:12px; background-color:#d9d9d9; margin-right:20px;")
+        //-     .build(style="display:inline-block; width:300px; height:300px; border-radius:12px; background-color:#d9d9d9;")
         
     br
     br
@@ -541,8 +607,8 @@ section {
     h1, h2, h5 {
         font-weight: 500;
     }
-    h2 {
-        // margin-bottom: 2.6rem;
+    p {
+        line-height: 1.3;
     }
     &.intact {
         max-width: 1080px;
@@ -788,6 +854,16 @@ section {
 }
 
 @media (max-width: 580px) {
+    section {
+        &.banner {
+            height: 500px;
+        }
+    }
+    .techWrap {
+        .tech {
+            width: 100%;
+        }
+    }
     .cardWrap {
         .card {
             &:nth-child(1),&:nth-child(2),&:nth-child(4),&:nth-child(5),&:nth-child(7),&:nth-child(8) {
