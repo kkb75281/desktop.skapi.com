@@ -977,13 +977,14 @@ let saveRecordData = async () => {
         return
     }
 
-    if (res.bin && Object.keys(res.bin).length > 0 && !Array.isArray(res.bin)) {
-        for (let i in res.bin) {
-            for (let j of res.bin[i]) {
-                delete j.getFile;
-            }
-        }
-    }
+    // 문제 생기면 복귀
+    // if (res.bin && Object.keys(res.bin).length > 0 && !Array.isArray(res.bin)) {
+    //     for (let i in res.bin) {
+    //         for (let j of res.bin[i]) {
+    //             delete j.getFile;
+    //         }
+    //     }
+    // }
 
     recordInfoEdit.value = false;
 
