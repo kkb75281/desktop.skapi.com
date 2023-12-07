@@ -142,6 +142,7 @@ NavBar(style='--position: fixed; --background-color:#262626')
         br
 
         div(style="width:100%; height:400px; background-color:#999; border-radius:8px;")
+        // youtube: https://www.youtube.com/watch?v=y31F1ko9LbU&t=13s
 
     br
     br
@@ -150,33 +151,31 @@ NavBar(style='--position: fixed; --background-color:#262626')
     br
     br
     
-    section.intact.technology(style="text-align:center;")
+    //section.intact.technology(style="text-align:center;")
+    section.intact.technology
         h2 Powered by Serverless Technology 
 
         br
         br
 
         .techWrap 
-            .tech 
-                br
-                img(src="@/assets/img/landingpage/tech1.svg")
-                br
+            .tech
+                div(style="text-align: center;")
+                  img(src="@/assets/img/landingpage/tech1.svg")
                 br
                 h5 Lower Your Costs By 10x
                 br
                 p Thanks to our well-architected serverless system, Skapi significantly reduces backend operational costs, accelerating your project development.
             .tech
-                br 
-                img(src="@/assets/img/landingpage/tech2.svg")
-                br
+                div(style="text-align: center;")
+                  img(src="@/assets/img/landingpage/tech2.svg")
                 br
                 h5 Scale Without Limits 
                 br
                 p Built to scale effortlessly, Skapi handles your concurrent connections without any manual intervention.
             .tech
-                br
-                img(src="@/assets/img/landingpage/tech3.svg")
-                br
+                div(style="text-align: center;")
+                  img(src="@/assets/img/landingpage/tech3.svg")
                 br
                 h5 No Setup, No Deployment 
                 br
@@ -194,7 +193,9 @@ NavBar(style='--position: fixed; --background-color:#262626')
     br
 
     section.intact.database
-        .data(style="margin-right:2%;")
+      .databaseWrap
+        //- .data(style="margin-right:2%;")
+        .data
             h2 Flexible,#[br]Schemaless Database
 
             br
@@ -210,9 +211,9 @@ NavBar(style='--position: fixed; --background-color:#262626')
             .btnWrap 
                 .btn(:class="{'active' : showCode == 'post'}" @click="showCode = 'post'") Post Record
                 .btn(:class="{'active' : showCode == 'get'}" @click="showCode = 'get'") Get Record 
-            .code(style="height:270px; overflow:scroll;")
+            .code
                 template(v-if="showCode == 'post'")
-                    span(style="color:#999999") // Data to be saved in key:value pairs
+                    span(style="color:#999999") // JSON data to be saved
                     
                     br
                     
@@ -223,8 +224,13 @@ NavBar(style='--position: fixed; --background-color:#262626')
                     
                     br
 
-                    span(style="color:#58dfff") &nbsp;&nbsp;myData: 
-                    span(style="color:#ffa600") "Hello World"
+                    span(style="color:#58dfff") &nbsp;&nbsp;title: 
+                    span(style="color:#ffa600") "Vintage Les Paul"
+
+                    br
+
+                    span(style="color:#58dfff") &nbsp;&nbsp;image: 
+                    span(style="color:#ffa600") "https://.../..."
 
                     br
 
@@ -245,22 +251,94 @@ NavBar(style='--position: fixed; --background-color:#262626')
                     br
 
                     span(style="color:#58dfff") &nbsp;&nbsp;table: 
-                    span(style="color:#ffa600") "my_collection"
+                    span(style="color:#ffa600") "my_collection",
+
+                    br
+
+                    span(style="color:#58dfff") &nbsp;&nbsp;index: 
+                    span(style="color:#f9d849") {
+                    
+                    br
+
+                    span(style="color:#58dfff") &nbsp;&nbsp;&nbsp;&nbsp;name: 
+                    span(style="color:#ffa600") "price",
+
+                    br
+
+                    span(style="color:#58dfff") &nbsp;&nbsp;&nbsp;&nbsp;value: 
+                    span(style="color:#ffa600") 499,
+
+                    br
+                    
+                    span(style="color:#f9d849") &nbsp;&nbsp;}
+
+                    br
+
+                    span(style="color:#58dfff") &nbsp;&nbsp;tag: 
+                    | [
+                    span(style="color:#ffa600") "vintage"
+                    | , 
+                    span(style="color:#ffa600") "guitar"
+                    | ]
 
                     br
 
                     span(style="color:#f9d849") }
+
+                    br
+                    br
+                    
+                    span(style="color:#999999") // Post to database
+
+                    br
+
+                    span(style="color:#58dfff") skapi
+                    | .
+                    span(style="color:#f9d849") postRecords(
+                    span(style="color:#58dfff") data
+                    | , 
+                    span(style="color:#58dfff") config
+                    span(style="color:#f9d849") )
                     
                 template(v-else)
                     span(style="color:#33adff") let 
                     span(style="color:#58dfff") query 
                     | = 
                     span(style="color:#f9d849") {
-                    
+
                     br
 
                     span(style="color:#58dfff") &nbsp;&nbsp;table: 
-                    span(style="color:#ffa600") "my_collection"
+                    span(style="color:#ffa600") "my_collection",
+
+                    br
+
+                    span(style="color:#58dfff") &nbsp;&nbsp;index: 
+                    span(style="color:#f9d849") {
+                    
+                    br
+
+                    span(style="color:#58dfff") &nbsp;&nbsp;&nbsp;&nbsp;name: 
+                    span(style="color:#ffa600") "price",
+
+                    br
+
+                    span(style="color:#58dfff") &nbsp;&nbsp;&nbsp;&nbsp;value: 
+                    span(style="color:#ffa600") 500,
+
+                    br
+
+                    span(style="color:#58dfff") &nbsp;&nbsp;&nbsp;&nbsp;condition: 
+                    span(style="color:#ffa600") "&lt;",
+                    
+                    br
+
+                    span(style="color:#f9d849") &nbsp;&nbsp;}
+
+                    br
+
+                    span(style="color:#58dfff") &nbsp;&nbsp;tag: 
+                    span(style="color:#ffa600") "guitar"
 
                     br
 
@@ -282,21 +360,9 @@ NavBar(style='--position: fixed; --background-color:#262626')
 
                     br
                     
-                    span(style="color:#999999") &nbsp;&nbsp;/** 
+                    span(style="color:#999999") &nbsp;&nbsp;// Items in "my_collection",
                     br
-                    span(style="color:#999999") &nbsp;&nbsp;&nbsp;* endOfList: true,
-                    br
-                    span(style="color:#999999") &nbsp;&nbsp;&nbsp;* list: [
-                    br
-                    span(style="color:#999999") &nbsp;&nbsp;&nbsp;*&nbsp;&nbsp;...
-                    br
-                    span(style="color:#999999") &nbsp;&nbsp;&nbsp;* ],
-                    br
-                    span(style="color:#999999") &nbsp;&nbsp;&nbsp;* startKey: 'end',
-                    br
-                    span(style="color:#999999") &nbsp;&nbsp;&nbsp;* ...
-                    br
-                    span(style="color:#999999") &nbsp;&nbsp;&nbsp;*/
+                    span(style="color:#999999") &nbsp;&nbsp;// priced below 500 and tagged as "guitar"
 
                     br
 
@@ -426,7 +492,7 @@ NavBar(style='--position: fixed; --background-color:#262626')
     br
     br
 
-    section.intact(style="text-align:center;")
+    //- section.intact(style="text-align:center;")
         h2 What you Can Build with Skapi
 
         br
@@ -438,10 +504,10 @@ NavBar(style='--position: fixed; --background-color:#262626')
         br
         br
 
-        //- .buildWrap 
-        //-     .build(style="display:inline-block; width:300px; height:300px; border-radius:12px; background-color:#d9d9d9; margin-right:20px;")
-        //-     .build(style="display:inline-block; width:300px; height:300px; border-radius:12px; background-color:#d9d9d9; margin-right:20px;")
-        //-     .build(style="display:inline-block; width:300px; height:300px; border-radius:12px; background-color:#d9d9d9;")
+        .buildWrap 
+            .build(style="display:inline-block; width:300px; height:300px; border-radius:12px; background-color:#d9d9d9; margin-right:20px;")
+            .build(style="display:inline-block; width:300px; height:300px; border-radius:12px; background-color:#d9d9d9; margin-right:20px;")
+            .build(style="display:inline-block; width:300px; height:300px; border-radius:12px; background-color:#d9d9d9;")
         
     br
     br
@@ -460,6 +526,7 @@ NavBar(style='--position: fixed; --background-color:#262626')
     br
     br
 
+    // please refer current website's FAQ
     section.intact 
         h2(style="text-align:center;") FAQ 
 
@@ -630,6 +697,7 @@ details[open] summary:after {
 }
 
 .code {
+  white-space: pre;
   font-family: monospace;
   background-color: #434343;
   color: #fff;
@@ -637,10 +705,11 @@ details[open] summary:after {
   font-size: 14px;
   line-height: 1.7;
   border-radius: 8px;
+  overflow-x:auto;
 }
 
 section {
-  width: 100vw;
+  // width: 100vw; // display: block is always full width of parent
   margin: 0 auto;
 
   h1,
@@ -734,24 +803,32 @@ section {
     padding: 5rem 0;
   }
 }
+
 .techWrap {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 20px;
   .tech {
-    display: inline-block;
-    vertical-align: middle;
-    width: 32%;
-    height: 372px;
-    min-width: 300px;
-    margin-right: 20px;
-    margin-bottom: 20px;
-    padding: 1rem;
+    flex-grow: 1;
+    flex-shrink: 0;
+    // display: inline-block; // display type not relevant when parent is a flexbox
+    // vertical-align: middle;
+    // width: 32%;
+    // height: 372px;
+    // min-width: 300px;
+    width: 300px; // width effect as min-width in flex box
+    // margin-right: 20px;
+    // margin-bottom: 20px;
+    // padding: 1rem;
+    padding: 2rem 1rem;
     border-radius: 12px;
     border: 1px solid rgba(0, 0, 0, 0.05);
     background-color: #e5e9f3;
     box-shadow: 0px 2px 4px 0px rgba(0, 0, 0, 0.1);
 
-    &:last-child {
-      margin-right: 0;
-    }
+    // &:last-child {
+    //   margin-right: 0;
+    // }
     img {
       width: 120px;
       height: 120px;
@@ -764,33 +841,54 @@ section {
     }
   }
 }
-.data,
-.dataCode {
-  display: inline-block;
-  vertical-align: middle;
-  width: 49%;
-  text-align: left;
-}
-.dataCode {
-  .btn {
-    display: inline-block;
-    border-radius: 8px;
-    border: 2px solid #434343;
-    color: #434343;
-    padding: 2px 12px;
-    margin-right: 10px;
-    margin-bottom: 20px;
-    border-radius: 8px;
-    font-size: 16px;
-    font-weight: 700;
-    cursor: pointer;
 
-    &.active {
-      background: #434343;
-      color: #fff;
+.databaseWrap {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 20px;
+
+  align-items: center;
+
+  .data,
+  .dataCode {
+    // display: inline-block;
+    // vertical-align: middle;
+    // width: 49%;
+    text-align: left;
+
+    flex-grow: 1;
+    flex-shrink: 0;
+    width: calc(300px - 2rem); // acts as min-width in flexbox. never exceed 300px which may be the smallest phone width. calc is used to compensate for padding
+  }
+  .dataCode {
+    .code {
+      height:470px; 
+      @media (max-width: 650px) {
+        height:unset; 
+      }
+    }
+
+    .btn {
+      display: inline-block;
+      border-radius: 8px;
+      border: 2px solid #434343;
+      color: #434343;
+      padding: 2px 12px;
+      margin-right: 10px;
+      margin-bottom: 20px;
+      border-radius: 8px;
+      font-size: 16px;
+      font-weight: 700;
+      cursor: pointer;
+
+      &.active {
+        background: #434343;
+        color: #fff;
+      }
     }
   }
 }
+
 .cardWrap {
   display: flex;
   flex-wrap: wrap;
@@ -886,19 +984,19 @@ section {
       }
     }
   }
-  .techWrap {
-    .tech {
-      margin-right: 0;
-    }
-  }
-  .data,
-  .dataCode {
-    width: 100%;
-    margin-right: 0;
-  }
-  .data {
-    margin-bottom: 3rem;
-  }
+  // .techWrap {
+  //   .tech {
+  //     margin-right: 0;
+  //   }
+  // }
+  // .data,
+  // .dataCode {
+  //   width: 100%;
+  //   margin-right: 0;
+  // }
+  // .data {
+  //   margin-bottom: 3rem;
+  // }
 }
 
 @media (max-width: 580px) {
@@ -907,11 +1005,11 @@ section {
       height: 500px;
     }
   }
-  .techWrap {
-    .tech {
-      width: 100%;
-    }
-  }
+  // .techWrap {
+  //   .tech {
+  //     width: 100%;
+  //   }
+  // }
   .cardWrap {
     .card {
       &:nth-child(1),
