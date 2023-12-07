@@ -141,8 +141,7 @@ NavBar(style='--position: fixed; --background-color:#262626')
         br
         br
 
-        div(style="width:100%; height:400px; background-color:#999; border-radius:8px;")
-        // youtube: https://www.youtube.com/watch?v=y31F1ko9LbU&t=13s
+        iframe(width="100%" height="400" style="border-radius:8px;" src="https://www.youtube.com/embed/y31F1ko9LbU?si=R3jS_reo2N1vY3hb" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen)
 
     br
     br
@@ -534,26 +533,38 @@ NavBar(style='--position: fixed; --background-color:#262626')
         br
 
         details
-            summary What is Skapi and how to use it?
+            summary What Can You Build With Skapi?
             p(style="color: rgba(0,0,0,0.6);") Photo-sharing websites, chat application, file-sharing applications, social media platforms, newsletter subscription services, or any other application that requires a web server. Skapi is a complete backend API service that provides everything you'd expect from a backend server.
             br
             br
             
         details
-            summary How much does it cost?
-            p(style="color: rgba(0,0,0,0.6);") dddd
+            summary Is Skapi Typescript Supported?
+            p(style="color: rgba(0,0,0,0.6);") Yes, Skapi is written in Typescript and is fully compatible with Typescript.
             br
             br
 
         details
-            summary Do I need at least of basic backend knowledge to use Skapi?
-            p(style="color: rgba(0,0,0,0.6);") dddd
+            summary What Are the Pricing Plans?
+            p(style="color: rgba(0,0,0,0.6);") 
+                | Skapi is currently on free beta. We will announce the pricing plan soon. 
+                a(href="/signup") Sign up&nbsp;
+                | while it's free!
             br
             br
 
         details
-            summary Can I use my own domain using Skapi?
-            p(style="color: rgba(0,0,0,0.6);") dddd
+            summary Do I Need Basic Knowledge of Backend Development?
+            p(style="color: rgba(0,0,0,0.6);") No, Skapi is designed for frontend developers. You can build a complete full stack application without writing a single line of backend code, or even touching a terminal window.
+            br
+            br
+
+        details
+            summary Where can I get help?
+            p(style="color: rgba(0,0,0,0.6);") 
+                | You can reach us at our 
+                a(href="https://discord.com/channels/1164154380816236626/1164154381269213188") Discord server
+                | . We are happy to help you with any questions you may have.
             br
             br
 
