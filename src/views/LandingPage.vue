@@ -329,7 +329,7 @@ NavBar(style='--position: fixed; --background-color:#262626')
                     br
 
                     span(style="color:#58dfff") &nbsp;&nbsp;&nbsp;&nbsp;condition: 
-                    span(style="color:#ffa600") "&lt;=",
+                    span(style="color:#ffa600") "&lt;",
                     
                     br
 
@@ -709,7 +709,7 @@ details[open] summary:after {
 }
 
 section {
-  // width: 100vw;
+  // width: 100vw; // display: block is always full width of parent
   margin: 0 auto;
 
   h1,
@@ -724,8 +724,7 @@ section {
   &.intact {
     max-width: 1080px;
     position: relative;
-    // padding: 0 1rem 2rem 1rem;
-    padding: 1rem;
+    padding: 0 1rem 2rem 1rem;
   }
   &.intro {
     width: 100%;
