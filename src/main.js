@@ -6,7 +6,12 @@ import App from './App.vue'
 import router from './router'
 import Admin from '@/skapi-extensions/js/admin.js'
 
-let skapi = new Admin("us31zettahertzesskpi");
+let etc = {
+    hostDomain: 'skapi.app',
+    target_cdn: 'd1wrj5ymxrt2ir'
+}
+
+let skapi = new Admin("eu71zettahertzesskpi", etc);
 let account = ref('pending');
 
 skapi.getProfile().then(u => {
@@ -19,9 +24,9 @@ app.use(router)
 app.mount('#app')
 
 let bodyClick = {}
-document.body.addEventListener('click', ()=>{
-    if(Object.keys(bodyClick).length) {
-        for(let key in bodyClick) {
+document.body.addEventListener('click', () => {
+    if (Object.keys(bodyClick).length) {
+        for (let key in bodyClick) {
             bodyClick[key]();
         }
     }
