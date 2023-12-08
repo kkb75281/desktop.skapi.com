@@ -4,8 +4,12 @@ main#subdomain
         .titleWrap
             // main title
             template(v-if="computedSubdomain")
-                a(:href="'http://' + computedSubdomain + '.skapi.com'" target="_blank")
-                    h4.title {{ subdomainState || (computedSubdomain ? computedSubdomain + '.skapi.com' : 'Hosting') }}
+                // pending, removing...
+                h4(v-if='subdomainState') {{ subdomainState }}
+                
+                // subdomain url
+                a(v-else :href="'http://' + computedSubdomain + '.skapi.com'" target="_blank")
+                    h4.title {{ (computedSubdomain ? computedSubdomain + '.skapi.com' : 'Hosting') }}
             template(v-else)
                 h4.title Hosting
             .buttonWrap(v-if="currentService.subdomain") 
