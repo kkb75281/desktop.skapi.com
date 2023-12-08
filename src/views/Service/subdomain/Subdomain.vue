@@ -343,7 +343,7 @@ let selectedFileUrl = computed(() => {
 //     skapi.getFile(endpoint, { expires: 30 });
 // }
 
-let subdomainCallback = e => {
+let subdomainCallback = async e => {
     if (!e) {
         return;
     }
@@ -359,7 +359,16 @@ let subdomainCallback = e => {
         subdomainState.value = ' ...Removing';
     }
     else {
-        inputSubdomain.value = currentService.value.subdomain || '';
+        // when subdomain is set, refetch new subdomain info, refresh cdn, initialize new page class (launch())
+        let subdomain = currentService.value.subdomain;
+        if (subdomainState.value === ' ...Pending') {
+            refreshCdn();
+            launch(currentService.value.subdomain, null, true);
+        }
+        let s = await skapi.getSubdomainInfo(currentService.value.service, { subdomain }).catch(err => err);
+        subdomainInfo.value[subdomain] = s;
+    
+        inputSubdomain.value = subdomain || '';
         subdomainState.value = ''; // idle
     }
     computedSubdomain.value = inputSubdomain.value;
