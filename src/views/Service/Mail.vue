@@ -65,6 +65,7 @@ main#mail
                 span Public Newsletter
             .cont 
                 template(v-if="newsletter_sender?.[currentService.service]?.public") {{ newsletter_sender[currentService.service].public }}
+                template(v-else-if="!account.email_verified") Email verification required
                 template(v-else) loading...
         .email
             .tit 
@@ -73,6 +74,7 @@ main#mail
                 span Service Newsletter
             .cont 
                 template(v-if="newsletter_sender?.[currentService.service]?.authorized") {{ newsletter_sender[currentService.service].authorized }}
+                template(v-else-if="!account.email_verified") Email verification required
                 template(v-else) loading...
 </template>
 
