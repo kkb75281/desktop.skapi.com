@@ -6,7 +6,7 @@ main#subdomain
             template(v-if="computedSubdomain")
                 // pending, removing...
                 h4(v-if='subdomainState') {{ subdomainState }}
-                
+
                 // subdomain url
                 a(v-else :href="'http://' + computedSubdomain + '.skapi.com'" target="_blank")
                     h4.title {{ (computedSubdomain ? computedSubdomain + '.skapi.com' : 'Hosting') }}
@@ -22,7 +22,7 @@ main#subdomain
         br
 
         // head panel when there is subdomain
-        .settingWrap(v-if="currentService.subdomain") 
+        .settingWrap(v-if="currentService.subdomain" :class="{nonClickable: subdomainState}") 
             .setting
                 h6.tit Subdomain
                 template(v-if="modifySudomain && !subdomainState")
@@ -38,12 +38,12 @@ main#subdomain
                 template(v-else)
                     .cont(@click="modifySudomain = true")
                         p {{ computedSubdomain }}
-                        .material-symbols-outlined.mid.clickable(:class="{'nonClickable' : !account.email_verified || subdomainState}") edit
+                        .material-symbols-outlined.mid.clickable(:class="{'nonClickable' : !account.email_verified}") edit
             .setting
                 h6.tit HTML file for 404 page
-                .cont.line 
+                .cont.line
                     p {{ subdomainInfo?.[computedSubdomain]?.['404'] || "Upload a file"}}
-                    .customFile(:class="{'nonClickable' : !account.email_verified || subdomainState}")
+                    .customFile(:class="{'nonClickable' : !account.email_verified}")
                         template(v-if="set404PromiseRunning")
                             img.loading(style='position: absolute;right: 1em;top: 8px;' src="@/assets/img/loading.png")
                         template(v-else)
@@ -67,7 +67,7 @@ main#subdomain
                     template(v-else)
                         button(type="submit") Create
 
-    section#section(v-if="currentService.subdomain")
+    section#section(v-if="currentService.subdomain" :class="{'nonClickable': subdomainState }")
         // path navigation
         .filesHeader
             .filesPathWrap
@@ -90,7 +90,7 @@ main#subdomain
                             .more(:class='{"nonClickable": !checkedFiles.length || !account.email_verified}' @click="showDeleteFile = true; showEdit = false;")
                                 .material-symbols-outlined.mid delete
                                 span Delete
-                .customFile(:class="{'nonClickable' : !account.email_verified || Object.keys(fileList).length}")
+                .customFile(:class="{'nonClickable': !account.email_verified || Object.keys(fileList).length}")
                     label.uploadBtn(for="files")
                         .material-symbols-outlined.mid upload
                         span Upload
@@ -211,23 +211,28 @@ let gotoFolder = index => {
 }
 let refreshCDNRun = ref(true);
 
-if (subdomainInfo.value?.[computedSubdomain.value]) {
-    if (subdomainInfo.value?.[computedSubdomain.value]?.invid) {
-        checkCDNStatus();
-    }
-    else {
-        refreshCDNRun.value = false;
-    }
-}
+// below is unnecessary. computedSubdomain will be defined, thus watch() will be triggered.
+
+// if (subdomainInfo.value?.[computedSubdomain.value]) {
+//     if (subdomainInfo.value?.[computedSubdomain.value]?.invid) {
+//         checkCDNStatus();
+//     }
+//     else {
+//         refreshCDNRun.value = false;
+//     }
+// }
 
 watch(() => subdomainInfo.value?.[computedSubdomain.value], (newValue) => {
-    if (newValue?.invid) {
-        checkCDNStatus();
+    console.log({ newValue })
+    if (newValue) {
+        if (newValue?.invid) {
+            checkCDNStatus();
+        }
+        else {
+            refreshCDNRun.value = false;
+        }
     }
-    else {
-        refreshCDNRun.value = false;
-    }
-}, { deep: true });
+}); //, { deep: true }
 
 let cdnCheckRunning = false;
 let checkCDNStatus = async () => {
@@ -363,15 +368,13 @@ let subdomainCallback = async e => {
         subdomainState.value = ' ...Removing';
     }
     else {
-        // when subdomain is set, refetch new subdomain info, refresh cdn, initialize new page class (launch())
         let subdomain = currentService.value.subdomain;
-        if (subdomainState.value === ' ...Pending') {
-            refreshCdn();
+        if (subdomainState.value === ' ...Pending') { // If previous state was pending, then initialize new page class (launch())
             launch(currentService.value.subdomain, null, true);
         }
         let s = await skapi.getSubdomainInfo(currentService.value.service, { subdomain }).catch(err => err);
         subdomainInfo.value[subdomain] = s;
-    
+
         inputSubdomain.value = subdomain || '';
         subdomainState.value = ''; // idle
     }
@@ -481,7 +484,10 @@ function traverseFileTree(item, path = '') {
 }
 
 let onDrop = async (event, files) => {
-
+    if(subdomainState.value) {
+        return;
+    }
+    
     if (!searchDir.value) {
         return;
     }
