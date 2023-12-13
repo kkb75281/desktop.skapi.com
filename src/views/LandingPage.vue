@@ -20,7 +20,7 @@ NavBar(style='--position: fixed; --background-color:#262626')
                       .sliderInner
                         img.upload(src="@/assets/img/landingpage/intro_upload.png")
                         img.comment(src="@/assets/img/landingpage/intro_comment.png")
-                        .codeWindow(style="bottom:120px;")
+                        .codeWindow
                             .windowInner
                                 .circle 
                                     .cir 
@@ -65,7 +65,7 @@ NavBar(style='--position: fixed; --background-color:#262626')
                                     span(style="color:#33adff") &lt;/
                                     span(style="color:#33adff") form
                                     span(style="color:#33adff") &gt;
-                    SwiperSlide.slider
+                    SwiperSlide.slider.sec
                       .sliderInner
                         img.login(src="@/assets/img/landingpage/intro_login.png")
                         img.users(src="@/assets/img/landingpage/intro_user.png")
@@ -633,7 +633,7 @@ summary {
   &:after {
     position: absolute;
     content: "";
-    background: url("@/assets/img/landingpage/plus.png") no-repeat;
+    background: url("@/assets/img/landingpage/plus.svg") no-repeat;
     right: 0;
     width: 30px;
     height: 30px;
@@ -641,7 +641,7 @@ summary {
   }
 }
 details[open] summary:after {
-  background: url("@/assets/img/landingpage/minus.png") no-repeat;
+  background: url("@/assets/img/landingpage/minus.svg") no-repeat;
   width: 30px;
   height: 30px;
   background-size: contain;
@@ -674,7 +674,7 @@ details[open] summary:after {
   position: absolute;
   left: 50%;
   transform: translateX(-50%);
-  bottom: 50px;
+  bottom: 120px;
   .windowInner {
     width: 500px;
     padding: 10px 15px 15px;
@@ -736,7 +736,7 @@ section {
   &.intact {
     max-width: 1080px;
     position: relative;
-    padding: 0 1rem 2rem 1rem;
+    padding: 0 1rem;
   }
   &.intro {
     width: 100%;
@@ -782,12 +782,21 @@ section {
       overflow: hidden;
       .slider {
         position: relative;
-        overflow: hidden;
-        
+
+        &.sec {
+          .codeWindow {
+            bottom: 50px;
+          }
+        }
         .sliderInner {
           max-width: 1000px;
           margin: 0 auto;
           text-align: center;
+
+          > img {
+            border-radius: 8px;
+            box-shadow: 8px 12px 16px 8px rgba(0, 0, 0, 0.2);
+          }
         }
         .login {
           width: 30%;
@@ -811,11 +820,18 @@ section {
     }
   }
   &.banner {
+    display: grid;
+    align-content: center;
+    padding-bottom: 0;
     width: 100%;
-    height: 300px;
-    background: url(@/assets/img/landingpage/intro_banner.png);
-    background-size: cover;
-    background-position-y: -560px;
+    // height: 300px;
+    height: 475px;
+    background: url(@/assets/img/landingpage/intro_banner.png) no-repeat;
+    // background-size: 1200px;
+    background-size: 900px;
+    // background-position-x: -50px;
+    // background-position-y: -150px;
+    background-position-y: -20px;
   }
   &.line {
     text-align: center;
@@ -832,28 +848,18 @@ section {
     flex-grow: 1;
     flex-shrink: 0;
     // display: inline-block; // display type not relevant when parent is a flexbox
-    // vertical-align: middle;
-    // width: 32%;
-    // height: 372px;
-    // min-width: 300px;
     width: 300px; // width effect as min-width in flex box
-    // margin-right: 20px;
-    // margin-bottom: 20px;
-    // padding: 1rem;
     padding: 2rem 1rem;
     border-radius: 12px;
     border: 1px solid rgba(0, 0, 0, 0.05);
     background-color: #e5e9f3;
     box-shadow: 0px 2px 4px 0px rgba(0, 0, 0, 0.1);
+    text-align: center;
 
-    // &:last-child {
-    //   margin-right: 0;
-    // }
     img {
       width: 120px;
       height: 120px;
       display: inline-block;
-      text-align: center;
     }
     p {
       font-size: max(0.8rem, 14px);
@@ -960,6 +966,27 @@ section {
 }
 
 @media (max-width: 825px) {
+  section {
+    &.intro {
+      .introBottom {
+        .slider {
+          &:first-child, &:last-child {
+            .codeWindow {
+              bottom: 130px !important;
+            }
+          }
+          .sliderInner {
+            > img {
+              opacity: 0;
+            }
+          }
+          .comment, .users {
+            margin-bottom: 0;
+          }
+        }
+      }
+    }
+  }
   .cardWrap {
     .card {
       &:nth-child(1),
@@ -980,7 +1007,7 @@ section {
   }
 }
 
-@media (max-width: 650px) {
+@media (max-width: 740px) {
   section {
     &.intro {
       .introTop {
@@ -1003,33 +1030,18 @@ section {
         display: none;
       }
     }
+    &.video {
+      padding: 0;
+    }
   }
-  // .techWrap {
-  //   .tech {
-  //     margin-right: 0;
-  //   }
-  // }
-  // .data,
-  // .dataCode {
-  //   width: 100%;
-  //   margin-right: 0;
-  // }
-  // .data {
-  //   margin-bottom: 3rem;
-  // }
 }
 
 @media (max-width: 580px) {
   section {
     &.banner {
-      height: 500px;
+      text-align: left !important;
     }
   }
-  // .techWrap {
-  //   .tech {
-  //     width: 100%;
-  //   }
-  // }
   .cardWrap {
     .card {
       &:nth-child(1),

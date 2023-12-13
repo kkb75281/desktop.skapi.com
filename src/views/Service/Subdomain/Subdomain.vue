@@ -279,6 +279,7 @@ let removeAllFiles = async () => {
         paths: ['']
     }).then(() => {
         launch(computedSubdomain.value, async () => {
+            // dirPage.list : 업로드 되어있는 파일 리스트
             for (let k in dirPage.list) {
                 await dirPage.deleteItem(k);
             }
@@ -296,6 +297,7 @@ let deleteSelectedFiles = async () => {
         let path = f.split('/').slice(1);
         let file = path.pop();
         fileList.push(file);
+
         if (file[0] === '#') {
             file = file.slice(1) + '/';
         }
