@@ -20,7 +20,7 @@ NavBar(style='--position: fixed; --background-color:#262626')
                       .sliderInner
                         img.upload(src="@/assets/img/landingpage/intro_upload.png")
                         img.comment(src="@/assets/img/landingpage/intro_comment.png")
-                        .codeWindow
+                        .codeWindow(style="bottom:120px;")
                             .windowInner
                                 .circle 
                                     .cir 
@@ -681,6 +681,7 @@ details[open] summary:after {
     border-radius: 20px;
     background-color: #434343;
     box-shadow: 8px 12px 16px 8px rgba(0, 0, 0, 0.2);
+    text-align: left;
     .circle {
       .cir {
         display: inline-block;
@@ -776,29 +777,35 @@ section {
     .introBottom {
       max-width: calc(100vw - 80px);
       margin: 0 auto;
-      margin-bottom: -20px;
+      margin-bottom: -100px;
       text-align: left;
       overflow: hidden;
       .slider {
         position: relative;
+        overflow: hidden;
         
         .sliderInner {
-            width: 1000px;
-            margin: 0 auto;
+          max-width: 1000px;
+          margin: 0 auto;
+          text-align: center;
         }
         .login {
-          width: 28%;
+          width: 30%;
+          margin-top: 4%;
           margin-right: 4%;
         }
         .users {
-          width: 68%;
+          width: 53%;
+          margin-bottom: 9%;
         }
         .upload {
-          width: 38%;
+          width: 30%;
           margin-right: 4%;
+          margin-bottom: 15%;
         }
         .comment {
-          width: 58%;
+          width: 50%;
+          margin-bottom: 15%;
         }
       }
     }
