@@ -277,14 +277,14 @@ let removeAllFiles = async () => {
     await skapi.deleteHostFiles({
         serviceId: currentService.value.service,
         paths: ['']
-    }).then(() => {
-        launch(computedSubdomain.value, async () => {
+    }).then(async() => {
+        // launch(computedSubdomain.value, async () => {
             // dirPage.list : 업로드 되어있는 파일 리스트
             for (let k in dirPage.list) {
                 await dirPage.deleteItem(k);
             }
             launch(computedSubdomain.value);
-        });
+        // });
     }).catch(err => {
         console.log({ err });
         alert(err.message);
@@ -565,7 +565,7 @@ let onDrop = async (event, files) => {
         serviceId: currentService.value.service,
         progress: trackUpload,
         nestKey: pathArray.value.join('/')
-    }).then(e => {
+    }).then(async e => {
         if (uploading.value) {
             launch(searchDir.value, () => { }, true);
         }
