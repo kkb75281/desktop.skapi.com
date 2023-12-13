@@ -747,6 +747,8 @@ section {
       margin: 0 auto;
     }
     .introTop {
+      max-width: 1100px;
+      margin: 0 auto;
       text-align: left;
       color: #fff;
       h1 {
