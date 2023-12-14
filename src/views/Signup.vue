@@ -157,6 +157,12 @@ let error = ref(null);
 let passwordField = ref(null);
 let confirmPasswordField = ref(null);
 
+// get promocode query params
+let promocode = '';
+if(route.query?.hasOwnProperty('kdu')) {
+    promocode = 'kdu';
+}
+
 onMounted(() => {
     document.querySelector('body').classList.add('fa');
 })
@@ -266,6 +272,7 @@ let signup = () => {
         return false;
     }
 }
+
 </script>
 
 <style lang="less" scoped>
