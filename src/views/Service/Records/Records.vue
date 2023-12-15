@@ -71,7 +71,7 @@ main#database
                                     option(value="<") &lt;
                                     option(value="<=") &lt;=
                                     option(value="~") ~
-                                .material-symbols-outlined.mid.selectArrowDown arrow_drop_down
+                                .material-symbols-outlined.mid.selectArrowDown(:class="{'disabled' : advancedForm.index.name === '$user_id'}") arrow_drop_down
                             input#indexValueSearchInput(
                                 type="text"
                                 name='index_value'
@@ -109,7 +109,7 @@ main#database
                         template(v-if='selectedRecord?.record_id')
                             .info 
                                 .label Record ID 
-                                .value(:class="{ disabled: recordInfoEdit }" :value="selectedRecord.record_id" style="width: calc(100% - 170px);") {{ selectedRecord.record_id }}
+                                .value(:class="{ disabled: recordInfoEdit }" :value="selectedRecord.record_id" style="width: calc(100% - 200px);") {{ selectedRecord.record_id }}
                                 .copy(v-if="!recordInfoEdit" @click="copy")
                                     .material-symbols-outlined.sml file_copy
 
@@ -242,7 +242,7 @@ main#database
 
                         .info 
                             .label Tags 
-                            .value(style="width: calc(100% - 170px);")
+                            .value.tags(style="width: calc(100% - 170px);")
                                 .tagsWrapper#tagsWrapper(@click.stop="e=>{if(recordInfoEdit && !promiseRunning) editTags=(()=>{if(!selectedRecord?.tags) {selectedRecord.tags = []} return selectedRecord.tags;})(); else if(ellipsisCheck('tagsWrapper')) hiddenTags=true;}")
                                     template(v-if="selectedRecord?.tags?.length")
                                         .tag(v-for="tag in selectedRecord?.tags") {{ tag }}
@@ -271,11 +271,11 @@ main#database
                                     .row(@click="()=>{ if(data.download) data.download(); else if((data.type === 'json' || data.type === 'string') && ellipsisCheck('data-context-' + index)) showRecordDataValue=data}" :class="{'disabled' : ['boolean', 'number', 'string'].includes(data.type), 'file': data.download}")
                                         //- .data {{ data.type }}
                                         .data 
-                                            .material-symbols-outlined.mid(v-if="data.type == 'string'") text_format
+                                            .material-symbols-outlined.mid(v-if="data.type == 'string'") font_download
                                             .material-symbols-outlined.mid(v-else-if="data.type == 'binary'") draft
                                             .material-symbols-outlined.mid(v-else-if="data.type == 'json'") data_object
-                                            .material-symbols-outlined.mid(v-else-if="data.type == 'boolean'") stroke_partial
-                                            .material-symbols-outlined.mid(v-else="data.type == 'number'") 123
+                                            .material-symbols-outlined.mid(v-else-if="data.type == 'boolean'") flaky
+                                            .material-symbols-outlined.mid(v-else="data.type == 'number'") pin
                                         .data
                                             .overflow(v-if="data?.key") {{ data.key }}
                                             .overflow(v-else) -
@@ -535,11 +535,11 @@ import { bodyClick } from '@/main.js';
 import { computed, nextTick, onBeforeMount, onBeforeUnmount, onMounted, reactive, ref, watch } from 'vue';
 import RecordDataOverlay from '@/views/Service/Records/RecordDataOverlay.vue';
 import DeleteRecordOverlay from '@/views/Service/Records/DeleteRecordOverlay.vue';
-import TagEditor from './TagEditor.vue';
-import { account, skapi } from '../../../main';
+import TagEditor from '@/views/Service/Records/TagEditor.vue';
+import { account, skapi } from '@/main.js';
 import { currentService } from '@/data.js';
-import { selectedRecord, records_data, indexValueType, remove_bin, specialChars } from './RecordEdit';
-import { searchInfo, launch, serviceRecords, getPage, records, selectNone, recordPage, currentPage, maxPage, fetching, refresh, nextPage, timeSince, fetchParams } from './RecordFetch';
+import { selectedRecord, records_data, indexValueType, remove_bin, specialChars } from '@/views/Service/Records/RecordEdit';
+import { searchInfo, launch, serviceRecords, getPage, records, selectNone, recordPage, currentPage, maxPage, fetching, refresh, nextPage, timeSince, fetchParams } from '@/views/Service/Records/RecordFetch';
 
 selectedRecord.value = null;
 launch();
@@ -977,13 +977,14 @@ let saveRecordData = async () => {
         return
     }
 
-    if (res.bin && Object.keys(res.bin).length > 0 && !Array.isArray(res.bin)) {
-        for (let i in res.bin) {
-            for (let j of res.bin[i]) {
-                delete j.getFile;
-            }
-        }
-    }
+    // 문제 생기면 복귀
+    // if (res.bin && Object.keys(res.bin).length > 0 && !Array.isArray(res.bin)) {
+    //     for (let i in res.bin) {
+    //         for (let j of res.bin[i]) {
+    //             delete j.getFile;
+    //         }
+    //     }
+    // }
 
     recordInfoEdit.value = false;
 
@@ -1290,6 +1291,12 @@ watch(() => selectedRecord.value, () => {
 
                         .customSelect {
                             left: 0;
+
+                            .selectArrowDown {
+                                &.disabled {
+                                    color: rgba(0, 0, 0, 0.25);
+                                }
+                            }
                         }
                     }
 
@@ -1641,10 +1648,10 @@ watch(() => selectedRecord.value, () => {
 
                     .copy {
                         position: absolute;
-                        top: 65%;
+                        // top: -2px;
                         right: 0;
-                        transform: translateY(-50%);
-                        color: rgba(0, 0, 0, 0.4);
+                        display: inline;
+                        color: rgba(0, 0, 0, 0.6);
                         cursor: pointer;
 
                         svg {
@@ -1980,10 +1987,10 @@ watch(() => selectedRecord.value, () => {
                 }
 
                 .noData {
-                    position: absolute;
-                    left: 75%;
-                    top: 50%;
-                    transform: translate(-50%, -50%);
+                    // position: absolute;
+                    // left: 75%;
+                    // top: 50%;
+                    // transform: translate(-50%, -50%);
                     text-align: center;
                     font-size: 28px;
                     font-weight: 700;
@@ -2261,6 +2268,12 @@ watch(() => selectedRecord.value, () => {
                             padding-right: 1rem;
                         }
 
+                        &.center, &:last-child {
+                            > div {
+                                padding-right: 0;
+                            }
+                        }
+
                         &.center {
                             text-align: center;
 
@@ -2447,6 +2460,15 @@ watch(() => selectedRecord.value, () => {
                             text-align: left;
                         }
                     }
+                    .hidden {
+                        &.tags {
+                            left: unset;
+                            bottom: unset;
+                            right: 0;
+                            top: 50%;
+                            transform: translateY(-50%);
+                        }
+                    }
                 }
             }
         }
@@ -2485,11 +2507,22 @@ watch(() => selectedRecord.value, () => {
             .createForm {
                 .content {
                     .info {
+                        // &:last-child {
+                        //     .value {
+                        //         width: 100% !important;
+                        //         margin-top: 1rem;
+                        //     }
+                        // }
                         .label {
                             width: 100%;
                         }
                         .value {
                             width: unset !important;
+
+                            &.tags {
+                                width: 100% !important;
+                                margin-top: 1rem;
+                            }
                         }
                     }
                     .smallInfo {

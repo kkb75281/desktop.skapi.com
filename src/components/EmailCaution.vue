@@ -1,7 +1,7 @@
 <template lang="pug">
 #emailCaution 
     .material-symbols-outlined.mid error
-    span In order to able the service, verification is necessary. 
+    span Skapi will not be functional unless your email is verified. 
     //- router-link(to="/accountSettings") Click here to verify
     .click(@click="goVerify") Click here to verify
 </template>

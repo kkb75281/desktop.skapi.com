@@ -6,10 +6,8 @@ template(v-if="account")
 </template>
 
 <script setup>
-import { provide, ref, watch } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
-import { skapi, account } from '@/main.js';
-import { services, serviceFetching, currentService, storageInfo, serviceUsers, newsletter_sender } from '@/data.js';
+import { account } from '@/main.js';
 
 import NavBar from '@/components/NavBar.vue';
 import EmailCaution from '@/components/EmailCaution.vue';

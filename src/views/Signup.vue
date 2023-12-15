@@ -2,131 +2,64 @@
 .container
     RouterLink(to="/")
         img.logo(src="@/assets/img/logo/symbol-logo.png")
-    template(v-if="step === 1")
-        .title Sign up
-        form(@submit.prevent="checkExist")
+    .title Sign up
+    form(@submit.prevent="signup")
+        .input
+            label.label Email 
+            input(type="text" 
+            :value='form.email' 
+            @input="e=> { form.email = e.target.value; }"
+            title="Please enter a valid email address." 
+            placeholder="Enter your email" 
+            required)
+        .passwordInput    
             .input
-                label.label Email 
-                input(type="text" 
-                :value='form.email' 
-                @input="e=> { form.email = e.target.value; }"
-                title="Please enter a valid email address." 
-                placeholder="Enter your email" 
+                label.label Password 
+                input(
+                :type='showPassword ? "text" : "password"'
+                ref="passwordField" 
+                @input="e=> { form.password = e.target.value; e.target.setCustomValidity(''); error = '' }"
+                @change="validatePassword" 
+                placeholder="Create a password" 
                 required)
-            .passwordInput    
-                .input
-                    label.label Password 
-                    input(
-                    :type='showPassword ? "text" : "password"'
-                    ref="passwordField" 
-                    @input="e=> { form.password = e.target.value; e.target.setCustomValidity(''); error = '' }"
-                    @change="validatePassword" 
-                    placeholder="Create a password" 
-                    required)
-                .passwordIcon(@click="showPassword = !showPassword")
-                    template(v-if="showPassword")
-                        .material-symbols-outlined.sml visibility
-                    template(v-else)
-                        .material-symbols-outlined.sml visibility_off
-            .passwordInput    
-                .input
-                    label.label Password Confirm 
-                    input(
-                    :type='showPassword ? "text" : "password"'
-                    ref="confirmPasswordField" 
-                    @input="e=> { form.password_confirm = e.target.value; e.target.setCustomValidity(''); error = '' }"
-                    @change="validatePassword" 
-                    placeholder="Confirm the password" 
-                    required)
-                .passwordIcon(@click="showPassword = !showPassword")
-                    template(v-if="showPassword")
-                        .material-symbols-outlined.sml visibility
-                    template(v-else)
-                        .material-symbols-outlined.sml visibility_off
-            .action 
-                .customCheckBox
-                    input#remember(type="checkbox" @input="(e)=> form.subscribe = e.target.checked" checked)
-                    label(for="remember")
-                        span I agree to receive newsletters from Skapi via Email.
-                        .material-symbols-outlined.mid.check check
-            .error(v-if="error")
-                .material-symbols-outlined.mid error
-                span {{ error }}
-            .bottom
-                template(v-if="promiseRunning")
-                    img.loading(src="@/assets/img/loading.png")
-                
+            .passwordIcon(@click="showPassword = !showPassword")
+                template(v-if="showPassword")
+                    .material-symbols-outlined.sml visibility
                 template(v-else)
-                    button.create Continue
-                    .signup 
-                        span Have an account?
-                        RouterLink(:to="{name: 'login'}") Login
-    template(v-if="step >= 2")
-        .title Tell us More
-        form(@submit.prevent="signup" action="")
-            .input 
-                label.label What is your role?
-                .customSelect
-                    select(@change="(e) => form.misc.role = e.target.value" :required="!noMisc")
-                        option(value="" :selected="form.misc.role === ''") -- Please select one --
-                        option(value="frontend" :selected="form.misc.role === 'frontend'") Frontend Engineer
-                        option(value="backend" :selected="form.misc.role === 'backend'") Backend Engineer
-                        option(value="fullstack" :selected="form.misc.role === 'fullstack'") Fullstack Engineer
-                        option(value="others" :selected="form.misc.role === 'others'") None of the above
-                    .material-symbols-outlined.selectArrowDown arrow_drop_down
-            .input 
-                label.label How many years of experience do you have in dev?
-                .customSelect
-                    select(@change="(e) => form.misc.experience = e.target.value" :required="!noMisc")
-                        option(value="" :selected="form.misc.experience === ''") -- Please select one --
-                        option(value="1" :selected="form.misc.experience === '1'") Less than a year
-                        option(value="5" :selected="form.misc.experience === '5'") 1 to 5 years
-                        option(value="10" :selected="form.misc.experience === '10'") 5 to 10 years
-                        option(value="100" :selected="form.misc.experience === '100'") More than 10 years
-                    .material-symbols-outlined.selectArrowDown arrow_drop_down
+                    .material-symbols-outlined.sml visibility_off
+        .passwordInput    
             .input
-                .question You are looking for:
-                .customCheckBox
-                    input#database(type="checkbox" value="database" name="feature" v-model='form.misc.feature')
-                    label(for="database")
-                        span Database Solutions
-                        .material-symbols-outlined.mid.check check
-                .customCheckBox
-                    input#storage(type="checkbox" value="cloud" name="feature" v-model='form.misc.feature')
-                    label(for="storage")
-                        span Cloud Storage
-                        .material-symbols-outlined.mid.check check
-                .customCheckBox
-                    input#authentication(type="checkbox" value="authentication" name="feature" v-model='form.misc.feature')
-                    label(for="authentication")
-                        span Authentication
-                        .material-symbols-outlined.mid.check check
-            .input
-                .question What will you use skapi for?
-                .customCheckBox
-                    input#hobby(type="checkbox" value="hobby" name="purpose" v-model='form.misc.purpose')
-                    label(for="hobby")
-                        span Hobby / Learning
-                        .material-symbols-outlined.mid.check check
-                .customCheckBox
-                    input#personal(type="checkbox" value="personal" name="purpose" v-model='form.misc.purpose')
-                    label(for="personal")
-                        span Personal projects
-                        .material-symbols-outlined.mid.check check
-                .customCheckBox
-                    input#company(type="checkbox" value="company" name="purpose" v-model='form.misc.purpose')
-                    label(for="company")
-                        span Company projects
-                        .material-symbols-outlined.mid.check check
-            .error(v-if="signupError")
-                .material-symbols-outlined.mid error
-                span {{ signupError }}
-            .bottom.flex
-                template(v-if="promiseRunning")
-                    img.loading(src="@/assets/img/loading.png")
+                label.label Password Confirm 
+                input(
+                :type='showPassword ? "text" : "password"'
+                ref="confirmPasswordField" 
+                @input="e=> { form.password_confirm = e.target.value; e.target.setCustomValidity(''); error = '' }"
+                @change="validatePassword" 
+                placeholder="Confirm the password" 
+                required)
+            .passwordIcon(@click="showPassword = !showPassword")
+                template(v-if="showPassword")
+                    .material-symbols-outlined.sml visibility
                 template(v-else)
-                    button.submit(type="submit") Submit
-                    button.skip(type="button" @click="skip") Skip
+                    .material-symbols-outlined.sml visibility_off
+        .action 
+            .customCheckBox
+                input#remember(type="checkbox" @input="(e)=> form.subscribe = e.target.checked" checked)
+                label(for="remember")
+                    span I agree to receive newsletters from Skapi via Email.
+                    .material-symbols-outlined.mid.check check
+        .error(v-if="error")
+            .material-symbols-outlined.mid error
+            span {{ error }}
+        .bottom
+            template(v-if="promiseRunning")
+                img.loading(src="@/assets/img/loading.png")
+            
+            template(v-else)
+                button.create Continue
+                .signup 
+                    span Have an account?
+                    RouterLink(:to="{name: 'login'}") Login
 </template>
 
 <script setup>
@@ -141,18 +74,10 @@ let form = reactive({
     password: '',
     password_confirm: '',
     subscribe: true,
-    misc: {
-        role: '',
-        experience: '',
-        feature: [],
-        purpose: []
-    }
 });
 let signupError = ref('');
 let showPassword = ref(false);
 let promiseRunning = ref(false);
-let noMisc = ref(false);
-let step = ref(1);
 let error = ref(null);
 let passwordField = ref(null);
 let confirmPasswordField = ref(null);
@@ -169,29 +94,7 @@ onMounted(() => {
 onBeforeUnmount(() => {
     document.querySelector('body').classList.remove('fa'); // <- 이게 필요하지 않을까요?
 })
-let checkExist = ()=>{
-    promiseRunning.value = true;
-    skapi.login({email: form.email, password: form.password}).then(res => {
-        account.value = res;
-        router.push({ path: '/dashboard' });
-    }).catch(err => {
-        if(err.code === 'NOT_EXISTS') {
-            step.value++;
-        } 
-        else if(err.code === 'INCORRECT_USERNAME_OR_PASSWORD' || err.code === 'USER_IS_DISABLED' || err.code === 'SIGNUP_CONFIRMATION_NEEDED') {
-            error.value = "This email is already in use";
-        }
-        else if(err.code === 'REQUEST_EXCEED') {
-            error.value = "Too many requests. Please try again later.";
-        }
-        else {
-            error.value = err.message;
-            throw err;
-        }
-    }).finally(() => {
-        promiseRunning.value = false;
-    });
-}
+
 let validatePassword = () => {
     if (form.password.length < 6 || form.password.length > 60) {
         passwordField.value.setCustomValidity('Min 6 characters and Max 60 characters');
@@ -202,13 +105,15 @@ let validatePassword = () => {
     }
 }
 
-let skip = async () => {
+let signup = () => {
+    error.value = '';
     promiseRunning.value = true;
-    noMisc.value = true;
+    signupError.value = "";
 
     let params = {
         email: form.email,
         password: form.password,
+        misc: promocode
     }
     let options = {
         signup_confirmation: '/success',
@@ -216,63 +121,22 @@ let skip = async () => {
     }
 
     skapi.signup(params, options).then(res => {
+        console.log(res);
         router.push({ path: '/confirmation', query: { email: form.email } })
     }).catch(err => {
+        console.log(err)
         promiseRunning.value = false;
 
         switch (err.code) {
             case 'EXISTS':
                 error.value = "This email is already in use";
-                step.value = 1;
                 break;
             default:
-                error.value = err.message;
+                error.value = "Something went wrong please contact an administrator.";
                 throw e;
         }
     });
 }
-let signup = () => {
-    noMisc.value = false;
-    error.value = '';
-    promiseRunning.value = true;
-    signupError.value = "";
-
-    if (form.misc.purpose.length && form.misc.feature.length) {
-        let params = {
-            email: form.email,
-            password: form.password,
-            misc: JSON.stringify(form.misc)
-        }
-        let options = {
-            signup_confirmation: '/success',
-            email_subscription: form.subscribe
-        }
-
-        skapi.signup(params, options).then(res => {
-            console.log(res);
-            router.push({ path: '/confirmation', query: { email: form.email } })
-        }).catch(err => {
-            console.log(err)
-            promiseRunning.value = false;
-
-            switch (err.code) {
-                case 'EXISTS':
-                    error.value = "This email is already in use";
-                    step.value = 1;
-                    break;
-                default:
-                    error.value = "Something went wrong please contact an administrator.";
-                    throw e;
-            }
-        });
-
-    } else {
-        promiseRunning.value = false;
-        signupError.value = "Please select at least one checkbox from each question above.";
-        return false;
-    }
-}
-
 </script>
 
 <style lang="less" scoped>

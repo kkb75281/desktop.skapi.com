@@ -76,17 +76,13 @@ header#navBar(style='--position: relative;')
 import { onBeforeUnmount, onMounted, ref } from 'vue'
 import { useRouter, useRoute } from 'vue-router';
 import { skapi, account, bodyClick } from '@/main';
-import { services, serviceFetching, currentService, storageInfo, serviceUsers, newsletter_sender } from '@/data';
+import { services, currentService, storageInfo, serviceUsers } from '@/data';
 import { serviceRecords } from '@/views/Service/Records/RecordFetch';
-import { launch, serviceHost, subdomainInfo } from '@/views/Service/subdomain/SubdomainFetch';
 
 let route = useRoute();
 let router = useRouter();
 let topRoute = ref(null);
 let accountInfo = ref(false);
-let servicePage = ref(false);
-
-currentService.value = null;
 
 bodyClick.nav = ()=>{
     accountInfo.value = false;
@@ -96,6 +92,7 @@ let navigateToPage = () => {
     accountInfo.value = false;
     router.push({ path: '/accountSettings' });
 }
+
 let logout = async () => {
     accountInfo.value = false;
     account.value = null;
@@ -113,66 +110,6 @@ let logout = async () => {
     await skapi.logout();
 
     router.push({ path: '/' });
-}
-let getCurrentService = () => {
-    let srvcId = route.path.split('/')[2];
-    currentService.value = skapi.services[srvcId];
-
-    if (currentService.value) {
-        if (!newsletter_sender.value?.[currentService.value.service]?.public) {
-            if (!newsletter_sender.value?.[currentService.value.service]) {
-                newsletter_sender.value[currentService.value.service] = {};
-            }
-            skapi.requestNewsletterSender(currentService.value.service, { groupNum: 0 }).then(s => {
-                newsletter_sender.value[currentService.value.service]['public'] = s;
-            });
-        }
-
-        if (!newsletter_sender.value?.[currentService.value.service]?.authorized) {
-            if (!newsletter_sender.value?.[currentService.value.service]) {
-                newsletter_sender.value[currentService.value.service] = {};
-            }
-            skapi.requestNewsletterSender(currentService.value.service, { groupNum: 1 }).then(s => {
-                newsletter_sender.value[currentService.value.service]['authorized'] = s;
-            });
-        }
-
-        if (!storageInfo.value[currentService.value.service]) {
-            storageInfo.value[currentService.value.service] = {};
-        }
-        let sd = currentService.value.subdomain;
-        if (sd && (sd[0] !== '*' || sd[0] !== '+')) {
-            // get subdomain storage info (404 file info)
-            skapi.getSubdomainInfo(currentService.value.service, {
-                subdomain: sd,
-            }).then(s =>
-                subdomainInfo.value[sd] = s
-            ).catch(err=>err);
-
-            launch(currentService.value.subdomain, f => {
-                if (f.length) {
-                    storageInfo.value[currentService.value.service].host = f[0].size;
-                }
-            }, true);
-        }
-
-        skapi.storageInformation(currentService.value.service).then(i => {
-            // get storage info
-            for (let k in i) {
-                storageInfo.value[currentService.value.service][k] = i[k];
-            }
-        });
-    }
-    else {
-        // router.replace({ path: '/dashboard' });
-    }
-}
-
-if (serviceFetching.value instanceof Promise) {
-    serviceFetching.value.then(getCurrentService);
-}
-else {
-    getCurrentService()
 }
 
 let resize = () => {
@@ -205,13 +142,14 @@ onBeforeUnmount(() => {
     display: flex;
     align-items: center;
     justify-content: space-between;
-
+    background-color: var(--background-color);
+    transition: all 0.3s;
     .left {
         position: relative;
         width: 220px;
         .logo {
             display: block;
-            height: 40px;
+            height: 32px;
 
             img {
                 height: 100%;

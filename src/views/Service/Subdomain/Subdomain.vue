@@ -26,7 +26,7 @@ main#subdomain
             .setting
                 h6.tit Subdomain
                 template(v-if="modifySudomain && !subdomainState")
-                    form.modifyForm(style="margin-top: 8px" @submit.prevent='registerSubdomain')
+                    form.modifyForm(@submit.prevent='registerSubdomain')
                         .input
                             input#modifySudomain(:disabled="subdomainState || subdomainPromiseRunning ? true : null" type="text" placeholder="Name of Subdomain" required minlength='5' pattern='[a-z0-9]+' title='Subdomain should be lowercase alphanumeric.' :value='inputSubdomain' @input="(e) => {e.target.setCustomValidity(''); inputSubdomain = e.target.value}")
                         .btnWrap
@@ -34,7 +34,9 @@ main#subdomain
                                 img.loading(src="@/assets/img/loading.png")
                             template(v-else)
                                 button.cancel(type="button" @click="modifySudomain = false;") Cancel
+                                .material-symbols-outlined.mid.icon(type="button" @click="modifySudomain = false;" style="margin-right:5px") close
                                 button.save(type="submit" :disabled="subdomainState ? true : null") Save
+                                .material-symbols-outlined.mid.icon(type="submit" :disabled="subdomainState ? true : null" style="color: #293FE6;") check
                 template(v-else)
                     .cont(@click="modifySudomain = true")
                         p {{ computedSubdomain }}
@@ -182,10 +184,10 @@ import { computed, inject, nextTick, ref, watch } from 'vue';
 import { useRoute } from 'vue-router';
 import { skapi, account, bodyClick } from '@/main.js';
 import { currentService } from '@/data.js';
-import UploadFileList from '@/views/Service/subdomain/UploadFileList.vue';
-import DeleteFileOverlay from '@/views/Service/subdomain/DeleteFileOverlay.vue';
-import { launch, currentPage, fetching, searchDir, files, refresh, fileList, dirPage, getPage, selectNone, subdomainInfo, uploading, uploadWholeProgress } from './SubdomainFetch';
-import { img, vid } from './extensions';
+import UploadFileList from '@/views/Service/Subdomain/UploadFileList.vue';
+import DeleteFileOverlay from '@/views/Service/Subdomain/DeleteFileOverlay.vue';
+import { launch, currentPage, fetching, searchDir, files, refresh, fileList, dirPage, getPage, selectNone, subdomainInfo, uploading, uploadWholeProgress } from '@/views/Service/Subdomain/SubdomainFetch';
+import { img, vid } from '@/views/Service/Subdomain/extensions';
 
 let route = useRoute();
 let currnetPath = route.path.split('/')[2];
@@ -280,6 +282,7 @@ let deleteSelectedFiles = async () => {
         let path = f.split('/').slice(1);
         let file = path.pop();
         fileList.push(file);
+
         if (file[0] === '#') {
             file = file.slice(1) + '/';
         }
@@ -558,7 +561,7 @@ let onDrop = async (event, files) => {
         serviceId: currentService.value.service,
         progress: trackUpload,
         nestKey: pathArray.value.join('/')
-    }).then(e => {
+    }).then(async e => {
         if (uploading.value) {
             launch(searchDir.value, () => { }, true);
         }
@@ -716,6 +719,7 @@ function formatBytes(bytes, decimals = 2) {
                 .tit {
                     color: rgba(0, 0, 0, 0.40);
                     font-weight: 500;
+                    margin-bottom: 8px;
                 }
 
                 .cont {
@@ -771,19 +775,8 @@ function formatBytes(bytes, decimals = 2) {
                     height: 44px;
 
                     .input {
-                        width: 65%;
                         position: relative;
-
-                        &::before {
-                            position: absolute;
-                            content: '';
-                            width: 100%;
-                            height: 100%;
-                            border-radius: 8px;
-                            background: rgba(0, 0, 0, 0.05);
-                            // z-index: -1;
-                            pointer-events: none;
-                        }
+                        width: calc(100% - 170px);
 
                         &::after {
                             position: absolute;
@@ -796,18 +789,19 @@ function formatBytes(bytes, decimals = 2) {
                         }
 
                         input {
+                            width: 100%;
                             border: 0;
-                            width: calc(100% - 87px);
-                            padding: 13px;
                             height: 44px;
-                            background-color: unset;
+                            background: rgba(0, 0, 0, 0.05);
+                            border-radius: 8px;
+                            padding: 13px 95px 13px 13px;
                             font-size: 0.8rem;
                             font-weight: 400;
                         }
                     }
 
                     .btnWrap {
-                        width: 35%;
+                        width: 170px;
                         display: flex;
                         flex-wrap: nowrap;
                         align-items: center;
@@ -831,6 +825,10 @@ function formatBytes(bytes, decimals = 2) {
                                 background-color: #293FE6;
                                 color: #fff;
                             }
+                        }
+                        .icon {
+                            display: none;
+                            cursor: pointer;
                         }
                     }
                 }
@@ -1065,7 +1063,31 @@ function formatBytes(bytes, decimals = 2) {
         }
     }
 }
+@media (max-width:1200px) {
+    #subdomain {
+        #section {
+            .settingWrap {
+                .setting {
+                    .modifyForm {
+                        .input {
+                            width: calc(100% - 70px);
+                        }
+                        .btnWrap {
+                            width: 70px;
 
+                            button {
+                                display: none;
+                            }
+                            .icon {
+                                display: inline-block;
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
 @media (max-width:767px) {
     #subdomain {
         #section {

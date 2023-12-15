@@ -33,8 +33,8 @@
 </template>
 <script setup>
 import { ref } from "vue";
-import { img, vid } from './extensions';
-import ProgressCircle from "../../../components/ProgressCircle.vue";
+import { img, vid } from '@/views/Service/Subdomain/extensions';
+import ProgressCircle from "@/components/ProgressCircle.vue";
 let props = defineProps(['fileList', 'wholeProgress']);
 let emits = defineEmits(['cancel']);
 let hideList = ref(false);

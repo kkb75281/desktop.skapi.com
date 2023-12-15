@@ -512,7 +512,6 @@ let searchUsers = (e) => {
             range: endDate
         }
 
-        console.log(fetchParams)
         refresh();
     }
     else if (searchTarget === 'user_id') {

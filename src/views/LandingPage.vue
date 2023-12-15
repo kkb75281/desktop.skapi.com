@@ -1,630 +1,1059 @@
 <template lang="pug">
-NavBar(style='--position: absolute;')
+NavBar(style='--position: fixed; --background-color:#262626')
 #landing
     section.intro.gradback
-        .introInner(ref="intro")
-            img.introLogo(src="@/assets/img/logo/text-logo-white.svg")
-            br
-            br
+        .introInner
+            .introTop.intact
+                h1.long Mastering#[br]Backend&nbsp;Developemnt,#[br]Do It With HTML
+                h1.mobile Mastering#[br]Backend Developemnt,#[br]Do It With HTML
+                .side
+                    p(style="font-weight:400;") Instantly Power Your Application with a&nbsp;Robust Backend API
 
-            h1.underline(style='font-size:2.2em') One Line of Code&nbsp;=&gt;
+                    br
 
-            br
+                    .tabletCenter
+                        a.customButton.shadow(v-if='!account' href='/signup' style='background-color:white;color:#293FE6;') Try Out For Free
+                        a.customButton.shadow(v-else href='/dashboard' style='background-color:white;color:#293FE6;') Go To Dashboard
+            .introBottom
+                Swiper.swiper(:modules="[Autoplay]" :autoplay="{delay: 2500,disableOnInteraction: false}" :loop="true") 
+                    SwiperSlide.slider 
+                      .sliderInner
+                        img.upload(src="@/assets/img/landingpage/intro_upload.png")
+                        img.comment(src="@/assets/img/landingpage/intro_comment.png")
+                        .codeWindow
+                            .windowInner
+                                .circle 
+                                    .cir 
+                                    .cir 
+                                    .cir 
+                                .code
+                                    span(style="color:#33adff") &lt;
+                                    span(style="color:#33adff") form
+                                    span(style="color:#58dfff")  onsubmit
+                                    | =
+                                    span(style="color:#ffa600") "skapi.postRecord(event, { table:
+                                    span(style="color:#ffa600")  'my_collection'}).then(record =>
+                                    span(style="color:#ffa600")  console.log(record))"
+                                    span(style="color:#33adff") &gt;
 
-            h1(style='font-size:2.1em') Instant Backend&nbsp;API
+                                    br
 
-            br
-            br
+                                    span(style="color:#33adff") &nbsp;&nbsp;&nbsp;&nbsp;&lt;
+                                    span(style="color:#33adff") input
+                                    span(style="color:#58dfff")  type
+                                    | =
+                                    span(style="color:#ffa600") "text" 
+                                    span(style="color:#58dfff") name
+                                    | =
+                                    span(style="color:#ffa600") "myData"
+                                    span(style="color:#33adff") &gt;
 
-            p(style='font-weight:700') All-in-One Backend Solution for Your Web Application
+                                    br
 
-            br
-            br
-            br
+                                    span(style="color:#33adff") &nbsp;&nbsp;&nbsp;&nbsp;&lt;
+                                    span(style="color:#33adff") input
+                                    span(style="color:#58dfff")  type
+                                    | =
+                                    span(style="color:#ffa600") "submit" 
+                                    span(style="color:#58dfff") value
+                                    | =
+                                    span(style="color:#ffa600") "Submit"
+                                    span(style="color:#33adff") &gt;
 
-            .tabletCenter
-                a.customButton.shadow(v-if='!account' href='/signup' style='background-color:white;color:black;margin: 0 .5rem 1rem .5rem;') Try Out For Free
-                a.customButton.shadow(v-else href='/dashboard' style='background-color:white;color:black;margin: 0 .5rem 1rem .5rem;') Go To Dashboard
-                //a.customButton.outline(href='https://docs.skapi.com/introduction/getting-started.html' target="_blank" style='color:white;margin: 0 .5rem 1rem .5rem;') Getting Started
+                                    br
+
+                                    span(style="color:#33adff") &lt;/
+                                    span(style="color:#33adff") form
+                                    span(style="color:#33adff") &gt;
+                    SwiperSlide.slider.sec
+                      .sliderInner
+                        img.login(src="@/assets/img/landingpage/intro_login.png")
+                        img.users(src="@/assets/img/landingpage/intro_user.png")
+                        .codeWindow
+                            .windowInner 
+                                .circle 
+                                    .cir
+                                    .cir
+                                    .cir
+                                .code
+                                    span(style="color:#33adff") &lt;
+                                    span(style="color:#33adff") form
+                                    span(style="color:#58dfff")  onsubmit
+                                    | =
+                                    span(style="color:#ffa600") "skapi.login(event)"
+                                    span(style="color:#58dfff")  action
+                                    | =
+                                    span(style="color:#ffa600") "login-success.html"
+                                    span(style="color:#33adff") &gt;
+
+                                    br
+
+                                    span(style="color:#33adff") &nbsp;&nbsp;&nbsp;&nbsp;&lt;
+                                    span(style="color:#33adff") input
+                                    span(style="color:#58dfff")  name
+                                    | =
+                                    span(style="color:#ffa600") "email"
+                                    span(style="color:#58dfff")  type
+                                    | =
+                                    span(style="color:#ffa600") "email"
+                                    span(style="color:#33adff") &gt;
+
+                                    br
+
+                                    span(style="color:#33adff") &nbsp;&nbsp;&nbsp;&nbsp;&lt;
+                                    span(style="color:#33adff") input
+                                    span(style="color:#58dfff")  name
+                                    | =
+                                    span(style="color:#ffa600") "password"
+                                    span(style="color:#58dfff")  type
+                                    | =
+                                    span(style="color:#ffa600") "password"
+                                    span(style="color:#33adff") &gt;
+
+                                    br
+
+                                    span(style="color:#33adff") &nbsp;&nbsp;&nbsp;&nbsp;&lt;
+                                    span(style="color:#33adff") input
+                                    span(style="color:#58dfff")  type
+                                    | =
+                                    span(style="color:#ffa600") "submit" 
+                                    span(style="color:#58dfff") value
+                                    | =
+                                    span(style="color:#ffa600") "Login"
+                                    span(style="color:#33adff") &gt;
+
+                                    br
+
+                                    span(style="color:#33adff") &lt;/
+                                    span(style="color:#33adff") form
+                                    span(style="color:#33adff") &gt;       
 
     br
     br
     br
+    br
+    br
+    br
 
-    section.intact(style="text-align:center;")
-        img(src="@/assets/img/logo/symbol-logo.png" style='width:6rem; max-width:80%;vertical-align:middle;')
-        
-        br
-        br
-        
-        
+    section.intact.video(style="text-align:center;")
         h2 Backend Server, Simplified
 
         br
         br
 
-        .code
-            span(style="color:#33adff") &lt;
-            span(style="color:#33adff") script 
-            span(style="color:#58dfff") src
-            span =
-            span(style="color:#ffa600") "https://cdn.jsdelivr.net/npm/skapi-js@latest/dist/skapi.js"
-            span(style="color:#33adff") 
-            span(style="color:#33adff") &gt;
-            span(style="color:#33adff") &lt;/
-            span(style="color:#33adff") script
-            span(style="color:#33adff") &gt;
-        
+        iframe(width="100%" height="400" style="border-radius:8px;" src="https://www.youtube.com/embed/y31F1ko9LbU?si=R3jS_reo2N1vY3hb" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen)
+
+    br
+    br
+    br
+    br
+    br
+    br
+    
+    //section.intact.technology(style="text-align:center;")
+    section.intact.technology
+        h2 Powered by Serverless Technology 
+
         br
         br
-        br
 
-        a.customButton.outline(href='https://docs.skapi.com/introduction/getting-started.html' target="_blank" style='padding: 0.8em 1em;vertical-align:middle;color:#293FE6;') Getting Started
-    br
-    br
-    br
-    br
-
-    section.intact.fullWidthOnTablet(style='text-align:center;')
-        img(src="@/assets/img/landingpage/1.png" style='padding: 2rem;padding-top:0;width:50%;vertical-align:middle;')
-
-        .inline(style='width:50%;text-align:left;vertical-align:middle;')
-            h3(style='color:#293FE6') Seamless Server Integration
-            h3 with Your Web Projects
-
-            br
-
-            p From&nbsp;static&nbsp;HTML to complex &nbsp;SPA projects, Skapi is compatible&nbsp;with&nbsp;any type of projects.
-
-    br
-    br
-    br
-
-    section.intact.fullWidthOnTablet
-        .leftOnTablet.inline(style='width:70%;vertical-align:middle;')
-            h3(style='color:#293FE6') Do It With HTML,
-            h3 No backend Code Required
-
-            br
-
-            p(style='position:relative;')
-                | Basic HTML and JavaScript skills is all you need.
-            p Withness how simple it is to build a login form with Skapi:
-
-            br
-
-            .code.loginExample(style='position:relative;width:100%')
-                span(style="color:#33adff") &lt;
-                span(style="color:#33adff") form
-                span(style="color:#58dfff")  onsubmit
-                | =
-                span(style="color:#ffa600") "skapi.login(event)"
-                span(style="color:#58dfff")  action
-                | =
-                span(style="color:#ffa600") "login-success.html"
-                span(style="color:#33adff") &gt;
-
+        .techWrap 
+            .tech
+                div(style="text-align: center;")
+                  img(src="@/assets/img/landingpage/tech1.svg")
                 br
-
-                span(style="color:#33adff") &nbsp;&nbsp;&nbsp;&nbsp;&lt;
-                span(style="color:#33adff") input
-                span(style="color:#58dfff")  name
-                | =
-                span(style="color:#ffa600") "email"
-                span(style="color:#58dfff")  type
-                | =
-                span(style="color:#ffa600") "email"
-                span(style="color:#33adff") &gt;
-
+                h5 Lower Your Costs By 10x
                 br
-
-                span(style="color:#33adff") &nbsp;&nbsp;&nbsp;&nbsp;&lt;
-                span(style="color:#33adff") input
-                span(style="color:#58dfff")  name
-                | =
-                span(style="color:#ffa600") "password"
-                span(style="color:#58dfff")  type
-                | =
-                span(style="color:#ffa600") "password"
-                span(style="color:#33adff") &gt;
-
-                br
-
-                span(style="color:#33adff") &nbsp;&nbsp;&nbsp;&nbsp;&lt;
-                span(style="color:#33adff") input
-                span(style="color:#58dfff")  type
-                | =
-                span(style="color:#ffa600") "submit" 
-                span(style="color:#58dfff") value
-                | =
-                span(style="color:#ffa600") "Login"
-                span(style="color:#33adff") &gt;
-
-                br
-
-                span(style="color:#33adff") &lt;/
-                span(style="color:#33adff") form
-                span(style="color:#33adff") &gt;
-        img.loginExamplePic.hideOnTablet(src="@/assets/img/landingpage/4.png" style='vertical-align:middle;')
-
-    br
-    br
-    br
-
-    section.intact.fullWidthOnTablet
-        h3 Powered by Serverless Technology
-        
-        br
-
-        ul(style='padding-left: 1rem;')
-            li(style='color:#293FE6')
-                h4(style='color:#293FE6;margin-bottom: .25em;') Lower Your Costs By 10x
                 p Thanks to our well-architected serverless system, Skapi significantly reduces backend operational costs, accelerating your project development.
-            
-            
-            br
-
-            li(style='color:#293FE6')
-                h4(style='color:#293FE6;margin-bottom: .25em;') Scale Without Limits
+            .tech
+                div(style="text-align: center;")
+                  img(src="@/assets/img/landingpage/tech2.svg")
+                br
+                h5 Scale Without Limits 
+                br
                 p Built to scale effortlessly, Skapi handles your concurrent connections without any manual intervention.
-
-            br
-
-            li(style='color:#293FE6')
-                h4(style='color:#293FE6;margin-bottom: .25em;') No Setup, No Deployment
+            .tech
+                div(style="text-align: center;")
+                  img(src="@/assets/img/landingpage/tech3.svg")
+                br
+                h5 No Setup, No Deployment 
+                br
                 p Farewell to complex backend deployment hassles. Everything is managed from the frontend, streamlining your development process.
+
+    br
+    br
+    br
+    br
+    br
+    br
+    br
+    br
+    br
+    br
+
+    section.intact.database
+      .databaseWrap
+        //- .data(style="margin-right:2%;")
+        .data
+            h2 Flexible,#[br]Schemaless Database
+
+            br
+            br
+
+            p(style="color:rgba(0,0,0,0.6);") Skapi's thoughtfully engineered auto indexing system delivers full scalability and flexibility without any manual schema design.
             
-
-    br
-    br
-
-    section.intact.fullWidthOnTablet(style='text-align:center;')
-        .inline(style='width:60%;vertical-align:middle;') 
-            h3(style='text-align:left')
-                span(style='color:#293FE6') Flexible,&nbsp;
-                | Schemaless&nbsp;Database
-
-            br.hideOnTablet
-            img.showOnTablet(src="@/assets/img/landingpage/2.png" style='padding: 2rem;width:100%;vertical-align:middle;display:none;')
-
-            p(style='text-align:left') Skapi's thoughtfully engineered auto&nbsp;indexing&nbsp;system delivers full scalability and flexibility without&nbsp;any&nbsp;manual&nbsp;schema&nbsp;design. 
-            br
-            p(style='text-align:left') The database is optimized for a diverse range of applications with simplicity, while preventing cost overruns and performance issues.
-        img.hideOnTablet(src="@/assets/img/landingpage/2.png" style='padding: 2rem;width:40%;vertical-align:middle;')
-
-    br
-    br
-    br
-
-    section.intact(style='padding-bottom:0')
-        h3
-            span(style='color:#293FE6;') Huge Files,&nbsp;
-            | Fast&nbsp;Delivery
-
-    br
-
-    section.intact.fullWidthOnTablet(style='text-align:center;padding-top:0')
-        img(src="@/assets/img/landingpage/3.png" style='padding: 2rem;padding-top:0;width:40%;vertical-align:middle;')
-        .inline(style='width:60%;vertical-align:middle;')
-            p(style='text-align:left') You can upload huge files directly from&nbsp;HTML&nbsp;forms.
-            p(style='text-align:left') Your data is served through the CDN network, without any extra configuration.
-
-            br
-            br
-            br
             br
             
-            //- .mobileCenter(style='text-align:left;')
-            //-     p.inline(style='font-weight:700;color:#293FE6;margin:.5rem 0') Curious for more?&nbsp;&nbsp;&nbsp;&nbsp;
-            //-     a.customButton.outline(href='https://docs.skapi.com/introduction/getting-started.html' target="_blank" style='padding: 0.8em 1em;vertical-align:middle;color:#293FE6;') Explore our Documentation
+            p(style="color:rgba(0,0,0,0.6);") The database is optimized for a diverse range of applications with simplicity, while preventing cost overruns and performance issues.
 
+        .dataCode 
+            .btnWrap 
+                .btn(:class="{'active' : showCode == 'post'}" @click="showCode = 'post'") Post Record
+                .btn(:class="{'active' : showCode == 'get'}" @click="showCode = 'get'") Get Record 
+            .code
+                template(v-if="showCode == 'post'")
+                    span(style="color:#999999") // JSON data to be saved
+                    
+                    br
+                    
+                    span(style="color:#33adff") let 
+                    span(style="color:#58dfff") data 
+                    | = 
+                    span(style="color:#f9d849") {
+                    
+                    br
+
+                    span(style="color:#58dfff") &nbsp;&nbsp;title: 
+                    span(style="color:#ffa600") "Vintage Les Paul"
+
+                    br
+
+                    span(style="color:#58dfff") &nbsp;&nbsp;image: 
+                    span(style="color:#ffa600") "https://.../..."
+
+                    br
+
+                    span(style="color:#f9d849") }
+
+                    br
+                    br
+
+                    span(style="color:#999999") // Configuration for the record to be uploaded
+
+                    br
+
+                    span(style="color:#33adff") let 
+                    span(style="color:#58dfff") config 
+                    | = 
+                    span(style="color:#f9d849") {
+
+                    br
+
+                    span(style="color:#58dfff") &nbsp;&nbsp;table: 
+                    span(style="color:#ffa600") "my_collection",
+
+                    br
+
+                    span(style="color:#58dfff") &nbsp;&nbsp;index: 
+                    span(style="color:#f9d849") {
+                    
+                    br
+
+                    span(style="color:#58dfff") &nbsp;&nbsp;&nbsp;&nbsp;name: 
+                    span(style="color:#ffa600") "price",
+
+                    br
+
+                    span(style="color:#58dfff") &nbsp;&nbsp;&nbsp;&nbsp;value: 
+                    span(style="color:#ffa600") 499,
+
+                    br
+                    
+                    span(style="color:#f9d849") &nbsp;&nbsp;}
+
+                    br
+
+                    span(style="color:#58dfff") &nbsp;&nbsp;tag: 
+                    | [
+                    span(style="color:#ffa600") "vintage"
+                    | , 
+                    span(style="color:#ffa600") "guitar"
+                    | ]
+
+                    br
+
+                    span(style="color:#f9d849") }
+
+                    br
+                    br
+                    
+                    span(style="color:#999999") // Post to database
+
+                    br
+
+                    span(style="color:#58dfff") skapi
+                    | .
+                    span(style="color:#f9d849") postRecords(
+                    span(style="color:#58dfff") data
+                    | , 
+                    span(style="color:#58dfff") config
+                    span(style="color:#f9d849") )
+                    
+                template(v-else)
+                    span(style="color:#33adff") let 
+                    span(style="color:#58dfff") query 
+                    | = 
+                    span(style="color:#f9d849") {
+
+                    br
+
+                    span(style="color:#58dfff") &nbsp;&nbsp;table: 
+                    span(style="color:#ffa600") "my_collection",
+
+                    br
+
+                    span(style="color:#58dfff") &nbsp;&nbsp;index: 
+                    span(style="color:#f9d849") {
+                    
+                    br
+
+                    span(style="color:#58dfff") &nbsp;&nbsp;&nbsp;&nbsp;name: 
+                    span(style="color:#ffa600") "price",
+
+                    br
+
+                    span(style="color:#58dfff") &nbsp;&nbsp;&nbsp;&nbsp;value: 
+                    span(style="color:#ffa600") 500,
+
+                    br
+
+                    span(style="color:#58dfff") &nbsp;&nbsp;&nbsp;&nbsp;condition: 
+                    span(style="color:#ffa600") "&lt;",
+                    
+                    br
+
+                    span(style="color:#f9d849") &nbsp;&nbsp;}
+
+                    br
+
+                    span(style="color:#58dfff") &nbsp;&nbsp;tag: 
+                    span(style="color:#ffa600") "guitar"
+
+                    br
+
+                    span(style="color:#f9d849") }
+
+                    br
+                    br
+
+                    span(style="color:#58dfff") skapi
+                    | .
+                    span(style="color:#f9d849") getRecords(
+                    span(style="color:#58dfff") query
+                    span(style="color:#f9d849") )
+                    | .
+                    span(style="color:#f9d849") then(
+                    span(style="color:#58dfff") response 
+                    span(style="color:#33adff") => 
+                    span(style="color:#cc76d1") {
+
+                    br
+                    
+                    span(style="color:#999999") &nbsp;&nbsp;// Items in "my_collection",
+                    br
+                    span(style="color:#999999") &nbsp;&nbsp;// priced below 500 and tagged as "guitar"
+
+                    br
+
+                    span(style="color:#cc76d1") }
+                    span(style="color:#f9d849") )
+                    span ;
+    br
+    br
+    br
+    br
+    br
+    br
+    br
+    br
+    br
+    br
+
+    section.intact.banner(style="text-align:right;")
+        h2 Huge Files, Fast Delivery 
+
+        br
+
+        p(style="color:rgba(0,0,0,0.6);") You can upload huge files directly from HTML forms. #[br]Your data is served through the CDN network, without any extra configuration.
 
     br
     br
-    
-    .shine
-        .frameShine(src="@/assets/img/FrameShine.png")
-        img.frameLogo(src="@/assets/img/FrameLogo.png")
-
-    section.intact.leftOnTablet.fullWidthOnTablet(style='text-align:center;padding-top:0;')
-        br
-        br
-
-        h2(style='opacity:1;text-shadow: -2px -2px 0 WHITE;opacity:1;line-height:2') All-in-One Package
-        p Skapi provides all the essential backend resources you need in a single javascript library.
-
-    section.intact
-        .fullWidthOnTablet
-            .featureCollection
-                .inline.circle
-                    img(src="@/assets/img/icon/icons-03.png")
-                .inline.desc
-                    h3 Database
-                    p Auto-indexed database that scales
-            .featureCollection
-                .inline.circle
-                    img(src="@/assets/img/icon/icons-04.png")
-                .inline.desc
-                    h3 Cloud Storage
-                    p Robust storage solutions for any data size
-            .featureCollection
-                .inline.circle
-                    img(src="@/assets/img/icon/icons-05.png")
-                .inline.desc
-                    h3 Authentication
-                    p Solid security for your users and data
-            .featureCollection
-                .inline.circle
-                    img(src="@/assets/img/icon/icons-08.png")
-                .inline.desc
-                    h3 CDN
-                    p Fast content delivery across the globe
-            .featureCollection
-                .inline.circle
-                    img(src="@/assets/img/icon/icons-12-trans.png" style='padding:10px;')
-                .inline.desc
-                    h3 Realtime Data
-                    p Build chat, games, push notifications in no time
-            .featureCollection
-                .inline.circle
-                    img(src="@/assets/img/icon/icons-07.png")
-                .inline.desc
-                    h3 Instant Hosting
-                    p Host your HTML content swiftly
-            .featureCollection
-                .inline.circle
-                    img(src="@/assets/img/icon/icons-06.png")
-                .inline.desc
-                    h3 Auto Email System
-                    p Automated Emails and newsletters
-            .featureCollection
-                .inline.circle
-                    img(src="@/assets/img/icon/icons-11.png")
-                .inline.desc
-                    h3 API Bridge
-                    p Expand with your own custom APIs
-
+    br
+    br
+    br
+    br
+    br
+    br
     br
     br
 
-    section.gradback(style='text-align:center;padding:4rem 0;')
-        h2.inline(style='color:white;opacity:1') Skapi is on Free Beta
+    section.intact.features
+        h2 Skapi Features 
+
         br
         br
+
+        .cardWrap 
+            .card(style="width:250px")
+                .titWrap 
+                    .icon
+                        img(src="@/assets/img/landingpage/database.png")
+                    h5 Database
+                
+                br
+
+                p Simple, scalable, yet flexible database at your service.
+                img.background(src="@/assets/img/landingpage/database_bg.png" style="right: 0px;bottom: 0px; height: 150px;")
+            .card(style="width:250px")
+                .titWrap 
+                    .icon 
+                        img(src="@/assets/img/landingpage/security.png")
+                    h5 Security
+                
+                br
+
+                p Solid security for your users and data.
+                img.background(src="@/assets/img/landingpage/security_bg.png" style="left: 20px;bottom: 20px; height: 80px;")
+                img.background(src="@/assets/img/landingpage/security_bg2.png" style="right: -45px;bottom: 20px; height: 80px;")
+            .card(style="width:calc(100% - 540px); margin-right:0")
+                .titWrap 
+                    .icon 
+                        img(src="@/assets/img/landingpage/cloud.png")
+                    h5 Cloud Storage 
+                
+                br
+
+                p Robust storage solutions for any data size.
+                img.background(src="@/assets/img/landingpage/cloud_bg.svg" style="right: -40px;bottom: 10px; height: 150px;")
+            .card(style="width:50%;")
+                .titWrap 
+                    .icon 
+                        img(src="@/assets/img/landingpage/cdn.png")
+                    h5 CDN
+                
+                br
+
+                p Swift content delivery across the globe.
+                img.background(src="@/assets/img/landingpage/cdn_bg.svg" style="right: -50px;bottom: -100px;")
+            .card(style="width:calc(50% - 20px); margin-right:0;")
+                .titWrap 
+                    .icon 
+                        img(src="@/assets/img/landingpage/hosting.png")
+                    h5 Instant Hosting 
+                
+                br
+
+                p Host your HTML content swiftly.
+                img.background(src="@/assets/img/landingpage/hosting_bg.svg" style="right: -70px;bottom: -15px; height: 200px;")
+            .card(style="width:calc(100% - 540px);")
+                .titWrap 
+                    .icon 
+                        img(src="@/assets/img/landingpage/email.png")
+                    h5 Automated E-Mail Service
+                
+                br
+
+                p Simplified email automation and newsletters.
+                img.background(src="@/assets/img/landingpage/email_bg.png" style="right: 30px;bottom: 15px; height: 120px;")
+            .card(style="width:250px")
+                .titWrap 
+                    .icon 
+                        img(src="@/assets/img/landingpage/api.png")
+                    h5 API Bridge
+                
+                br
+
+                p Expand with your own custom APIs.
+                img.background(src="@/assets/img/landingpage/api_bg.svg" style="right: -25px;bottom: 25px;")
+            .card(style="width:250px; margin-right:0;")
+                .titWrap 
+                    .icon 
+                        img(src="@/assets/img/landingpage/realtime.png")
+                    h5 Realtime Data
+                
+                br
+
+                p Build chat, games, push notifications in no time.
+                img.background(src="@/assets/img/landingpage/realtime_bg.svg" style="right: -130px;bottom: -60px;")
+            
+    br
+    br
+    br
+    br
+
+    //- section.intact(style="text-align:center;")
+        h2 What you Can Build with Skapi
+
+        br
+        br
+
+        p(style="color:rgba(0, 0, 0, 0.60)") Basic HTML and JavaScript skills is all you need. 
+        p(style="color:rgba(0, 0, 0, 0.60)") Withness how simple it is to build a login form with Skapi: 
+
+        br
+        br
+
+        .buildWrap 
+            .build(style="display:inline-block; width:300px; height:300px; border-radius:12px; background-color:#d9d9d9; margin-right:20px;")
+            .build(style="display:inline-block; width:300px; height:300px; border-radius:12px; background-color:#d9d9d9; margin-right:20px;")
+            .build(style="display:inline-block; width:300px; height:300px; border-radius:12px; background-color:#d9d9d9;")
         
-        a.customButton.shadow(v-if='!account' href='/signup' style='background-color:black;color:white;') Sign-up
-        a.customButton.shadow(v-else href='/dashboard' style='background-color:black;color:white;') Go To Dashboard
+    br
+    br
+    br
+    br
+
+    section.line
+        h2(style="width:100%;") Sign-up while it's free!
+
+        br
+
+        a.customButton(href="/" style="background-color:#293FE6;color:white;") Start my project
 
     br
     br
     br
     br
 
-    section.intact
-
-        h2 FAQ 
-
-        br
-
-        .faq
-            h3 What Can You Build With Skapi?
-            p.
-                Photo-sharing websites, chat application, file-sharing applications, social media platforms, newsletter subscription services, or&nbsp;any&nbsp;other&nbsp;application that requires a web server.
-                Skapi is a complete backend API service that provides everything you'd expect from a backend server.
+    // please refer current website's FAQ
+    section.intact 
+        h2(style="text-align:center;") FAQ 
 
         br
         br
 
-        .faq
-            h3 Is Skapi Typescript Supported?
-            p Yes, Skapi is written in Typescript and is fully compatible with Typescript.
+        details
+            summary What Can You Build With Skapi?
+            p(style="color: rgba(0,0,0,0.6);") Photo-sharing websites, chat application, file-sharing applications, social media platforms, newsletter subscription services, or any other application that requires a web server. Skapi is a complete backend API service that provides everything you'd expect from a backend server.
+            br
+            br
+            
+        details
+            summary Is Skapi Typescript Supported?
+            p(style="color: rgba(0,0,0,0.6);") Yes, Skapi is written in Typescript and is fully compatible with Typescript.
+            br
+            br
 
-        br
-        br
-
-        .faq
-            h3 What Are the Pricing Plans?
-            p
-                | Skapi is currently on free beta. We will announce the pricing plan soon.&nbsp;
-                a(href='/signup') Sign Up&nbsp;
+        details
+            summary What Are the Pricing Plans?
+            p(style="color: rgba(0,0,0,0.6);") 
+                | Skapi is currently on free beta. We will announce the pricing plan soon. 
+                a(href="/signup") Sign up&nbsp;
                 | while it's free!
+            br
+            br
 
-        br
-        br
+        details
+            summary Do I Need Basic Knowledge of Backend Development?
+            p(style="color: rgba(0,0,0,0.6);") No, Skapi is designed for frontend developers. You can build a complete full stack application without writing a single line of backend code, or even touching a terminal window.
+            br
+            br
 
-        .faq
-            h3 Do I Need Basic&nbsp;Knowledge of Backend&nbsp;Development?
-            p No, Skapi is designed for frontend developers. You can build a complete full stack application without&nbsp;writing&nbsp;a&nbsp;single&nbsp;line of backend code, or even touching a terminal window.
-
-        br
-        br
-
-        .faq
-            h3 Where can I get help?
-            p 
-                | You can reach us at our&nbsp;
-                a(href='https://discord.com/channels/1164154380816236626/1164154381269213188' target="_blank") Discord&nbsp;server
+        details
+            summary Where can I get help?
+            p(style="color: rgba(0,0,0,0.6);") 
+                | You can reach us at our 
+                a(href="https://discord.com/channels/1164154380816236626/1164154381269213188") Discord server
                 | . We are happy to help you with any questions you may have.
+            br
+            br
+
     br
     br
     br
     br
+
 
 </template>
 
 <script setup>
-import NavBar from '@/components/NavBar.vue';
-import { account } from '../main';
+import NavBar from "@/components/NavBar.vue";
+import { onBeforeUnmount, onMounted, ref } from "vue";
+import { Swiper, SwiperSlide } from "swiper/vue";
+import { Autoplay } from "swiper/modules";
+import "swiper/css";
+import { account } from "@/main";
+
+let showCode = ref("post");
+
+let showNavBar = (e) => {
+  let navBar = document.getElementById("top");
+
+  if (e.deltaY > 0) {
+    navBar.style.top = "-60px";
+  } else {
+    navBar.style.top = "0";
+  }
+};
+
+onMounted(() => {
+  window.addEventListener("wheel", showNavBar);
+});
+onBeforeUnmount(() => {
+  window.removeEventListener("wheel", showNavBar);
+});
 </script>
 
 <style lang="less" scoped>
-.faq {
-    h3 {
-        line-height: 1.5;
-
-        &::after {
-            content: '';
-            display: block;
-            width: 100%;
-            height: 1px;
-            background-color: rgba(0, 0, 0, 0.6);
-            margin: .5em 0;
-        }
-    }
+summary::-webkit-details-marker {
+  /* Safari 브라우저용 사용자 정의 스타일 */
+  display: none;
 }
+summary {
+  position: relative;
+  list-style-type: none; /* 그 외의 브라우저용 사용자 정의 스타일 */
+  cursor: pointer;
+  padding: 20px 0;
+  margin-bottom: 20px;
+  font-size: 1.2rem;
+  font-weight: 500;
 
-#landing {
-    max-width: 100vw;
-}
-
-.loginExamplePic {
-    position: relative;
-    width: 30%;
+  ::marker {
+    content: "";
+  }
+  &::before {
+    position: absolute;
+    content: "";
+    left: 0;
+    bottom: 0;
+    width: 100%;
+    height: 1px;
+    background-color: rgba(0, 0, 0, 0.6);
+  }
+  &:after {
+    position: absolute;
+    content: "";
+    background: url("@/assets/img/landingpage/plus.svg") no-repeat;
     right: 0;
-    padding: 0.5rem;
+    width: 30px;
+    height: 30px;
+    background-size: contain;
+  }
 }
-
-.code {
-    display: inline-block;
-    text-align: left;
-    padding: 1em;
-    background-color: rgba(0, 0, 0, 0.8);
-    color: white;
-    overflow-x: auto;
-    white-space: pre;
-    border-radius: 8px;
-    font-family: monospace;
-    max-width: 100%;
-    // width: 830px;
-    box-shadow: inset -3px -3px 4px 0px rgba(255, 255, 255, 0.2);
-    font-size: 14px;
-
-    &>* {
-        display: inline-block;
-    }
-}
-
-span {
-    display: inline-block;
+details[open] summary:after {
+  background: url("@/assets/img/landingpage/minus.svg") no-repeat;
+  width: 30px;
+  height: 30px;
+  background-size: contain;
 }
 
 #landing {
-    background-color: white;
-}
-
-.inline {
-    display: inline-block;
-}
-
-section.intact {
-    max-width: 1080px;
-    // box-sizing: content-box;
-    position: relative;
-    padding: 0 1rem 2rem 1rem;
-    margin: auto;
-}
-
-img {
-    display: inline-block;
-    max-width: 500px;
-}
-
-h1 {
-    font-size: 2.4em;
-    line-height: 1.2;
-}
-
-h2,
-h3 {
-    opacity: .8;
-}
-
-// h2,
-p,
-h3,
-h4 {
-    line-height: 1.33;
-}
-h4 {
-    font-size: 1.33rem;
-    color: rgba(0, 0, 0, 0.6)
-}
-p {
-    color: rgba(0, 0, 0, 0.6)
-}
-
-.outline {
-    box-shadow: inset 0 0 0 2px;
-    font-weight: 600;
-}
-
-.customButton {
-    font-size: 16px;
-    min-width: 169px;
-    box-sizing: border-box;
-    padding: 0.8em 2.3em;
-    text-decoration: none;
-    border-radius: 8px;
-    display: inline-block;
-}
-
-.shadow {
-    box-shadow: 0px -1px 1px 0px rgba(0, 0, 0, 0.15) inset;
-}
-
-@media all and (max-width:767px) {
-    .fullWidthOnTablet {
-        &>* {
-            width: 100% !important;
-        }
-    }
-
-    .leftOnTablet {
-        &>* {
-            text-align: left !important;
-        }
-    }
-
-    .hideOnTablet {
-        display: none !important;
-    }
-
-    .showOnTablet {
-        display: inline-block !important;
-    }
-
-    .tabletCenter {
-        text-align: center !important;
-    }
-}
-
-@media all and (max-width:480px) {
-    .mobileCenter {
-        text-align: center !important;
-    }
-
-    .fullWidthOnMobile {
-        &>* {
-            width: 100% !important;
-        }
-    }
+  max-width: 100vw;
+  background-color: #f0f0f0;
 }
 
 .gradback {
-    background: linear-gradient(217deg, rgba(0, 255, 170, 1), rgba(255, 0, 0, 0) 70.71%), linear-gradient(54deg, rgba(0, 14, 255, 1), rgba(0, 255, 0, 0) 70.71%), linear-gradient(148deg, rgba(0, 14, 255, 1), rgba(0, 255, 0, 0) 70.71%), linear-gradient(336deg, rgba(252, 208, 75, 1), rgba(0, 0, 255, 1) 70.71%);
+  background: linear-gradient(217deg, rgba(0, 255, 170, 1), rgba(255, 0, 0, 0) 70.71%),
+    linear-gradient(54deg, rgba(0, 14, 255, 1), rgba(0, 255, 0, 0) 70.71%),
+    linear-gradient(148deg, rgba(0, 14, 255, 1), rgba(0, 255, 0, 0) 70.71%),
+    linear-gradient(336deg, rgba(252, 208, 75, 1), rgba(0, 0, 255, 1) 70.71%);
 }
 
-section.intro {
-    padding: 10rem 1em 6rem;
-    text-align: center;
-    line-height: 1;
-
-    .introInner {
-        display: inline-block;
-        margin: 0 auto;
-        text-align: left;
-    }
-
-    .introLogo {
-        width: 12em;
-        max-width: 80%;
-    }
-
-    h1 {
-        color: #fff;
-
-        &.underline {
-            text-decoration: underline;
-            text-decoration-thickness: 2px;
-            text-underline-offset: .5em;
-            line-height: 1.5;
-        }
-    }
-
-    p {
-        font-weight: 500;
-        color: #fff;
-        line-height: 1.5;
-        padding: 4px 1rem;
-        opacity: 1;
-        background-color: rgba(0, 0, 0, 0.6);
-        border-radius: 4px;
-        border: black solid 1px;
-    }
+.customButton {
+  font-size: 16px;
+  font-weight: 700;
+  min-width: 169px;
+  box-sizing: border-box;
+  padding: 0.8em 2.3em;
+  text-decoration: none;
+  border-radius: 8px;
+  display: inline-block;
 }
 
-.shine {
-    text-align: center;
-    height: 210px;
-    position: relative;
-
-    img.frameLogo {
-        width: 9rem;
-        position: absolute;
-        transform: translateX(-50%);
-    }
-
-    .frameShine {
-        position: absolute;
-        width: 100%;
-        overflow: hidden;
-        height: 100vw;
-
-        &::before {
-            content: '';
-            width: 100vw;
-            height: 100vw;
-            display: inline-block;
-            position: absolute;
-            background: linear-gradient(135deg, rgba(112, 169, 255, 0.15) 0%, rgba(134, 255, 240, 0) 75vw);
-            transform-origin: top left;
-            transform: rotate(45deg);
-            top: 3.5rem;
-        }
-    }
-}
-
-.featureCollection {
-    display: inline-block;
-    width: 50%;
-    margin-bottom: 1.5rem;
-    position: relative;
-    min-height: 5.2rem;
-
-    &>* {
-        vertical-align: text-top;
-    }
-
+.codeWindow {
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+  bottom: 120px;
+  .windowInner {
+    width: 500px;
+    padding: 10px 15px 15px;
+    border-radius: 20px;
+    background-color: #434343;
+    box-shadow: 8px 12px 16px 8px rgba(0, 0, 0, 0.2);
+    text-align: left;
     .circle {
-        width: 4.5rem;
-        height: 4.5rem;
-        box-sizing: border-box;
-        display: inline-flex;
-        justify-content: center;
-        align-items: center;
-        background-color: white;
+      .cir {
+        display: inline-block;
+        width: 14px;
+        height: 14px;
+        margin-right: 10px;
+        border-radius: 50%;
+        background-color: #ffcc80;
 
-        &>img {
-            width: 100%;
+        &:first-child {
+          background-color: #ff8686;
         }
+        &:last-child {
+          background-color: #8de585;
+        }
+      }
+    }
+    .code {
+      width: 100%;
+      margin-top: 10px;
+      border-radius: 20px;
+      background-color: #262626;
+    }
+  }
+}
 
-        border: 1px solid rgba(0, 0, 0, 0.05);
-        margin-right: 1rem;
-        box-shadow: 8px 8px 36px rgba(0, 0, 0, 0.1);
-        border-radius: 100%;
-        padding: 0.5rem;
+.code {
+  white-space: pre;
+  font-family: monospace;
+  background-color: #434343;
+  color: #fff;
+  padding: 20px;
+  font-size: 14px;
+  line-height: 1.7;
+  border-radius: 8px;
+  overflow-x:auto;
+}
+
+section {
+  // width: 100vw; // display: block is always full width of parent
+  margin: 0 auto;
+
+  h1,
+  h2,
+  h5 {
+    font-weight: 500;
+  }
+  p {
+    font-weight: 300;
+    line-height: 1.5;
+  }
+  &.intact {
+    max-width: 1080px;
+    position: relative;
+    padding: 0 1rem;
+  }
+  &.intro {
+    width: 100%;
+    text-align: center;
+    padding: 10rem 40px 0 40px;
+    overflow: hidden;
+    .introInner {
+      display: inline-block;
+      margin: 0 auto;
+    }
+    .introTop {
+      max-width: 1100px;
+      margin: 0 auto;
+      text-align: left;
+      color: #fff;
+      h1 {
+        display: inline-block;
+        margin-right: 3rem;
+        font-size: 2.6rem;
+
+        &.mobile {
+          display: none;
+        }
+      }
+      .side {
+        display: inline-block;
+      }
+      p {
+        max-width: 470px;
+        padding-top: 2rem;
+        margin-bottom: 1rem;
+        font-size: 1.2rem;
+      }
+      .customButton {
+        margin-bottom: 2rem;
+      }
+    }
+    .introBottom {
+      max-width: calc(100vw - 80px);
+      margin: 0 auto;
+      margin-bottom: -100px;
+      text-align: left;
+      overflow: hidden;
+      .slider {
+        position: relative;
+
+        &.sec {
+          .codeWindow {
+            bottom: 50px;
+          }
+        }
+        .sliderInner {
+          max-width: 1000px;
+          margin: 0 auto;
+          text-align: center;
+
+          > img {
+            border-radius: 8px;
+            box-shadow: 8px 12px 16px 8px rgba(0, 0, 0, 0.2);
+          }
+        }
+        .login {
+          width: 30%;
+          margin-top: 4%;
+          margin-right: 4%;
+        }
+        .users {
+          width: 53%;
+          margin-bottom: 9%;
+        }
+        .upload {
+          width: 30%;
+          margin-right: 4%;
+          margin-bottom: 15%;
+        }
+        .comment {
+          width: 50%;
+          margin-bottom: 15%;
+        }
+      }
+    }
+  }
+  &.banner {
+    display: grid;
+    align-content: center;
+    padding-bottom: 0;
+    width: 100%;
+    // height: 300px;
+    height: 475px;
+    background: url(@/assets/img/landingpage/intro_banner.png) no-repeat;
+    // background-size: 1200px;
+    background-size: 900px;
+    // background-position-x: -50px;
+    // background-position-y: -150px;
+    background-position-y: -20px;
+  }
+  &.line {
+    text-align: center;
+    background-color: #e5e9f3;
+    padding: 5rem 0;
+  }
+}
+
+.techWrap {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 20px;
+  .tech {
+    flex-grow: 1;
+    flex-shrink: 0;
+    // display: inline-block; // display type not relevant when parent is a flexbox
+    width: 300px; // width effect as min-width in flex box
+    padding: 2rem 1rem;
+    border-radius: 12px;
+    border: 1px solid rgba(0, 0, 0, 0.05);
+    background-color: #e5e9f3;
+    box-shadow: 0px 2px 4px 0px rgba(0, 0, 0, 0.1);
+    text-align: center;
+
+    img {
+      width: 120px;
+      height: 120px;
+      display: inline-block;
+    }
+    p {
+      font-size: max(0.8rem, 14px);
+      color: rgba(0, 0, 0, 0.6);
+    }
+  }
+}
+
+.databaseWrap {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 20px;
+
+  align-items: center;
+
+  .data,
+  .dataCode {
+    // display: inline-block;
+    // vertical-align: middle;
+    // width: 49%;
+    text-align: left;
+
+    flex-grow: 1;
+    flex-shrink: 0;
+    width: calc(300px - 2rem); // acts as min-width in flexbox. never exceed 300px which may be the smallest phone width. calc is used to compensate for padding
+  }
+  .dataCode {
+    .code {
+      height:470px; 
+      @media (max-width: 650px) {
+        height:unset; 
+      }
     }
 
-    .desc {
-        width: calc(100% - 5.5rem);
-        padding: 0 0.25rem;
+    .btn {
+      display: inline-block;
+      border-radius: 8px;
+      border: 2px solid #434343;
+      color: #434343;
+      padding: 2px 12px;
+      margin-right: 10px;
+      margin-bottom: 20px;
+      border-radius: 8px;
+      font-size: 16px;
+      font-weight: 700;
+      cursor: pointer;
 
-        h3,
-        p {
-            padding: 2px 0;
-            opacity: 1;
-            line-height: 1.2;
-        }
+      &.active {
+        background: #434343;
+        color: #fff;
+      }
     }
+  }
+}
+
+.cardWrap {
+  display: flex;
+  flex-wrap: wrap;
+
+  .card {
+    position: relative;
+    min-width: 250px;
+    height: 284px;
+    border-radius: 12px;
+    border: 1px solid rgba(0, 0, 0, 0.05);
+    background: #e5e9f3;
+    box-shadow: 0px 2px 4px 0px rgba(0, 0, 0, 0.1);
+    margin-right: 20px;
+    margin-bottom: 20px;
+    padding: 20px;
+    overflow: hidden;
+    .background {
+      position: absolute;
+      opacity: 0.7;
+    }
+    .titWrap {
+      display: flex;
+      align-items: center;
+    }
+    .icon {
+      position: relative;
+      width: 45px;
+      height: 45px;
+      background-color: #fff;
+      border-radius: 50%;
+      box-shadow: 0px 12px 36px rgba(69, 77, 255, 0.1);
+      margin-right: 18px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+
+      img {
+        width: 45px;
+        scale: 0.9;
+      }
+    }
+    p {
+      max-width: 296px;
+      line-height: 20px;
+      font-size: 16px;
+      color: rgba(0, 0, 0, 0.6);
+    }
+  }
+}
+
+@media (max-width: 825px) {
+  section {
+    &.intro {
+      .introBottom {
+        .slider {
+          &:first-child, &:last-child {
+            .codeWindow {
+              bottom: 130px !important;
+            }
+          }
+          .sliderInner {
+            > img {
+              opacity: 0;
+            }
+          }
+          .comment, .users {
+            margin-bottom: 0;
+          }
+        }
+      }
+    }
+  }
+  .cardWrap {
+    .card {
+      &:nth-child(1),
+      &:nth-child(7) {
+        width: 50% !important;
+      }
+      &:nth-child(2),
+      &:nth-child(8) {
+        width: calc(50% - 20px) !important;
+        margin-right: 0;
+      }
+      &:nth-child(3),
+      &:nth-child(6) {
+        width: 100% !important;
+        margin-right: 0;
+      }
+    }
+  }
+}
+
+@media (max-width: 740px) {
+  section {
+    &.intro {
+      .introTop {
+        text-align: center;
+
+        h1 {
+          margin: 0 auto;
+          &.long {
+            display: none;
+          }
+          &.mobile {
+            display: block;
+          }
+        }
+      }
+      .side {
+        margin-bottom: 6rem;
+      }
+      .introBottom {
+        display: none;
+      }
+    }
+    &.video {
+      padding: 0;
+    }
+  }
+}
+
+@media (max-width: 580px) {
+  section {
+    &.banner {
+      text-align: left !important;
+    }
+  }
+  .cardWrap {
+    .card {
+      &:nth-child(1),
+      &:nth-child(2),
+      &:nth-child(4),
+      &:nth-child(5),
+      &:nth-child(7),
+      &:nth-child(8) {
+        width: 100% !important;
+        margin-right: 0 !important;
+      }
+    }
+  }
 }
 </style>
