@@ -980,11 +980,11 @@ let saveRecordData = async () => {
         return
     }
 
-    // 문제 생기면 복귀
+    // do not remove the code below!
     if (res.bin && Object.keys(res.bin).length > 0 && !Array.isArray(res.bin)) {
         for (let i in res.bin) {
             for (let j of res.bin[i]) {
-                delete j.getFile;
+                delete j.getFile; // deleting because pager cannot parse a function
             }
         }
     }

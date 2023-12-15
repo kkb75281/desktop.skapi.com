@@ -100,6 +100,7 @@ if (serviceFetching.value instanceof Promise) {
 else {
     getCurrentService()
 }
+
 </script>
 
 <style lang="less" scoped>

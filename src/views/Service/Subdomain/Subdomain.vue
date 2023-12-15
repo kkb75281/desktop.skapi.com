@@ -213,19 +213,7 @@ let gotoFolder = index => {
 }
 let refreshCDNRun = ref(true);
 
-// below is unnecessary. computedSubdomain will be defined, thus watch() will be triggered.
-
-// if (subdomainInfo.value?.[computedSubdomain.value]) {
-//     if (subdomainInfo.value?.[computedSubdomain.value]?.invid) {
-//         checkCDNStatus();
-//     }
-//     else {
-//         refreshCDNRun.value = false;
-//     }
-// }
-
 watch(() => subdomainInfo.value?.[computedSubdomain.value], (newValue) => {
-    console.log({ newValue })
     if (newValue) {
         if (newValue?.invid) {
             checkCDNStatus();
@@ -234,7 +222,7 @@ watch(() => subdomainInfo.value?.[computedSubdomain.value], (newValue) => {
             refreshCDNRun.value = false;
         }
     }
-}); //, { deep: true }
+}, { immediate: true, deep: true });
 
 let cdnCheckRunning = false;
 let checkCDNStatus = async () => {
@@ -277,14 +265,11 @@ let removeAllFiles = async () => {
     await skapi.deleteHostFiles({
         serviceId: currentService.value.service,
         paths: ['']
-    }).then(async() => {
-        // launch(computedSubdomain.value, async () => {
-            // dirPage.list : 업로드 되어있는 파일 리스트
+    }).then(async () => {
             for (let k in dirPage.list) {
                 await dirPage.deleteItem(k);
             }
             launch(computedSubdomain.value);
-        // });
     }).catch(err => {
         console.log({ err });
         alert(err.message);
@@ -363,12 +348,10 @@ let subdomainCallback = async e => {
     currentService.value = e;
     if (currentService.value.subdomain?.[0] === '+') {
         inputSubdomain.value = currentService.value.subdomain.slice(1);
-        console.log(' ...Pending')
         subdomainState.value = ' ...Pending';
     }
     else if (currentService.value.subdomain?.[0] === '*') {
         inputSubdomain.value = currentService.value.subdomain.slice(1);
-        console.log(' ...Removing')
         subdomainState.value = ' ...Removing';
     }
     else {
@@ -387,7 +370,19 @@ let subdomainCallback = async e => {
 }
 
 if (currentService.value.subdomain?.[0] === '+' || currentService.value.subdomain?.[0] === '*') {
-    skapi.updateSubdomain(currentService.service, subdomainCallback);
+    // visited page while pending or removing
+    computedSubdomain.value = currentService.value.subdomain.slice(1);
+
+    if (currentService.value.subdomain?.[0] === '+') {
+        inputSubdomain.value = currentService.value.subdomain.slice(1);
+        subdomainState.value = ' ...Pending';
+    }
+    else if (currentService.value.subdomain?.[0] === '*') {
+        inputSubdomain.value = currentService.value.subdomain.slice(1);
+        subdomainState.value = ' ...Removing';
+    }
+    
+    skapi.updateSubdomain(currentService.value.service, subdomainCallback);
 }
 else {
     computedSubdomain.value = currentService.value.subdomain || '';
@@ -399,12 +394,13 @@ let removeSubdomain = e => {
     return skapi.registerSubdomain(currentService.value.service, {
         subdomain: '',
         cb: subdomainCallback
-    }).then(s => { console.log({ ccc: s }); subdomainCallback(s); }).catch(err => {
+    }).then(subdomainCallback).catch(err => {
         console.log({ err });
         alert(err.message);
         throw err;
-    })
+    });
 }
+
 let registerSubdomain = e => {
     subdomainPromiseRunning.value = true;
     skapi.registerSubdomain(currentService.value.service, {

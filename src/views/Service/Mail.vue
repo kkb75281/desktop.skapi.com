@@ -80,6 +80,7 @@ main#mail
 
 <script setup>
 import { currentService, newsletter_sender } from '@/data.js';
+import { account } from '@/main.js';
 
 let copy = (e) => {
     let currentTarget = e.currentTarget;

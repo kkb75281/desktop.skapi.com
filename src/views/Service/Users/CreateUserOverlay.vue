@@ -13,7 +13,6 @@
                         input(
                             type="email"
                             @input="e => email = e.target.value"
-                            pattern="[a-zA-Z0-9\+]+[@][a-zA-Z0-9]+[.]+[a-zA-Z]+[.]*[a-zA-Z]*" 
                             title="Please enter a valid email address." 
                             placeholder="anonymous@anonymous.com"
                             required

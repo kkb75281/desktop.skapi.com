@@ -82,6 +82,12 @@ let error = ref(null);
 let passwordField = ref(null);
 let confirmPasswordField = ref(null);
 
+// get promocode query params
+let promocode = ref('');
+if(route.query?.hasOwnProperty('kdu')) {
+    promocode.value = 'kdu'; // kook dong university
+}
+
 onMounted(() => {
     document.querySelector('body').classList.add('fa');
 })
@@ -107,6 +113,7 @@ let signup = () => {
     let params = {
         email: form.email,
         password: form.password,
+        misc: promocode.value
     }
     let options = {
         signup_confirmation: '/success',
