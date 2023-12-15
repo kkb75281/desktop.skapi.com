@@ -328,7 +328,7 @@ main#database
                             template(v-if="!recordInfoEdit" v-for="i in dataTrCount" :key="'extra-' + i")
                                 .row.empty
 
-                        .noData(v-else-if="!recordInfoEdit")
+                        .noData(v-else-if="!recordInfoEdit" style="margin-top:150px;")
                             .material-symbols-outlined.big scan_delete
                             p No data
 
@@ -355,7 +355,7 @@ main#database
                 // buttons (edit)
                 .editBtnWrap(v-if="recordInfoEdit") 
                     template(v-if="promiseRunning")
-                        img.loading(src="@/assets/img/loading.png" style="width:20px;height:20px;")
+                        img.loading(src="@/assets/img/loading.png" style="width:20px;height:20px;margin-top:4px;")
                     template(v-else)
                         button.cancel(type='button' @click="()=>{recordInfoEdit = false; selectedRecord = recordPage.list[selectedRecord.record_id] ? JSON.parse(JSON.stringify(recordPage.list[selectedRecord.record_id])) : null; }") 
                             .material-symbols-outlined.mid(v-if="isSmallScreen") close
@@ -457,7 +457,7 @@ main#database
                     tr
                         th(style="min-width:50px; padding-left:5px;")
                             .customCheckBox(:class='{"nonClickable": fetching || records && !records.length}')
-                                input#allRecords(type="checkbox" value='allRecords' @click="selectAll")
+                                input#allRecords(type="checkbox" value='allRecords' @click="selectAll" :checked="checkedRecords.length >= 10")
                                 label(for="allRecords")
                                     .material-symbols-outlined.mid.check check
                         th(style="min-width:150px;") Table Name
@@ -829,7 +829,7 @@ let clearSearchFilter = () => {
 let selectAll = (e) => {
     let checkboxes = document.querySelectorAll('input[type="checkbox"]');
     checkboxes.forEach((checkbox) => {
-        checkbox.checked = e.target.checked
+        checkbox.checked = e.target.checked;
     })
     trackSelectedRecords();
 }
@@ -843,6 +843,9 @@ let trackSelectedRecords = () => {
         }
     })
     checkedRecords.value = checked;
+    if(checkedRecords.value[0] == 'allRecords') {
+        checkedRecords.value.shift();
+    }
 }
 
 // recordData edit
