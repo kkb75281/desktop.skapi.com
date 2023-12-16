@@ -11,10 +11,10 @@
             router-link.menu(:to="`/dashboard/${currentService.service}/records`" :class="{'active': route.name == 'records'}")
                 .material-symbols-outlined.big database
                 h3 Database
-            router-link.menu(:to="`/dashboard/${currentService.service}/mail`" :class="{'active': route.name == 'mail'}")
+            router-link.menu(:to="`/dashboard/${currentService.service}/mail`" :class="{'active': route.name == 'mail', 'nonClick' : account.access_group == 1}")
                 .material-symbols-outlined.big email
                 h3 Mail
-            router-link.menu(:to="`/dashboard/${currentService.service}/subdomain`" :class="{'active': route.name == 'subdomain'}")
+            router-link.menu(:to="`/dashboard/${currentService.service}/subdomain`" :class="{'active': route.name == 'subdomain', 'nonClick' : account.access_group == 1}")
                 .material-symbols-outlined.big language
                 h3 Hosting
     .right 
@@ -144,6 +144,12 @@ else {
                     span {
                         font-weight: 700;
                     }
+                }
+
+                &.nonClick {
+                    opacity: 0.5;
+                    pointer-events: none;
+                    cursor: default;
                 }
 
                 &:first-child {

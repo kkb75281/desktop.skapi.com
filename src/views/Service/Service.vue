@@ -126,30 +126,38 @@ main#service
                 .list
                     h6 # of cloud storage Used
                     h5 {{ convertToMb(storageInfo?.[currentService.service]?.cloud) }}
-        router-link.info.hover.mail.clicked(:to='`/dashboard/${currentService.service}/mail`')
+        router-link.info.hover.mail.clicked(:to='`/dashboard/${currentService.service}/mail`' :class="{'nonClick' : account.access_group == 1}")
             .titleWrap
                 .title 
                     .material-symbols-outlined.big mail
                     h4 Mail
             .listWrap.noWrap
-                .list
-                    h6 # Subscribers
-                    h5 {{ currentService.newsletter_subscribers }}
-                .list 
-                    h6 # Mail storage used 
-                    h5 {{ convertToMb(storageInfo?.[currentService.service]?.email) }}
-        router-link.info.hover.domain.clicked(:to='`/dashboard/${currentService.service}/subdomain`')
+                template(v-if="account.access_group == 1")
+                    .list(style="width:100%; padding:0;")
+                        h6 Trial service does not provide mail.
+                template(v-else)
+                    .list
+                        h6 # Subscribers
+                        h5 {{ currentService.newsletter_subscribers }}
+                    .list 
+                        h6 # Mail storage used 
+                        h5 {{ convertToMb(storageInfo?.[currentService.service]?.email) }}
+        router-link.info.hover.domain.clicked(:to='`/dashboard/${currentService.service}/subdomain`' :class="{'nonClick' : account.access_group == 1}")
             .titleWrap
                 .title 
                     .material-symbols-outlined.big language
                     h4 Hosting
             .listWrap.noWrap
-                .list
-                    h6 Registered Subdomain
-                    h5 {{ currentSubdomain }}
-                .list
-                    h6 Host storage used
-                    h5 {{ convertToMb(storageInfo?.[currentService.service]?.host) }}
+                template(v-if="account.access_group == 1")
+                    .list(style="width:100%; padding:0;")
+                        h6 Trial service does not provide hosting.
+                template(v-else)
+                    .list
+                        h6 Registered Subdomain
+                        h5 {{ currentSubdomain }}
+                    .list
+                        h6 Host storage used
+                        h5 {{ convertToMb(storageInfo?.[currentService.service]?.host) }}
     .deleteWrap(:class="{'nonClickable' : !account?.email_verified}")
         .deleteInner(@click="!account?.email_verified ? false : openDeleteService = true;")
             .material-symbols-outlined.mid delete
@@ -416,6 +424,12 @@ watch(modifyCors, () => {
         &:nth-child(4),
         &:nth-child(6) {
             margin-right: 0;
+        }
+
+        &.nonClick {
+            opacity: 0.5;
+            pointer-events: none;
+            cursor: default;
         }
 
         &.hover {
