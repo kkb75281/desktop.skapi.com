@@ -109,11 +109,10 @@ const regions = {
 
 
 skapi.getProfile().then(u => {
-    console.log({ u })
     if (u.misc === 'kdu') {
         skapi.consumeTicket({ ticket_id: 'kdu' }).catch(err => console.log({ err })).finally(() => {
             skapi.updateProfile({ misc: '' }).then(up => {
-                console.log({ up })
+                account.value = up;
             });
         });
     }

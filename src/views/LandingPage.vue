@@ -4,16 +4,15 @@ NavBar(style='--position: fixed; --background-color:#262626')
     section.intro.gradback
         .introInner
             .introTop.intact
-                h1.long Mastering#[br]Backend&nbsp;Developemnt,#[br]Do It With HTML
-                h1.mobile Mastering#[br]Backend Developemnt,#[br]Do It With HTML
+                h1.long Build Fullstack Applications#[br]Right From HTML
+                h1.mobile Build Fullstack Application#[br]from the Frontend
                 .side
-                    p(style="font-weight:400;") Instantly Power Your Application with a&nbsp;Robust Backend API
+                    p(style="font-weight:400;") Skapi is a serverless backend JS library that allows you to build fullstack applications without writing a single line of backend code.
 
                     br
 
                     .tabletCenter
-                        a.customButton.shadow(v-if='!account' href='/signup' style='background-color:white;color:#293FE6;') Try Out For Free
-                        a.customButton.shadow(v-else href='/dashboard' style='background-color:white;color:#293FE6;') Go To Dashboard
+                        a.customButton.shadow(target="_blank" href='https://docs.skapi.com/introduction/getting-started.html' style='background-color:white;color:#293FE6;') Learn More
             .introBottom
                 Swiper.swiper(:modules="[Autoplay]" :autoplay="{delay: 2500,disableOnInteraction: false}" :loop="true") 
                     SwiperSlide.slider 
@@ -31,9 +30,7 @@ NavBar(style='--position: fixed; --background-color:#262626')
                                     span(style="color:#33adff") form
                                     span(style="color:#58dfff")  onsubmit
                                     | =
-                                    span(style="color:#ffa600") "skapi.postRecord(event, { table:
-                                    span(style="color:#ffa600")  'my_collection'}).then(record =>
-                                    span(style="color:#ffa600")  console.log(record))"
+                                    span(style="color:#ffa600") "skapi.postRecord(event, { table: 'my_photos'}).then(record => console.log(record))"
                                     span(style="color:#33adff") &gt;
 
                                     br
@@ -42,10 +39,10 @@ NavBar(style='--position: fixed; --background-color:#262626')
                                     span(style="color:#33adff") input
                                     span(style="color:#58dfff")  type
                                     | =
-                                    span(style="color:#ffa600") "text" 
+                                    span(style="color:#ffa600") "file" 
                                     span(style="color:#58dfff") name
                                     | =
-                                    span(style="color:#ffa600") "myData"
+                                    span(style="color:#ffa600") "myPhoto"
                                     span(style="color:#33adff") &gt;
 
                                     br
@@ -160,6 +157,13 @@ NavBar(style='--position: fixed; --background-color:#262626')
         .techWrap 
             .tech
                 div(style="text-align: center;")
+                  img(src="@/assets/img/landingpage/tech3.svg")
+                br
+                h5 No Setup, No Deployment 
+                br
+                p Farewell to complex backend deployment hassles. Everything is managed from the frontend, streamlining your development process.
+            .tech
+                div(style="text-align: center;")
                   img(src="@/assets/img/landingpage/tech1.svg")
                 br
                 h5 Lower Your Costs By 10x
@@ -172,14 +176,7 @@ NavBar(style='--position: fixed; --background-color:#262626')
                 h5 Scale Without Limits 
                 br
                 p Built to scale effortlessly, Skapi handles your concurrent connections without any manual intervention.
-            .tech
-                div(style="text-align: center;")
-                  img(src="@/assets/img/landingpage/tech3.svg")
-                br
-                h5 No Setup, No Deployment 
-                br
-                p Farewell to complex backend deployment hassles. Everything is managed from the frontend, streamlining your development process.
-
+            
     br
     br
     br
@@ -398,7 +395,7 @@ NavBar(style='--position: fixed; --background-color:#262626')
     br
 
     section.intact.features
-        h2 Skapi Features 
+        h2 Features 
 
         br
         br
@@ -514,11 +511,13 @@ NavBar(style='--position: fixed; --background-color:#262626')
     br
 
     section.line
-        h2(style="width:100%;") Sign-up while it's free!
+        h2(v-if='account' style="width:100%;") Start a new project!
+        h2(v-else style="width:100%;") Sign-up while it's free!
 
         br
 
-        a.customButton(href="/" style="background-color:#293FE6;color:white;") Start my project
+        a.customButton(v-if='account' href="/dashboard" style="background-color:#293FE6;color:white;") Start my project
+        a.customButton(v-else href="/signup" style="background-color:#293FE6;color:white;") Sign up
 
     br
     br
