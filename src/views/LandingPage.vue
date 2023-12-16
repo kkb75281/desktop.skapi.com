@@ -4,8 +4,8 @@ NavBar(style='--position: fixed; --background-color:#262626')
     section.intro.gradback
         .introInner
             .introTop.intact
-                h1.long Build Fullstack Applications#[br]Right From HTML
-                h1.mobile Build Fullstack Application#[br]from the Frontend
+                h1.long Build Fullstack Applications#[br]Just From HTML & Javascript
+                h1.mobile Build Fullstack Applications#[br]Just From HTML & Javascript
                 .side
                     p(style="font-weight:400;") Skapi is a serverless backend JS library that allows you to build fullstack applications without writing a single line of backend code.
 
