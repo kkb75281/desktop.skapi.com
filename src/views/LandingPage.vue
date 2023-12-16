@@ -562,7 +562,7 @@ NavBar(style='--position: fixed; --background-color:#262626')
             summary Where can I get help?
             p(style="color: rgba(0,0,0,0.6);") 
                 | You can reach us at our 
-                a(href="https://discord.com/channels/1164154380816236626/1164154381269213188") Discord server
+                a(href="https://discord.com/channels/1164154380816236626/1164154381269213188" target="_blank") Discord server
                 | . We are happy to help you with any questions you may have.
             br
             br
