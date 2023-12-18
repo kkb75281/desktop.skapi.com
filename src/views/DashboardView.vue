@@ -47,7 +47,8 @@ main#dashboard
                                 .material-symbols-outlined.big power_settings_new
                 template(v-else)
                     .box.noService
-                        h2 No Services
+                        h3 No Services
+                        br
                         p Get started by creating a new service.
 </template>
 
@@ -370,17 +371,9 @@ skapi.getProfile().then(u => {
                 &.noService {
                     width: 360px;
                     padding: 80px 0;
+                    text-align: center;
                     box-shadow: unset;
-                    display: flex;
-                    flex-wrap: wrap;
-                    align-items: center;
-                    justify-content: center;
                     color: rgba(0, 0, 0, 0.40);
-
-                    h2 {
-                        font-size: 28px;
-                        font-weight: 700;
-                    }
                 }
             }
         }
