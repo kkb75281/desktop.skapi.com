@@ -9,46 +9,50 @@ main#mail
             br
             | For more information refer the 
             a(href="https://docs.skapi.com/email/email-templates.html" target="_blank") Documentation
-        .email
-            .tit 
-                .copy.clickable(@click="copy")
-                    .material-symbols-outlined.sml file_copy
-                span Welcome
-            .cont 
-                template(v-if="currentService") {{ currentService?.email_triggers?.template_setters?.welcome }}
-                template(v-else) loading...
-        .email
-            .tit 
-                .copy.clickable(@click="copy")
-                    .material-symbols-outlined.sml file_copy
-                span Verification
-            .cont
-                template(v-if="currentService") {{ currentService?.email_triggers?.template_setters?.verification }}
-                template(v-else) loading...
-        .email
-            .tit 
-                .copy.clickable(@click="copy")
-                    .material-symbols-outlined.sml file_copy
-                span Signup Confirmation
-            .cont 
-                template(v-if="currentService") {{ currentService?.email_triggers?.template_setters?.signup_confirmation }}
-                template(v-else) loading...
-        .email
-            .tit 
-                .copy.clickable(@click="copy")
-                    .material-symbols-outlined.sml file_copy
-                span Invitation
-            .cont 
-                template(v-if="currentService") {{ currentService?.email_triggers?.template_setters?.invitation }}
-                template(v-else) loading...
-        .email
-            .tit 
-                .copy.clickable(@click="copy")
-                    .material-symbols-outlined.sml file_copy
-                span Newsletter Subscription
-            .cont 
-                template(v-if="currentService") {{ currentService?.email_triggers?.template_setters?.newsletter_subscription }}
-                template(v-else) loading...
+        template(v-if="account.access_group == 1")
+            .email(style="text-align:center;")
+                p(style="margin-bottom:1rem;") Trial service does not provide automated emails.
+        template(v-else)
+            .email
+                .tit 
+                    .copy.clickable(@click="copy")
+                        .material-symbols-outlined.sml file_copy
+                    span Welcome
+                .cont 
+                    template(v-if="currentService") {{ currentService?.email_triggers?.template_setters?.welcome }}
+                    template(v-else) loading...
+            .email
+                .tit 
+                    .copy.clickable(@click="copy")
+                        .material-symbols-outlined.sml file_copy
+                    span Verification
+                .cont
+                    template(v-if="currentService") {{ currentService?.email_triggers?.template_setters?.verification }}
+                    template(v-else) loading...
+            .email
+                .tit 
+                    .copy.clickable(@click="copy")
+                        .material-symbols-outlined.sml file_copy
+                    span Signup Confirmation
+                .cont 
+                    template(v-if="currentService") {{ currentService?.email_triggers?.template_setters?.signup_confirmation }}
+                    template(v-else) loading...
+            .email
+                .tit 
+                    .copy.clickable(@click="copy")
+                        .material-symbols-outlined.sml file_copy
+                    span Invitation
+                .cont 
+                    template(v-if="currentService") {{ currentService?.email_triggers?.template_setters?.invitation }}
+                    template(v-else) loading...
+            .email
+                .tit 
+                    .copy.clickable(@click="copy")
+                        .material-symbols-outlined.sml file_copy
+                    span Newsletter Subscription
+                .cont 
+                    template(v-if="currentService") {{ currentService?.email_triggers?.template_setters?.newsletter_subscription }}
+                    template(v-else) loading...
     section#section
         h4 Newsletters
         p 
@@ -58,26 +62,33 @@ main#mail
             br
             | For more information refer the 
             a(href="https://docs.skapi.com/email/newsletters.html" target="_blank") Documentation
-        .email
-            .tit 
-                .copy.clickable(@click="copy")
-                    .material-symbols-outlined.sml file_copy
-                span Public Newsletter
-            .cont 
-                template(v-if="newsletter_sender?.[currentService.service]?.public") {{ newsletter_sender[currentService.service].public }}
-                template(v-else) loading...
-        .email
-            .tit 
-                .copy.clickable(@click="copy")
-                    .material-symbols-outlined.sml file_copy 
-                span Service Newsletter
-            .cont 
-                template(v-if="newsletter_sender?.[currentService.service]?.authorized") {{ newsletter_sender[currentService.service].authorized }}
-                template(v-else) loading...
+        template(v-if="account.access_group == 1")
+            .email(style="text-align:center;")
+                p(style="margin-bottom:1rem;") Trial service does not provide newsletters.
+        template(v-else)
+            .email
+                .tit 
+                    .copy.clickable(@click="copy")
+                        .material-symbols-outlined.sml file_copy
+                    span Public Newsletter
+                .cont 
+                    template(v-if="newsletter_sender?.[currentService.service]?.public") {{ newsletter_sender[currentService.service].public }}
+                    template(v-else-if="!account.email_verified") Email verification required
+                    template(v-else) loading...
+            .email
+                .tit 
+                    .copy.clickable(@click="copy")
+                        .material-symbols-outlined.sml file_copy 
+                    span Service Newsletter
+                .cont 
+                    template(v-if="newsletter_sender?.[currentService.service]?.authorized") {{ newsletter_sender[currentService.service].authorized }}
+                    template(v-else-if="!account.email_verified") Email verification required
+                    template(v-else) loading...
 </template>
 
 <script setup>
 import { currentService, newsletter_sender } from '@/data.js';
+import { account } from '@/main.js';
 
 let copy = (e) => {
     let currentTarget = e.currentTarget;

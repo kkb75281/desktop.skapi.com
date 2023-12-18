@@ -26,7 +26,7 @@ main#subdomain
             .setting
                 h6.tit Subdomain
                 template(v-if="modifySudomain && !subdomainState")
-                    form.modifyForm(style="margin-top: 8px" @submit.prevent='registerSubdomain')
+                    form.modifyForm(@submit.prevent='registerSubdomain')
                         .input
                             input#modifySudomain(:disabled="subdomainState || subdomainPromiseRunning ? true : null" type="text" placeholder="Name of Subdomain" required minlength='5' pattern='[a-z0-9]+' title='Subdomain should be lowercase alphanumeric.' :value='inputSubdomain' @input="(e) => {e.target.setCustomValidity(''); inputSubdomain = e.target.value}")
                         .btnWrap
@@ -34,7 +34,9 @@ main#subdomain
                                 img.loading(src="@/assets/img/loading.png")
                             template(v-else)
                                 button.cancel(type="button" @click="modifySudomain = false;") Cancel
+                                .material-symbols-outlined.mid.icon(type="button" @click="modifySudomain = false;" style="margin-right:5px") close
                                 button.save(type="submit" :disabled="subdomainState ? true : null") Save
+                                .material-symbols-outlined.mid.icon(type="submit" :disabled="subdomainState ? true : null" style="color: #293FE6;") check
                 template(v-else)
                     .cont(@click="modifySudomain = true")
                         p {{ computedSubdomain }}
@@ -55,6 +57,10 @@ main#subdomain
                                 span Upload
                             input#file404(hidden type="file" @change="set404" accept='text/html')
 
+        template(v-else-if="account.access_group == 1")
+            div(style="text-align:center; background-color:rgba(0,0,0,0.05); padding: 2rem 0; border-radius: 8px;")
+                p(style="color: rgba(0, 0, 0, 0.6); font-size: 0.8rem; font-weight: 500; line-height: 1.5;") Trial service does not provide hosting.
+        
         // head panel when there is NO subdomain
         .create(v-else) 
             h3.tit Register Subdomain
@@ -182,10 +188,10 @@ import { computed, inject, nextTick, ref, watch } from 'vue';
 import { useRoute } from 'vue-router';
 import { skapi, account, bodyClick } from '@/main.js';
 import { currentService } from '@/data.js';
-import UploadFileList from '@/views/Service/subdomain/UploadFileList.vue';
-import DeleteFileOverlay from '@/views/Service/subdomain/DeleteFileOverlay.vue';
-import { launch, currentPage, fetching, searchDir, files, refresh, fileList, dirPage, getPage, selectNone, subdomainInfo, uploading, uploadWholeProgress } from './SubdomainFetch';
-import { img, vid } from './extensions';
+import UploadFileList from '@/views/Service/Subdomain/UploadFileList.vue';
+import DeleteFileOverlay from '@/views/Service/Subdomain/DeleteFileOverlay.vue';
+import { launch, currentPage, fetching, searchDir, files, refresh, fileList, dirPage, getPage, selectNone, subdomainInfo, uploading, uploadWholeProgress } from '@/views/Service/Subdomain/SubdomainFetch';
+import { img, vid } from '@/views/Service/Subdomain/extensions';
 
 let route = useRoute();
 let currnetPath = route.path.split('/')[2];
@@ -211,19 +217,7 @@ let gotoFolder = index => {
 }
 let refreshCDNRun = ref(true);
 
-// below is unnecessary. computedSubdomain will be defined, thus watch() will be triggered.
-
-// if (subdomainInfo.value?.[computedSubdomain.value]) {
-//     if (subdomainInfo.value?.[computedSubdomain.value]?.invid) {
-//         checkCDNStatus();
-//     }
-//     else {
-//         refreshCDNRun.value = false;
-//     }
-// }
-
 watch(() => subdomainInfo.value?.[computedSubdomain.value], (newValue) => {
-    console.log({ newValue })
     if (newValue) {
         if (newValue?.invid) {
             checkCDNStatus();
@@ -232,7 +226,7 @@ watch(() => subdomainInfo.value?.[computedSubdomain.value], (newValue) => {
             refreshCDNRun.value = false;
         }
     }
-}); //, { deep: true }
+}, { immediate: true, deep: true });
 
 let cdnCheckRunning = false;
 let checkCDNStatus = async () => {
@@ -275,13 +269,11 @@ let removeAllFiles = async () => {
     await skapi.deleteHostFiles({
         serviceId: currentService.value.service,
         paths: ['']
-    }).then(() => {
-        launch(computedSubdomain.value, async () => {
+    }).then(async () => {
             for (let k in dirPage.list) {
                 await dirPage.deleteItem(k);
             }
             launch(computedSubdomain.value);
-        });
     }).catch(err => {
         console.log({ err });
         alert(err.message);
@@ -294,6 +286,7 @@ let deleteSelectedFiles = async () => {
         let path = f.split('/').slice(1);
         let file = path.pop();
         fileList.push(file);
+
         if (file[0] === '#') {
             file = file.slice(1) + '/';
         }
@@ -359,12 +352,10 @@ let subdomainCallback = async e => {
     currentService.value = e;
     if (currentService.value.subdomain?.[0] === '+') {
         inputSubdomain.value = currentService.value.subdomain.slice(1);
-        console.log(' ...Pending')
         subdomainState.value = ' ...Pending';
     }
     else if (currentService.value.subdomain?.[0] === '*') {
         inputSubdomain.value = currentService.value.subdomain.slice(1);
-        console.log(' ...Removing')
         subdomainState.value = ' ...Removing';
     }
     else {
@@ -383,7 +374,19 @@ let subdomainCallback = async e => {
 }
 
 if (currentService.value.subdomain?.[0] === '+' || currentService.value.subdomain?.[0] === '*') {
-    skapi.updateSubdomain(currentService.service, subdomainCallback);
+    // visited page while pending or removing
+    computedSubdomain.value = currentService.value.subdomain.slice(1);
+
+    if (currentService.value.subdomain?.[0] === '+') {
+        inputSubdomain.value = currentService.value.subdomain.slice(1);
+        subdomainState.value = ' ...Pending';
+    }
+    else if (currentService.value.subdomain?.[0] === '*') {
+        inputSubdomain.value = currentService.value.subdomain.slice(1);
+        subdomainState.value = ' ...Removing';
+    }
+    
+    skapi.updateSubdomain(currentService.value.service, subdomainCallback);
 }
 else {
     computedSubdomain.value = currentService.value.subdomain || '';
@@ -395,12 +398,13 @@ let removeSubdomain = e => {
     return skapi.registerSubdomain(currentService.value.service, {
         subdomain: '',
         cb: subdomainCallback
-    }).then(s => { console.log({ ccc: s }); subdomainCallback(s); }).catch(err => {
+    }).then(subdomainCallback).catch(err => {
         console.log({ err });
         alert(err.message);
         throw err;
-    })
+    });
 }
+
 let registerSubdomain = e => {
     subdomainPromiseRunning.value = true;
     skapi.registerSubdomain(currentService.value.service, {
@@ -561,7 +565,7 @@ let onDrop = async (event, files) => {
         serviceId: currentService.value.service,
         progress: trackUpload,
         nestKey: pathArray.value.join('/')
-    }).then(e => {
+    }).then(async e => {
         if (uploading.value) {
             launch(searchDir.value, () => { }, true);
         }
@@ -719,6 +723,7 @@ function formatBytes(bytes, decimals = 2) {
                 .tit {
                     color: rgba(0, 0, 0, 0.40);
                     font-weight: 500;
+                    margin-bottom: 8px;
                 }
 
                 .cont {
@@ -774,19 +779,8 @@ function formatBytes(bytes, decimals = 2) {
                     height: 44px;
 
                     .input {
-                        width: 65%;
                         position: relative;
-
-                        &::before {
-                            position: absolute;
-                            content: '';
-                            width: 100%;
-                            height: 100%;
-                            border-radius: 8px;
-                            background: rgba(0, 0, 0, 0.05);
-                            // z-index: -1;
-                            pointer-events: none;
-                        }
+                        width: calc(100% - 170px);
 
                         &::after {
                             position: absolute;
@@ -799,18 +793,19 @@ function formatBytes(bytes, decimals = 2) {
                         }
 
                         input {
+                            width: 100%;
                             border: 0;
-                            width: calc(100% - 87px);
-                            padding: 13px;
                             height: 44px;
-                            background-color: unset;
+                            background: rgba(0, 0, 0, 0.05);
+                            border-radius: 8px;
+                            padding: 13px 95px 13px 13px;
                             font-size: 0.8rem;
                             font-weight: 400;
                         }
                     }
 
                     .btnWrap {
-                        width: 35%;
+                        width: 170px;
                         display: flex;
                         flex-wrap: nowrap;
                         align-items: center;
@@ -834,6 +829,10 @@ function formatBytes(bytes, decimals = 2) {
                                 background-color: #293FE6;
                                 color: #fff;
                             }
+                        }
+                        .icon {
+                            display: none;
+                            cursor: pointer;
                         }
                     }
                 }
@@ -1068,7 +1067,31 @@ function formatBytes(bytes, decimals = 2) {
         }
     }
 }
+@media (max-width:1200px) {
+    #subdomain {
+        #section {
+            .settingWrap {
+                .setting {
+                    .modifyForm {
+                        .input {
+                            width: calc(100% - 70px);
+                        }
+                        .btnWrap {
+                            width: 70px;
 
+                            button {
+                                display: none;
+                            }
+                            .icon {
+                                display: inline-block;
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
 @media (max-width:767px) {
     #subdomain {
         #section {

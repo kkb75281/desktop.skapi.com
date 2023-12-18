@@ -11,10 +11,10 @@
             router-link.menu(:to="`/dashboard/${currentService.service}/records`" :class="{'active': route.name == 'records'}")
                 .material-symbols-outlined.big database
                 h3 Database
-            router-link.menu(:to="`/dashboard/${currentService.service}/mail`" :class="{'active': route.name == 'mail'}")
+            router-link.menu(:to="`/dashboard/${currentService.service}/mail`" :class="{'active': route.name == 'mail', 'nonClick' : account.access_group == 1}")
                 .material-symbols-outlined.big email
                 h3 Mail
-            router-link.menu(:to="`/dashboard/${currentService.service}/subdomain`" :class="{'active': route.name == 'subdomain'}")
+            router-link.menu(:to="`/dashboard/${currentService.service}/subdomain`" :class="{'active': route.name == 'subdomain', 'nonClick' : account.access_group == 1}")
                 .material-symbols-outlined.big language
                 h3 Hosting
     .right 
@@ -22,12 +22,11 @@
 </template>
 
 <script setup>
-import { nextTick, ref, watch } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 import { services, serviceFetching, currentService, storageInfo, serviceUsers, newsletter_sender } from '@/data.js';
 import { serviceRecords } from '@/views/Service/Records/RecordFetch.js';
-import { launch, nextPage, serviceHost, subdomainInfo } from './subdomain/SubdomainFetch';
-import { skapi, account, bodyClick } from '@/main.js';
+import { launch, subdomainInfo } from '@/views/Service/Subdomain/SubdomainFetch.js';
+import { skapi, account } from '@/main.js';
 
 import NavBar from '@/components/NavBar.vue';
 import EmailCaution from '@/components/EmailCaution.vue';
@@ -101,6 +100,7 @@ if (serviceFetching.value instanceof Promise) {
 else {
     getCurrentService()
 }
+
 </script>
 
 <style lang="less" scoped>
@@ -146,6 +146,12 @@ else {
                     }
                 }
 
+                &.nonClick {
+                    opacity: 0.5;
+                    pointer-events: none;
+                    cursor: default;
+                }
+
                 &:first-child {
                     margin-bottom: 66px;
                 }
@@ -167,7 +173,7 @@ else {
     }
     .right {
         display: inline-block;
-        // width: calc(100vw - 240px);
+        width: calc(100vw - 240px);
         padding: 0 20px 20px 0;
         flex-grow: 1;
     }

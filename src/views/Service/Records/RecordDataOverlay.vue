@@ -12,9 +12,9 @@
                     .error(v-if="error")
                         .material-symbols-outlined.mid error
                         span {{ error }}
-                .buttonWrap 
-                    button.cancel(@click="emits('close')") Cancel
-                    button.save(@click='()=>{if(error) return; emits("save", dataCopy);}') Save
+                    .buttonWrap 
+                        button.cancel(@click="emits('close')") Cancel
+                        button.save(@click='()=>{if(error) return; emits("save", dataCopy);}') Save
 
         template(v-else)
             // view
@@ -27,7 +27,7 @@
                 //-     span edit
             main
                 .content(:style='displayFontType()') 
-                    p {{ selectedData.context }}
+                    p(style="word-wrap: break-word;") {{ selectedData.context }}
 
 </template>
 
