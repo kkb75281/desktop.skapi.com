@@ -6,10 +6,9 @@ main#accountSetting(v-if='account')
     .container
         .wrapper 
             .accountWrap 
-                // info 변수를 정의하는 경우가 없는것같습니다. info의 역활은?
-                h5.account(@click="info = true" :class="{'active': info}") Account info
-                h5.account(:class="{'red': !info, 'nonClickable' : !account.email_verified}" @click="!account.email_verified ? false : openDeleteAccount = true") Delete Account
-            .accountCont(v-if="info")    
+                h5.account.active Account info
+                h5.account(:class="{'nonClickable' : !account.email_verified}" @click="!account.email_verified ? false : openDeleteAccount = true") Delete Account
+            .accountCont
                 .row
                     h6.tit Email
                     .cont 
@@ -49,8 +48,6 @@ main#accountSetting(v-if='account')
                     h6.tit Subscription
                     .cont 
                         .customCheckBox(:class="{'nonClickable' : !account.email_verified}" :style='{opacity: disableNewsletterCheckbox ? ".5" : "1"}')
-                            // !(account.email_verified || false) <- account.email_verified 가 undefined 인 경우도 있어서
-                            // 사용자 email이 인증이 안되었을시 뉴스레터를 구독할수없습니다.
                             input#subscribeCheckbox(
                                 type="checkbox"
                                 v-model='newsletterSubscribed'
@@ -84,7 +81,6 @@ import ChangePassword from '@/components/ChangePassword.vue';
 import VerifyEmail from '@/components/VerifyEmail.vue';
 import DeleteAccount from '@/components/DeleteAccount.vue';
 
-let info = ref(true);
 let email = ref('');
 let emailConfirmed = ref(false);
 let changeEmail = ref(false);
