@@ -1804,6 +1804,7 @@ watch(() => selectedRecord.value, () => {
 
                 .row {
                     position: relative;
+                    height: 2rem;
                     padding: 0 20px;
                     border-radius: 4px;
                     font-size: 0.7rem;
@@ -2454,6 +2455,7 @@ watch(() => selectedRecord.value, () => {
 
                 .content {
                     .row {
+                        height: unset;
                         flex-wrap: wrap;
                     }
                     .data {
