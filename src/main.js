@@ -11,7 +11,12 @@ import Admin from '@/skapi-extensions/js/admin.js'
 //     target_cdn: 'd1wrj5ymxrt2ir'
 // }
 
-// let skapi = new Admin("eu71zettahertzesskpi", etc); // for testing
+// let regions = {
+//     KR: 'ap-northeast-1',
+// };
+
+// let skapi = new Admin("eu71zettahertzesskpi", etc, regions); // for testing
+
 let skapi = new Admin("us31zettahertzesskpi");
 let account = ref('pending');
 
