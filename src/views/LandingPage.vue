@@ -138,7 +138,8 @@ NavBar(style='--position: fixed; --background-color:#262626')
         br
         br
 
-        iframe(width="100%" height="400" style="border-radius:8px;" src="https://www.youtube.com/embed/y31F1ko9LbU?si=R3jS_reo2N1vY3hb" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen)
+        .iframeContainer
+          iframe(src="https://www.youtube.com/embed/y31F1ko9LbU?si=R3jS_reo2N1vY3hb" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen)
 
     br
     br
@@ -764,7 +765,6 @@ section {
         display: inline-block;
       }
       p {
-        max-width: 470px;
         padding-top: 2rem;
         margin-bottom: 1rem;
         font-size: 1.2rem;
@@ -836,6 +836,24 @@ section {
     text-align: center;
     background-color: #e5e9f3;
     padding: 5rem 0;
+  }
+}
+
+.iframeContainer {
+  position: relative;
+  width: 100%;
+  height: 0;
+  overflow: hidden;  
+  padding-top: calc(9/16 * 100%);
+
+  iframe {
+    position: absolute;
+    padding: 0;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    border-radius: 8px;
   }
 }
 
