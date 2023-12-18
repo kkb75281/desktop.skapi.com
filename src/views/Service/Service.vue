@@ -25,43 +25,11 @@ main#service
                         .toggleBg(:class="{'nonClickable' : !account?.email_verified}")
                             .toggleBtn(@click="enableDisableToggle")
             .codeWrap
-                .codeInner
-                    span(style="color:#33adff") &lt;
-                    span(style="color:#33adff") script 
-                    span(style="color:#58dfff") src
-                    span =
-                    span(style="color:#ffa600") "https://cdn.jsdelivr.net/npm/skapi-js@latest/dist/skapi.js"
-                    span(style="color:#33adff") 
-                    span(style="color:#33adff") &gt;
-                    span(style="color:#33adff") &lt;
-                    span(style="color:#33adff") /
-                    span(style="color:#33adff") script
-                    span(style="color:#33adff") &gt;
-
-                    br
-
-                    span(style="color:#33adff") &lt;
-                    span(style="color:#33adff") script
-                    span(style="color:#33adff") &gt;
-
-                    br
-
-                    span(style="color:#33adff")     const 
-                    span skapi 
-                    span = 
-                    span(style="color:#33adff") new 
-                    span Skapi(
-                    span(style="color:#ffa600") "{{ currentService.service }}"
-                    span , 
-                    span(style="color:#ffa600") "{{ currentService.owner }}"
-                    span );
-
-                    br
-
-                    span(style="color:#33adff") &lt;
-                    span(style="color:#33adff") /
-                    span(style="color:#33adff") script
-                    span(style="color:#33adff") &gt;
+                pre.codeInner.
+                    #[span(style="color:#33adff") &lt;script] #[span(style="color:#58dfff") src]=#[span(style="color:#ffa600") "https://cdn.jsdelivr.net/npm/skapi-js@latest/dist/skapi.js"]#[span(style="color:#33adff") &gt;]#[span(style="color:#33adff") &lt;/script&gt;]
+                    #[span(style="color:#33adff") &lt;script&gt;]
+                    #[span(style="color:#33adff") &nbsp;&nbsp;&nbsp;&nbsp;const] skapi = #[span(style="color:#33adff") new] Skapi(#[span(style="color:#ffa600") "{{ currentService.service }}"], #[span(style="color:#ffa600") "{{ currentService.owner }}"]);
+                    #[span(style="color:#33adff") &lt;/script&gt;]
                 .copy.clickable(@click="copy")
                     .material-symbols-outlined.mid file_copy
             a.question(href="https://docs.skapi.com/introduction/getting-started.html" target="_blank")
@@ -183,6 +151,7 @@ let convertToMb = (size) => {
         return '-'
     }
 }
+
 let modifyServiceName = ref(false);
 let modifyCors = ref(false);
 let modifyKey = ref(false);
@@ -250,13 +219,18 @@ let editKey = () => {
 }
 let copy = (e) => {
     let currentTarget = e.currentTarget;
-    let doc = document.createElement('textarea');
-    doc.textContent = currentTarget.previousSibling.textContent;
-    doc.textContent = currentTarget.previousSibling.textContent;
-    document.body.append(doc);
-    doc.select();
-    document.execCommand('copy');
-    doc.remove();
+    // let doc = document.createElement('textarea');
+    // doc.textContent = currentTarget.previousSibling.textContent + '\n';
+    // document.body.append(doc);
+    // doc.select();
+    // document.execCommand('copy');
+    // doc.remove();
+    const range = document.createRange();
+      range.selectNode(currentTarget.previousSibling);
+      window.getSelection().removeAllRanges();
+      window.getSelection().addRange(range);
+      document.execCommand('copy');
+      window.getSelection().removeAllRanges();
 
     currentTarget.classList.add('copied');
     setTimeout(() => {
