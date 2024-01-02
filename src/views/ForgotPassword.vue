@@ -46,7 +46,7 @@
                 template(v-if="resending")
                     .resending The Code has been resent.
                 template(v-else)
-                    span Haven’t got any Code?
+                    p(style="display:inline-block; margin-right:5px;") Haven’t got any Code?
                     .click(@click="resend") Re-send Code
             .error(v-if="codeError") 
                 .material-symbols-outlined.mid error
