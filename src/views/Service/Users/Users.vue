@@ -108,8 +108,8 @@ main#users
                 .material-symbols-outlined.mid.refresh(@click='refresh' :class='{"rotate_animation": fetching }') cached
                 .material-symbols-outlined.mid.create(:class="{'nonClickable' : !account.email_verified}" @click="!account.email_verified ? false : inviteUserShow=true") mail
                 .material-symbols-outlined.mid.create(:class="{'nonClickable' : !account.email_verified}" @click="!account.email_verified ? false : createUserShow=true") person_add
-                .menu(@click.stop="!account.email_verified ? false : showUserSetting = !showUserSetting")
-                    .material-symbols-outlined.mid.clickable(:class='{"nonClickable": !checkedUsers.length || !account.email_verified}') more_vert
+                .menu(:class='{"nonClickable": !checkedUsers.length || !account.email_verified}' @click.stop="!account.email_verified ? false : showUserSetting = !showUserSetting")
+                    .material-symbols-outlined.mid.clickable more_vert
                     #moreVert(v-if="showUserSetting" @click.stop style="--moreVert-left: 0")
                         .inner
                             .more(@click="()=>{stateText='Block'; showBlockUser=true; showUserSetting=false;}")

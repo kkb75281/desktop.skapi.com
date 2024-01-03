@@ -560,14 +560,10 @@ watch(modifyCors, () => {
         }
 
         .question {
-            display: flex;
-            flex-wrap: nowrap;
-            align-items: center;
             text-decoration: none;
             color: #293FE6;
             font-size: 0.8rem;
             font-weight: 500;
-            margin-top: 1rem;
 
             &.help {
                 position: absolute;
@@ -657,6 +653,7 @@ watch(modifyCors, () => {
     box-shadow: 3px 9px 6px 0px rgba(0, 0, 0, 0.15);
     margin-top: 1.5rem;
     user-select: text !important;
+    margin-bottom: 1rem;
     
     .codeInner {
         width: 100%;
