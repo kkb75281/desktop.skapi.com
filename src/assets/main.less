@@ -463,8 +463,42 @@
         color: unset;
     }
 
-    &.clicked:active {
-        box-shadow: 0 0 0 4px #A5AFFF inset;
+    &.clicked {
+        &:hover {
+            background-color: rgba(41, 63, 230, 0.05) !important;
+        }
+        &:active {
+            box-shadow: 0 0 0 4px #A5AFFF inset !important;
+        }
+    }
+
+    &:not(.clicked) {
+        .inner {
+            .title {
+                .arrowIcon {
+                    position: relative;
+
+                    &::before {
+                        position: absolute;
+                        content: '';
+                        left: 50%;
+                        top: 50%;
+                        transform: translate(-50%, -50%);
+                        width: 40px;
+                        height: 40px;
+                        background-color: unset;
+                        border-radius: 50%;
+                    }
+
+                    &:hover::before {
+                        background-color: rgba(41, 63, 230, 0.1);
+                    }
+                    &:active::before {
+                        background-color: rgba(41, 63, 230, 0.2);
+                    }
+                }
+            }
+        }
     }
 
     .inner {
@@ -487,6 +521,10 @@
 
             h4 {
                 font-weight: 500;
+            }
+
+            .arrowIcon {
+                margin: 0 !important;
             }
 
             .logoTitle {

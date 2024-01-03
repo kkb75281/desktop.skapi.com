@@ -28,11 +28,11 @@ main#dashboard
                                 button(type="submit").create Create
 
                 template(v-if='services.length')
-                    .box.card.clicked(v-for="service in services" :style='{opacity: service?.pending ? ".5" : null}')
+                    router-link.box.card.clicked(v-for="service in services" :to="'/dashboard/' + service.service" :style='{opacity: service?.pending ? ".5" : null}')
                         .inner
                             .title 
                                 h4 {{ service.name }}
-                                router-link.material-symbols-outlined.mid(:to="'/dashboard/' + service.service") arrow_forward_ios
+                                .material-symbols-outlined.mid arrow_forward_ios
                             .contWrap 
                                 .cont 
                                     h6 Locale
@@ -172,14 +172,13 @@ skapi.getProfile().then(u => {
 
             .box {
                 width: 31%;
-                // height: 254px;
                 margin-right: 3.5%;
                 margin-bottom: 3.5%;
                 border-radius: 8px;
-                // padding: 1.5rem;
                 background-color: #fafafa;
                 box-shadow: 0px 2px 4px 0px rgba(0, 0, 0, 0.10);
                 transition: all 0.1s;
+                cursor: pointer;
 
                 &:nth-child(3n+3) {
                     margin-right: 0;
