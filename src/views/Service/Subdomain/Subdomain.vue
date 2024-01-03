@@ -90,7 +90,7 @@ main#subdomain
                     .material-symbols-outlined.mid.clickable(:class='{"nonClickable": !checkedFiles.length || !account.email_verified}') more_vert
                     #moreVert(v-if="showEdit" @click.stop style="--moreVert-right: 0;")
                         .inner
-                            .more(@click="showRemoveAllFiles = true; showEdit = false;" style="width:145px;")
+                            .more(@click="showRemoveAllFiles = true; showEdit = false;" style="width:unset; white-space: nowrap;")
                                 .material-symbols-outlined.mid delete
                                 span Remove All Files
                             .more(:class='{"nonClickable": !checkedFiles.length || !account.email_verified}' @click="showDeleteFile = true; showEdit = false;")
