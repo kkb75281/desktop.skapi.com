@@ -15,7 +15,11 @@ main#dashboard
                 .box.create(v-if="create")
                     form(@submit.prevent="addService")
                         h5 Create a new service
+                        br
                         input#serviceName(type="text" @input='e=>newServiceName=e.target.value' placeholder="Name of Service" required)
+                        br
+                        br
+                        br
                         .buttons
                             template(v-if="promiseRunning")
                                 img.loading(src="@/assets/img/loading.png")
@@ -24,20 +28,20 @@ main#dashboard
                                 button(type="submit").create Create
 
                 template(v-if='services.length')
-                    router-link.box.service.clicked(v-for="service in services" :to="'/dashboard/' + service.service" :style='{opacity: service?.pending ? ".5" : null}')
+                    .box.card.clicked(v-for="service in services" :style='{opacity: service?.pending ? ".5" : null}')
                         .inner
-                            .tit 
-                                h5 {{ service.name }}
-                                .material-symbols-outlined.mid arrow_forward_ios
+                            .title 
+                                h4 {{ service.name }}
+                                router-link.material-symbols-outlined.mid(:to="'/dashboard/' + service.service") arrow_forward_ios
                             .contWrap 
                                 .cont 
-                                    span Locale
+                                    h6 Locale
                                     p {{ regions?.[service.region] || service.region }}
                                 .cont 
-                                    span Date Created
+                                    h6 Date Created
                                     p {{ typeof service.timestamp === 'string' ? service.timestamp : new Date(service.timestamp).toDateString() }}
                                 .cont 
-                                    span CORS
+                                    h6 CORS
                                     p {{ service.cors }}
 
                             .serviceActive(v-if='service?.pending')
@@ -172,7 +176,7 @@ skapi.getProfile().then(u => {
                 margin-right: 3.5%;
                 margin-bottom: 3.5%;
                 border-radius: 8px;
-                padding: 1.5rem;
+                // padding: 1.5rem;
                 background-color: #fafafa;
                 box-shadow: 0px 2px 4px 0px rgba(0, 0, 0, 0.10);
                 transition: all 0.1s;
@@ -197,13 +201,14 @@ skapi.getProfile().then(u => {
                 }
 
                 &.create {
+                    padding: 1.4rem;
                     box-shadow: 0 0 0 4px #A5AFFF inset;
 
                     form {
                         h5 {
                             color: #293FE6;
                             font-weight: 500;
-                            margin-bottom: 20px;
+                            // margin-bottom: 20px;
                         }
 
                         input {
@@ -213,7 +218,7 @@ skapi.getProfile().then(u => {
                             border: 0;
                             padding: 15px 20px;
                             font-size: 0.8rem;
-                            margin-bottom: 45px;
+                            // margin-bottom: 45px;
                         }
 
                         .buttons {
@@ -240,128 +245,6 @@ skapi.getProfile().then(u => {
                                 &.create {
                                     background-color: #293FE6;
                                     color: #fff;
-                                }
-                            }
-                        }
-                    }
-                }
-
-                &.service {
-                    color: unset;
-                    text-decoration: unset;
-
-                    position: relative;
-                    border: 1px solid rgba(0, 0, 0, 0.15);
-                    overflow: hidden;
-                    cursor: pointer;
-
-                    &:hover {
-                        background: #F5F7FF;
-                    }
-
-                    a {
-                        text-decoration: none;
-                        color: unset;
-                    }
-
-                    &.clicked:active {
-                        box-shadow: 0 0 0 4px #A5AFFF inset;
-                    }
-
-                    .inner {
-                        .tit {
-                            position: relative;
-                            display: flex;
-                            justify-content: space-between;
-                            margin-bottom: 45px;
-
-                            >h5,
-                            span {
-                                font-weight: 500;
-                            }
-
-                            &::after {
-                                position: absolute;
-                                content: '';
-                                width: 200%;
-                                height: 1px;
-                                background: rgba(0, 0, 0, 0.15);
-                                left: 50%;
-                                bottom: -20px;
-                                transform: translateX(-50%);
-                            }
-                        }
-
-                        .contWrap {
-                            display: flex;
-                            flex-wrap: wrap;
-
-                            .cont {
-                                width: 50%;
-                                margin-bottom: 25px;
-
-                                span {
-                                    font-size: 0.8rem;
-                                    color: rgba(0, 0, 0, 0.40);
-                                }
-
-                                p {
-                                    font-size: 0.8rem;
-                                    font-weight: 700;
-                                    padding-top: 12px;
-                                    color: rgba(0, 0, 0, 0.60);
-                                }
-
-                                &:last-child {
-                                    width: 65%;
-                                    margin-bottom: 0;
-
-                                    p {
-                                        white-space: nowrap;
-                                        overflow: hidden;
-                                        text-overflow: ellipsis;
-                                    }
-                                }
-                            }
-                        }
-
-                        .serviceActive {
-                            position: absolute;
-                            width: 36px;
-                            height: 36px;
-                            right: 29px;
-                            bottom: 27px;
-                            display: flex;
-                            align-items: center;
-                            justify-content: center;
-                            color: #fff;
-                            background-color: rgba(0, 0, 0, 0.25);
-                            border-radius: 50%;
-
-                            &.active {
-                                background-color: rgba(90, 216, 88, 1);
-                            }
-
-                            .toggleBg {
-                                position: relative;
-                                width: 63px;
-                                height: 32px;
-                                border-radius: 16px;
-                                background-color: rgba(0, 0, 0, 0.25);
-                                transition: all 1s;
-
-                                .toggleBtn {
-                                    position: absolute;
-                                    width: 26px;
-                                    height: 26px;
-                                    right: unset;
-                                    left: 3px;
-                                    top: 50%;
-                                    transform: translateY(-50%);
-                                    border-radius: 50%;
-                                    background-color: #eee;
-                                    transition: all 1s;
-                                    cursor: pointer;
                                 }
                             }
                         }
