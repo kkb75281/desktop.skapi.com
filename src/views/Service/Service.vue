@@ -87,8 +87,7 @@ main#service
                     .cont(style="width:unset;")
                         h6 Creating User
                         .customSelect 
-                            //- select(@change="(e) => onlyAdminCreateUsers(e.target.value).then(r => console.log(r))")
-                            select(@change="(e) => changeCreateUserMode(e)")
+                            select(:value="currentService.service.prevent_signup ? 'admin' : 'anyone'" @change="(e) => changeCreateUserMode(e)")
                                 option(value="admin") Only Admin allowed 
                                 option(value="anyone") Anyone allowed
                             .material-symbols-outlined.mid.search.selectArrowDown(style="right:-30px;top:66%;") arrow_drop_down
@@ -345,10 +344,16 @@ let enableDisableToggle = () => {
     }
 }
 let changeCreateUserMode = (e) => {
+    let prevent;
     e.target.parentNode.classList.add('nonClickable');
 
-    onlyAdminCreateUsers(e.target.value).then(result => {
-        console.log(result);
+    if(e.target.value == 'admin') {
+        prevent = true;
+    } else {
+        prevent = false;
+    }
+
+    onlyAdminCreateUsers(currentService.value.service, prevent).then(() => {
         setTimeout(() => {
             e.target.parentNode.classList.remove('nonClickable');
         }, 1000)
