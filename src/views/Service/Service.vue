@@ -822,7 +822,7 @@ watch(modifyCors, () => {
 @media (max-width:767px) {
     .infoWrap {
         .info {
-            .title {
+            >.title {
                 display: block;
 
                 .name {

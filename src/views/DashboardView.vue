@@ -40,9 +40,9 @@ main#dashboard
                                 .cont 
                                     h6 Date Created
                                     p {{ typeof service.timestamp === 'string' ? service.timestamp : new Date(service.timestamp).toDateString() }}
-                                .cont 
+                                .cont(style="width:65%;margin-bottom: 0;")
                                     h6 CORS
-                                    p {{ service.cors }}
+                                    p.ellipsis {{ service.cors }}
 
                             .serviceActive(v-if='service?.pending')
                                 // 왜 인지 모르겠으나 조건 class가 에니메이션을 영향줌 (생성될때 active가 켜졌다->꺼졌다->서비스 생성 완료되면 다시 켜짐)
