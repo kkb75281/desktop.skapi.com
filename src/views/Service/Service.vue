@@ -25,39 +25,11 @@ main#service
                         .toggleBg(:class="{'nonClickable' : !account?.email_verified}")
                             .toggleBtn(@click="enableDisableToggle")
             .codeWrap
-                .codeInner
-                    .line
-                        div
-                            span(style="color:#33adff") &lt;
-                            span(style="color:#33adff") script 
-                            span(style="color:#58dfff") src
-                            span =
-                            span(style="color:#ffa600") "https://cdn.jsdelivr.net/npm/skapi-js@latest/dist/skapi.js"
-                            span(style="color:#33adff") 
-                            span(style="color:#33adff") &gt;
-                            span(style="color:#33adff") &lt;
-                            span(style="color:#33adff") /
-                            span(style="color:#33adff") script
-                            span(style="color:#33adff") &gt;
-                        div
-                            span(style="color:#33adff") &lt;
-                            span(style="color:#33adff") script
-                            span(style="color:#33adff") &gt;
-                        div(style="margin-left: 30px")
-                            span(style="color:#33adff") const 
-                            span skapi 
-                            span = 
-                            span(style="color:#33adff") new 
-                            span Skapi(
-                            span(style="color:#ffa600") "{{ currentService.service }}"
-                            span , 
-                            span(style="color:#ffa600") "{{ currentService.owner }}"
-                            span );
-                        div
-                            span(style="color:#33adff") &lt;
-                            span(style="color:#33adff") /
-                            span(style="color:#33adff") script
-                            span(style="color:#33adff") &gt;
+                pre.codeInner.
+                    #[span(style="color:#33adff") &lt;script] #[span(style="color:#58dfff") src]=#[span(style="color:#ffa600") "https://cdn.jsdelivr.net/npm/skapi-js@latest/dist/skapi.js"]#[span(style="color:#33adff") &gt;]#[span(style="color:#33adff") &lt;/script&gt;]
+                    #[span(style="color:#33adff") &lt;script&gt;]
+                    #[span(style="color:#33adff") &nbsp;&nbsp;&nbsp;&nbsp;const] skapi = #[span(style="color:#33adff") new] Skapi(#[span(style="color:#ffa600") "{{ currentService.service }}"], #[span(style="color:#ffa600") "{{ currentService.owner }}"]);
+                    #[span(style="color:#33adff") &lt;/script&gt;]
                 .copy.clickable(@click="copy")
                     .material-symbols-outlined.mid file_copy
             a.question(href="https://docs.skapi.com/introduction/getting-started.html" target="_blank")
@@ -122,30 +94,38 @@ main#service
                 .list
                     h6 # of cloud storage Used
                     h5 {{ convertToMb(storageInfo?.[currentService.service]?.cloud) }}
-        router-link.info.hover.mail.clicked(:to='`/dashboard/${currentService.service}/mail`')
+        router-link.info.hover.mail.clicked(:to='`/dashboard/${currentService.service}/mail`' :class="{'nonClick' : account.access_group == 1}")
             .titleWrap
                 .title 
                     .material-symbols-outlined.big mail
                     h4 Mail
             .listWrap.noWrap
-                .list
-                    h6 # Subscribers
-                    h5 {{ currentService.newsletter_subscribers }}
-                .list 
-                    h6 # Mail storage used 
-                    h5 {{ convertToMb(storageInfo?.[currentService.service]?.email) }}
-        router-link.info.hover.domain.clicked(:to='`/dashboard/${currentService.service}/subdomain`')
+                template(v-if="account.access_group == 1")
+                    .list(style="width:100%; padding:0;")
+                        h6 Trial service does not provide mail.
+                template(v-else)
+                    .list
+                        h6 # Subscribers
+                        h5 {{ currentService.newsletter_subscribers }}
+                    .list 
+                        h6 # Mail storage used 
+                        h5 {{ convertToMb(storageInfo?.[currentService.service]?.email) }}
+        router-link.info.hover.domain.clicked(:to='`/dashboard/${currentService.service}/subdomain`' :class="{'nonClick' : account.access_group == 1}")
             .titleWrap
                 .title 
                     .material-symbols-outlined.big language
                     h4 Hosting
             .listWrap.noWrap
-                .list
-                    h6 Registered Subdomain
-                    h5 {{ currentSubdomain }}
-                .list
-                    h6 Host storage used
-                    h5 {{ convertToMb(storageInfo?.[currentService.service]?.host) }}
+                template(v-if="account.access_group == 1")
+                    .list(style="width:100%; padding:0;")
+                        h6 Trial service does not provide hosting.
+                template(v-else)
+                    .list
+                        h6 Registered Subdomain
+                        h5 {{ currentSubdomain }}
+                    .list
+                        h6 Host storage used
+                        h5 {{ convertToMb(storageInfo?.[currentService.service]?.host) }}
     .deleteWrap(:class="{'nonClickable' : !account?.email_verified}")
         .deleteInner(@click="!account?.email_verified ? false : openDeleteService = true;")
             .material-symbols-outlined.mid delete
@@ -171,6 +151,7 @@ let convertToMb = (size) => {
         return '-'
     }
 }
+
 let modifyServiceName = ref(false);
 let modifyCors = ref(false);
 let modifyKey = ref(false);
@@ -238,13 +219,18 @@ let editKey = () => {
 }
 let copy = (e) => {
     let currentTarget = e.currentTarget;
-    let doc = document.createElement('textarea');
-    doc.textContent = currentTarget.previousSibling.textContent;
-    doc.textContent = currentTarget.previousSibling.textContent;
-    document.body.append(doc);
-    doc.select();
-    document.execCommand('copy');
-    doc.remove();
+    // let doc = document.createElement('textarea');
+    // doc.textContent = currentTarget.previousSibling.textContent + '\n';
+    // document.body.append(doc);
+    // doc.select();
+    // document.execCommand('copy');
+    // doc.remove();
+    const range = document.createRange();
+      range.selectNode(currentTarget.previousSibling);
+      window.getSelection().removeAllRanges();
+      window.getSelection().addRange(range);
+      document.execCommand('copy');
+      window.getSelection().removeAllRanges();
 
     currentTarget.classList.add('copied');
     setTimeout(() => {
@@ -414,6 +400,12 @@ watch(modifyCors, () => {
             margin-right: 0;
         }
 
+        &.nonClick {
+            opacity: 0.5;
+            pointer-events: none;
+            cursor: default;
+        }
+
         &.hover {
             &.clicked {
                 // router-link 스타일 없에기
@@ -568,14 +560,10 @@ watch(modifyCors, () => {
         }
 
         .question {
-            display: flex;
-            flex-wrap: nowrap;
-            align-items: center;
             text-decoration: none;
             color: #293FE6;
             font-size: 0.8rem;
             font-weight: 500;
-            margin-top: 1rem;
 
             &.help {
                 position: absolute;
@@ -665,14 +653,13 @@ watch(modifyCors, () => {
     box-shadow: 3px 9px 6px 0px rgba(0, 0, 0, 0.15);
     margin-top: 1.5rem;
     user-select: text !important;
-
+    margin-bottom: 1rem;
+    
     .codeInner {
-        white-space: nowrap;
-        overflow: auto;
+        width: 100%;
+        white-space: pre;
+        overflow-x: auto;
         padding: 1rem;
-    }
-    .line {
-        display: inline-block;
         line-height: 1.4;
         font-size: 0.9rem;
     }

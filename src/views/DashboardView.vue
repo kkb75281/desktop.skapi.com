@@ -47,7 +47,8 @@ main#dashboard
                                 .material-symbols-outlined.big power_settings_new
                 template(v-else)
                     .box.noService
-                        h2 No Services
+                        h3 No Services
+                        br
                         p Get started by creating a new service.
 </template>
 
@@ -106,6 +107,17 @@ const regions = {
     'ap-southeast-1': 'SG',
     'ap-south-1': 'IN'
 }
+
+
+skapi.getProfile().then(u => {
+    if (u.misc === 'kdu') {
+        skapi.consumeTicket({ ticket_id: 'kdu' }).catch(err => console.log({ err })).finally(() => {
+            skapi.updateProfile({ misc: '' }).then(up => {
+                account.value = up;
+            });
+        });
+    }
+}).catch(err => err);
 </script>
 
 <style lang="less" scoped>
@@ -120,12 +132,12 @@ const regions = {
             max-width: 1200px;
             margin: 0 auto;
             padding-bottom: 2.1rem;
-    
+
             h2 {
                 display: inline-block;
                 font-weight: 700;
             }
-    
+
             span {
                 font-size: 1.2rem;
                 font-weight: 500;
@@ -143,7 +155,7 @@ const regions = {
         box-shadow: 8px 12px 36px rgba(0, 0, 0, 0.10);
         border-radius: 8px;
     }
-    
+
     .wrapper {
         max-width: 1200px;
         margin: 0 auto;
@@ -263,7 +275,7 @@ const regions = {
                             justify-content: space-between;
                             margin-bottom: 45px;
 
-                            > h5,
+                            >h5,
                             span {
                                 font-weight: 500;
                             }
@@ -359,17 +371,9 @@ const regions = {
                 &.noService {
                     width: 360px;
                     padding: 80px 0;
+                    text-align: center;
                     box-shadow: unset;
-                    display: flex;
-                    flex-wrap: wrap;
-                    align-items: center;
-                    justify-content: center;
                     color: rgba(0, 0, 0, 0.40);
-
-                    h2 {
-                        font-size: 28px;
-                        font-weight: 700;
-                    }
                 }
             }
         }

@@ -1,5 +1,5 @@
 import { ref, watch } from "vue";
-import { skapi } from "../../../main";
+import { skapi } from "@/main.js";
 
 export let selectedRecord = ref(null);
 export let records_data = ref([]);

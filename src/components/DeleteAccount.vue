@@ -29,6 +29,7 @@
                         .buttonWrap.block
                             button.no(type="button" @click="emits('close')") No, keep my account
                             button.yes(type="submit") Yes, delete my account
+                        br
                 template(v-if="step === 2")
                     form.reasonForm(@submit.prevent="reasonCheck" action="")
                         p Please tell us why you’re leaving :

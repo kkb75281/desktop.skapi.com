@@ -71,7 +71,7 @@ main#database
                                     option(value="<") &lt;
                                     option(value="<=") &lt;=
                                     option(value="~") ~
-                                .material-symbols-outlined.mid.selectArrowDown arrow_drop_down
+                                .material-symbols-outlined.mid.selectArrowDown(:class="{'disabled' : advancedForm.index.name === '$user_id'}") arrow_drop_down
                             input#indexValueSearchInput(
                                 type="text"
                                 name='index_value'
@@ -109,7 +109,7 @@ main#database
                         template(v-if='selectedRecord?.record_id')
                             .info 
                                 .label Record ID 
-                                .value(:class="{ disabled: recordInfoEdit }" :value="selectedRecord.record_id" style="width: calc(100% - 170px);") {{ selectedRecord.record_id }}
+                                .value(:class="{ disabled: recordInfoEdit }" :value="selectedRecord.record_id" style="width: calc(100% - 200px);") {{ selectedRecord.record_id }}
                                 .copy(v-if="!recordInfoEdit" @click="copy")
                                     .material-symbols-outlined.sml file_copy
 
@@ -242,7 +242,7 @@ main#database
 
                         .info 
                             .label Tags 
-                            .value(style="width: calc(100% - 170px);")
+                            .value.tags(style="width: calc(100% - 170px);")
                                 .tagsWrapper#tagsWrapper(@click.stop="e=>{if(recordInfoEdit && !promiseRunning) editTags=(()=>{if(!selectedRecord?.tags) {selectedRecord.tags = []} return selectedRecord.tags;})(); else if(ellipsisCheck('tagsWrapper')) hiddenTags=true;}")
                                     template(v-if="selectedRecord?.tags?.length")
                                         .tag(v-for="tag in selectedRecord?.tags") {{ tag }}
@@ -271,11 +271,11 @@ main#database
                                     .row(@click="()=>{ if(data.download) data.download(); else if((data.type === 'json' || data.type === 'string') && ellipsisCheck('data-context-' + index)) showRecordDataValue=data}" :class="{'disabled' : ['boolean', 'number', 'string'].includes(data.type), 'file': data.download}")
                                         //- .data {{ data.type }}
                                         .data 
-                                            .material-symbols-outlined.mid(v-if="data.type == 'string'") text_format
+                                            .material-symbols-outlined.mid(v-if="data.type == 'string'") font_download
                                             .material-symbols-outlined.mid(v-else-if="data.type == 'binary'") draft
                                             .material-symbols-outlined.mid(v-else-if="data.type == 'json'") data_object
-                                            .material-symbols-outlined.mid(v-else-if="data.type == 'boolean'") stroke_partial
-                                            .material-symbols-outlined.mid(v-else="data.type == 'number'") 123
+                                            .material-symbols-outlined.mid(v-else-if="data.type == 'boolean'") flaky
+                                            .material-symbols-outlined.mid(v-else="data.type == 'number'") pin
                                         .data
                                             .overflow(v-if="data?.key") {{ data.key }}
                                             .overflow(v-else) -
@@ -328,7 +328,7 @@ main#database
                             template(v-if="!recordInfoEdit" v-for="i in dataTrCount" :key="'extra-' + i")
                                 .row.empty
 
-                        .noData(v-else-if="!recordInfoEdit")
+                        .noData(v-else-if="!recordInfoEdit" style="margin-top:150px;")
                             .material-symbols-outlined.big scan_delete
                             p No data
 
@@ -337,7 +337,7 @@ main#database
                             span Add data
 
                 // right panel top right menu
-                .menu(v-if="!recordInfoEdit" @click.stop="showEdit = !showEdit") 
+                .menu(:class='{"nonClickable": !account.email_verified}' v-if="!recordInfoEdit" @click.stop="showEdit = !showEdit") 
                     // drop down menu (no edit)
                     .material-symbols-outlined.mid.clickable more_vert
                     #moreVert(v-if="showEdit" @click.stop style="--moreVert-right: 0")
@@ -355,7 +355,7 @@ main#database
                 // buttons (edit)
                 .editBtnWrap(v-if="recordInfoEdit") 
                     template(v-if="promiseRunning")
-                        img.loading(src="@/assets/img/loading.png" style="width:20px;height:20px;")
+                        img.loading(src="@/assets/img/loading.png" style="width:20px;height:20px;margin-top:4px;")
                     template(v-else)
                         button.cancel(type='button' @click="()=>{recordInfoEdit = false; selectedRecord = recordPage.list[selectedRecord.record_id] ? JSON.parse(JSON.stringify(recordPage.list[selectedRecord.record_id])) : null; }") 
                             .material-symbols-outlined.mid(v-if="isSmallScreen") close
@@ -439,8 +439,8 @@ main#database
             .actions 
                 .material-symbols-outlined.mid.refresh.clickable(@click='()=>{selectedRecord=null; refresh(fetchParams);}' :class='{"rotate_animation": fetching }') cached
                 .material-symbols-outlined.mid.create.clickable(:class="{'nonClickable' : !account.email_verified}" @click="()=>{ !account.email_verified ? false : selectedRecord = JSON.parse(JSON.stringify(createRecordTemplate)); recordInfoEdit=true; }") note_stack_add
-                .menu(@click.stop="!account.email_verified ? false : showRecordSetting = !showRecordSetting") 
-                    .material-symbols-outlined.mid.clickable(:class='{"nonClickable": !checkedRecords.length || !account.email_verified}') more_vert
+                .menu(:class='{"nonClickable": !checkedRecords.length || !account.email_verified}' @click.stop="!account.email_verified ? false : showRecordSetting = !showRecordSetting") 
+                    .material-symbols-outlined.mid.clickable more_vert
                     #moreVert(v-if="showRecordSetting" @click.stop style="--moreVert-left: 0")
                         .inner
                             .more(@click="()=>{recordDelete(); showRecordSetting=false;}")
@@ -457,7 +457,7 @@ main#database
                     tr
                         th(style="min-width:50px; padding-left:5px;")
                             .customCheckBox(:class='{"nonClickable": fetching || records && !records.length}')
-                                input#allRecords(type="checkbox" value='allRecords' @click="selectAll")
+                                input#allRecords(type="checkbox" value='allRecords' @click="selectAll" :checked="checkedRecords.length >= 10")
                                 label(for="allRecords")
                                     .material-symbols-outlined.mid.check check
                         th(style="min-width:150px;") Table Name
@@ -535,11 +535,11 @@ import { bodyClick } from '@/main.js';
 import { computed, nextTick, onBeforeMount, onBeforeUnmount, onMounted, reactive, ref, watch } from 'vue';
 import RecordDataOverlay from '@/views/Service/Records/RecordDataOverlay.vue';
 import DeleteRecordOverlay from '@/views/Service/Records/DeleteRecordOverlay.vue';
-import TagEditor from './TagEditor.vue';
-import { account, skapi } from '../../../main';
+import TagEditor from '@/views/Service/Records/TagEditor.vue';
+import { account, skapi } from '@/main.js';
 import { currentService } from '@/data.js';
-import { selectedRecord, records_data, indexValueType, remove_bin, specialChars } from './RecordEdit';
-import { searchInfo, launch, serviceRecords, getPage, records, selectNone, recordPage, currentPage, maxPage, fetching, refresh, nextPage, timeSince, fetchParams } from './RecordFetch';
+import { selectedRecord, records_data, indexValueType, remove_bin, specialChars } from '@/views/Service/Records/RecordEdit';
+import { searchInfo, launch, serviceRecords, getPage, records, selectNone, recordPage, currentPage, maxPage, fetching, refresh, nextPage, timeSince, fetchParams } from '@/views/Service/Records/RecordFetch';
 
 selectedRecord.value = null;
 launch();
@@ -829,7 +829,7 @@ let clearSearchFilter = () => {
 let selectAll = (e) => {
     let checkboxes = document.querySelectorAll('input[type="checkbox"]');
     checkboxes.forEach((checkbox) => {
-        checkbox.checked = e.target.checked
+        checkbox.checked = e.target.checked;
     })
     trackSelectedRecords();
 }
@@ -843,6 +843,9 @@ let trackSelectedRecords = () => {
         }
     })
     checkedRecords.value = checked;
+    if(checkedRecords.value[0] == 'allRecords') {
+        checkedRecords.value.shift();
+    }
 }
 
 // recordData edit
@@ -977,10 +980,11 @@ let saveRecordData = async () => {
         return
     }
 
+    // do not remove the code below!
     if (res.bin && Object.keys(res.bin).length > 0 && !Array.isArray(res.bin)) {
         for (let i in res.bin) {
             for (let j of res.bin[i]) {
-                delete j.getFile;
+                delete j.getFile; // deleting because pager cannot parse a function
             }
         }
     }
@@ -1290,6 +1294,12 @@ watch(() => selectedRecord.value, () => {
 
                         .customSelect {
                             left: 0;
+
+                            .selectArrowDown {
+                                &.disabled {
+                                    color: rgba(0, 0, 0, 0.25);
+                                }
+                            }
                         }
                     }
 
@@ -1641,10 +1651,10 @@ watch(() => selectedRecord.value, () => {
 
                     .copy {
                         position: absolute;
-                        top: 65%;
+                        // top: -2px;
                         right: 0;
-                        transform: translateY(-50%);
-                        color: rgba(0, 0, 0, 0.4);
+                        display: inline;
+                        color: rgba(0, 0, 0, 0.6);
                         cursor: pointer;
 
                         svg {
@@ -1794,6 +1804,7 @@ watch(() => selectedRecord.value, () => {
 
                 .row {
                     position: relative;
+                    height: 2rem;
                     padding: 0 20px;
                     border-radius: 4px;
                     font-size: 0.7rem;
@@ -1980,10 +1991,10 @@ watch(() => selectedRecord.value, () => {
                 }
 
                 .noData {
-                    position: absolute;
-                    left: 75%;
-                    top: 50%;
-                    transform: translate(-50%, -50%);
+                    // position: absolute;
+                    // left: 75%;
+                    // top: 50%;
+                    // transform: translate(-50%, -50%);
                     text-align: center;
                     font-size: 28px;
                     font-weight: 700;
@@ -2261,6 +2272,12 @@ watch(() => selectedRecord.value, () => {
                             padding-right: 1rem;
                         }
 
+                        &.center, &:last-child {
+                            > div {
+                                padding-right: 0;
+                            }
+                        }
+
                         &.center {
                             text-align: center;
 
@@ -2438,6 +2455,7 @@ watch(() => selectedRecord.value, () => {
 
                 .content {
                     .row {
+                        height: unset;
                         flex-wrap: wrap;
                     }
                     .data {
@@ -2445,6 +2463,15 @@ watch(() => selectedRecord.value, () => {
 
                         &:first-child {
                             text-align: left;
+                        }
+                    }
+                    .hidden {
+                        &.tags {
+                            left: unset;
+                            bottom: unset;
+                            right: 0;
+                            top: 50%;
+                            transform: translateY(-50%);
                         }
                     }
                 }
@@ -2485,11 +2512,22 @@ watch(() => selectedRecord.value, () => {
             .createForm {
                 .content {
                     .info {
+                        // &:last-child {
+                        //     .value {
+                        //         width: 100% !important;
+                        //         margin-top: 1rem;
+                        //     }
+                        // }
                         .label {
                             width: 100%;
                         }
                         .value {
                             width: unset !important;
+
+                            &.tags {
+                                width: 100% !important;
+                                margin-top: 1rem;
+                            }
                         }
                     }
                     .smallInfo {
