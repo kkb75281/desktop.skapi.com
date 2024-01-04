@@ -371,11 +371,6 @@ NavBar(style='--position: fixed; --background-color:#262626')
     br
     br
     br
-    br
-    br
-    br
-    br
-    br
 
     section.intact.banner(style="text-align:right;")
         h2 Huge Files, Fast Delivery 
@@ -384,11 +379,6 @@ NavBar(style='--position: fixed; --background-color:#262626')
 
         p(style="color:rgba(0,0,0,0.6);") You can upload huge files directly from HTML forms. #[br]Your data is served through the CDN network, without any extra configuration.
 
-    br
-    br
-    br
-    br
-    br
     br
     br
     br
@@ -406,7 +396,7 @@ NavBar(style='--position: fixed; --background-color:#262626')
                 .titWrap 
                     .icon
                         img(src="@/assets/img/landingpage/database.png")
-                    h5 Database
+                    h5.tit Database
                 
                 br
 
@@ -416,7 +406,7 @@ NavBar(style='--position: fixed; --background-color:#262626')
                 .titWrap 
                     .icon 
                         img(src="@/assets/img/landingpage/security.png")
-                    h5 Security
+                    h5.tit Security
                 
                 br
 
@@ -427,7 +417,7 @@ NavBar(style='--position: fixed; --background-color:#262626')
                 .titWrap 
                     .icon 
                         img(src="@/assets/img/landingpage/cloud.png")
-                    h5 Cloud Storage 
+                    h5.tit Cloud Storage 
                 
                 br
 
@@ -437,7 +427,7 @@ NavBar(style='--position: fixed; --background-color:#262626')
                 .titWrap 
                     .icon 
                         img(src="@/assets/img/landingpage/cdn.png")
-                    h5 CDN
+                    h5.tit CDN
                 
                 br
 
@@ -447,7 +437,7 @@ NavBar(style='--position: fixed; --background-color:#262626')
                 .titWrap 
                     .icon 
                         img(src="@/assets/img/landingpage/hosting.png")
-                    h5 Instant Hosting 
+                    h5.tit Instant Hosting 
                 
                 br
 
@@ -457,7 +447,7 @@ NavBar(style='--position: fixed; --background-color:#262626')
                 .titWrap 
                     .icon 
                         img(src="@/assets/img/landingpage/email.png")
-                    h5 Automated E-Mail Service
+                    h5.tit Automated E-Mail Service
                 
                 br
 
@@ -467,7 +457,7 @@ NavBar(style='--position: fixed; --background-color:#262626')
                 .titWrap 
                     .icon 
                         img(src="@/assets/img/landingpage/api.png")
-                    h5 API Bridge
+                    h5.tit API Bridge
                 
                 br
 
@@ -477,7 +467,7 @@ NavBar(style='--position: fixed; --background-color:#262626')
                 .titWrap 
                     .icon 
                         img(src="@/assets/img/landingpage/realtime.png")
-                    h5 Realtime Data
+                    h5.tit Realtime Data
                 
                 br
 
@@ -517,7 +507,7 @@ NavBar(style='--position: fixed; --background-color:#262626')
 
         br
 
-        a.customButton(v-if='account' href="/dashboard" style="background-color:#293FE6;color:white;") Start my project
+        a.customButton(v-if='account' href="/dashboard" style="background-color:#293FE6;color:white;") Start
         a.customButton(v-else href="/signup" style="background-color:#293FE6;color:white;") Sign up
 
     br
@@ -955,6 +945,10 @@ section {
     .titWrap {
       display: flex;
       align-items: center;
+
+      .tit {
+        font-size: 20px;
+      }
     }
     .icon {
       position: relative;
