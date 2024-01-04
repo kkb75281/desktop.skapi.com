@@ -309,6 +309,7 @@
         border: 0;
         border-radius: 8px;
         appearance: none;
+        background-color: unset;
         cursor: pointer;
     }
     
@@ -445,5 +446,183 @@
         border-right: 20px solid transparent;
         border-left: 20px solid #fafafa;
         rotate: -45deg;
+    }
+}
+
+// card
+.card {
+    padding: 1.4rem;
+    color: unset;
+    text-decoration: unset;
+    position: relative;
+    border: 1px solid rgba(0, 0, 0, 0.15);
+    overflow: hidden;
+
+    a {
+        text-decoration: none;
+        color: unset;
+    }
+
+    &.clicked {
+        &:hover {
+            background-color: rgba(41, 63, 230, 0.05) !important;
+        }
+        &:active {
+            box-shadow: 0 0 0 4px #A5AFFF inset !important;
+        }
+    }
+
+    &:not(.clicked) {
+        .inner {
+            .title {
+                .arrowIcon {
+                    position: relative;
+
+                    &::before {
+                        position: absolute;
+                        content: '';
+                        left: 50%;
+                        top: 50%;
+                        transform: translate(-50%, -50%);
+                        width: 40px;
+                        height: 40px;
+                        background-color: unset;
+                        border-radius: 50%;
+                    }
+
+                    &:hover::before {
+                        background-color: rgba(41, 63, 230, 0.1);
+                    }
+                    &:active::before {
+                        background-color: rgba(41, 63, 230, 0.2);
+                    }
+                }
+            }
+        }
+    }
+
+    .inner {
+        .title {
+            position: relative;
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 53px;
+
+            &::after {
+                position: absolute;
+                content: '';
+                width: 200%;
+                height: 1px;
+                background: rgba(0, 0, 0, 0.15);
+                left: 50%;
+                bottom: -28px;
+                transform: translateX(-50%);
+            }
+
+            h4 {
+                font-weight: 500;
+            }
+
+            .arrowIcon {
+                margin: 0 !important;
+            }
+
+            .logoTitle {
+                * {
+                    display: inline-block;
+                    vertical-align: middle;
+                }
+            }
+        }
+
+        .contWrap {
+            display: flex;
+            flex-wrap: wrap;
+
+            &.noWrap {
+                flex-wrap: nowrap;
+
+                .cont {
+                    margin-bottom: 0;
+                }
+            }
+
+            .cont {
+                width: 50%;
+                margin-bottom: 25px;
+
+                * {
+                    font-weight: 400;
+                }
+
+                h6 {
+                    color: rgba(0, 0, 0, 0.40);
+                }
+
+                p {
+                    font-size: 0.8rem;
+                    padding-top: 12px;
+                    color: rgba(0, 0, 0, 0.60);
+
+                    &.ellipsis {
+                        white-space: nowrap;
+                        overflow: hidden;
+                        text-overflow: ellipsis;
+                    }
+                }
+
+                .customSelect {
+                    select {
+                        font-size: 0.8rem;
+                        padding-top: 12px;
+                        color: rgba(0, 0, 0, 0.60);
+                    }
+                    .selectArrowDown {
+                        color: rgba(0, 0, 0, 0.60);
+                    }
+                }
+            }
+        }
+
+        .serviceActive {
+            position: absolute;
+            width: 36px;
+            height: 36px;
+            right: 29px;
+            bottom: 27px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #fff;
+            background-color: rgba(0, 0, 0, 0.25);
+            border-radius: 50%;
+
+            &.active {
+                background-color: rgba(90, 216, 88, 1);
+            }
+
+            .toggleBg {
+                position: relative;
+                width: 63px;
+                height: 32px;
+                border-radius: 16px;
+                background-color: rgba(0, 0, 0, 0.25);
+                transition: all 1s;
+
+                .toggleBtn {
+                    position: absolute;
+                    width: 26px;
+                    height: 26px;
+                    right: unset;
+                    left: 3px;
+                    top: 50%;
+                    transform: translateY(-50%);
+                    border-radius: 50%;
+                    background-color: #eee;
+                    transition: all 1s;
+                    cursor: pointer;
+                }
+            }
+        }
     }
 }

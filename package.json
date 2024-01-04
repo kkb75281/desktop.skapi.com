@@ -5,7 +5,8 @@
   "scripts": {
     "dev": "vite --host --force",
     "build": "vite build",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "pullex": "(cd src/skapi-extensions;git pull)"
   },
   "dependencies": {
     "less": "^4.1.3",

@@ -73,78 +73,60 @@ main#service
                         h5 {{ currentService.api_key || 'No key' }}
                             .material-symbols-outlined.mid.pen.clickable(:class="{'nonClickable' : !account?.email_verified}" @click="editKey") edit
 
-        .info.card
-            .inner
+        router-link.info.hover.user.clicked(:to='`/dashboard/${currentService.service}/users`')
+            .titleWrap
                 .title 
-                    .logoTitle
-                        .material-symbols-outlined.big group
-                        h4 Users
-                    router-link.material-symbols-outlined.arrowIcon.mid(:to='`/dashboard/${currentService.service}/users`') arrow_forward_ios
-                .contWrap.noWrap
-                    .cont 
-                        h6 # of Users
-                        p {{ currentService.users }}
-                    .cont(style="width:unset;")
-                        h6 Creating User
-                        .customSelect 
-                            select(:value="currentService.service.prevent_signup ? 'admin' : 'anyone'" @change="(e) => changeCreateUserMode(e)")
-                                option(value="admin") Only Admin allowed 
-                                option(value="anyone") Anyone allowed
-                            .material-symbols-outlined.mid.search.selectArrowDown(style="right:-30px;top:66%;") arrow_drop_down
+                    .material-symbols-outlined.big group
+                    h4 Users
+            .listWrap.noWrap
+                .list
+                    h6 # of Users
+                    h5 {{ currentService.users }}
 
-        .info.card
-            .inner
+        router-link.info.hover.record.clicked(:to='`/dashboard/${currentService.service}/records`')
+            .titleWrap
                 .title 
-                    .logoTitle
-                        .material-symbols-outlined.big database
-                        h4 Database
-                    router-link.material-symbols-outlined.arrowIcon.mid(:to='`/dashboard/${currentService.service}/records`') arrow_forward_ios
-                .contWrap.noWrap
-                    .cont 
-                        h6 # of database storage Used
-                        p {{ convertToMb(storageInfo?.[currentService.service]?.database) }}
-                    .cont 
-                        h6 # of cloud storage Used
-                        p {{ convertToMb(storageInfo?.[currentService.service]?.cloud) }}
-
-        .info.card
-            .inner
+                    .material-symbols-outlined.big database
+                    h4 Database
+            .listWrap.noWrap
+                .list
+                    h6 # of database storage Used
+                    h5 {{ convertToMb(storageInfo?.[currentService.service]?.database) }}
+                .list
+                    h6 # of cloud storage Used
+                    h5 {{ convertToMb(storageInfo?.[currentService.service]?.cloud) }}
+        router-link.info.hover.mail.clicked(:to='`/dashboard/${currentService.service}/mail`' :class="{'nonClick' : account.access_group == 1}")
+            .titleWrap
                 .title 
-                    .logoTitle
-                        .material-symbols-outlined.big mail
-                        h4 Mail
-                    router-link.material-symbols-outlined.arrowIcon.mid(:to='`/dashboard/${currentService.service}/mail`' :class="{'nonClick' : account.access_group == 1}") arrow_forward_ios
-                .contWrap.noWrap
-                    template(v-if="account.access_group == 1")
-                        .cont(style="width:100%; padding:0;")
-                            h6 Trial service does not provide mail.
-                    template(v-else)
-                        .cont 
-                            h6 # Subscribers
-                            p {{ currentService.newsletter_subscribers }}
-                        .cont 
-                            h6 # Mail storage used 
-                            p {{ convertToMb(storageInfo?.[currentService.service]?.email) }}
-
-        .info.card
-            .inner
+                    .material-symbols-outlined.big mail
+                    h4 Mail
+            .listWrap.noWrap
+                template(v-if="account.access_group == 1")
+                    .list(style="width:100%; padding:0;")
+                        h6 Trial service does not provide mail.
+                template(v-else)
+                    .list
+                        h6 # Subscribers
+                        h5 {{ currentService.newsletter_subscribers }}
+                    .list 
+                        h6 # Mail storage used 
+                        h5 {{ convertToMb(storageInfo?.[currentService.service]?.email) }}
+        router-link.info.hover.domain.clicked(:to='`/dashboard/${currentService.service}/subdomain`' :class="{'nonClick' : account.access_group == 1}")
+            .titleWrap
                 .title 
-                    .logoTitle
-                        .material-symbols-outlined.big language
-                        h4 Hosting
-                    router-link.material-symbols-outlined.arrowIcon.mid(:to='`/dashboard/${currentService.service}/subdomain`' :class="{'nonClick' : account.access_group == 1}") arrow_forward_ios
-                .contWrap.noWrap
-                    template(v-if="account.access_group == 1")
-                        .cont(style="width:100%; padding:0;")
-                            h6 Trial service does not provide hosting.
-                    template(v-else)
-                        .cont 
-                            h6 Registered Subdomain
-                            p {{ currentSubdomain }}
-                        .cont 
-                            h6 Host storage used
-                            p {{ convertToMb(storageInfo?.[currentService.service]?.host) }}
-
+                    .material-symbols-outlined.big language
+                    h4 Hosting
+            .listWrap.noWrap
+                template(v-if="account.access_group == 1")
+                    .list(style="width:100%; padding:0;")
+                        h6 Trial service does not provide hosting.
+                template(v-else)
+                    .list
+                        h6 Registered Subdomain
+                        h5 {{ currentSubdomain }}
+                    .list
+                        h6 Host storage used
+                        h5 {{ convertToMb(storageInfo?.[currentService.service]?.host) }}
     .deleteWrap(:class="{'nonClickable' : !account?.email_verified}")
         .deleteInner(@click="!account?.email_verified ? false : openDeleteService = true;")
             .material-symbols-outlined.mid delete
@@ -343,22 +325,6 @@ let enableDisableToggle = () => {
         openDisableService.value = true;
     }
 }
-let changeCreateUserMode = (e) => {
-    let prevent;
-    e.target.parentNode.classList.add('nonClickable');
-
-    if(e.target.value == 'admin') {
-        prevent = true;
-    } else {
-        prevent = false;
-    }
-
-    onlyAdminCreateUsers(currentService.value.service, prevent).then(() => {
-        setTimeout(() => {
-            e.target.parentNode.classList.remove('nonClickable');
-        }, 1000)
-    })
-}
 let disableService = (e) => {
     if (enableDisablePromise.value) {
         return;
@@ -458,10 +424,6 @@ watch(modifyCors, () => {
                 background-color: #F5F7FF;
                 // filter: drop-shadow(8px 12px 36px rgba(255, 255, 255, 0.30));
             }
-        }
-
-        &.card {
-            padding-top: 1.4rem;
         }
 
         .title {
@@ -827,7 +789,7 @@ watch(modifyCors, () => {
 @media (max-width:767px) {
     .infoWrap {
         .info {
-            >.title {
+            .title {
                 display: block;
 
                 .name {
