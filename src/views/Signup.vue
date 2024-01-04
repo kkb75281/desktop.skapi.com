@@ -65,17 +65,13 @@
     br
 
     // google login button
-
-    // https://developers.google.com/identity/gsi/web/reference/html-reference#element_with_class_g_id_signin
-    // ** button customizing seems to be deprecated **
-    #g_id_onload(data-client_id="412167460837-9mfmmrapd4ndlcv28pr4ivnrif3bfct3.apps.googleusercontent.com" data-callback="googleCredentialResponse")
-    .g_id_signin(data-type="standard" data-size='large' data-width='400' data-text="signup_with")
+    a(:href="googleOpenId") Google Login (OpenID)
 </template>
 
 <script setup>
 import { onBeforeUnmount, onMounted, reactive, ref } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
-import { skapi, account } from '@/main.js';
+import { skapi, account, googleOpenId } from '@/main.js';
 
 let route = useRoute();
 let router = useRouter();
@@ -100,41 +96,6 @@ if(route.query?.hasOwnProperty('kdu')) {
 
 onMounted(() => {
     document.querySelector('body').classList.add('fa');
-
-     
-    // Google Sign In code =====================
-
-    // load google sign in script
-    let script = document.createElement('script');
-    script.src = 'https://accounts.google.com/gsi/client';
-    script.async = true;
-    script.defer = true;
-    document.getElementById('openid_script').appendChild(script);
-
-    // google sign in callback
-    window.googleCredentialResponse = (googleUser) => {
-        let jwt = googleUser.credential;
-        let clientId = "412167460837-9mfmmrapd4ndlcv28pr4ivnrif3bfct3.apps.googleusercontent.com"
-        let keyUrl = "https://www.googleapis.com/oauth2/v3/certs";
-
-        // ** do something while logging in **
-        // OpenID login does not require signup
-
-        skapi.jwtLogin({
-            jwt,
-            clientId,
-            keyUrl,
-            provider: 'ggl'
-        }).then(res => {
-            window.localStorage.setItem('remember', remember.toString());
-
-            // logged in!
-            account.value = res;
-            router.push({ path: '/dashboard' });
-        });
-    };
-
-    // Google Sign In code end =================
 })
 onBeforeUnmount(() => {
     document.querySelector('body').classList.remove('fa'); // <- 이게 필요하지 않을까요?
