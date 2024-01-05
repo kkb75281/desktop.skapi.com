@@ -6,25 +6,7 @@ import App from './App.vue'
 import router from './router'
 import Admin from '@/skapi-extensions/js/admin.js'
 
-let skapi;
-let redirect_uri;
-
-if(process.env.NODE_ENV == 'development') {
-    let etc = {
-        hostDomain: 'skapi.app',
-        target_cdn: 'd1wrj5ymxrt2ir'
-    }
-    
-    let regions = {
-        KR: 'ap-northeast-1',
-    };
-    
-    skapi = new Admin("eu71zettahertzesskpi", etc, regions);
-    redirect_uri = "http://localhost:5173";
-} else if(process.env.NODE_ENV == 'production') {
-    skapi = new Admin("us31zettahertzesskpi");
-    redirect_uri = "https://www.skapi.com"
-}
+let skapi = new Admin(import.meta.env.VITE_ADMIN, JSON.parse(import.meta.env.VITE_ETC), JSON.parse(import.meta.env.VITE_REG));
 
 let account = ref('pending');
 
@@ -40,6 +22,7 @@ function generateNonce(length = 32) {
 // !change to below in production!
 // let redirect_uri = "https://www.skapi.com"
 // let redirect_uri = "http://localhost:5173"; // for local development
+let redirect_uri = import.meta.env.VITE_URI;
 let googleOpenId = `https://accounts.google.com/o/oauth2/v2/auth?scope=https%3A//www.googleapis.com/auth/drive.metadata.readonly&include_granted_scopes=true&state=ggl&response_type=token id_token&client_id=412167460837-9mfmmrapd4ndlcv28pr4ivnrif3bfct3.apps.googleusercontent.com&redirect_uri=${encodeURIComponent(redirect_uri)}&&nonce=${generateNonce()}`;
 
 let url = window.location;
