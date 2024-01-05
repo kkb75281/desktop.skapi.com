@@ -2,8 +2,7 @@
 main#dashboard
     .titleWrap
         .inner 
-            h2 Dashboard
-            span All Services
+            h2 My Services
     .container
         .wrapper(v-if="!serviceFetching")
             // service 로딩이 완료 되면 표시
@@ -49,11 +48,14 @@ main#dashboard
                                 .material-symbols-outlined.big power_settings_new
                             .serviceActive(v-else :class="{'active': service.active == 1 }")
                                 .material-symbols-outlined.big power_settings_new
+
                 template(v-else)
                     .box.noService
                         h3 No Services
                         br
                         p Get started by creating a new service.
+        .loadingWrap(v-else)
+            img.loading(src="@/assets/img/loading.png")
 </template>
 
 <script setup>
@@ -158,6 +160,13 @@ skapi.getProfile().then(u => {
         background-color: #fafafa;
         box-shadow: 8px 12px 36px rgba(0, 0, 0, 0.10);
         border-radius: 8px;
+    }
+
+    .loadingWrap {
+        height: 240px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
     }
 
     .wrapper {
