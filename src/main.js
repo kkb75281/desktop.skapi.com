@@ -19,6 +19,8 @@ function generateNonce(length = 32) {
     return text;
 }
 
+console.log(import.meta.env)
+
 // !change to below in production!
 // let redirect_uri = "https://www.skapi.com"
 // let redirect_uri = "http://localhost:5173"; // for local development

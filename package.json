@@ -4,9 +4,8 @@
   "private": true,
   "scripts": {
     "dev": "vite --host --force",
-    "build": "vite build",
+    "build": "cross-env NODE_ENV=production vite build",
     "build_dev": "cross-env NODE_ENV=development vite build",
-    "build_prod": "cross-env NODE_ENV=production vite build",
     "preview": "vite preview",
     "pullex": "(cd src/skapi-extensions;git pull)"
   },
