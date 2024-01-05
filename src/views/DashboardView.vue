@@ -167,6 +167,11 @@ skapi.getProfile().then(u => {
         display: flex;
         align-items: center;
         justify-content: center;
+
+        img { 
+            width: 30px;
+            height: 30px;
+        }
     }
 
     .wrapper {
