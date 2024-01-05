@@ -87,7 +87,7 @@ main#service
                     .cont(style="width:unset;")
                         h6 Creating User
                         .customSelect 
-                            select(:value="currentService.service.prevent_signup ? 'admin' : 'anyone'" @change="(e) => changeCreateUserMode(e)")
+                            select(:value="currentService.prevent_signup ? 'admin' : 'anyone'" @change="(e) => changeCreateUserMode(e)")
                                 option(value="admin") Only Admin allowed 
                                 option(value="anyone") Anyone allowed
                             .material-symbols-outlined.mid.search.selectArrowDown(style="right:-30px;top:66%;") arrow_drop_down
@@ -158,7 +158,6 @@ import { computed, nextTick, ref, watch } from 'vue';
 import { useRouter } from 'vue-router';
 import { currentService, storageInfo } from '@/data.js';
 import { skapi, account } from '@/main.js';
-import { onlyAdminCreateUsers } from '@/views/Service/functions.js'
 import DisableServiceOverlay from '@/views/Service/DisableServiceOverlay.vue';
 import DeleteService from '@/components/DeleteService.vue';
 
@@ -344,20 +343,13 @@ let enableDisableToggle = () => {
     }
 }
 let changeCreateUserMode = (e) => {
-    let prevent;
     e.target.parentNode.classList.add('nonClickable');
 
-    if(e.target.value == 'admin') {
-        prevent = true;
-    } else {
-        prevent = false;
-    }
-
-    onlyAdminCreateUsers(currentService.value.service, prevent).then(() => {
-        setTimeout(() => {
-            e.target.parentNode.classList.remove('nonClickable');
-        }, 1000)
-    })
+    skapi.setServiceOption({
+        serviceId: currentService.value.service, option: {'prevent_signup': e.target.value == 'admin' ? true : false}
+    }).then(() => {
+        e.target.parentNode.classList.remove('nonClickable');
+    }).catch(err => console.log(err));
 }
 let disableService = (e) => {
     if (enableDisablePromise.value) {
