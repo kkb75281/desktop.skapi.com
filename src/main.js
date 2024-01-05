@@ -20,6 +20,8 @@ import Admin from '@/skapi-extensions/js/admin.js'
 let skapi = new Admin("us31zettahertzesskpi");
 let account = ref('pending');
 
+console.log(import.meta.env.NODE_ENV)
+
 function generateNonce(length = 32) {
     let text = "";
     const possible = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";

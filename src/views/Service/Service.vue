@@ -87,7 +87,7 @@ main#service
                     .cont(style="width:unset;")
                         h6 Creating User
                         .customSelect 
-                            select(:value="currentService.service.prevent_signup ? 'admin' : 'anyone'" @change="(e) => changeCreateUserMode(e)")
+                            select(:value="currentService.prevent_signup ? 'admin' : 'anyone'" @change="(e) => changeCreateUserMode(e)")
                                 option(value="admin") Only Admin allowed 
                                 option(value="anyone") Anyone allowed
                             .material-symbols-outlined.mid.search.selectArrowDown(style="right:-30px;top:66%;") arrow_drop_down
@@ -354,9 +354,7 @@ let changeCreateUserMode = (e) => {
     }
 
     onlyAdminCreateUsers(currentService.value.service, prevent).then(() => {
-        setTimeout(() => {
-            e.target.parentNode.classList.remove('nonClickable');
-        }, 1000)
+        e.target.parentNode.classList.remove('nonClickable');
     })
 }
 let disableService = (e) => {
