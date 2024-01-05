@@ -19,11 +19,7 @@ function generateNonce(length = 32) {
     return text;
 }
 
-console.log(import.meta.env)
-
 // !change to below in production!
-// let redirect_uri = "https://www.skapi.com"
-// let redirect_uri = "http://localhost:5173"; // for local development
 let redirect_uri = import.meta.env.VITE_URI;
 let googleOpenId = `https://accounts.google.com/o/oauth2/v2/auth?scope=https%3A//www.googleapis.com/auth/drive.metadata.readonly&include_granted_scopes=true&state=ggl&response_type=token id_token&client_id=412167460837-9mfmmrapd4ndlcv28pr4ivnrif3bfct3.apps.googleusercontent.com&redirect_uri=${encodeURIComponent(redirect_uri)}&&nonce=${generateNonce()}`;
 
