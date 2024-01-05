@@ -29,8 +29,8 @@ main#accountSetting(v-if='account')
                                         button.save(type="submit") Save
                         template(v-else) 
                             span {{ account.email }}
-                    .btn(v-if="!changeEmail" @click="email=account.email; changeEmail = true;") Change email
-                    .btnIcon(v-if="!changeEmail" @click="email=account.email; changeEmail = true;")
+                    .btn(v-if="!changeEmail && !account.approved.includes('ggl')" @click="email=account.email; changeEmail = true;") Change email
+                    .btnIcon(v-if="!changeEmail && !account.approved.includes('ggl')" @click="email=account.email; changeEmail = true;")
                         .material-symbols-outlined.mid.clickable edit
                 .row
                     h6.tit Verify Email
@@ -56,7 +56,7 @@ main#accountSetting(v-if='account')
                             label(for="subscribeCheckbox")
                                 span Subscribe to Skapi newsletter
                                 .material-symbols-outlined.mid.check(:style="{cursor: disableNewsletterCheckbox ? 'default' : null }") check
-                .row
+                .row(v-if="!account.approved.includes('ggl')")
                     h6.tit Password
                     .cont(v-if='passwordChanged')
                         .material.verified

@@ -6,18 +6,18 @@ import App from './App.vue'
 import router from './router'
 import Admin from '@/skapi-extensions/js/admin.js'
 
-// let etc = {
-//     hostDomain: 'skapi.app',
-//     target_cdn: 'd1wrj5ymxrt2ir'
-// }
+let etc = {
+    hostDomain: 'skapi.app',
+    target_cdn: 'd1wrj5ymxrt2ir'
+}
 
-// let regions = {
-//     KR: 'ap-northeast-1',
-// };
+let regions = {
+    KR: 'ap-northeast-1',
+};
 
-// let skapi = new Admin("eu71zettahertzesskpi", etc, regions); // for testing
+let skapi = new Admin("eu71zettahertzesskpi", etc, regions); // for testing
 
-let skapi = new Admin("us31zettahertzesskpi");
+// let skapi = new Admin("us31zettahertzesskpi");
 let account = ref('pending');
 
 function generateNonce(length = 32) {
