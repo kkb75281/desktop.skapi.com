@@ -15,10 +15,10 @@ header#navBar(style='--position: relative;')
             .topRoute(v-if="route.params.service && currentService" ref="topRoute") 
                 ol
                     li 
-                        router-link(to="/dashboard") Dashboard
+                        router-link(to="/dashboard") My Services
                     li(:class="{'active': route.name == 'service'}")
                         router-link(:to="`/dashboard/${currentService.service}`") 
-                            h5 {{ currentService.name }}
+                            h5 Dashboard
                     li(v-if="route.name == 'users'" :class="{'active': route.name == 'users'}")
                         router-link(:to="`/dashboard/${currentService.service}/users`") Users
                     li(v-if="route.name == 'records'" :class="{'active': route.name == 'records'}")
@@ -28,7 +28,7 @@ header#navBar(style='--position: relative;')
                     li(v-if="route.name == 'subdomain'" :class="{'active': route.name == 'subdomain'}")
                         router-link(:to="`/dashboard/${currentService.service}/records`") Hosting
                 router-link.service(:to="`/dashboard/${currentService.service}`") 
-                    h5 {{ currentService.name }}
+                    h5 Dashboard
             .topMenu(:class="{'white' : route.name == 'home'}")
                 template(v-if="account")
                     ul
@@ -194,10 +194,10 @@ onBeforeUnmount(() => {
                     }
     
                     h5 {
-                        max-width: 80px;
-                        white-space: nowrap;
-                        overflow: hidden;
-                        text-overflow: ellipsis;
+                        // max-width: 80px;
+                        // white-space: nowrap;
+                        // overflow: hidden;
+                        // text-overflow: ellipsis;
                     }
     
                     &:last-child {
@@ -447,7 +447,8 @@ onBeforeUnmount(() => {
     }
 }
 
-@media (max-width:1023px) {
+// @media (max-width:1023px) {
+@media (max-width:1110px) {
     #top {
         .left {
             width: 65px;
