@@ -33,11 +33,20 @@
         .error(v-if="error")
             .material-symbols-outlined.mid error
             span {{ error }}
+        br
+        br
         .bottom
             template(v-if="promiseRunning")
                 img.loading(src="@/assets/img/loading.png")
             template(v-else)
                 button.login Login
+                br
+                br
+                a.googleLogin(:href="googleOpenId")
+                    img(src="@/assets/img/icon/google.svg")
+                    span Sign in with Google
+                br
+                br
                 RouterLink.forgot(:to="{name: 'forgotpassword'}") Forgot Email & Password?
                 .signup 
                     span No account?
@@ -47,7 +56,9 @@
     br
 
     // google login button
-    a(:href="googleOpenId") Google Login (OpenID)
+    a.googleLogin(:href="googleOpenId")
+        img(src="@/assets/img/icon/google.svg")
+        span Sign in with Google
 </template>
 
 <script setup>
@@ -179,7 +190,7 @@ let login = () => {
             align-items: center;
             justify-content: space-between;
             flex-direction: row-reverse;
-            margin-top: 48px;
+            // margin-top: 48px;
 
             .forgot {
                 display: none;
@@ -212,7 +223,33 @@ let login = () => {
                 font-weight: 700;
                 cursor: pointer;
             }
+
+            .googleLogin {
+                display: none;
+            }
         }
+    }
+}
+
+.googleLogin {
+    display: block;
+    padding: 8px 0;
+    border-radius: 8px;
+    border: 1px solid #D9D9D9;
+    text-decoration: none;
+    text-align: center;
+
+    img {
+        display: inline-block;
+        vertical-align: middle;
+        width: 24px;
+        height: 24px;
+        margin-right: 7px;
+    }
+    span {
+        font-size: 16px;
+        font-weight: 700;
+        color: #293FE6;
     }
 }
 
@@ -221,6 +258,10 @@ let login = () => {
         label {
             align-items: unset;
         }
+    }
+
+    .googleLogin{
+        display: none;
     }
 
     .container {
@@ -240,12 +281,13 @@ let login = () => {
             }
 
             .bottom {
+                height: unset;
                 display: block;
                 text-align: center;
 
                 .login {
                     width: 100%;
-                    margin-bottom: 40px;
+                    // margin-bottom: 40px;
                 }
 
                 .forgot {
@@ -253,6 +295,10 @@ let login = () => {
                     margin-bottom: 28px;
                     text-decoration: none;
                     color: #293FE6;
+                }
+
+                .googleLogin {
+                    display: block;
                 }
             }
         }
