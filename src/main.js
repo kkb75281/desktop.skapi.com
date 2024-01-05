@@ -29,15 +29,16 @@ function generateNonce(length = 32) {
     return text;
 }
 
-const nonce = generateNonce();
-
 // !change to below in production!
 // let redirect_uri = "https://www.skapi.com"
-let redirect_uri = "http://localhost:5173";
-let googleOpenId = `https://accounts.google.com/o/oauth2/v2/auth?scope=https%3A//www.googleapis.com/auth/drive.metadata.readonly&include_granted_scopes=true&state=ggl&response_type=token id_token&client_id=412167460837-9mfmmrapd4ndlcv28pr4ivnrif3bfct3.apps.googleusercontent.com&redirect_uri=${encodeURIComponent(redirect_uri)}&&nonce=${nonce}`;
+let redirect_uri = "http://localhost:5173"; // for local development
+let googleOpenId = `https://accounts.google.com/o/oauth2/v2/auth?scope=https%3A//www.googleapis.com/auth/drive.metadata.readonly&include_granted_scopes=true&state=ggl&response_type=token id_token&client_id=412167460837-9mfmmrapd4ndlcv28pr4ivnrif3bfct3.apps.googleusercontent.com&redirect_uri=${encodeURIComponent(redirect_uri)}&&nonce=${generateNonce()}`;
 
 let url = window.location;
+
 if (url.hash) {
+    // google login
+
     // idtoken returned in url
     let query = url.hash.slice(1).split('&');
     let params = {};
@@ -52,8 +53,7 @@ if (url.hash) {
             idToken: params.id_token,
             clientId: '412167460837-9mfmmrapd4ndlcv28pr4ivnrif3bfct3.apps.googleusercontent.com',
             keyUrl: 'https://www.googleapis.com/oauth2/v3/certs',
-            provider: 'ggl',
-            nonce: nonce
+            provider: 'ggl'
         }).then(res => {
             window.localStorage.setItem('remember', 'true');
             // logged in!
