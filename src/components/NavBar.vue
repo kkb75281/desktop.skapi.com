@@ -61,6 +61,7 @@ header#navBar(style='--position: relative;')
                             router-link.signup(to="/signup") Sign-up
         .prof(v-if="accountInfo && account" @click.stop)
             .member 
+                img(v-if="account.approved.includes('ggl')" src="@/assets/img/icon/google.svg" style="display:inline-block;width:20px;height:20px;vertical-align:middle;margin-right:10px;")
                 span {{ account.email }}
             .settings 
                 .setting(@click="navigateToPage")
