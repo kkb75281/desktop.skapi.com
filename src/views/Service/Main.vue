@@ -130,9 +130,11 @@ else {
 
             p {
                 margin-left: 13px;
+                font-weight: 500;
             }
         }
         .menuWrap {
+            margin-top: 63px;
             padding: 0 16px;
 
             .menu {
@@ -189,7 +191,7 @@ else {
     }
     .right {
         display: inline-block;
-        width: calc(100vw - 240px);
+        width: calc(100vw - 250px);
         padding: 0 20px 20px 0;
         flex-grow: 1;
     }
