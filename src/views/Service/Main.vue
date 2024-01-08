@@ -114,10 +114,10 @@ else {
     .left {
         display: inline-block;
         vertical-align: top;
-        padding: 0 16px;
-
+        
         .back {
             display: block;
+            margin: 0 16px;
             padding: 12px 20px;
             color: #293FE6;
             text-decoration: none;
@@ -133,6 +133,8 @@ else {
             }
         }
         .menuWrap {
+            padding: 0 16px;
+
             .menu {
                 position: relative;
                 display: block;
@@ -170,10 +172,6 @@ else {
                     cursor: default;
                 }
 
-                // &:first-child {
-                //     margin-bottom: 66px;
-                // }
-
                 svg {
                     display: inline-block;
                     width: 28px;
@@ -200,6 +198,11 @@ else {
 @media (max-width:1023px) {
     #serviceMain {
         .left {
+            .back {
+                p {
+                    display: none;
+                }
+            }
             .menuWrap {
                 .menu {
                     h3 {
