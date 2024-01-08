@@ -6,6 +6,8 @@ import App from './App.vue'
 import router from './router'
 import Admin from '@/skapi-extensions/js/admin.js'
 
+console.log(import.meta.env.MODE)
+
 let skapi = new Admin(import.meta.env.VITE_ADMIN, JSON.parse(import.meta.env.VITE_ETC), JSON.parse(import.meta.env.VITE_REG));
 
 let account = ref('pending');
