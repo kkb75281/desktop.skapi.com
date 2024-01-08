@@ -40,11 +40,11 @@
                 img.loading(src="@/assets/img/loading.png")
             template(v-else)
                 button.login Login
-                br
-                br
-                a.googleLogin(:href="googleOpenId")
-                    img(src="@/assets/img/icon/google.svg")
-                    span Sign in with Google
+                //- br
+                //- br
+                //- a.googleLogin(:href="googleOpenId")
+                //-     img(src="@/assets/img/icon/google.svg")
+                //-     span Sign in with Google
                 br
                 br
                 RouterLink.forgot(:to="{name: 'forgotpassword'}") Forgot Email & Password?
@@ -56,9 +56,9 @@
     br
 
     // google login button
-    a.googleLogin(:href="googleOpenId")
-        img(src="@/assets/img/icon/google.svg")
-        span Sign in with Google
+    //- a.googleLogin(:href="googleOpenId")
+    //-     img(src="@/assets/img/icon/google.svg")
+    //-     span Sign in with Google
 </template>
 
 <script setup>

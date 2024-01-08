@@ -65,7 +65,7 @@
     br
 
     // google login button
-    a(:href="googleOpenId") Google Login (OpenID)
+    //- a(:href="googleOpenId") Google Login (OpenID)
 </template>
 
 <script setup>
