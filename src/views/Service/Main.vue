@@ -1,10 +1,13 @@
 <template lang="pug">
 #serviceMain(v-if='currentService')
     .left
+        router-link.back(:to="`/dashboard`")
+            .material-symbols-outlined.mid arrow_back_ios
+            p My services
         nav.menuWrap 
             router-link.menu(:to="`/dashboard/${currentService.service}`" :class="{'active': route.name == 'service'}")
                 .material-symbols-outlined.big home
-                h3 Home
+                h3 Dashboard
             router-link.menu(:to="`/dashboard/${currentService.service}/users`" :class="{'active': route.name == 'users'}")
                 .material-symbols-outlined.big supervisor_account
                 h3 Users
@@ -111,10 +114,25 @@ else {
     .left {
         display: inline-block;
         vertical-align: top;
-        
-        .menuWrap {
-            padding: 0 16px;
+        padding: 0 16px;
 
+        .back {
+            display: block;
+            padding: 12px 20px;
+            color: #293FE6;
+            text-decoration: none;
+            margin-bottom: 4px;
+
+            * {
+                display: inline-block;
+                vertical-align: middle;
+            }
+
+            p {
+                margin-left: 13px;
+            }
+        }
+        .menuWrap {
             .menu {
                 position: relative;
                 display: block;
@@ -138,10 +156,10 @@ else {
                 }
 
                 &.active {
-                    background: rgba(0, 0, 0, 0.05);
+                    background: #293FE60D;
                     box-shadow: 0px -1px 1px 0px rgba(0, 0, 0, 0.15) inset;
 
-                    span {
+                    h3 {
                         font-weight: 700;
                     }
                 }
@@ -152,9 +170,9 @@ else {
                     cursor: default;
                 }
 
-                &:first-child {
-                    margin-bottom: 66px;
-                }
+                // &:first-child {
+                //     margin-bottom: 66px;
+                // }
 
                 svg {
                     display: inline-block;
