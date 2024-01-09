@@ -42,7 +42,7 @@ header#navBar(style='--position: relative;')
                         li.doc
                             a(href="https://docs.skapi.com" target="_blank") Documentation
                         li.dash
-                            router-link(to="/dashboard") Dashboard
+                            router-link(to="/dashboard") My Services
                         li.account(@click.stop="accountInfo = !accountInfo") {{ account.email.charAt(0).toUpperCase() }}
                 template(v-else)
                     ul
