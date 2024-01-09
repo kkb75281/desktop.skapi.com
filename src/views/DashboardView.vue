@@ -46,8 +46,8 @@ main#dashboard
                         | Datebase
                         .resizer(@mousedown="mousedown")
             tbody
-                template(v-if="services.length" v-for="service in services")
-                    tr(:class="{'active' : showServiceInfo}" @click="showServiceInfo = !showServiceInfo")
+                template(v-if="services.length" v-for="(service, index) in services")
+                    tr(ref="tr" :class="{'active' : showInfo}" @click="showServiceInfo(index)")
                         td.center
                             .serviceActive(:class="{'active': service.active == 1 }")
                                 .material-symbols-outlined.mid.power power_settings_new
@@ -64,9 +64,15 @@ main#dashboard
                             .percent(:class='{"green": 0 <= Math.ceil(service.users/100*100) && Math.ceil(service.users/100*100) < 51, "orange": 51 <= Math.ceil(service.users/100*100) && Math.ceil(service.users/100*100) < 81, "red": 81 <= Math.ceil(service.users/100*100) && Math.ceil(service.users/100*100) < 101}') {{ Math.ceil(service.users/100*100) + '%' }}
                         td
                             .percent(:class='{"green": 0 <= Math.ceil(service.users/100*100) && Math.ceil(service.users/100*100) < 51, "orange": 51 <= Math.ceil(service.users/100*100) && Math.ceil(service.users/100*100) < 81, "red": 81 <= Math.ceil(service.users/100*100) && Math.ceil(service.users/100*100) < 101}') {{ Math.ceil(service.users/100*100) + '%' }}
-                            .menu(@click.stop :class='{"nonClickable": !account.email_verified}')
+                            .menu(@click.stop="showPlanSetting = !showPlanSetting" :class='{"nonClickable": !account.email_verified}')
                                 .material-symbols-outlined.mid.clickable more_vert
-                    tr.cont(:class="{'active' : showServiceInfo}")
+                                #moreVert(v-if="showPlanSetting" @click.stop style="--moreVert-right: 0")
+                                    .inner
+                                        .more(style="width:unset;white-space:nowrap;") Downgrade Plan
+                                        .more Upgrade Plan
+                                        .more Stop Plan
+                                        .more Cancel Plan
+                    tr.cont(ref="trCont" :class="{'active' : showInfo}")
                         td(colspan="8")
                             .info
                                 h6 Name
@@ -121,7 +127,27 @@ onMounted(() => {
 
 let searchFor = ref('service');
 let searchText = ref('');
-let showServiceInfo = ref(false);
+let showInfo = ref(false);
+let tr = ref(null);
+let trCont = ref(null);
+let showPlanSetting = ref(false);
+
+let showServiceInfo = (index) => {
+    for(let i=0; i<tr.value.length; i++) {
+        if(tr.value[i].className.includes('active')) { 
+            tr.value[i].classList.remove('active');
+        }
+    }
+
+    for(let i=0; i<trCont.value.length; i++) {
+        if(trCont.value[i].className.includes('active')) { 
+            trCont.value[i].classList.remove('active');
+        }
+    }
+
+    tr.value[index].classList.add('active');
+    trCont.value[index].classList.add('active');
+}
 
 // table resize
 let prevX, prevW, nextW = 0;
@@ -481,7 +507,8 @@ skapi.getProfile().then(u => {
                         width: 40px;
                         height: 40px;
                         text-align: center;
-                        line-height: 40px;
+                        // line-height: 40px;
+                        padding-top: 8px;
                         border-radius: 50%;
                         transform: translateY(-50%);
                         z-index: 2;
