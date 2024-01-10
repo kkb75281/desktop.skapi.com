@@ -8,8 +8,8 @@ main#subdomain
                 h4(v-if='subdomainState') {{ subdomainState }}
 
                 // subdomain url
-                a(v-else :href="'http://' + computedSubdomain + '.skapi.com'" target="_blank")
-                    h4.title {{ (computedSubdomain ? computedSubdomain + '.skapi.com' : 'Hosting') }}
+                a(v-else :href="'http://' + computedSubdomain + '.' + domain" target="_blank")
+                    h4.title {{ (computedSubdomain ? computedSubdomain + '.' + domain : 'Hosting') }}
             template(v-else)
                 h4.title Hosting
             .buttonWrap(v-if="currentService.subdomain") 
@@ -60,7 +60,7 @@ main#subdomain
         template(v-else-if="account.access_group == 1")
             div(style="text-align:center; background-color:rgba(0,0,0,0.05); padding: 2rem 0; border-radius: 8px;")
                 p(style="color: rgba(0, 0, 0, 0.6); font-size: 0.8rem; font-weight: 500; line-height: 1.5;") Trial service does not provide hosting.
-        
+
         // head panel when there is NO subdomain
         .create(v-else) 
             h3.tit Register Subdomain
@@ -186,7 +186,7 @@ msgOverlay(v-if="fileInfo" @close="fileInfo = null" :title="fileInfo?.name" styl
 import msgOverlay from '@/components/msgOverlay.vue';
 import { computed, inject, nextTick, ref, watch } from 'vue';
 import { useRoute } from 'vue-router';
-import { skapi, account, bodyClick } from '@/main.js';
+import { skapi, account, bodyClick, domain } from '@/main.js';
 import { currentService } from '@/data.js';
 import UploadFileList from '@/views/Service/Subdomain/UploadFileList.vue';
 import DeleteFileOverlay from '@/views/Service/Subdomain/DeleteFileOverlay.vue';
@@ -270,10 +270,10 @@ let removeAllFiles = async () => {
         serviceId: currentService.value.service,
         paths: ['']
     }).then(async () => {
-            for (let k in dirPage.list) {
-                await dirPage.deleteItem(k);
-            }
-            launch(computedSubdomain.value);
+        for (let k in dirPage.list) {
+            await dirPage.deleteItem(k);
+        }
+        launch(computedSubdomain.value);
     }).catch(err => {
         console.log({ err });
         alert(err.message);
@@ -334,7 +334,7 @@ let selectedFileUrl = computed(() => {
     let filename = encodeURI(fileInfo.value.name);
     path = path ? encodeURI(path) + '/' + filename : filename;
 
-    return 'https://' + computedSubdomain.value + '.skapi.com/' + path;
+    return 'https://' + computedSubdomain.value + `.${domain}/` + path;
 });
 
 // let downloadFile = (f) => {
@@ -385,7 +385,7 @@ if (currentService.value.subdomain?.[0] === '+' || currentService.value.subdomai
         inputSubdomain.value = currentService.value.subdomain.slice(1);
         subdomainState.value = ' ...Removing';
     }
-    
+
     skapi.updateSubdomain(currentService.value.service, subdomainCallback);
 }
 else {
@@ -491,7 +491,7 @@ let onDrop = async (event, files) => {
     if(subdomainState.value) {
         return;
     }
-    
+
     if (!searchDir.value) {
         return;
     }
