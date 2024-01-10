@@ -7,7 +7,7 @@ import router from './router'
 import Admin from '@/skapi-extensions/js/admin.js'
 
 console.log(import.meta.env.MODE, '01.08 14:00')
-
+let domain = import.meta.env.VITE_DOMAIN;
 let skapi = new Admin(import.meta.env.VITE_ADMIN, JSON.parse(import.meta.env.VITE_ETC), JSON.parse(import.meta.env.VITE_REG));
 
 let account = ref('pending');
@@ -37,7 +37,7 @@ if (url.hash) {
         let [key, value] = q.split('=');
         params[key] = value;
     });
-    
+
     function decodeIdToken(idToken) {
         const base64Url = idToken.split('.')[1];
         const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
@@ -85,4 +85,4 @@ document.body.addEventListener('click', () => {
     }
 })
 
-export { skapi, account, bodyClick, googleOpenId }
+export { skapi, account, bodyClick, googleOpenId, domain }

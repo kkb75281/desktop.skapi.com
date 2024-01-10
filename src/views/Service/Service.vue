@@ -35,7 +35,7 @@ main#service
             a.question(href="https://docs.skapi.com/introduction/getting-started.html" target="_blank")
                 .material-symbols-outlined.empty.sml help 
                 span Where do I put this code?
-        
+
         .info 
             .title 
                 h4 Security Setting
@@ -157,7 +157,7 @@ DeleteService(v-if="openDeleteService" @close="openDeleteService = false;")
 import { computed, nextTick, ref, watch } from 'vue';
 import { useRouter } from 'vue-router';
 import { currentService, storageInfo } from '@/data.js';
-import { skapi, account } from '@/main.js';
+import { skapi, account, domain } from '@/main.js';
 import DisableServiceOverlay from '@/views/Service/DisableServiceOverlay.vue';
 import DeleteService from '@/components/DeleteService.vue';
 
@@ -187,9 +187,9 @@ let currentSubdomain = computed(() => {
     if (currentService.value.subdomain) {
         if (currentService.value.subdomain[0] === '*' || currentService.value.subdomain[0] === '+') {
             // subdomain will start with * or + when in pending state or removal state
-            return currentService.value.subdomain.slice(1) + '.skapi.com';
+            return currentService.value.subdomain.slice(1) + '.' + domain;
         }
-        return currentService.value.subdomain + '.skapi.com';
+        return currentService.value.subdomain + '.' + domain;
     }
     else {
         return 'No subdomain';
@@ -245,11 +245,11 @@ let copy = (e) => {
     // document.execCommand('copy');
     // doc.remove();
     const range = document.createRange();
-      range.selectNode(currentTarget.previousSibling);
-      window.getSelection().removeAllRanges();
-      window.getSelection().addRange(range);
-      document.execCommand('copy');
-      window.getSelection().removeAllRanges();
+    range.selectNode(currentTarget.previousSibling);
+    window.getSelection().removeAllRanges();
+    window.getSelection().addRange(range);
+    document.execCommand('copy');
+    window.getSelection().removeAllRanges();
 
     currentTarget.classList.add('copied');
     setTimeout(() => {
@@ -485,46 +485,46 @@ watch(modifyCors, () => {
                     display: inline-block;
                     height: 30px;
                 }
-                .date {        
+                .date {
                     span {
                         color: rgba(0, 0, 0, 0.40);
                         font-size: 0.8rem;
                         font-weight: 500;
                         margin-right: 10px;
                     }
-    
+
                     h6 {
                         display: inline-block;
                         color: rgba(0, 0, 0, 0.60);
                     }
                 }
-    
+
                 .toggleWrap {
                     display: inline-block;
                     margin-left: 30px;
                     opacity: 1;
-    
+
                     &.locked {
                         opacity: 0.4;
                     }
-    
+
                     &.active {
                         .toggleBg {
                             background-color: #293FE6;
-    
+
                             .toggleBtn {
                                 transform: translate(31px, -50%);
                                 transition: all 1s;
                             }
                         }
                     }
-    
+
                     span {
                         color: rgba(0, 0, 0, 0.40);
                         font-size: 0.8rem;
                         font-weight: 500;
                     }
-    
+
                     .toggleBg {
                         position: relative;
                         display: inline-block;
@@ -535,8 +535,8 @@ watch(modifyCors, () => {
                         border-radius: 16px;
                         background-color: rgba(0, 0, 0, 0.25);
                         transition: all 1s;
-    
-                        &.nonClickable { 
+
+                        &.nonClickable {
                             .toggleBtn {
                                 cursor: default;
                             }
@@ -585,7 +585,7 @@ watch(modifyCors, () => {
             .title {
                 justify-content: start;
             }
-            
+
             h4 {
                 display: inline-block;
             }
@@ -686,7 +686,7 @@ watch(modifyCors, () => {
     margin-top: 1.5rem;
     user-select: text !important;
     margin-bottom: 1rem;
-    
+
     .codeInner {
         width: 100%;
         white-space: pre;
