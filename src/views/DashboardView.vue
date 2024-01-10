@@ -47,7 +47,7 @@ main#dashboard
                         .resizer(@mousedown="mousedown")
             tbody
                 template(v-if="services.length" v-for="(service, index) in services")
-                    tr(ref="tr" :class="{'active' : showInfo}" @click="showServiceInfo(index)")
+                    tr(ref="tr" :class="{'active' : showInfo}" @click="showServiceInfo(index)" @dblclick="router.push('/dashboard/' + service.service)")
                         td.center
                             .serviceActive(:class="{'active': service.active == 1 }")
                                 .material-symbols-outlined.mid.power power_settings_new
@@ -64,16 +64,17 @@ main#dashboard
                             .percent(:class='{"green": 0 <= Math.ceil(service.users/100*100) && Math.ceil(service.users/100*100) < 51, "orange": 51 <= Math.ceil(service.users/100*100) && Math.ceil(service.users/100*100) < 81, "red": 81 <= Math.ceil(service.users/100*100) && Math.ceil(service.users/100*100) < 101}') {{ Math.ceil(service.users/100*100) + '%' }}
                         td
                             .percent(:class='{"green": 0 <= Math.ceil(service.users/100*100) && Math.ceil(service.users/100*100) < 51, "orange": 51 <= Math.ceil(service.users/100*100) && Math.ceil(service.users/100*100) < 81, "red": 81 <= Math.ceil(service.users/100*100) && Math.ceil(service.users/100*100) < 101}') {{ Math.ceil(service.users/100*100) + '%' }}
-                            .menu(@click.stop="showPlanSetting = !showPlanSetting" :class='{"nonClickable": !account.email_verified}')
+                            .menu(@click.stop="(e) => showPlanSetting(e, index)" :class='{"nonClickable": !account.email_verified}')
                                 .material-symbols-outlined.mid.clickable more_vert
-                                #moreVert(v-if="showPlanSetting" @click.stop style="--moreVert-right: 0")
-                                    .inner
-                                        .more(style="width:unset;white-space:nowrap;") Downgrade Plan
-                                        .more Upgrade Plan
-                                        .more Stop Plan
-                                        .more Cancel Plan
+                            #moreVert.hide(ref="moreVert" @click.stop style="--moreVert-right: 20px; top:44px;")
+                                .inner
+                                    .more(style="width:unset;white-space:nowrap;") Downgrade Plan
+                                    .more Upgrade Plan
+                                    .more Stop Plan
+                                    .more Cancel Plan
                     tr.cont(ref="trCont" :class="{'active' : showInfo}")
                         td(colspan="8")
+                            br
                             .info
                                 h6 Name
                                 span {{ service.name }}
@@ -107,8 +108,8 @@ main#dashboard
                             .info.inline 
                                 h6 Subdomain
                                 span {{ service.subdomain }}
-                tr(v-else-if="serviceFetching")
-                    td.loadingWrap(colspan="8" style="text-align:center; padding-top:20px;")
+                tr.loadingWrap(v-else-if="serviceFetching")
+                    td(colspan="8" style="text-align:center; padding-top:20px;")
                         img.loading(src="@/assets/img/loading.png")
         .noServices(v-if="!services.length")
             //- h3 No Users
@@ -117,22 +118,34 @@ main#dashboard
 </template>
 
 <script setup>
-import { services, serviceFetching } from '@/data.js';
 import { nextTick, onMounted, ref } from 'vue';
+import { useRouter } from 'vue-router';
 import { skapi, account } from '@/main.js';
+import { services, serviceFetching } from '@/data.js';
 
 onMounted(() => {
     document.querySelector('body').classList.add('fa');
 })
 
+const router = useRouter();
 let searchFor = ref('service');
 let searchText = ref('');
 let showInfo = ref(false);
 let tr = ref(null);
+let moreVert = ref(null);
 let trCont = ref(null);
-let showPlanSetting = ref(false);
+let currnetServiceIndex = null;
+let currnetPlanIndex = null;
 
 let showServiceInfo = (index) => {
+    if(currnetServiceIndex == index) {
+        tr.value[index].classList.remove('active');
+        trCont.value[index].classList.remove('active');
+        currnetServiceIndex = null;
+
+        return;
+    }
+
     for(let i=0; i<tr.value.length; i++) {
         if(tr.value[i].className.includes('active')) { 
             tr.value[i].classList.remove('active');
@@ -145,8 +158,27 @@ let showServiceInfo = (index) => {
         }
     }
 
+    currnetServiceIndex = index;
     tr.value[index].classList.add('active');
     trCont.value[index].classList.add('active');
+}
+
+let showPlanSetting = (e, index) => {
+    if(currnetPlanIndex == index) {
+        moreVert.value[index].classList.remove('show');
+        currnetPlanIndex = null;
+
+        return;
+    }
+
+    for(let i=0; i<moreVert.value.length; i++) {
+        if(moreVert.value[i].className.includes('show')) { 
+            moreVert.value[i].classList.remove('show');
+        }
+    }
+
+    currnetPlanIndex = index;
+    moreVert.value[index].classList.add('show');
 }
 
 // table resize
@@ -202,11 +234,23 @@ document.addEventListener('mouseup', function () {
 if (serviceFetching.value) {
     serviceFetching.value.then(() => {
         services.value = skapi.serviceMap.map(sid => skapi.services[sid]).reverse();
+        // skapi.storageInformation(services.value.service).then(i => {
+        //     // get storage info
+        //     for (let k in i) {
+        //         storageInfo.value[services.value.service][k] = i[k];
+        //     }
+        // });
         console.log(services.value)
     })
 }
 else {
     services.value = skapi.serviceMap.map(sid => skapi.services[sid]).reverse();
+    // skapi.storageInformation(services.value.service).then(i => {
+    //     // get storage info
+    //     for (let k in i) {
+    //         storageInfo.value[services.value.service][k] = i[k];
+    //     }
+    // });
     console.log(services.value)
 }
 
@@ -267,7 +311,6 @@ skapi.getProfile().then(u => {
 <style lang="less" scoped>
 #dashboard {
     position: relative;
-    // max-width: 1200px;
     margin-top: 3.4rem;
     padding: 0 2rem;
 
@@ -320,7 +363,7 @@ skapi.getProfile().then(u => {
 
     .tableWrap {
         position: relative;
-        min-height: 660px;
+        min-height: calc(100vh - 3.4rem - 160px);
         margin-top: 16px;
         overflow-x: auto;
 
@@ -347,6 +390,10 @@ skapi.getProfile().then(u => {
             table-layout: fixed;
 
             thead {
+                position: sticky;
+                top: 0px;
+                background-color: #fafafa;
+                z-index: 10;
                 text-align: left;
 
                 tr {
@@ -410,10 +457,11 @@ skapi.getProfile().then(u => {
             }
 
             tbody {
+                overflow-y: auto;
                 font-weight: 400;
 
                 tr {
-                    &:not(.cont, .active):hover {
+                    &:not(.cont, .active, .loadingWrap):hover {
                         background-color: rgba(41,63,230,0.05);
                     }
                     &.active {
@@ -452,6 +500,13 @@ skapi.getProfile().then(u => {
                             }
                         }
                     }
+                    &.loadingWrap {
+                        td {
+                            &::after {
+                                display: none !important;
+                            }
+                        }
+                    }
                 }
 
                 td {
@@ -469,12 +524,6 @@ skapi.getProfile().then(u => {
                         bottom: 0;
                         background: rgba(0, 0, 0, 0.1);
                         box-shadow: 0px 1px 3px 0px rgba(0, 0, 0, 0.06);
-                    }
-
-                    &.loadingWrap {
-                        &::after {
-                            display: none;
-                        }
                     }
 
                     &.center {
@@ -511,10 +560,20 @@ skapi.getProfile().then(u => {
                         padding-top: 8px;
                         border-radius: 50%;
                         transform: translateY(-50%);
-                        z-index: 2;
+                        z-index: 1;
 
                         &:hover {
                             background-color: rgba(41, 63, 230, 0.10);
+                        }
+
+                    }
+                    #moreVert {
+                        &.hide {
+                            display: none;
+                        }
+
+                        &.show {
+                            display: block;
                         }
                     }
 
