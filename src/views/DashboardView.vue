@@ -21,7 +21,7 @@ main#dashboard
         table#resizeMe.table
             thead
                 tr
-                    th.th.center(style="width:102px;")
+                    th.th.center(style="width:102px;padding-left:50px;")
                         | Status
                         .resizer(@mousedown="mousedown")
                     th.th.center(style="width:168px;")
@@ -47,10 +47,11 @@ main#dashboard
                         .resizer(@mousedown="mousedown")
             tbody
                 template(v-if="services.length" v-for="(service, index) in services")
-                    tr(ref="tr" :class="{'active' : showInfo}" @click="showServiceInfo(index)" @dblclick="router.push('/dashboard/' + service.service)")
-                        td.center
+                    tr(ref="tr" :class="{'active' : showInfo}" @click="(e) => goServiceDashboard(e, service)")
+                        td.center(style="padding-left:50px;")
+                            .material-symbols-outlined.mid.downArrow(ref="downArrow" @click.stop="(e) => showServiceInfo(e, index)") arrow_forward_ios
                             .serviceActive(:class="{'active': service.active == 1 }")
-                                .material-symbols-outlined.mid.power power_settings_new
+                                .material-symbols-outlined.sml.power power_settings_new
                         td
                             .overflow {{ service.name }}
                         td
@@ -87,7 +88,7 @@ main#dashboard
                                 span {{ service.cors }}
                             .info.inline 
                                 h6 Database Used
-                                span {{ service.users + '/100' }}
+                                span {{ service?.info?.database + '/100' }}
                             .info.inline 
                                 h6 Subscription Plan
                                 span asdasd
@@ -101,13 +102,14 @@ main#dashboard
                                 span {{ regions?.[service.region] || service.region }}
                             .info.inline 
                                 h6 Cloud Storage Used
-                                span {{ service.users + '/100' }}
+                                span {{ service?.info?.cloud + '/100' }}
                             .info.inline 
                                 h6 Date Created
                                 span {{ typeof service.timestamp === 'string' ? service.timestamp : new Date(service.timestamp).toDateString() }}
                             .info.inline 
                                 h6 Subdomain
                                 span {{ service.subdomain }}
+                            .material-symbols-outlined.mid.upArrow(ref="upArrow" @click.stop="(e) => showServiceInfo(e, index)") arrow_forward_ios
                 tr.loadingWrap(v-else-if="serviceFetching")
                     td(colspan="8" style="text-align:center; padding-top:20px;")
                         img.loading(src="@/assets/img/loading.png")
@@ -133,33 +135,29 @@ let searchText = ref('');
 let showInfo = ref(false);
 let tr = ref(null);
 let moreVert = ref(null);
+let downArrow = ref(null);
+let upArrow = ref(null);
 let trCont = ref(null);
 let currnetServiceIndex = null;
 let currnetPlanIndex = null;
 
-let showServiceInfo = (index) => {
+let showServiceInfo = (e, index) => {
     if(currnetServiceIndex == index) {
-        tr.value[index].classList.remove('active');
+        downArrow.value[index].classList.remove('hide');
+        trCont.value[index].classList.remove('active');
+        currnetServiceIndex = null;
+
+        return;
+    } else if(e.target.classList.contains('upArrow')) {
+        downArrow.value[index].classList.remove('hide');
         trCont.value[index].classList.remove('active');
         currnetServiceIndex = null;
 
         return;
     }
 
-    for(let i=0; i<tr.value.length; i++) {
-        if(tr.value[i].className.includes('active')) { 
-            tr.value[i].classList.remove('active');
-        }
-    }
-
-    for(let i=0; i<trCont.value.length; i++) {
-        if(trCont.value[i].className.includes('active')) { 
-            trCont.value[i].classList.remove('active');
-        }
-    }
-
     currnetServiceIndex = index;
-    tr.value[index].classList.add('active');
+    downArrow.value[index].classList.add('hide');
     trCont.value[index].classList.add('active');
 }
 
@@ -179,6 +177,14 @@ let showPlanSetting = (e, index) => {
 
     currnetPlanIndex = index;
     moreVert.value[index].classList.add('show');
+}
+
+let goServiceDashboard = (e, service) => {
+    e.currentTarget.classList.add('active');
+
+    setTimeout(() => {
+        router.push('/dashboard/' + service.service);
+    }, 500);
 }
 
 // table resize
@@ -234,23 +240,21 @@ document.addEventListener('mouseup', function () {
 if (serviceFetching.value) {
     serviceFetching.value.then(() => {
         services.value = skapi.serviceMap.map(sid => skapi.services[sid]).reverse();
-        // skapi.storageInformation(services.value.service).then(i => {
-        //     // get storage info
-        //     for (let k in i) {
-        //         storageInfo.value[services.value.service][k] = i[k];
-        //     }
-        // });
+        for(let i=0; i<services.value.length; i++) {
+            skapi.storageInformation(services.value[i].service).then(info => {
+                services.value[i].info = info;
+            })
+        }
         console.log(services.value)
     })
 }
 else {
     services.value = skapi.serviceMap.map(sid => skapi.services[sid]).reverse();
-    // skapi.storageInformation(services.value.service).then(i => {
-    //     // get storage info
-    //     for (let k in i) {
-    //         storageInfo.value[services.value.service][k] = i[k];
-    //     }
-    // });
+    for(let i=0; i<services.value.length; i++) {
+        skapi.storageInformation(services.value[i].service).then(info => {
+            services.value[i].info = info;
+        })
+    }
     console.log(services.value)
 }
 
@@ -289,13 +293,13 @@ let addService = () => {
         })
         .finally(_ => promiseRunning.value = false)
 }
+
 const regions = {
     'us-west-2': 'US',
     'ap-northeast-2': 'KR',
     'ap-southeast-1': 'SG',
     'ap-south-1': 'IN'
 }
-
 
 skapi.getProfile().then(u => {
     if (u.misc === 'kdu') {
@@ -463,6 +467,7 @@ skapi.getProfile().then(u => {
                 tr {
                     &:not(.cont, .active, .loadingWrap):hover {
                         background-color: rgba(41,63,230,0.05);
+                        cursor: pointer;
                     }
                     &.active {
                         background-color: rgba(41, 63, 230, 0.10);
@@ -474,6 +479,10 @@ skapi.getProfile().then(u => {
 
                         &.active {
                             display: table-row;
+                        }
+
+                        td {
+                            padding: 0 75px;
                         }
 
                         .info {
@@ -499,6 +508,26 @@ skapi.getProfile().then(u => {
                                 color: rgba(0, 0, 0, 0.60);
                             }
                         }
+                        .upArrow {
+                            position: absolute;
+                            left: -7px;
+                            bottom: 0;
+                            rotate: 270deg;
+                            transform-origin: top;
+                            font-size: 24px;
+                            padding: 10px;
+                            border-radius: 50%;
+                            color: rgba(0,0,0,0.4);
+                            opacity: 1;
+                            cursor: pointer;
+
+                            &:hover {
+                                background-color: rgba(41, 63, 230, 0.10);
+                            }
+                            &.hide {
+                                opacity: 0;
+                            }
+                        }
                     }
                     &.loadingWrap {
                         td {
@@ -512,7 +541,7 @@ skapi.getProfile().then(u => {
                 td {
                     position: relative;
                     height: 60px;
-                    padding: 0 40px;
+                    padding: 0 20px;
                     font-size: 0.8rem;
 
                     &::after {
@@ -549,14 +578,34 @@ skapi.getProfile().then(u => {
                         }
                     }
 
+                    .downArrow {
+                        position: absolute;
+                        left: 16px;
+                        top: 50%;
+                        padding: 10px;
+                        border-radius: 50%;
+                        transform: translateY(-50%);
+                        font-size: 24px;
+                        color: rgba(0,0,0,0.4);
+                        rotate: 90deg;
+                        transform-origin: top center;
+                        opacity: 1;
+                        cursor: pointer;
+
+                        &:hover {
+                            background-color: rgba(41, 63, 230, 0.10);
+                        }
+                        &.hide {
+                            opacity: 0;
+                        }
+                    }
+
                     .menu {
                         position: absolute;
                         right: 28px;
                         top: 50%;
-                        width: 40px;
-                        height: 40px;
+                        padding: 10px;
                         text-align: center;
-                        // line-height: 40px;
                         padding-top: 8px;
                         border-radius: 50%;
                         transform: translateY(-50%);
@@ -579,8 +628,8 @@ skapi.getProfile().then(u => {
 
                     .serviceActive {
                         position: relative;
-                        width: 36px;
-                        height: 36px;
+                        width: 20px;
+                        height: 20px;
                         margin: 0 auto;
                         border-radius: 50%;
                         background-color: rgba(0,0,0,0.25);
@@ -630,52 +679,4 @@ skapi.getProfile().then(u => {
         }
     }
 }
-
-// @media (max-width: 1023px) {
-//     #dashboard {
-//         .wrapper {
-//             .boxWrap {
-//                 .box {
-//                     width: 48%;
-//                     margin-right: 4%;
-//                     margin-bottom: 4%;
-
-//                     &:nth-child(2n+2) {
-//                         margin-right: 0;
-//                     }
-
-//                     &:nth-child(6n+6) {
-//                         margin-right: 0;
-//                     }
-
-//                     &:nth-child(3n+3) {
-//                         margin-right: 4%;
-//                     }
-//                 }
-//             }
-//         }
-//     }
-// }
-
-// @media (max-width: 767px) {
-//     #dashboard {
-//         .wrapper {
-//             .boxWrap {
-//                 .box {
-//                     width: 100%;
-//                     margin-right: 0%;
-//                     margin-bottom: 30px;
-
-//                     &:nth-child(3n+3) {
-//                         margin-right: 0;
-//                     }
-
-//                     &.btn {
-//                         height: 240px;
-//                     }
-//                 }
-//             }
-//         }
-//     }
-// }
 </style>
