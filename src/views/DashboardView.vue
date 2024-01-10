@@ -21,7 +21,7 @@ main#dashboard
         table#resizeMe.table
             thead
                 tr
-                    th.th.center(style="width:102px;padding-left:50px;")
+                    th.th.center(colspan="2" style="width:102px;padding-left:50px;")
                         | Status
                         .resizer(@mousedown="mousedown")
                     th.th.center(style="width:168px;")
@@ -42,14 +42,15 @@ main#dashboard
                     th.th.center(style="width:168px;")
                         | Cloud Storage
                         .resizer(@mousedown="mousedown")
-                    th.th(style="width:240px;")
+                    th.th(colspan="2" style="width:168px;padding-left:20px;")
                         | Datebase
                         .resizer(@mousedown="mousedown")
             tbody
                 template(v-if="services.length" v-for="(service, index) in services")
                     tr(ref="tr" :class="{'active' : showInfo}" @click="(e) => goServiceDashboard(e, service)")
-                        td.center(style="padding-left:50px;")
-                            .material-symbols-outlined.mid.downArrow(ref="downArrow" @click.stop="(e) => showServiceInfo(e, index)") arrow_forward_ios
+                        td(@click.stop="(e) => showServiceInfo(e, index)")
+                            .material-symbols-outlined.mid.downArrow(ref="downArrow") arrow_forward_ios
+                        td.center
                             .serviceActive(:class="{'active': service.active == 1 }")
                                 .material-symbols-outlined.sml.power power_settings_new
                         td
@@ -65,7 +66,8 @@ main#dashboard
                             .percent(:class='{"green": 0 <= Math.ceil(service.users/100*100) && Math.ceil(service.users/100*100) < 51, "orange": 51 <= Math.ceil(service.users/100*100) && Math.ceil(service.users/100*100) < 81, "red": 81 <= Math.ceil(service.users/100*100) && Math.ceil(service.users/100*100) < 101}') {{ Math.ceil(service.users/100*100) + '%' }}
                         td
                             .percent(:class='{"green": 0 <= Math.ceil(service.users/100*100) && Math.ceil(service.users/100*100) < 51, "orange": 51 <= Math.ceil(service.users/100*100) && Math.ceil(service.users/100*100) < 81, "red": 81 <= Math.ceil(service.users/100*100) && Math.ceil(service.users/100*100) < 101}') {{ Math.ceil(service.users/100*100) + '%' }}
-                            .menu(@click.stop="(e) => showPlanSetting(e, index)" :class='{"nonClickable": !account.email_verified}')
+                        td(@click.stop="(e) => showPlanSetting(e, index)")
+                            .menu(:class='{"nonClickable": !account.email_verified}')
                                 .material-symbols-outlined.mid.clickable more_vert
                             #moreVert.hide(ref="moreVert" @click.stop style="--moreVert-right: 20px; top:44px;")
                                 .inner
@@ -518,14 +520,14 @@ skapi.getProfile().then(u => {
                             padding: 10px;
                             border-radius: 50%;
                             color: rgba(0,0,0,0.4);
-                            opacity: 1;
+                            display: block;
                             cursor: pointer;
 
                             &:hover {
                                 background-color: rgba(41, 63, 230, 0.10);
                             }
                             &.hide {
-                                opacity: 0;
+                                display: none;
                             }
                         }
                     }
@@ -553,6 +555,21 @@ skapi.getProfile().then(u => {
                         bottom: 0;
                         background: rgba(0, 0, 0, 0.1);
                         box-shadow: 0px 1px 3px 0px rgba(0, 0, 0, 0.06);
+                    }
+
+                    &:first-child {
+                        &:hover {
+                            .downArrow {
+                                background-color: rgba(41, 63, 230, 0.10);
+                            }
+                        }
+                    }
+                    &:last-child {
+                        &:hover {
+                            .menu {
+                                background-color: rgba(41, 63, 230, 0.10);
+                            }
+                        }
                     }
 
                     &.center {
@@ -589,31 +606,33 @@ skapi.getProfile().then(u => {
                         color: rgba(0,0,0,0.4);
                         rotate: 90deg;
                         transform-origin: top center;
-                        opacity: 1;
+                        display: block;
                         cursor: pointer;
 
-                        &:hover {
-                            background-color: rgba(41, 63, 230, 0.10);
-                        }
+                        // &:hover {
+                        //     background-color: rgba(41, 63, 230, 0.10);
+                        // }
                         &.hide {
-                            opacity: 0;
+                            display: none;
                         }
                     }
 
                     .menu {
-                        position: absolute;
-                        right: 28px;
-                        top: 50%;
-                        padding: 10px;
+                        // position: absolute;
+                        // right: 28px;
+                        // top: 50%;
+                        width: 40px;
+                        height: 40px;
+                        // padding: 10px;
                         text-align: center;
                         padding-top: 8px;
                         border-radius: 50%;
-                        transform: translateY(-50%);
+                        // transform: translateY(-50%);
                         z-index: 1;
 
-                        &:hover {
-                            background-color: rgba(41, 63, 230, 0.10);
-                        }
+                        // &:hover {
+                        //     background-color: rgba(41, 63, 230, 0.10);
+                        // }
 
                     }
                     #moreVert {
