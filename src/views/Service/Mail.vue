@@ -36,9 +36,10 @@ main#mail
                 .cont 
                     .tit Subject
                     .endPoint
-                        template(v-if="currentService") 
-                            span [Verification] please verify the code
-                        template(v-else) loading...
+                        template(v-if="currentService?.template_welcome") 
+                            a(:href="currentService?.template_welcome?.url" target="_blank") {{ currentService?.template_welcome?.subject }}
+                        template(v-else) 
+                            a(href="javascript:void(0);" @click="openDefaultTemplate('welcome')") {{ defaultTemplate['welcome'].subject }}
             .email
                 h5 Verification Email
                 p The user receives this email when they verifes their email or when they request forgot password.
@@ -56,15 +57,14 @@ main#mail
                 .cont 
                     .tit Subject
                     .endPoint
-                        template(v-if="currentService") 
-                            span [Verification] please verify the code
-                        template(v-else) loading...
+                        template(v-if="currentService?.template_verification") 
+                            a(:href="currentService?.template_verification?.url" target="_blank") {{ currentService?.template_verification?.subject }}
+                        template(v-else)
+                            a(href="javascript:void(0);" @click="openDefaultTemplate('verification')") {{ defaultTemplate['verification'].subject }}
                 .cont 
                     .tit Required Placeholder
                     .endPoint
-                        template(v-if="currentService") 
-                            span ${code}
-                        template(v-else) loading...
+                        span ${code}
             .email
                 h5 Signup Confirmation Email
                 p The user receives this email when they are requested for confirmation on signup.
@@ -82,15 +82,14 @@ main#mail
                 .cont 
                     .tit Subject
                     .endPoint
-                        template(v-if="currentService") 
-                            span [Verification] please verify the code
-                        template(v-else) loading...
+                        template(v-if="currentService?.template_confirmation") 
+                            a(:href="currentService?.template_confirmation?.url" target="_blank") {{ currentService?.template_confirmation?.subject }}
+                        template(v-else)
+                            a(href="javascript:void(0);" @click="openDefaultTemplate('confirmation')") {{ defaultTemplate['confirmation'].subject }}
                 .cont 
                     .tit Required Placeholder
                     .endPoint
-                        template(v-if="currentService") 
-                            span ${link}
-                        template(v-else) loading...
+                        span ${link}
             .email
                 h5 Invitation Email
                 p The user receives this email when they are invited to the service.
@@ -108,15 +107,14 @@ main#mail
                 .cont 
                     .tit Subject
                     .endPoint
-                        template(v-if="currentService") 
-                            span [Verification] please verify the code
-                        template(v-else) loading...
+                        template(v-if="currentService?.template_invitation") 
+                            a(:href="currentService?.template_invitation?.url" target="_blank") {{ currentService?.template_invitation?.subject }}
+                        template(v-else)
+                            a(href="javascript:void(0);" @click="openDefaultTemplate('invitation')") {{ defaultTemplate['invitation'].subject }}
                 .cont 
                     .tit Required Placeholder
                     .endPoint
-                        template(v-if="currentService") 
-                            span ${password} , ${email}
-                        template(v-else) loading...
+                        span ${password} , ${email}
 
     section#section
         h4 Newsletters
@@ -182,7 +180,7 @@ let defaultTemplate = {
         'html': '<pre>Hello ${name}You are invited to ${service_name}You can accept the invitation by clicking on this <a href="${link}" style="font-weight: bold">LINK</a>Your login e-mail is: <b>${email}</b>Your account password is: <b>${password}</b>Your activation link is valid for 7 days.</pre>',
         'subject': "[${service_name}] Invitation",
     },
-    service_signup_confirmation : {
+    confirmation : {
         'html': '<pre>Please activate your account by clicking this <a href="${link}" style="font-weight: bold">LINK</a>Your activation link is valid for 7 days</pre>',
         'subject': '[${service_name}] Account activation',
     },
@@ -192,10 +190,18 @@ let defaultTemplate = {
     }
 }
 
+let openDefaultTemplate = (email) => {
+    let newWindow = window.open('', '_blank', 'width=600,height=400');
+    let htmlContent = '<html>' + defaultTemplate[email].html + '</html>';
+
+    newWindow.document.write(htmlContent);
+    newWindow.document.close();
+}
+
 let copy = (e) => {
     let currentTarget = e.currentTarget;
     let doc = document.createElement('textarea');
-    doc.textContent = currentTarget.parentNode.nextSibling.textContent;
+    doc.textContent = currentTarget.previousSibling.textContent;
     document.body.append(doc);
     doc.select();
     document.execCommand('copy');
@@ -269,6 +275,7 @@ let copy = (e) => {
             }
 
             .cont {
+                position: relative;
                 margin-bottom: 12px;
 
                 &:last-child {
@@ -278,30 +285,75 @@ let copy = (e) => {
                     display: inline-block;
                 }
                 .tit {
-                    width: 250px;
+                    width: 238px;
                     color: rgba(0, 0, 0, 0.40);
                     font-size: 16px;
                     font-weight: 500;
                 }
                 .endPoint {
-                    position: relative;
-
-                    span {
+                    span, a {
                         color: rgba(0, 0, 0, 0.60);
                         font-size: 16px;
                         font-weight: 400;
+                        line-height: 24px;
+                        word-wrap: break-word;
                     }
                     .copy {
-                        position: absolute;
-                        right: -30px;
-                        top: 50%;
-                        transform: translateY(-50%);
+                        position: relative;
+                        display: inline-block;
+                        padding-left: 10px;
+
+                        &::after {
+                            position: absolute;
+                            display: block;
+                            right: -60px;
+                            top: 50%;
+                            transform: translateY(-50%);
+                            text-align: center;
+                            font-size: 14px;
+                            font-weight: 400;
+                            background: rgba(255, 255, 255, 0.6);
+                            color: #343434;
+                            padding: 4px;
+                            content: "Copied";
+                            transition: opacity .4s;
+                            opacity: 0;
+                        }
+
+                        &.copied::after {
+                            opacity: 1;
+                        }
                     }
                 }
             }
 
             &:last-child {
                 margin-bottom: 0;
+            }
+        }
+    }
+}
+
+@media (max-width: 1300px) {
+    #mail {
+        #section {
+            .email {
+                .cont {
+                    margin-bottom: 24px;
+                    .endPoint {
+                        display: block;
+                        margin-top: 8px;
+                    }
+                    .copy {
+                        position: absolute !important;
+                        right: 0;
+                        top: 0;
+
+                        &::after {
+                            right: 30px !important;
+                        }
+                    }
+                }
             }
         }
     }
