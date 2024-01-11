@@ -127,7 +127,7 @@ main#subdomain
                             .material-symbols-outlined.mid.type(v-else-if="img.includes(file.name.split('.').slice(-1)[0])") image
                             .material-symbols-outlined.mid.type(v-else-if="vid.includes(file.name.split('.').slice(-1)[0])") movie
                             .material-symbols-outlined.mid.type(v-else) draft
-                            .pathWrapper
+                            .pathWrapper(:data-filetype="'.'+file.name.split('.').splice(-1)[0]")
                                 .path {{ file.name[0] === '#' ? file.name.slice(1) : file.name }}
 
 UploadFileList(
@@ -549,7 +549,10 @@ let onDrop = async (event, files) => {
 
     uploadWholeProgress.value = 0;
 
+    let fileLength = 0;
+
     let trackUpload = track => {
+        fileLength ++;
         if (uploading.value === null) {
             track.abort();
         }
@@ -559,6 +562,13 @@ let onDrop = async (event, files) => {
             fileList.value[track.currentFile.name].progress = track.progress;
             fileList.value[track.currentFile.name].loaded = track.loaded;
         }
+        nextTick(() => {
+            let scrollTarget = document.querySelector('.uploadListWrapper .content .listWrap');
+
+            if (scrollTarget.getBoundingClientRect().height < scrollTarget.scrollHeight && fileLength > 4) {
+                scrollTarget.scrollTop += 56;
+            }
+        })
     }
 
     uploading.value = skapi.uploadHostFiles(formData, {
@@ -908,11 +918,24 @@ function formatBytes(bytes, decimals = 2) {
                     }
 
                     .pathWrapper {
+                        position: relative;
                         font-size: 0.7rem;
                         font-weight: 500;
-
+                        width: calc(100% - 5rem);
+                        
                         .path {
+                            width: 100%;
                             white-space: nowrap;
+                            overflow: hidden;
+                            text-overflow: ellipsis;
+                        }
+
+                        &:after {
+                            content: attr(data-filetype);
+                            position: absolute;
+                            left: 100%;
+                            top: 0;
+                            display: none;
                         }
                     }
                 }
