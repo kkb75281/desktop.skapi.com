@@ -552,7 +552,6 @@ let onDrop = async (event, files) => {
     let fileLength = 0;
 
     let trackUpload = track => {
-        fileLength ++;
         if (uploading.value === null) {
             track.abort();
         }
@@ -561,7 +560,12 @@ let onDrop = async (event, files) => {
             uploadWholeProgress.value = Math.round(loadedSize / wholeSize * 100);
             fileList.value[track.currentFile.name].progress = track.progress;
             fileList.value[track.currentFile.name].loaded = track.loaded;
+
+            if (track.progress == 100) {
+                fileLength ++;
+            }
         }
+
         nextTick(() => {
             let scrollTarget = document.querySelector('.uploadListWrapper .content .listWrap');
 
