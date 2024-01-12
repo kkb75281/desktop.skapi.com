@@ -1,30 +1,15 @@
 <template lang="pug">
 main#dashboard
-    .searchCreateButtons
-        .searchBar 
-            form
-                .customSelect
-                    select(:value="searchFor")
-                        option(value="service") Name of Service
-                        option(value="locale") Locale
-                        option(value="timestamp") Date Created
-                    .material-symbols-outlined.mid.selectArrowDown arrow_drop_down
-                .material-symbols-outlined.mid.search search
-                input#searchInput(v-if="searchFor === 'service'" placeholder="Search Name of Service" v-model="searchText")
-                input#searchInput(v-else-if="searchFor === 'locale'" placeholder="2 digit country code e.g. KR" v-model="searchText")
-                input#searchInput(v-else-if="searchFor === 'timestamp'" placeholder="YYYY-MM-DD ~ YYYY-MM-DD" v-model="searchText")
-        .createButton(:class="{'nonClickable' : !account?.email_verified}")
-            .material-symbols-outlined.mid add
-            span Create new service
+    .createButton(@click="console.log('create')" :class="{'nonClickable' : !account?.email_verified}")
+        .material-symbols-outlined.mid add
+        span Create new service
     
     .tableWrap
         table#resizeMe.table
             thead
                 tr
-                    th.th.center(colspan="2" style="width:102px;padding-left:50px;")
-                        | Status
-                        .resizer(@mousedown="mousedown")
-                    th.th.center(style="width:168px;")
+                    th.th.center(style="width:150px;")
+                    th.th.center(style="width:128px;")
                         | Name of Service
                         .resizer(@mousedown="mousedown")
                     th.th.center(style="width:140px;")
@@ -42,15 +27,15 @@ main#dashboard
                     th.th.center(style="width:168px;")
                         | Cloud Storage
                         .resizer(@mousedown="mousedown")
-                    th.th(colspan="2" style="width:168px;padding-left:20px;")
+                    th.th(style="width:240px;")
                         | Datebase
                         .resizer(@mousedown="mousedown")
             tbody
                 template(v-if="services.length" v-for="(service, index) in services")
                     tr(ref="tr" :class="{'active' : showInfo}" @click="(e) => goServiceDashboard(e, service)")
-                        td(@click.stop="(e) => showServiceInfo(e, index)")
-                            .material-symbols-outlined.mid.downArrow(ref="downArrow") arrow_forward_ios
-                        td.center
+                        td(style="display:flex;align-items:center;")
+                            .material-symbols-outlined.mid.upArrow.hide(ref="upArrow" @click.stop="(e) => showServiceInfo(e, index)") arrow_forward_ios
+                            .material-symbols-outlined.mid.downArrow(ref="downArrow" @click.stop="(e) => showServiceInfo(e, index)") arrow_forward_ios
                             .serviceActive(:class="{'active': service.active == 1 }")
                                 .material-symbols-outlined.sml.power power_settings_new
                         td
@@ -61,13 +46,21 @@ main#dashboard
                             .overflow {{ service.cors }}
                         td.center {{ typeof service.timestamp === 'string' ? service.timestamp : new Date(service.timestamp).toDateString() }}
                         td.center
-                            .percent(:class='{"green": 0 <= Math.ceil(service.users/100*100) && Math.ceil(service.users/100*100) < 51, "orange": 51 <= Math.ceil(service.users/100*100) && Math.ceil(service.users/100*100) < 81, "red": 81 <= Math.ceil(service.users/100*100) && Math.ceil(service.users/100*100) < 101}') {{ Math.ceil(service.users/100*100) + '%' }}
+                            template(v-if="Math.ceil(service.users/100*100)")
+                                .percent(:class='{"green": 0 <= Math.ceil(service.users/100*100) && Math.ceil(service.users/100*100) < 51, "orange": 51 <= Math.ceil(service.users/100*100) && Math.ceil(service.users/100*100) < 81, "red": 81 <= Math.ceil(service.users/100*100) && Math.ceil(service.users/100*100) < 101}') {{ Math.ceil(service.users/100*100) + '%' }}
+                            template(v-else) 
+                                .percent.green 0%
                         td.center
-                            .percent(:class='{"green": 0 <= Math.ceil(service.users/100*100) && Math.ceil(service.users/100*100) < 51, "orange": 51 <= Math.ceil(service.users/100*100) && Math.ceil(service.users/100*100) < 81, "red": 81 <= Math.ceil(service.users/100*100) && Math.ceil(service.users/100*100) < 101}') {{ Math.ceil(service.users/100*100) + '%' }}
-                        td
-                            .percent(:class='{"green": 0 <= Math.ceil(service.users/100*100) && Math.ceil(service.users/100*100) < 51, "orange": 51 <= Math.ceil(service.users/100*100) && Math.ceil(service.users/100*100) < 81, "red": 81 <= Math.ceil(service.users/100*100) && Math.ceil(service.users/100*100) < 101}') {{ Math.ceil(service.users/100*100) + '%' }}
-                        td(@click.stop="(e) => showPlanSetting(e, index)")
-                            .menu(:class='{"nonClickable": !account.email_verified}')
+                            template(v-if="Math.ceil(service?.info?.cloud/5000*100)")
+                                .percent(:class='{"green": 0 <= Math.ceil(service?.info?.cloud/5000*100) && Math.ceil(service?.info?.cloud/5000*100) < 51, "orange": 51 <= Math.ceil(service?.info?.cloud/5000*100) && Math.ceil(service?.info?.cloud/5000*100) < 81, "red": 81 <= Math.ceil(service?.info?.cloud/5000*100)}') {{ Math.ceil(service?.info?.cloud/5000*100) + '%' }}
+                            template(v-else)
+                                .percent.green 0%
+                        td(style="padding-left:40px;")
+                            template(v-if="Math.ceil(service?.info?.database/5000*100)")
+                                .percent(:class='{"green": 0 <= Math.ceil(service?.info?.database/5000*100) && Math.ceil(service?.info?.database/5000*100) < 51, "orange": 51 <= Math.ceil(service?.info?.database/5000*100) && Math.ceil(service?.info?.database/5000*100) < 81, "red": 81 <= Math.ceil(service?.info?.database/5000*100)}') {{ Math.ceil(service?.info?.database/5000*100) + '%' }}
+                            template(v-else)
+                                .percent.green 0%
+                            .menu(@click.stop="(e) => showPlanSetting(e, index)" :class='{"nonClickable": !account.email_verified}')
                                 .material-symbols-outlined.mid.clickable more_vert
                             #moreVert.hide(ref="moreVert" @click.stop style="--moreVert-right: 20px; top:44px;")
                                 .inner
@@ -87,16 +80,19 @@ main#dashboard
                             br
                             .info.inline
                                 h6 # of Users 
-                                span {{ service.cors }}
+                                span {{ service.users }}
                             .info.inline 
                                 h6 Database Used
-                                span {{ service?.info?.database + '/100' }}
+                                span {{ service?.info?.database + '/5000' }}
                             .info.inline 
                                 h6 Subscription Plan
                                 span asdasd
                             .info.inline 
                                 h6 Hosting Strorage
-                                span {{ service.users + '/100' }}
+                                template(v-if="service?.subdomain")
+                                    span {{ convertToMb(service?.info?.host) + '/100' }}
+                                template(v-else)
+                                    span -
                             br
                             br
                             .info.inline 
@@ -104,28 +100,32 @@ main#dashboard
                                 span {{ regions?.[service.region] || service.region }}
                             .info.inline 
                                 h6 Cloud Storage Used
-                                span {{ service?.info?.cloud + '/100' }}
+                                span {{ service?.info?.cloud + '/5000' }}
                             .info.inline 
                                 h6 Date Created
                                 span {{ typeof service.timestamp === 'string' ? service.timestamp : new Date(service.timestamp).toDateString() }}
                             .info.inline 
                                 h6 Subdomain
-                                span {{ service.subdomain }}
-                            .material-symbols-outlined.mid.upArrow(ref="upArrow" @click.stop="(e) => showServiceInfo(e, index)") arrow_forward_ios
+                                template(v-if="service?.subdomain")
+                                    span {{ service.subdomain }}
+                                template(v-else)
+                                    span -
                 tr.loadingWrap(v-else-if="serviceFetching")
                     td(colspan="8" style="text-align:center; padding-top:20px;")
                         img.loading(src="@/assets/img/loading.png")
-        .noServices(v-if="!services.length")
-            //- h3 No Users
-            //- br
-            //- p There are no users matching your search terms.
+                tr.noServices(v-else)
+                    td(colspan="8" style="text-align:center; padding-top:20px;")
+                        h3 No Services
+                        br
+                        p Get started by creating a new service.
 </template>
 
 <script setup>
-import { nextTick, onMounted, ref } from 'vue';
+import { computed, nextTick, onMounted, ref } from 'vue';
 import { useRouter } from 'vue-router';
 import { skapi, account } from '@/main.js';
 import { services, serviceFetching } from '@/data.js';
+import { launch } from '@/views/Service/Subdomain/SubdomainFetch.js';
 
 onMounted(() => {
     document.querySelector('body').classList.add('fa');
@@ -143,15 +143,26 @@ let trCont = ref(null);
 let currnetServiceIndex = null;
 let currnetPlanIndex = null;
 
+let convertToMb = (size) => {
+    if (size) {
+        return (size / (1024 * 1024)).toFixed(2) + ' MB'
+    }
+    else {
+        return '-'
+    }
+}
+
 let showServiceInfo = (e, index) => {
     if(currnetServiceIndex == index) {
         downArrow.value[index].classList.remove('hide');
+        upArrow.value[index].classList.add('hide');
         trCont.value[index].classList.remove('active');
         currnetServiceIndex = null;
 
         return;
     } else if(e.target.classList.contains('upArrow')) {
         downArrow.value[index].classList.remove('hide');
+        upArrow.value[index].classList.add('hide');
         trCont.value[index].classList.remove('active');
         currnetServiceIndex = null;
 
@@ -160,6 +171,7 @@ let showServiceInfo = (e, index) => {
 
     currnetServiceIndex = index;
     downArrow.value[index].classList.add('hide');
+    upArrow.value[index].classList.remove('hide');
     trCont.value[index].classList.add('active');
 }
 
@@ -243,9 +255,20 @@ if (serviceFetching.value) {
     serviceFetching.value.then(() => {
         services.value = skapi.serviceMap.map(sid => skapi.services[sid]).reverse();
         for(let i=0; i<services.value.length; i++) {
-            skapi.storageInformation(services.value[i].service).then(info => {
+            let sd = services.value[i]?.subdomain;
+            let host = 0;
+            if (sd) {
+                launch(services.value[i].subdomain, f => {
+                    if (f.length) {
+                        host = f[0].size;
+                    }
+                }, true);
+            }
+            skapi.storageInformation(services.value[i].service).then(async(info) => {
+                info.host = host
                 services.value[i].info = info;
-            })
+            });
+
         }
         console.log(services.value)
     })
@@ -253,9 +276,18 @@ if (serviceFetching.value) {
 else {
     services.value = skapi.serviceMap.map(sid => skapi.services[sid]).reverse();
     for(let i=0; i<services.value.length; i++) {
+        let sd = services.value[i]?.subdomain;
+            let host = 0;
+            if (sd) {
+                launch(services.value[i].subdomain, f => {
+                    if (f.length) {
+                        host = f[0].size;
+                    }
+                }, true);
+            }
         skapi.storageInformation(services.value[i].service).then(info => {
             services.value[i].info = info;
-        })
+        });
     }
     console.log(services.value)
 }
@@ -319,232 +351,67 @@ skapi.getProfile().then(u => {
     position: relative;
     margin-top: 3.4rem;
     padding: 0 2rem;
+}
+.createButton {
+    display: inline-block;
+    // height: 40px;
+    padding: 6px 28px 8px;
+    border-radius: 8px;
+    border: 1px solid #D9D9D9;
+    color: #293FE6;
+    cursor: pointer;
+    
+    * {
+        user-select: none;
+        font-size: 16px;
+        font-weight: 500;
+    }
+}
 
-    .searchCreateButtons {
-        height: 44px;
-        display: flex;
-        flex-wrap: nowrap;
-        align-items: center;
-        justify-content: space-between;;
+.tableWrap {
+    position: relative;
+    min-height: calc(100vh - 3.4rem - 160px);
+    margin-top: 16px;
+    overflow-x: auto;
 
-        .searchBar {
-            width: 400px;
-            height: 100%;
-            line-height: 40px;
-            padding: 0 17px;
-            border-radius: 8px;
-            background-color: rgba(0, 0, 0, 0.05);
+    .noServices {
+        position: absolute;
+        left: 50%;
+        top: 50%;
+        transform: translate(-50%, -50%);
+        text-align: center;
 
-            .customSelect {
-                display: inline-block;
-                width: 150px;
-            }
-            .search {
-                padding: 0 13px;
-                border-left: 1px solid rgba(0,0,0,0.25);
-                color: rgba(0,0,0,0.4);
-            }
-            #searchInput {
-                width: 165px;
-                height: 20px;
-                border: 0;
-                background-color: unset;
-            }
+        h3 {
+            color: rgba(0, 0, 0, 0.40);
         }
-        .createButton {
-            height: 100%;
-            line-height: 40px;
-            padding: 0 28px;
-            border-radius: 8px;
-            background-color: #293FE6;
-            color: #fff;
-            cursor: pointer;
 
-            * {
-                font-size: 16px;
-                font-weight: 700;
-            }
+        p {
+            color: rgba(0, 0, 0, 0.40);
+            font-weight: 500;
         }
     }
 
-    .tableWrap {
-        position: relative;
-        min-height: calc(100vh - 3.4rem - 160px);
-        margin-top: 16px;
-        overflow-x: auto;
+    table {
+        width: 100%;
+        border-collapse: collapse;
+        table-layout: fixed;
 
-        .noServices {
-            position: absolute;
-            left: 50%;
-            top: 50%;
-            transform: translate(-50%, -50%);
-            text-align: center;
+        thead {
+            position: sticky;
+            top: 0px;
+            background-color: #fafafa;
+            z-index: 10;
+            text-align: left;
 
-            h3 {
-                color: rgba(0, 0, 0, 0.40);
-            }
+            tr {
+                height: 60px;
 
-            p {
-                color: rgba(0, 0, 0, 0.40);
-                font-weight: 500;
-            }
-        }
-
-        table {
-            width: 100%;
-            border-collapse: collapse;
-            table-layout: fixed;
-
-            thead {
-                position: sticky;
-                top: 0px;
-                background-color: #fafafa;
-                z-index: 10;
-                text-align: left;
-
-                tr {
-                    height: 60px;
-
-                    th {
-                        position: relative;
-                        color: rgba(0, 0, 0, 0.40);
-                        font-size: 0.7rem;
-                        font-weight: 500;
-                        padding-left: 40px;
-
-                        &::after {
-                            position: absolute;
-                            content: '';
-                            width: 100%;
-                            height: 1px;
-                            left: 0;
-                            bottom: 0;
-                            background: rgba(0, 0, 0, 0.1);
-                            box-shadow: 0px 1px 3px 0px rgba(0, 0, 0, 0.06);
-                        }
-
-                        &:first-child {
-                            padding-left: 0;
-                        }
-
-                        &:last-child {
-                            .resizer {
-                                display: none;
-                            }
-                        }
-
-                        &.center {
-                            padding: 0;
-                            text-align: center;
-                        }
-
-                        .resizer {
-                            position: absolute;
-                            top: 50%;
-                            right: 0px;
-                            transform: translateY(-50%);
-                            width: 4px;
-                            height: 20px;
-                            background-color: rgba(0, 0, 0, 0.1);
-                            cursor: col-resize;
-
-                            &.contrast {
-                                background-color: #fff !important;
-                            }
-                        }
-
-                        .resizable {
-                            height: 100px;
-                            width: 100px;
-                            position: relative;
-                        }
-                    }
-                }
-            }
-
-            tbody {
-                overflow-y: auto;
-                font-weight: 400;
-
-                tr {
-                    &:not(.cont, .active, .loadingWrap):hover {
-                        background-color: rgba(41,63,230,0.05);
-                        cursor: pointer;
-                    }
-                    &.active {
-                        background-color: rgba(41, 63, 230, 0.10);
-                    }
-                    &.cont {
-                        height: 250px;
-                        background-color: rgba(0, 0, 0, 0.02);
-                        display: none;
-
-                        &.active {
-                            display: table-row;
-                        }
-
-                        td {
-                            padding: 0 75px;
-                        }
-
-                        .info {
-                            display: block;
-                            margin-bottom: 10px;
-
-                            &.inline {
-                                display: inline-block;
-                                width: 25%;
-
-                                h6 {
-                                    display: block;
-                                    margin-bottom: 8px;
-                                }
-                            }
-                            h6 {
-                                display: inline-block;
-                                font-weight: 400;
-                                color: rgba(0, 0, 0, 0.40);
-                                margin-right: 10px;
-                            }
-                            span {
-                                color: rgba(0, 0, 0, 0.60);
-                            }
-                        }
-                        .upArrow {
-                            position: absolute;
-                            left: -7px;
-                            bottom: 0;
-                            rotate: 270deg;
-                            transform-origin: top;
-                            font-size: 24px;
-                            padding: 10px;
-                            border-radius: 50%;
-                            color: rgba(0,0,0,0.4);
-                            display: block;
-                            cursor: pointer;
-
-                            &:hover {
-                                background-color: rgba(41, 63, 230, 0.10);
-                            }
-                            &.hide {
-                                display: none;
-                            }
-                        }
-                    }
-                    &.loadingWrap {
-                        td {
-                            &::after {
-                                display: none !important;
-                            }
-                        }
-                    }
-                }
-
-                td {
+                th {
                     position: relative;
-                    height: 60px;
-                    padding: 0 20px;
-                    font-size: 0.8rem;
+                    color: rgba(0, 0, 0, 0.40);
+                    font-size: 0.7rem;
+                    font-weight: 500;
+                    padding-left: 40px;
 
                     &::after {
                         position: absolute;
@@ -558,140 +425,242 @@ skapi.getProfile().then(u => {
                     }
 
                     &:first-child {
-                        &:hover {
-                            .downArrow {
-                                background-color: rgba(41, 63, 230, 0.10);
-                            }
-                        }
+                        padding-left: 0;
                     }
+
                     &:last-child {
-                        &:hover {
-                            .menu {
-                                background-color: rgba(41, 63, 230, 0.10);
-                            }
+                        .resizer {
+                            display: none;
                         }
                     }
 
                     &.center {
                         padding: 0;
                         text-align: center;
-                        font-size: 0.8rem;
                     }
 
-                    .percent {
-                        display: inline-block;
-                        padding: 0px 12px;
-                        border-radius: 4px;
-                        box-shadow: 0px -1px 1px 0px rgba(0, 0, 0, 0.15) inset;
-
-                        &.green {
-                            background-color: #52D687;
-                        }
-                        &.orange {
-                            background-color: #FCA642;
-                        }
-                        &.red {
-                            background-color: #F04E4E;
-                        }
-                    }
-
-                    .downArrow {
+                    .resizer {
                         position: absolute;
-                        left: 16px;
                         top: 50%;
-                        padding: 10px;
-                        border-radius: 50%;
+                        right: 0px;
                         transform: translateY(-50%);
-                        font-size: 24px;
-                        color: rgba(0,0,0,0.4);
-                        rotate: 90deg;
-                        transform-origin: top center;
-                        display: block;
-                        cursor: pointer;
-
-                        // &:hover {
-                        //     background-color: rgba(41, 63, 230, 0.10);
-                        // }
-                        &.hide {
-                            display: none;
-                        }
-                    }
-
-                    .menu {
-                        // position: absolute;
-                        // right: 28px;
-                        // top: 50%;
-                        width: 40px;
-                        height: 40px;
-                        // padding: 10px;
-                        text-align: center;
-                        padding-top: 8px;
-                        border-radius: 50%;
-                        // transform: translateY(-50%);
-                        z-index: 1;
-
-                        // &:hover {
-                        //     background-color: rgba(41, 63, 230, 0.10);
-                        // }
-
-                    }
-                    #moreVert {
-                        &.hide {
-                            display: none;
-                        }
-
-                        &.show {
-                            display: block;
-                        }
-                    }
-
-                    .serviceActive {
-                        position: relative;
-                        width: 20px;
+                        width: 4px;
                         height: 20px;
-                        margin: 0 auto;
-                        border-radius: 50%;
-                        background-color: rgba(0,0,0,0.25);
+                        background-color: rgba(0, 0, 0, 0.1);
+                        cursor: col-resize;
 
-                        &.active {
-                            background-color: #5AD858;
-                        }
-
-                        .power {
-                            position: absolute;
-                            left: 50%;
-                            top: 50%;
-                            transform: translate(-50%, -50%);
-                            color: #fff;
+                        &.contrast {
+                            background-color: #fff !important;
                         }
                     }
 
-                    > div:not(.material-symbols-outlined) {
-                        font-size: 0.8rem;
-                    }
-
-                    .block {
-                        color: rgba(0, 0, 0, 0.4);
-                    }
-
-                    .enable {
-                        color: rgba(90, 216, 88, 1);
-                    }
-
-                    .disable {
-                        color: rgba(240, 78, 78, 1);
-                    }
-
-                    .overflow {
+                    .resizable {
+                        height: 100px;
+                        width: 100px;
                         position: relative;
-                        width: 100%;
-                        white-space: nowrap;
-                        overflow: hidden;
-                        text-overflow: ellipsis;
+                    }
+                }
+            }
+        }
 
-                        &::-webkit-scrollbar {
-                            display: none;
+        tbody {
+            overflow-y: auto;
+            font-weight: 400;
+
+            tr {
+                &:not(.cont, .active, .loadingWrap, .noServices):hover {
+                    background-color: rgba(41,63,230,0.05);
+                    cursor: pointer;
+                }
+                &.active {
+                    background-color: rgba(41, 63, 230, 0.10);
+                }
+                &.cont {
+                    height: 250px;
+                    background-color: rgba(0, 0, 0, 0.02);
+                    display: none;
+
+                    &.active {
+                        display: table-row;
+                    }
+
+                    td {
+                        padding: 0 75px;
+                    }
+
+                    .info {
+                        display: block;
+                        margin-bottom: 10px;
+
+                        &.inline {
+                            display: inline-block;
+                            width: 25%;
+
+                            h6 {
+                                display: block;
+                                margin-bottom: 8px;
+                            }
                         }
+                        h6 {
+                            display: inline-block;
+                            font-weight: 400;
+                            color: rgba(0, 0, 0, 0.40);
+                            margin-right: 10px;
+                        }
+                        span {
+                            color: rgba(0, 0, 0, 0.60);
+                        }
+                    }
+                }
+                &.loadingWrap, &.noServices {
+                    td {
+                        &::after {
+                            display: none !important;
+                        }
+                    }
+                }
+            }
+
+            td {
+                position: relative;
+                height: 60px;
+                padding: 0 20px;
+                font-size: 0.8rem;
+
+                &::after {
+                    position: absolute;
+                    content: '';
+                    width: 100%;
+                    height: 1px;
+                    left: 0;
+                    bottom: 0;
+                    background: rgba(0, 0, 0, 0.1);
+                    box-shadow: 0px 1px 3px 0px rgba(0, 0, 0, 0.06);
+                }
+
+                &.center {
+                    padding: 0;
+                    text-align: center;
+                    font-size: 0.8rem;
+                }
+
+                .percent {
+                    display: inline-block;
+                    padding: 3px 12px;
+                    border-radius: 4px;
+                    box-shadow: 0px -1px 1px 0px rgba(0, 0, 0, 0.15) inset;
+                    color: #fff;
+
+                    &.green {
+                        background-color: #52D687;
+                    }
+                    &.orange {
+                        background-color: #FCA642;
+                    }
+                    &.red {
+                        background-color: #F04E4E;
+                    }
+                }
+
+                .upArrow, .downArrow {
+                    display: inline-block;
+                    vertical-align: middle;
+                    padding: 10px;
+                    border-radius: 50%;
+                    font-size: 24px;
+                    color: rgba(0,0,0,0.4);
+                    cursor: pointer;
+
+                    &:hover {
+                        background-color: rgba(41, 63, 230, 0.10);
+                    }
+                    &.hide {
+                        display: none;
+                    }
+                }
+
+                .upArrow {
+                    rotate: 270deg;
+                }
+
+                .downArrow {
+                    rotate: 90deg;
+                }
+
+                .menu {
+                    position: absolute;
+                    right: 28px;
+                    top: 50%;
+                    padding: 10px;
+                    text-align: center;
+                    padding-top: 8px;
+                    border-radius: 50%;
+                    transform: translateY(-50%);
+                    z-index: 1;
+
+                    &:hover {
+                        background-color: rgba(41, 63, 230, 0.10);
+                    }
+
+                }
+                #moreVert {
+                    &.hide {
+                        display: none;
+                    }
+
+                    &.show {
+                        display: block;
+                    }
+                }
+
+                .serviceActive {
+                    position: relative;
+                    display: inline-block;
+                    vertical-align: middle;
+                    width: 20px;
+                    height: 20px;
+                    margin: 0 auto;
+                    border-radius: 50%;
+                    background-color: rgba(0,0,0,0.25);
+
+                    &.active {
+                        background-color: #5AD858;
+                    }
+
+                    .power {
+                        position: absolute;
+                        left: 50%;
+                        top: 50%;
+                        transform: translate(-50%, -50%);
+                        color: #fff;
+                    }
+                }
+
+                > div:not(.material-symbols-outlined) {
+                    font-size: 0.8rem;
+                }
+
+                .block {
+                    color: rgba(0, 0, 0, 0.4);
+                }
+
+                .enable {
+                    color: rgba(90, 216, 88, 1);
+                }
+
+                .disable {
+                    color: rgba(240, 78, 78, 1);
+                }
+
+                .overflow {
+                    position: relative;
+                    width: 100%;
+                    white-space: nowrap;
+                    overflow: hidden;
+                    text-overflow: ellipsis;
+
+                    &::-webkit-scrollbar {
+                        display: none;
                     }
                 }
             }
