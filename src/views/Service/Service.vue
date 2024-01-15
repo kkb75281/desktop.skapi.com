@@ -454,6 +454,7 @@ watch(modifyCors, () => {
 
         &.card {
             padding-top: 1.4rem;
+            border: 0;
         }
 
         .title {
