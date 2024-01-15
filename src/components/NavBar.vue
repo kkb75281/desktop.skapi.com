@@ -47,6 +47,7 @@ header#navBar(style='--position: relative;')
                             router-link.signup(to="/signup") Sign-up
         .prof(v-if="accountInfo && account" @click.stop)
             .member 
+                img(v-if="account.approved.includes('ggl')" src="@/assets/img/icon/google.svg" style="display:inline-block;width:20px;height:20px;vertical-align:middle;margin-right:10px;")
                 span {{ account.email }}
             .settings 
                 .setting(@click="navigateToPage")
@@ -55,7 +56,7 @@ header#navBar(style='--position: relative;')
                 .setting(@click="logout")
                     span.material-symbols-outlined.sml logout
                     span Logout
-            .policy terms of service ● privacy policy
+            a.policy(href="https://broadwayinc.com/pp/skapi.html" target="_blank") terms of service ● privacy policy
 </template>
 
 <script setup>
