@@ -21,10 +21,10 @@
                         ul.pointWrap 
                             li All the services will be permanently deleted
                             li All the information will be permanently deleted
+                            li You won’t be able to recover the account if you have not verified your email address.
                         .error(v-if="acknowledgeError")
                             .material-symbols-outlined.mid error
                             span {{ acknowledgeError }}
-                        br
                         br
                         .buttonWrap.block
                             button.no(type="button" @click="emits('close')") No, keep my account

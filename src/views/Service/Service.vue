@@ -515,7 +515,7 @@ watch(modifyCors, () => {
 
                             .toggleBtn {
                                 transform: translate(31px, -50%);
-                                transition: all 1s;
+                                transition: all 0.5s;
                             }
                         }
                     }
@@ -535,7 +535,7 @@ watch(modifyCors, () => {
                         margin-left: 1rem;
                         border-radius: 16px;
                         background-color: rgba(0, 0, 0, 0.25);
-                        transition: all 1s;
+                        transition: all 0.5s;
 
                         &.nonClickable {
                             .toggleBtn {
@@ -552,7 +552,7 @@ watch(modifyCors, () => {
                             transform: translateY(-50%);
                             border-radius: 50%;
                             background-color: #eee;
-                            transition: all 1s;
+                            transition: all 0.5s;
                             cursor: pointer;
                         }
                     }
