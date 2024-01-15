@@ -350,7 +350,6 @@ onBeforeUnmount(() => {
                 }
             }
         }
-
         .policy {
             display: flex;
             align-items: center;
