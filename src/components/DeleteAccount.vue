@@ -87,7 +87,7 @@
                                 button.cancel(type="button" @click="closeWindow") Cancel
                                 button.save(type="submit") Delete
                 br
-                .navigator(v-if="step <= 3")
+                .navigator(v-if="step <= 3" :class="{'nonClickable' : promiseRunning}")
                     .ball(v-for="num in 3" @click="() => { num < step ? step = num : null; password = ''; }" :class="{'active': step === num}")
 </template>
 <script setup>

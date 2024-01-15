@@ -36,7 +36,7 @@ header#navBar(style='--position: relative;')
                             a(href="https://twitter.com/skapijs" target="_blank")
                                 img(src="@/assets/img/icon/twitter.svg")
                         li
-                            a(href="https://discord.gg/P9aGAcBj" target="_blank")
+                            a(href="https://discord.gg/thqvysPnQt" target="_blank")
                                 img(src="@/assets/img/icon/discord.svg")
                     ul
                         li.doc
@@ -50,7 +50,7 @@ header#navBar(style='--position: relative;')
                             a(href="https://twitter.com/skapijs" target="_blank")
                                 img(src="@/assets/img/icon/twitter.svg")
                         li
-                            a(href="https://discord.com/channels/1164154380816236626/1164154380816236628" target="_blank")
+                            a(href="https://discord.com/invite/thqvysPnQt" target="_blank")
                                 img(src="@/assets/img/icon/discord.svg")
                     ul
                         li.doc 
@@ -249,7 +249,7 @@ onBeforeUnmount(() => {
                             color: #fff;
 
                             &:hover {
-                                color: #293FE6;
+                                color: #fff;
 
                                 img {
                                     filter: invert(28%) sepia(100%) saturate(5415%) hue-rotate(234deg) brightness(89%) contrast(102%);
