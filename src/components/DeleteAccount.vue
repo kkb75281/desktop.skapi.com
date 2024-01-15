@@ -21,10 +21,10 @@
                         ul.pointWrap 
                             li All the services will be permanently deleted
                             li All the information will be permanently deleted
+                            li You won’t be able to recover the account if you have not verified your email address.
                         .error(v-if="acknowledgeError")
                             .material-symbols-outlined.mid error
                             span {{ acknowledgeError }}
-                        br
                         br
                         .buttonWrap.block
                             button.no(type="button" @click="emits('close')") No, keep my account
@@ -87,7 +87,7 @@
                                 button.cancel(type="button" @click="closeWindow") Cancel
                                 button.save(type="submit") Delete
                 br
-                .navigator(v-if="step <= 3")
+                .navigator(v-if="step <= 3" :class="{'nonClickable' : promiseRunning}")
                     .ball(v-for="num in 3" @click="() => { num < step ? step = num : null; password = ''; }" :class="{'active': step === num}")
 </template>
 <script setup>

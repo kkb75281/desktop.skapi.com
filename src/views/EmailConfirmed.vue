@@ -3,7 +3,7 @@
     RouterLink(:to="{name: 'home'}")
         img.logo(src="@/assets/img/logo/logo.png")
     .material-symbols-outlined.big.check check_circle
-    h5 Congratulations!
+    h3 Congratulations!
     .message 
         | Thanks for joining!
         br
@@ -36,9 +36,8 @@
     .check {
         display: none;
     }
-    h5 {
+    h3 {
         color: #293FE6;
-        font-size: 20px;
         font-weight: 700;
         margin-top: 32px;
     }
