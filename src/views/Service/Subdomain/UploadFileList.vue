@@ -121,6 +121,13 @@ let hideList = ref(false);
 
                 .pathWrapper {
                     margin-left: 12px;
+                    
+                    .path {
+                        width: 360px;
+                        white-space: nowrap;
+                        overflow: hidden;
+                        text-overflow: ellipsis;
+                    }
                 }
             }
         }
