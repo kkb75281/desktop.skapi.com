@@ -15,7 +15,6 @@ header#navBar(style='--position: relative;')
             .topRoute(v-if="route.params.service && currentService" ref="topRoute") 
                 router-link.service(:to="`/dashboard/${currentService.service}`") 
                     h5 {{ currentService.name }}
-                    h5 {{ currentService.name }}
             .topMenu(:class="{'white' : route.name == 'home'}")
                 template(v-if="account")
                     ul
@@ -23,7 +22,7 @@ header#navBar(style='--position: relative;')
                             a(href="https://twitter.com/skapijs" target="_blank")
                                 img(src="@/assets/img/icon/twitter.svg")
                         li
-                            a(href="https://discord.gg/thqvysPnQt" target="_blank")
+                            a(href="https://discord.gg/P9aGAcBj" target="_blank")
                                 img(src="@/assets/img/icon/discord.svg")
                     ul
                         li.doc
@@ -37,7 +36,7 @@ header#navBar(style='--position: relative;')
                             a(href="https://twitter.com/skapijs" target="_blank")
                                 img(src="@/assets/img/icon/twitter.svg")
                         li
-                            a(href="https://discord.com/invite/thqvysPnQt" target="_blank")
+                            a(href="https://discord.com/channels/1164154380816236626/1164154380816236628" target="_blank")
                                 img(src="@/assets/img/icon/discord.svg")
                     ul
                         li.doc 
@@ -48,7 +47,7 @@ header#navBar(style='--position: relative;')
                             router-link.signup(to="/signup") Sign-up
         .prof(v-if="accountInfo && account" @click.stop)
             .member 
-                img(v-if="account.approved.includes('ggl')" src="@/assets/img/icon/google.svg" style="display:inline-block;width:20px;height:20px;vertical-align:middle;margin-right:10px;")
+                //- img(v-if="account.approved.includes('ggl')" src="@/assets/img/icon/google.svg" style="display:inline-block;width:20px;height:20px;vertical-align:middle;margin-right:10px;")
                 span {{ account.email }}
             .settings 
                 .setting(@click="navigateToPage")
@@ -57,7 +56,6 @@ header#navBar(style='--position: relative;')
                 .setting(@click="logout")
                     span.material-symbols-outlined.sml logout
                     span Logout
-            a.policy(href="https://broadwayinc.com/pp/skapi.html" target="_blank") terms of service ● privacy policy
             a.policy(href="https://broadwayinc.com/pp/skapi.html" target="_blank") terms of service ● privacy policy
 </template>
 
@@ -136,7 +134,6 @@ onBeforeUnmount(() => {
     .left {
         position: relative;
         width: 236px;
-        width: 236px;
         .logo {
             display: block;
             height: 32px;
@@ -156,7 +153,7 @@ onBeforeUnmount(() => {
         }
     }
     .right {
-        width: calc(100% - 236px);
+        width: calc(100% - 220px);
         text-align: right;
         
         &.flex {
@@ -166,7 +163,57 @@ onBeforeUnmount(() => {
             justify-content: space-between;
         }
         .topRoute {
+            ol {
+                height: 40px;
+                display: flex;
+                align-items: center;
+    
+                li {
+                    position: relative;
+                    list-style: none;
+                    margin-right: 50px;
+    
+                    a {
+                        font-size: 1rem;
+                        font-weight: 700;
+                        text-decoration: none;
+                        color: rgba(0, 0, 0, 0.40);
+                    }
+    
+                    h5 {
+                        // max-width: 80px;
+                        // white-space: nowrap;
+                        // overflow: hidden;
+                        // text-overflow: ellipsis;
+                    }
+    
+                    &:last-child {
+                        margin-right: 0;
+                    }
+    
+                    &::before {
+                        position: absolute;
+                        content: '>';
+                        right: -30px;
+                        top: 50%;
+                        transform: translateY(-50%);
+                        font-size: 20px;
+                        color: rgba(0, 0, 0, 0.40);
+                    }
+    
+                    &.active {
+                        a {
+                            color: #293FE6;
+                        }
+                    }
+    
+                    &.active::before {
+                        display: none;
+                    }
+                }
+            }
             .service {
+                // display: none;
                 text-decoration: none;
                 color: #293FE6;
             }
@@ -189,10 +236,10 @@ onBeforeUnmount(() => {
                             color: #fff;
 
                             &:hover {
-                                color: #fff;
+                                color: #293FE6;
 
                                 img {
-                                    // filter: invert(28%) sepia(100%) saturate(5415%) hue-rotate(234deg) brightness(89%) contrast(102%);
+                                    filter: invert(28%) sepia(100%) saturate(5415%) hue-rotate(234deg) brightness(89%) contrast(102%);
                                 }
                             }
                             img {
@@ -234,7 +281,7 @@ onBeforeUnmount(() => {
     
                 li {
                     list-style: none;
-                    margin-right: 2rem;
+                    margin-right: 1rem;
                     text-align: center;
     
                     &:last-child {
@@ -311,11 +358,12 @@ onBeforeUnmount(() => {
         color: rgba(0, 0, 0, 0.80);
         border: 1px solid rgba(0, 0, 0, 0.15);
         box-shadow: 8px 12px 36px rgba(0, 0, 0, 0.10);
+
         border-radius: 8px;
         z-index: 99;
 
         .member {
-            padding: 1rem;
+            padding: 20px;
             border-bottom: 1px solid rgba(0, 0, 0, 0.15);
 
             h4 {
@@ -329,7 +377,7 @@ onBeforeUnmount(() => {
         }
 
         .settings {
-            padding: 1rem;
+            padding: 20px;
             border-bottom: 1px solid rgba(0, 0, 0, 0.15);
 
             .setting {
@@ -353,14 +401,15 @@ onBeforeUnmount(() => {
                 }
             }
         }
+
         .policy {
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 12px;
+            font-size: 0.6rem;
             font-weight: 500;
             color: rgba(0, 0, 0, 0.6);
-            padding: 11px 0;
+            padding: 10px 0;
             text-decoration: none;
         }
     }
@@ -370,7 +419,7 @@ onBeforeUnmount(() => {
 @media (max-width:1110px) {
     #top {
         .left {
-            width: 75px;
+            width: 65px;
         }
         .right {
             width: calc(100% - 65px);
@@ -388,11 +437,7 @@ onBeforeUnmount(() => {
 
 @media (max-width:767px) {
     #top {
-        .left {
-            width: 40px;
-        }
         .right {
-            width: calc(100% - 40px);
             .topMenu {
                 ul {
                     li {

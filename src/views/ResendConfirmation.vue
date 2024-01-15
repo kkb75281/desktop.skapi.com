@@ -13,7 +13,7 @@
         template(v-if="resending")
             .resending The Code has been resent.
         template(v-else)
-            span(style="font-size:0.8rem") Haven’t got any Code?
+            span Haven’t got any Code?
             .click(@click="resend") Re-send Code
 </template>
 

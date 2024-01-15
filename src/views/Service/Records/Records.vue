@@ -339,7 +339,7 @@ main#database
                 // right panel top right menu
                 .menu(:class='{"nonClickable": !account.email_verified}' v-if="!recordInfoEdit" @click.stop="showEdit = !showEdit") 
                     // drop down menu (no edit)
-                    .material-symbols-outlined.mid.clickable(title="Menu") more_vert
+                    .material-symbols-outlined.mid.clickable more_vert
                     #moreVert(v-if="showEdit" @click.stop style="--moreVert-right: 0")
                         .inner
                             .more(@click="recordInfoEdit = true; showEdit = false;")
@@ -358,10 +358,10 @@ main#database
                         img.loading(src="@/assets/img/loading.png" style="width:20px;height:20px;margin-top:4px;")
                     template(v-else)
                         button.cancel(type='button' @click="()=>{recordInfoEdit = false; selectedRecord = recordPage.list[selectedRecord.record_id] ? JSON.parse(JSON.stringify(recordPage.list[selectedRecord.record_id])) : null; }") 
-                            .material-symbols-outlined.mid(v-if="isSmallScreen" title="Cancel") close
+                            .material-symbols-outlined.mid(v-if="isSmallScreen") close
                             span(v-else) Cancel
                         button.save
-                            .material-symbols-outlined.mid(v-if="isSmallScreen" title="Save") check
+                            .material-symbols-outlined.mid(v-if="isSmallScreen") check
                             span(v-else) Save
 
             template(v-else)
@@ -437,18 +437,18 @@ main#database
         // top menu of record list
         .tableHeader 
             .actions 
-                .material-symbols-outlined.mid.refresh.clickable(@click='()=>{selectedRecord=null; refresh(fetchParams);}' :class='{"rotate_animation": fetching }' title="Refresh") cached
-                .material-symbols-outlined.mid.create.clickable(:class="{'nonClickable' : !account.email_verified}" @click="()=>{ !account.email_verified ? false : selectedRecord = JSON.parse(JSON.stringify(createRecordTemplate)); recordInfoEdit=true; }" title="Create record") note_stack_add
+                .material-symbols-outlined.mid.refresh.clickable(@click='()=>{selectedRecord=null; refresh(fetchParams);}' :class='{"rotate_animation": fetching }') cached
+                .material-symbols-outlined.mid.create.clickable(:class="{'nonClickable' : !account.email_verified}" @click="()=>{ !account.email_verified ? false : selectedRecord = JSON.parse(JSON.stringify(createRecordTemplate)); recordInfoEdit=true; }") note_stack_add
                 .menu(:class='{"nonClickable": !checkedRecords.length || !account.email_verified}' @click.stop="!account.email_verified ? false : showRecordSetting = !showRecordSetting") 
-                    .material-symbols-outlined.mid.clickable(title="Menu") more_vert
+                    .material-symbols-outlined.mid.clickable more_vert
                     #moreVert(v-if="showRecordSetting" @click.stop style="--moreVert-left: 0")
                         .inner
                             .more(@click="()=>{recordDelete(); showRecordSetting=false;}")
                                 .material-symbols-outlined.mid delete
                                 span delete
             .pagenator 
-                .material-symbols-outlined.sml.prevPage.clickable(:class='{"nonClickable": currentPage === 1 || fetching }' @click='nextPage(false)' title="Previous page") arrow_back_ios
-                .material-symbols-outlined.sml.nextPage.clickable(:class='{"nonClickable": maxPage <= currentPage && recordPage?.endOfList || fetching }' @click='nextPage' title="Next page") arrow_forward_ios
+                .material-symbols-outlined.sml.prevPage.clickable(:class='{"nonClickable": currentPage === 1 || fetching }' @click='nextPage(false)') arrow_back_ios
+                .material-symbols-outlined.sml.nextPage.clickable(:class='{"nonClickable": maxPage <= currentPage && recordPage?.endOfList || fetching }' @click='nextPage') arrow_forward_ios
 
         // record list
         .tableWrap

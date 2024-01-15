@@ -454,7 +454,6 @@ watch(modifyCors, () => {
 
         &.card {
             padding-top: 1.4rem;
-            border: 0;
         }
 
         .title {
@@ -490,13 +489,12 @@ watch(modifyCors, () => {
                     span {
                         color: rgba(0, 0, 0, 0.40);
                         font-size: 0.8rem;
-                        font-weight: 400;
+                        font-weight: 500;
                         margin-right: 10px;
                     }
 
                     h6 {
                         display: inline-block;
-                        font-weight: 400;
                         color: rgba(0, 0, 0, 0.60);
                     }
                 }
@@ -516,7 +514,7 @@ watch(modifyCors, () => {
 
                             .toggleBtn {
                                 transform: translate(31px, -50%);
-                                transition: all 0.5s;
+                                transition: all 1s;
                             }
                         }
                     }
@@ -524,7 +522,7 @@ watch(modifyCors, () => {
                     span {
                         color: rgba(0, 0, 0, 0.40);
                         font-size: 0.8rem;
-                        font-weight: 400;
+                        font-weight: 500;
                     }
 
                     .toggleBg {
@@ -536,7 +534,7 @@ watch(modifyCors, () => {
                         margin-left: 1rem;
                         border-radius: 16px;
                         background-color: rgba(0, 0, 0, 0.25);
-                        transition: all 0.5s;
+                        transition: all 1s;
 
                         &.nonClickable {
                             .toggleBtn {
@@ -553,7 +551,7 @@ watch(modifyCors, () => {
                             transform: translateY(-50%);
                             border-radius: 50%;
                             background-color: #eee;
-                            transition: all 0.5s;
+                            transition: all 1s;
                             cursor: pointer;
                         }
                     }
@@ -630,7 +628,7 @@ watch(modifyCors, () => {
                 margin-top: 28px;
 
                 h6 {
-                    font-weight: 400;
+                    font-weight: 500;
                     color: rgba(0, 0, 0, 0.4);
 
                     &.active {
@@ -643,7 +641,7 @@ watch(modifyCors, () => {
                     position: relative;
                     display: inline-block;
                     font-size: 16px;
-                    font-weight: 400;
+                    font-weight: 700;
                     color: rgba(0, 0, 0, 0.6);
                     margin-top: 8px;
 

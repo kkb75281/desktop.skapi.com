@@ -59,20 +59,6 @@
     //- a.googleLogin(:href="googleOpenId")
     //-     img(src="@/assets/img/icon/google.svg")
     //-     span Sign in with Google
-
-msgOverlay(v-if="enableAccount" title="Enable your account" style="--max-width:376px;--title-color:#293FE6")
-    p(style="color:rgba(240, 78, 78, 0.80)") Your account has been disabled.
-    p Do you want to enable your account?
-    br
-    p *You cannot enable your account if you have not verified your email.
-    br
-    br
-    .buttonWrap
-        template(v-if="recoverRunning")
-            img.loading(src="@/assets/img/loading.png")
-        template(v-else)
-            button.cancel(@click="enableAccount = false;") Cancel
-            button.save(@click="recoverAccount" style="background:#293FE6;border:0;color:#fff;") Enable
 </template>
 
 <script setup>
@@ -80,7 +66,6 @@ import { onMounted, ref } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 import { skapi } from '@/main.js';
 import { account, googleOpenId } from '../main';
-import msgOverlay from '@/components/msgOverlay.vue'
 
 let route = useRoute();
 let router = useRouter();
@@ -90,9 +75,7 @@ let form = {
     remember: true,
 };
 let showPassword = ref(false);
-let enableAccount = ref(false);
 let promiseRunning = ref(false);
-let recoverRunning = ref(false);
 // let emailConfirmed = ref(false);
 let error = ref(null);
 
@@ -112,13 +95,11 @@ let login = () => {
         account.value = res;
         router.push({ path: '/dashboard' });
     }).catch(err => {
-        console.log(err.code)
         promiseRunning.value = false;
         if (err.code === "SIGNUP_CONFIRMATION_NEEDED") {
             router.push({ path: '/confirmation', query: { email: form.email } });
         } else if (err.code === "USER_IS_DISABLED") {
-            // error.value = "This account is disabled."
-            enableAccount.value = true;
+            error.value = "This account is disabled."
         } else if (err.code === "INCORRECT_USERNAME_OR_PASSWORD") {
             error.value = "Incorrect email or password."
         } else if (err.code === "NOT_EXISTS") {
@@ -127,16 +108,6 @@ let login = () => {
             error.value = err.message;
         }
     })
-}
-let recoverAccount = () => {
-    recoverRunning.value = true;
-    skapi.recoverAccount('/success').then(res=>{
-        console.log(res); // SUCCESS: Recovery e-mail has been sent.
-        router.push({ path: '/confirmation', query: { email: form.email } })
-    }).catch(err => {
-        console.log(err);
-        recoverRunning.value = false;
-    });
 }
 </script>
 

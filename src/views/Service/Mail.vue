@@ -116,8 +116,6 @@ main#mail
                     .endPoint
                         span ${password} , ${email}
 
-    br
-
     section#section
         h4 Newsletters
 
@@ -227,6 +225,7 @@ let copy = (e) => {
         padding: 2rem;
         background-color: #fafafa;
         border-radius: 8px;
+        margin-bottom: 2%;
         box-shadow: 8px 12px 36px rgba(0, 0, 0, 0.10);
 
         p {
@@ -241,17 +240,19 @@ let copy = (e) => {
             }
         }
         .placeholder {
-            text-align: end;
+            display: flex;
+            justify-content: end;
 
             a {
                 display: inline-block;
                 border-radius: 8px;
+                height: 32px;
                 text-align: right;
                 border: 1px solid #D9D9D9;
                 line-height: 32px;
                 padding: 0 24px;
                 text-decoration: none;
-                font-size: 0.8rem;
+                font-size: 16px;
                 font-weight: 500;
                 color: #293FE6;
             }
@@ -286,13 +287,13 @@ let copy = (e) => {
                 .tit {
                     width: 238px;
                     color: rgba(0, 0, 0, 0.40);
-                    font-size: 0.8rem;
+                    font-size: 16px;
                     font-weight: 500;
                 }
                 .endPoint {
                     span, a {
                         color: rgba(0, 0, 0, 0.60);
-                        font-size: 0.8rem;
+                        font-size: 16px;
                         font-weight: 400;
                         line-height: 24px;
                         word-wrap: break-word;
