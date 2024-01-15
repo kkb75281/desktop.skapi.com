@@ -189,7 +189,7 @@ onBeforeUnmount(() => {
                                 color: #fff;
 
                                 img {
-                                    filter: invert(28%) sepia(100%) saturate(5415%) hue-rotate(234deg) brightness(89%) contrast(102%);
+                                    // filter: invert(28%) sepia(100%) saturate(5415%) hue-rotate(234deg) brightness(89%) contrast(102%);
                                 }
                             }
                             img {
