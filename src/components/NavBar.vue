@@ -298,12 +298,95 @@ onBeforeUnmount(() => {
         }
 
     }
+    // .prof {
+    //     position: absolute;
+    //     right: 40px;
+    //     top: 70px;
+    //     min-width: 265px;
+    //     padding: 20px 20px 0;
+    //     overflow: hidden;
+    //     background-color: #fafafa;
+    //     color: rgba(0, 0, 0, 0.80);
+    //     border: 1px solid rgba(0, 0, 0, 0.15);
+    //     box-shadow: 8px 12px 36px rgba(0, 0, 0, 0.10);
+
+    //     border-radius: 8px;
+    //     z-index: 99;
+
+    //     .member {
+    //         h4 {
+    //             font-size: 0.8rem;
+    //             font-weight: 700;
+    //         }
+
+    //         span {
+    //             font-size: 0.7rem;
+    //         }
+    //     }
+
+    //     .settings {
+    //         position: relative;
+    //         margin-top: 40px;
+
+    //         &::before {
+    //             position: absolute;
+    //             content: '';
+    //             left: 0;
+    //             top: -20px;
+    //             width: 120%;
+    //             height: 1px;
+    //             transform: translateX(-20px);
+    //             background-color: rgba(0, 0, 0, 0.15);
+    //         }
+
+    //         &::after {
+    //             position: absolute;
+    //             content: '';
+    //             left: 0;
+    //             bottom: -20px;
+    //             width: 120%;
+    //             height: 1px;
+    //             transform: translateX(-20px);
+    //             background-color: rgba(0, 0, 0, 0.15);
+    //         }
+
+    //         .setting {
+    //             display: flex;
+    //             align-items: center;
+    //             margin-bottom: 18px;
+    //             cursor: pointer;
+    //             font-size: 0.8rem;
+    //             font-weight: 500;
+    //             color: #293FE6;
+
+    //             &:last-child {
+    //                 margin-bottom: 0;
+    //             }
+
+    //             span {
+    //                 &:first-child {
+    //                     fill: #293FE6;
+    //                     margin-right: 10px;
+    //                 }
+    //             }
+    //         }
+    //     }
+
+    //     .policy {
+    //         display: flex;
+    //         align-items: center;
+    //         justify-content: center;
+    //         font-size: 0.6rem;
+    //         font-weight: 500;
+    //         color: rgba(0, 0, 0, 0.15);
+    //         padding: 27px 0 10px;
+    //     }
+    // }
     .prof {
         position: absolute;
         right: 40px;
         top: 70px;
         min-width: 265px;
-        padding: 20px 20px 0;
         overflow: hidden;
         background-color: #fafafa;
         color: rgba(0, 0, 0, 0.80);
@@ -314,6 +397,9 @@ onBeforeUnmount(() => {
         z-index: 99;
 
         .member {
+            padding: 1rem;
+            border-bottom: 1px solid rgba(0, 0, 0, 0.15);
+
             h4 {
                 font-size: 0.8rem;
                 font-weight: 700;
@@ -325,30 +411,8 @@ onBeforeUnmount(() => {
         }
 
         .settings {
-            position: relative;
-            margin-top: 40px;
-
-            &::before {
-                position: absolute;
-                content: '';
-                left: 0;
-                top: -20px;
-                width: 120%;
-                height: 1px;
-                transform: translateX(-20px);
-                background-color: rgba(0, 0, 0, 0.15);
-            }
-
-            &::after {
-                position: absolute;
-                content: '';
-                left: 0;
-                bottom: -20px;
-                width: 120%;
-                height: 1px;
-                transform: translateX(-20px);
-                background-color: rgba(0, 0, 0, 0.15);
-            }
+            padding: 1rem;
+            border-bottom: 1px solid rgba(0, 0, 0, 0.15);
 
             .setting {
                 display: flex;
@@ -376,10 +440,11 @@ onBeforeUnmount(() => {
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 0.6rem;
+            font-size: 12px;
             font-weight: 500;
-            color: rgba(0, 0, 0, 0.15);
-            padding: 27px 0 10px;
+            color: rgba(0, 0, 0, 0.6);
+            padding: 11px 0;
+            text-decoration: none;
         }
     }
 }
