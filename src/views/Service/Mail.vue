@@ -116,6 +116,8 @@ main#mail
                     .endPoint
                         span ${password} , ${email}
 
+    br
+
     section#section
         h4 Newsletters
 
@@ -225,7 +227,6 @@ let copy = (e) => {
         padding: 2rem;
         background-color: #fafafa;
         border-radius: 8px;
-        margin-bottom: 2%;
         box-shadow: 8px 12px 36px rgba(0, 0, 0, 0.10);
 
         p {
