@@ -12,23 +12,26 @@ header#navBar(style='--position: relative;')
                 //- img(v-else-if="route.name == 'dashboard' || route.name == 'accountSettings'" src="@/assets/img/logo/logo.png")
                 img.small(v-else src="@/assets/img/logo/symbol-logo.png")
         .right(:class="{'flex' : route.params.service && currentService}")
+            //- .topRoute(v-if="route.params.service && currentService" ref="topRoute") 
+            //-     ol
+            //-         li 
+            //-             router-link(to="/dashboard") My Services
+            //-         li(:class="{'active': route.name == 'service'}")
+            //-             router-link(:to="`/dashboard/${currentService.service}`") 
+            //-                 h5 Dashboard
+            //-         li(v-if="route.name == 'users'" :class="{'active': route.name == 'users'}")
+            //-             router-link(:to="`/dashboard/${currentService.service}/users`") Users
+            //-         li(v-if="route.name == 'records'" :class="{'active': route.name == 'records'}")
+            //-             router-link(:to="`/dashboard/${currentService.service}/records`") Records
+            //-         li(v-if="route.name == 'mail'" :class="{'active': route.name == 'mail'}")
+            //-             router-link(:to="`/dashboard/${currentService.service}/records`") Mail
+            //-         li(v-if="route.name == 'subdomain'" :class="{'active': route.name == 'subdomain'}")
+            //-             router-link(:to="`/dashboard/${currentService.service}/records`") Hosting
+            //-     router-link.service(:to="`/dashboard/${currentService.service}`") 
+            //-         h5 Dashboard
             .topRoute(v-if="route.params.service && currentService" ref="topRoute") 
-                ol
-                    li 
-                        router-link(to="/dashboard") My Services
-                    li(:class="{'active': route.name == 'service'}")
-                        router-link(:to="`/dashboard/${currentService.service}`") 
-                            h5 Dashboard
-                    li(v-if="route.name == 'users'" :class="{'active': route.name == 'users'}")
-                        router-link(:to="`/dashboard/${currentService.service}/users`") Users
-                    li(v-if="route.name == 'records'" :class="{'active': route.name == 'records'}")
-                        router-link(:to="`/dashboard/${currentService.service}/records`") Records
-                    li(v-if="route.name == 'mail'" :class="{'active': route.name == 'mail'}")
-                        router-link(:to="`/dashboard/${currentService.service}/records`") Mail
-                    li(v-if="route.name == 'subdomain'" :class="{'active': route.name == 'subdomain'}")
-                        router-link(:to="`/dashboard/${currentService.service}/records`") Hosting
                 router-link.service(:to="`/dashboard/${currentService.service}`") 
-                    h5 Dashboard
+                    h5 {{ currentService.name }}
             .topMenu(:class="{'white' : route.name == 'home'}")
                 template(v-if="account")
                     ul
@@ -176,57 +179,57 @@ onBeforeUnmount(() => {
             justify-content: space-between;
         }
         .topRoute {
-            ol {
-                height: 40px;
-                display: flex;
-                align-items: center;
+            // ol {
+            //     height: 40px;
+            //     display: flex;
+            //     align-items: center;
     
-                li {
-                    position: relative;
-                    list-style: none;
-                    margin-right: 50px;
+            //     li {
+            //         position: relative;
+            //         list-style: none;
+            //         margin-right: 50px;
     
-                    a {
-                        font-size: 1rem;
-                        font-weight: 700;
-                        text-decoration: none;
-                        color: rgba(0, 0, 0, 0.40);
-                    }
+            //         a {
+            //             font-size: 1rem;
+            //             font-weight: 700;
+            //             text-decoration: none;
+            //             color: rgba(0, 0, 0, 0.40);
+            //         }
     
-                    h5 {
-                        // max-width: 80px;
-                        // white-space: nowrap;
-                        // overflow: hidden;
-                        // text-overflow: ellipsis;
-                    }
+            //         h5 {
+            //             // max-width: 80px;
+            //             // white-space: nowrap;
+            //             // overflow: hidden;
+            //             // text-overflow: ellipsis;
+            //         }
     
-                    &:last-child {
-                        margin-right: 0;
-                    }
+            //         &:last-child {
+            //             margin-right: 0;
+            //         }
     
-                    &::before {
-                        position: absolute;
-                        content: '>';
-                        right: -30px;
-                        top: 50%;
-                        transform: translateY(-50%);
-                        font-size: 20px;
-                        color: rgba(0, 0, 0, 0.40);
-                    }
+            //         &::before {
+            //             position: absolute;
+            //             content: '>';
+            //             right: -30px;
+            //             top: 50%;
+            //             transform: translateY(-50%);
+            //             font-size: 20px;
+            //             color: rgba(0, 0, 0, 0.40);
+            //         }
     
-                    &.active {
-                        a {
-                            color: #293FE6;
-                        }
-                    }
+            //         &.active {
+            //             a {
+            //                 color: #293FE6;
+            //             }
+            //         }
     
-                    &.active::before {
-                        display: none;
-                    }
-                }
-            }
+            //         &.active::before {
+            //             display: none;
+            //         }
+            //     }
+            // }
             .service {
-                display: none;
+                // display: none;
                 text-decoration: none;
                 color: #293FE6;
             }
@@ -456,12 +459,12 @@ onBeforeUnmount(() => {
         .right {
             width: calc(100% - 65px);
             .topRoute {
-                ol {
-                    display: none;
-                }
-                .service {
-                    display: block;
-                }
+                // ol {
+                //     display: none;
+                // }
+                // .service {
+                //     display: block;
+                // }
             }
         }
     }
