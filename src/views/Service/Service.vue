@@ -5,14 +5,14 @@ main#service
             .title 
                 .name(style="height: 44px;")
                     template(v-if="modifyServiceName")
-                        form.modifyForm.first(@submit.prevent="changeServiceName")
-                            input#modifyServiceName(type="text" placeholder="Service name" :value='inputServiceName' @input="(e) => inputServiceName = e.target.value" required)
-                            .buttonWrap
-                                template(v-if="promiseRunning")
-                                    img.loading(src="@/assets/img/loading.png")
-                                template(v-else)
-                                    button.cancel(type="button" @click="modifyServiceName = false;") Cancel
-                                    button.save(type="submit") Save
+                        form.modifyInputForm(@submit.prevent="changeServiceName")
+                            .customInput
+                                input#modifyServiceName(type="text" placeholder="Service name" :value='inputServiceName' @input="(e) => inputServiceName = e.target.value" required)
+                                .material-symbols-outlined.sml.cancel(@click="modifyServiceName = false;") cancel
+                            template(v-if="promiseRunning")
+                                img.loading(src="@/assets/img/loading.png")
+                            template(v-else)
+                                button.save(type="submit") Save
                     template(v-else)
                         h4 {{ currentService.name }}
                         .material-symbols-outlined.mid.modify.clickable(:class="{'nonClickable' : !account?.email_verified}" @click="editServiceName") edit
@@ -46,14 +46,14 @@ main#service
                 .list
                     h6(:class="{ active: modifyCors }") Cors
                     template(v-if="modifyCors")
-                        form.modifyForm(style="margin-top: 8px" @submit.prevent="changeCors")
-                            input#modifyCors(:disabled="promiseRunningCors || null" type="text" placeholder='https://your.domain.com' :value='inputCors' @input="(e) => {e.target.setCustomValidity(''); inputCors = e.target.value;}")
-                            .buttonWrap 
-                                template(v-if="promiseRunningCors")
-                                    img.loading(src="@/assets/img/loading.png")
-                                template(v-else)
-                                    button.cancel(type="button" @click="modifyCors = false;") Cancel
-                                    button.save(type="submit") Save
+                        form.modifyInputForm(style="margin-top: 8px" @submit.prevent="changeCors")
+                            .customInput
+                                input#modifyCors(:disabled="promiseRunningCors || null" type="text" placeholder='https://your.domain.com' :value='inputCors' @input="(e) => {e.target.setCustomValidity(''); inputCors = e.target.value;}")
+                                .material-symbols-outlined.sml.cancel(@click="modifyCors = false;") cancel
+                            template(v-if="promiseRunningCors")
+                                img.loading(src="@/assets/img/loading.png")
+                            template(v-else)
+                                button.save(type="submit") Save
                     template(v-else)
                         h5 {{ currentService.cors || '*' }}
                             .material-symbols-outlined.mid.pen.clickable(:class="{'nonClickable' : !account?.email_verified}" @click="editCors") edit
@@ -61,14 +61,14 @@ main#service
                 .list
                     h6(:class="{ active: modifyKey }") Secret Key
                     template(v-if="modifyKey")
-                        form.modifyForm(style="margin-top: 8px" @submit.prevent="setSecretKey")
-                            input#modifyKey(:disabled="promiseRunningSecKey || null" type="text" placeholder="Secret key for external request" :value='inputKey' @input="(e) => inputKey = e.target.value")
-                            .buttonWrap 
-                                template(v-if="promiseRunningSecKey")
-                                    img.loading(src="@/assets/img/loading.png")
-                                template(v-else)
-                                    button.cancel(type="button" @click="modifyKey = false;") Cancel
-                                    button.save(type="submit") Save
+                        form.modifyInputForm(style="margin-top: 8px" @submit.prevent="setSecretKey")
+                            .customInput
+                                input#modifyKey(:disabled="promiseRunningSecKey || null" type="text" placeholder="Secret key for external request" :value='inputKey' @input="(e) => inputKey = e.target.value")
+                                .material-symbols-outlined.sml.cancel(@click="modifyKey = false;") cancel
+                            template(v-if="promiseRunningSecKey")
+                                img.loading(src="@/assets/img/loading.png")
+                            template(v-else)
+                                button.save(type="submit") Save
                     template(v-else)
                         h5 {{ currentService.api_key || 'No key' }}
                             .material-symbols-outlined.mid.pen.clickable(:class="{'nonClickable' : !account?.email_verified}" @click="editKey") edit
@@ -558,9 +558,11 @@ watch(modifyCors, () => {
                 }
             }
 
-            .material-symbols-outlined {
-                margin-right: 17px;
-                vertical-align: middle;
+            .logoTitle {
+                .material-symbols-outlined {
+                    margin-right: 17px;
+                    vertical-align: middle;
+                }
             }
 
             .modify {
@@ -744,65 +746,6 @@ watch(modifyCors, () => {
             font-size: 16px;
             font-weight: 700;
             line-height: 24px;
-        }
-    }
-}
-
-.modifyForm {
-    width: 100%;
-    display: flex;
-    flex-wrap: nowrap;
-    justify-content: space-between;
-
-    &.first {
-        input {
-            width: 52%;
-            margin-right: 3%;
-        }
-
-        .buttonWrap {
-            width: 45%;
-        }
-    }
-
-    input {
-        width: max(246px, 65%);
-        height: 44px;
-        margin-right: 3%;
-        background-color: #EDEDED;
-        border: 0;
-        padding: 12px 20px;
-        border-radius: 8px;
-        font-size: 16px;
-        font-weight: 500;
-        color: rgba(0, 0, 0, 0.8);
-    }
-
-    .buttonWrap {
-        width: max(153px, 32%);
-        display: flex;
-        align-items: center;
-        flex-wrap: nowrap;
-
-        button {
-            height: 32px;
-            border: 2px solid #293FE6;
-            border-radius: 8px;
-            padding: 0 12px;
-            font-size: 16px;
-            font-weight: 700;
-            cursor: pointer;
-
-            &.cancel {
-                background-color: unset;
-                color: #293FE6;
-                margin-right: 10px;
-            }
-
-            &.save {
-                background-color: #293FE6;
-                color: #fff;
-            }
         }
     }
 }

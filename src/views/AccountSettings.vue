@@ -13,20 +13,20 @@ main#accountSetting(v-if='account')
                     h6.tit Email
                     .cont 
                         template(v-if="changeEmail")
-                            form(@submit.prevent="reqeustEmailChange")
-                                input#changeEmail(type="text" 
-                                :value="email" 
-                                :placeholder="account.email"
-                                :disabled="promiseRunning"
-                                pattern="[a-zA-Z0-9\+]+[@][a-zA-Z0-9]+[.]+[a-zA-Z]+[.]*[a-zA-Z]*" 
-                                title="Please enter a valid email address." 
-                                @input="(e) => {email = e.target.value;}")
-                                .buttonWrap 
-                                    template(v-if="promiseRunning")
-                                        img.loading(src="@/assets/img/loading.png")
-                                    template(v-else)
-                                        button.cancel(type="button" @click="changeEmail = false;") Cancel
-                                        button.save(type="submit") Save
+                            form.modifyInputForm(@submit.prevent="reqeustEmailChange")
+                                .customInput
+                                    input#changeEmail(type="text" 
+                                    :value="email" 
+                                    :placeholder="account.email"
+                                    :disabled="promiseRunning"
+                                    pattern="[a-zA-Z0-9\+]+[@][a-zA-Z0-9]+[.]+[a-zA-Z]+[.]*[a-zA-Z]*" 
+                                    title="Please enter a valid email address." 
+                                    @input="(e) => {email = e.target.value;}")
+                                    .material-symbols-outlined.sml.cancel(@click="changeEmail = false;") cancel
+                                template(v-if="promiseRunning")
+                                    img.loading(src="@/assets/img/loading.png")
+                                template(v-else)
+                                    button.save(type="submit") Save
                         template(v-else) 
                             img(v-if="account.approved.includes('ggl')" src="@/assets/img/icon/google.svg" style="display:inline-block;width:24px;height:24px;vertical-align:middle;margin-right:5px;")
                             span {{ account.email }}
@@ -329,6 +329,7 @@ let verifyEmail = () => {
                 }
 
                 .cont {
+                    width: calc(100% - 130px);
                     display: inline-block;
                     vertical-align: middle;
 
@@ -350,53 +351,6 @@ let verifyEmail = () => {
                         .material-symbols-outlined {
                             font-size: 24px;
                             margin-right: 5px;
-                        }
-                    }
-
-                    form {
-                        // display: flex;
-                        // flex-wrap: nowrap;
-                        // align-items: center;
-                        // justify-content: space-between;
-                    }
-
-                    input#changeEmail {
-                        display: inline-block;
-                        width: 280px;
-                        height: 44px;
-                        padding: 0 17px;
-                        border-radius: 8px;
-                        background-color: rgba(0, 0, 0, 0.05);
-                        border: 0;
-                        font-size: 0.8rem;
-                    }
-
-                    .buttonWrap {
-                        display: inline-block;
-                        vertical-align: middle;
-                        padding-left: 1rem;
-
-                        button {
-                            display: inline-block;
-                            height: 32px;
-                            padding: 0 0.6rem;
-                            border-radius: 8px;
-                            font-size: 0.8rem;
-                            font-weight: 700;
-                            cursor: pointer;
-
-                            &.cancel {
-                                border: 2px solid #293FE6;
-                                background-color: unset;
-                                margin-right: 0.6rem;
-                                color: #293FE6;
-                            }
-
-                            &.save {
-                                border: 0;
-                                background: #293FE6;
-                                color: #fff;
-                            }
                         }
                     }
                 }
@@ -424,20 +378,20 @@ let verifyEmail = () => {
 }
 
 @media (max-width: 1023px) {
+    .modifyInputForm {
+        .customInput {
+            max-width: unset;
+            width: calc(100% - 50px);
+        }
+    }
     #accountSetting {
         .wrapper {
             .accountCont {
                 .row {
                     .cont {
+                        width: 100%;
                         display: block;
                         margin-top: 1rem;
-
-                        input#changeEmail {
-                            width: 60%;
-                        }
-                        .buttonWrap {
-                            width: 40%;
-                        }
                     }
                 }
             }
@@ -463,16 +417,6 @@ let verifyEmail = () => {
                     }
                     &.delete {
                         display: block;
-                    }
-                    .cont {
-                        input#changeEmail, .buttonWrap {
-                            display: block;
-                            width: 100%;
-                        }
-                        .buttonWrap {
-                            margin-top: 1rem;
-                            text-align: right;
-                        }
                     }
                     .btn {
                         display: none;
