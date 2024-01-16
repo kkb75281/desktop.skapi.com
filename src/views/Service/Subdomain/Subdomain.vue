@@ -2,16 +2,7 @@
 main#subdomain
     section#section
         .titleWrap
-            // main title
-            template(v-if="computedSubdomain")
-                // pending, removing...
-                h4(v-if='subdomainState') {{ subdomainState }}
-
-                // subdomain url
-                a(v-else :href="'http://' + computedSubdomain + '.' + domain" target="_blank")
-                    h4.title {{ (computedSubdomain ? computedSubdomain + '.' + domain : 'Hosting') }}
-            template(v-else)
-                h4.title Hosting
+            h4.title Hosting
             .buttonWrap(v-if="currentService.subdomain") 
                 .refresh.clickable(:class="{'nonClickable' : !account.email_verified || subdomainState || refreshCDNRun}" @click='refreshCdn()')
                     .material-symbols-outlined.mid(:class="{'rotate_animation': refreshCDNRun}") cached
@@ -35,8 +26,10 @@ main#subdomain
                         template(v-else)
                             button.save(type="submit" :disabled="subdomainState ? true : null") Save
                 template(v-else)
-                    .cont(@click="modifySudomain = true")
+                    .cont
                         p {{ computedSubdomain }}
+                            a.link(:href="'http://' + computedSubdomain + '.' + domain" target="_blank")
+                                .material-symbols-outlined.sml link
                         .material-symbols-outlined.mid.clickable(:class="{'nonClickable' : !account.email_verified}") edit
             .setting
                 h6.tit HTML file for 404 page
@@ -81,18 +74,21 @@ main#subdomain
                     span /
 
             .filesButtonWrap
+                .menu(@click="showRemoveAllFiles = true; showEdit = false;")
+                    .material-symbols-outlined.mid.clickable delete
+                    span empty storage
                 // file menu
-                .material-symbols-outlined.mid.refresh.clickable(:class='{"rotate_animation": fetching }' @click='refresh(searchDir)') cached
                 .menu(@click.stop="showEdit = !showEdit")
-                    .material-symbols-outlined.mid.clickable(:class='{"nonClickable": !checkedFiles.length || !account.email_verified}') more_vert
+                    .material-symbols-outlined.mid.clickable(:class='{"nonClickable": !account.email_verified}') more_vert
                     #moreVert(v-if="showEdit" @click.stop style="--moreVert-right: 0;")
                         .inner
-                            .more(@click="showRemoveAllFiles = true; showEdit = false;" style="width:unset; white-space: nowrap;")
-                                .material-symbols-outlined.mid delete
-                                span Remove All Files
+                            .more(:class='{"nonClickable": !checkedFiles.length || !account.email_verified}' style="width:unset; white-space: nowrap;")
+                                .material-symbols-outlined.mid download_2
+                                span download
                             .more(:class='{"nonClickable": !checkedFiles.length || !account.email_verified}' @click="showDeleteFile = true; showEdit = false;")
                                 .material-symbols-outlined.mid delete
-                                span Delete
+                                span delete
+                .menu.material-symbols-outlined.mid.refresh.clickable(:class='{"rotate_animation": fetching }' @click='refresh(searchDir)') cached
                 .customFile(:class="{'nonClickable': !account.email_verified || Object.keys(fileList).length}")
                     label.uploadBtn(for="files")
                         .material-symbols-outlined.mid upload
@@ -110,7 +106,7 @@ main#subdomain
                         .material-symbols-outlined.empty(style="font-size:80px") file_present
                         p Drag and Drop Files or Folders here
             template(v-else-if="files.length")
-                .fileWrapper
+                //- .fileWrapper
                     template(v-for="(file, index) in files")
                         .file.clickable(v-if='file.name !== "!"' @click="file.name[0] == '#' ? launch(file.path + '/' + file.name.slice(1)) : viewFileInfo(file)")
                             .customCheckBox(@click.stop)
@@ -126,6 +122,31 @@ main#subdomain
                             .material-symbols-outlined.mid.type(v-else) draft
                             .pathWrapper(:data-filetype="'.'+file.name.split('.').splice(-1)[0]")
                                 .path {{ file.name[0] === '#' ? file.name.slice(1) : file.name }}
+                .tableWrap 
+                    table#resizeMe.table
+                        thead
+                            tr
+                                th.th.center(style="width:230px;")
+                                    | Name
+                                    .resizer(@mousedown="mousedown")
+                                th.th.center(style="width:155px;")
+                                    | Size
+                                    .resizer(@mousedown="mousedown")
+                                th.th(style="padding-left:90px;")
+                                    | Last Modified
+                                    .resizer(@mousedown="mousedown")
+                        tbody
+                            template(v-for="(file, index) in files")
+                                tr(v-if='file.name !== "!"')
+                                    td.name
+                                        .material-symbols-outlined.mid.type(v-if="file.name[0] == '#'") folder
+                                        .material-symbols-outlined.mid.type(v-else-if="file.name.includes('.html')") html
+                                        .material-symbols-outlined.mid.type(v-else-if="file.name.includes('.css')") css
+                                        .material-symbols-outlined.mid.type(v-else-if="file.name.includes('.pdf')") picture_as_pdf
+                                        .material-symbols-outlined.mid.type(v-else-if="img.includes(file.name.split('.').slice(-1)[0])") image
+                                        .material-symbols-outlined.mid.type(v-else-if="vid.includes(file.name.split('.').slice(-1)[0])") movie
+                                        .material-symbols-outlined.mid.type(v-else) draft
+                                        .overflow {{ file.name[0] === '#' ? file.name.slice(1) : file.name }}
 
 UploadFileList(
     v-if="uploading && fileList && Object.keys(fileList).length"
@@ -139,8 +160,8 @@ DeleteFileOverlay(v-if="showDeleteFile" @close="showDeleteFile = false;" title='
 DeleteFileOverlay(v-if="showDeleteSubdomain" :callback='removeSubdomain' title='Delete Subdomain' @close="showDeleteSubdomain = false;")
     | Are you sure want to delete your subdomain? All your hosted files will be lost.
     br
-DeleteFileOverlay(v-if="showRemoveAllFiles" :callback='removeAllFiles' title='Delete Subdomain' @close="showRemoveAllFiles = false;")
-    | Are you sure want to delete all the files in your subdomain? All your hosted files will be lost.
+DeleteFileOverlay(v-if="showRemoveAllFiles" :callback='removeAllFiles' title='Delete All Files' @close="showRemoveAllFiles = false;")
+    | You sure want to delete all files? The storage will be emptied. 
     br
 
 msgOverlay(v-if="fileInfo" @close="fileInfo = null" :title="fileInfo?.name" style='--max-width: 600px;')
@@ -766,7 +787,7 @@ function formatBytes(bytes, decimals = 2) {
                     }
 
                     p {
-                        width: 300px;
+                        max-width: 300px;
                         white-space: nowrap;
                         overflow: hidden;
                         text-overflow: ellipsis;
@@ -777,10 +798,16 @@ function formatBytes(bytes, decimals = 2) {
                         &:hover {
                             color: rgba(0, 0, 0, 0.8);
                             cursor: default;
+
+                            .link {
+                                color: rgba(0, 0, 0, 0.8);
+                            }
+                        }
+                        .link {
+                            margin-left: 10px;
+                            color: rgba(0, 0, 0, 0.6);
                         }
                     }
-
-
                 }
             }
         }
@@ -812,11 +839,20 @@ function formatBytes(bytes, decimals = 2) {
 
                 .menu {
                     position: relative;
-                    margin: 0 1rem;
+                    margin-right: 1rem;
+                    cursor: pointer;
+                    
+                    span {
+                        font-size: 0.8rem;
+                        font-weight: 500;
+                        color: rgba(0,0,0,0.6);
+                        margin-left: 8px;
+                    }
                 }
 
                 .refresh {
-                    color: #293FE6;
+                    color: rgba(0,0,0,0.6);
+                    // color: #293FE6;
                 }
             }
         }
@@ -827,7 +863,8 @@ function formatBytes(bytes, decimals = 2) {
             // min-height: 448px;
             height: 450px;
             overflow: hidden;
-            padding: 1.5rem 1.4rem;
+            // padding: 1.5rem 1.4rem;
+            padding: 0 1rem;
             border-radius: 8px;
             border: 1px solid rgba(0, 0, 0, 0.10);
 
@@ -1020,6 +1057,167 @@ function formatBytes(bytes, decimals = 2) {
                         font-weight: 700;
                         background: #293FE6;
                         box-shadow: 0px -1px 1px 0px rgba(0, 0, 0, 0.15) inset;
+                    }
+                }
+            }
+        }
+    }
+    .tableWrap {
+        position: relative;
+        min-height: 660px;
+        overflow-x: auto;
+
+        .noUsers {
+            position: absolute;
+            left: 50%;
+            top: 50%;
+            transform: translate(-50%, -50%);
+            text-align: center;
+
+            h3 {
+                color: rgba(0, 0, 0, 0.40);
+            }
+
+            p {
+                color: rgba(0, 0, 0, 0.40);
+                font-weight: 500;
+            }
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            table-layout: fixed;
+
+            thead {
+                text-align: left;
+
+                tr {
+                    height: 40px;
+
+                    th {
+                        position: relative;
+                        color: rgba(0, 0, 0, 0.40);
+                        font-size: 0.7rem;
+                        font-weight: 500;
+                        padding-left: 20px;
+
+                        &::after {
+                            position: absolute;
+                            content: '';
+                            width: 100%;
+                            height: 1px;
+                            left: 0;
+                            bottom: 0;
+                            background: rgba(0, 0, 0, 0.1);
+                            box-shadow: 0px 1px 3px 0px rgba(0, 0, 0, 0.06);
+                        }
+
+                        &:first-child {
+                            padding-left: 0;
+                        }
+
+                        &:last-child {
+                            .resizer {
+                                display: none;
+                            }
+                        }
+
+                        &.center {
+                            padding: 0;
+                            text-align: center;
+                        }
+
+                        .resizer {
+                            position: absolute;
+                            top: 50%;
+                            right: 0px;
+                            transform: translateY(-50%);
+                            width: 4px;
+                            height: 20px;
+                            background-color: rgba(0, 0, 0, 0.1);
+                            cursor: col-resize;
+
+                            &.contrast {
+                                background-color: #fff !important;
+                            }
+                        }
+
+                        .resizable {
+                            height: 100px;
+                            width: 100px;
+                            position: relative;
+                        }
+                    }
+                }
+            }
+
+            tbody {
+                font-weight: 400;
+
+                tr {
+                    cursor: pointer;
+                }
+
+                td {
+                    position: relative;
+                    height: 40px;
+                    padding-left: 20px;
+
+                    &::after {
+                        position: absolute;
+                        content: '';
+                        width: 100%;
+                        height: 1px;
+                        left: 0;
+                        bottom: 0;
+                        background: rgba(0, 0, 0, 0.1);
+                        box-shadow: 0px 1px 3px 0px rgba(0, 0, 0, 0.06);
+                    }
+
+                    &:first-child {
+                        padding-left: 0;
+                    }
+
+                    &.center {
+                        padding: 0;
+                        text-align: center;
+                    }
+
+                    &.name {
+                        display: flex;
+                    }
+
+                    > div:not(.material-symbols-outlined) {
+                        font-size: 0.8rem;
+                    }
+
+                    .block {
+                        color: rgba(0, 0, 0, 0.4);
+                    }
+
+                    .enable {
+                        color: rgba(90, 216, 88, 1);
+                    }
+
+                    .disable {
+                        color: rgba(240, 78, 78, 1);
+                    }
+
+                    // .type, .name {
+                    //     display: inline-block;
+                    // }
+
+                    .overflow {
+                        position: relative;
+                        width: 100%;
+                        white-space: nowrap;
+                        overflow: hidden;
+                        text-overflow: ellipsis;
+
+                        &::-webkit-scrollbar {
+                            display: none;
+                        }
                     }
                 }
             }
