@@ -26,17 +26,14 @@ main#subdomain
             .setting
                 h6.tit Subdomain
                 template(v-if="modifySudomain && !subdomainState")
-                    form.modifyForm(@submit.prevent='registerSubdomain')
-                        .input
+                    form.modifyInputForm.sub(@submit.prevent='registerSubdomain')
+                        .customInput(style="max-width:350px")
                             input#modifySudomain(:disabled="subdomainState || subdomainPromiseRunning ? true : null" type="text" placeholder="Name of Subdomain" required minlength='5' pattern='[a-z0-9]+' title='Subdomain should be lowercase alphanumeric.' :value='inputSubdomain' @input="(e) => {e.target.setCustomValidity(''); inputSubdomain = e.target.value}")
-                        .btnWrap
-                            template(v-if="subdomainPromiseRunning")
-                                img.loading(src="@/assets/img/loading.png")
-                            template(v-else)
-                                button.cancel(type="button" @click="modifySudomain = false;") Cancel
-                                .material-symbols-outlined.mid.icon(type="button" @click="modifySudomain = false;" style="margin-right:5px" title="Cancel") close
-                                button.save(type="submit" :disabled="subdomainState ? true : null") Save
-                                .material-symbols-outlined.mid.icon(type="submit" :disabled="subdomainState ? true : null" style="color: #293FE6;" title="Save") check
+                            .material-symbols-outlined.sml.cancel(@click="modifySudomain = false;") cancel
+                        template(v-if="subdomainPromiseRunning")
+                            img.loading(src="@/assets/img/loading.png")
+                        template(v-else)
+                            button.save(type="submit" :disabled="subdomainState ? true : null") Save
                 template(v-else)
                     .cont(@click="modifySudomain = true")
                         p {{ computedSubdomain }}
@@ -785,71 +782,6 @@ function formatBytes(bytes, decimals = 2) {
 
 
                 }
-
-                .modifyForm {
-                    display: flex;
-                    flex-wrap: nowrap;
-                    justify-content: space-between;
-                    height: 44px;
-
-                    .input {
-                        position: relative;
-                        width: calc(100% - 170px);
-
-                        &::after {
-                            position: absolute;
-                            content: '.skapi.com';
-                            right: 13px;
-                            top: 50%;
-                            transform: translateY(-50%);
-                            font-size: 0.8rem;
-                            font-weight: 400;
-                        }
-
-                        input {
-                            width: 100%;
-                            border: 0;
-                            height: 44px;
-                            background: rgba(0, 0, 0, 0.05);
-                            border-radius: 8px;
-                            padding: 13px 95px 13px 13px;
-                            font-size: 0.8rem;
-                            font-weight: 400;
-                        }
-                    }
-
-                    .btnWrap {
-                        width: 170px;
-                        display: flex;
-                        flex-wrap: nowrap;
-                        align-items: center;
-                        justify-content: end;
-
-                        button {
-                            border: 2px solid #293FE6;
-                            border-radius: 8px;
-                            padding: 6px 12px;
-                            font-size: 0.8rem;
-                            font-weight: 700;
-                            cursor: pointer;
-
-                            &.cancel {
-                                background-color: unset;
-                                color: #293FE6;
-                                margin-right: 12px;
-                            }
-
-                            &.save {
-                                background-color: #293FE6;
-                                color: #fff;
-                            }
-                        }
-                        .icon {
-                            display: none;
-                            cursor: pointer;
-                        }
-                    }
-                }
             }
         }
 
@@ -1094,32 +1026,14 @@ function formatBytes(bytes, decimals = 2) {
         }
     }
 }
-@media (max-width:1200px) {
-    #subdomain {
-        #section {
-            .settingWrap {
-                .setting {
-                    .modifyForm {
-                        .input {
-                            width: calc(100% - 70px);
-                        }
-                        .btnWrap {
-                            width: 70px;
 
-                            button {
-                                display: none;
-                            }
-                            .icon {
-                                display: inline-block;
-                            }
-                        }
-                    }
-                }
-            }
+@media (max-width:767px) {
+    .modifyInputForm.sub {
+        .customInput {
+            max-width: unset !important;
+            width: calc(100% - 50px);
         }
     }
-}
-@media (max-width:767px) {
     #subdomain {
         #section {
             .titleWrap {

@@ -302,6 +302,70 @@
     animation: rotate_image 1.5s linear infinite;
 }
 
+.modifyInputForm {
+    width: 100%;
+
+    &.sub {
+        .customInput {
+            &::after {
+                display: block;
+            }
+            input {
+                padding-right: calc(4rem + 40px);
+            }
+        }
+    }
+    .loading {
+        vertical-align: middle;
+    }
+    .save {
+        border: 0;
+        background-color: unset;
+        color: #293FE6;
+        font-size: 0.8rem;
+        font-weight: 700;
+    }
+}
+
+.customInput {
+    position: relative;
+    display: inline-block;
+    margin-right: 12px;
+    width: calc(100% - 52px);
+    max-width: 280px;
+
+    &::after {
+        position: absolute;
+        content: '.skapi.com';
+        right: 35px;
+        top: 50%;
+        transform: translateY(-50%);
+        font-size: 0.8rem;
+        font-weight: 400;
+        color: rgba(0,0,0,0.4);
+        display: none;
+    }
+    input {
+        width: 100%;
+        height: 44px;
+        border-radius: 8px;
+        background-color: rgba(0,0,0,0.05);
+        border: 0;
+        color: rgba(0, 0, 0, 0.8);
+        font-weight: 500;
+        font-size: 0.8rem;
+        padding: 12px;
+    }
+    .cancel {
+        position: absolute;
+        right: 8px;
+        top: 50%;
+        transform: translateY(-50%);
+        color: rgba(0, 0, 0, 0.60);
+        cursor: pointer;
+    }
+}
+
 // select
 .customSelect {
     position: relative;
