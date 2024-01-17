@@ -78,8 +78,8 @@ main#subdomain
                     .material-symbols-outlined.mid.clickable delete
                     span empty storage
                 // file menu
-                .menu(@click.stop="showEdit = !showEdit")
-                    .material-symbols-outlined.mid.clickable(:class='{"nonClickable": !account.email_verified}') more_vert
+                .menu(@click.stop="showEdit = !showEdit" :class='{"nonClickable": !checkedFiles.length || !account.email_verified}')
+                    .material-symbols-outlined.mid.clickable more_vert
                     #moreVert(v-if="showEdit" @click.stop style="--moreVert-right: 0;")
                         .inner
                             .more(:class='{"nonClickable": !checkedFiles.length || !account.email_verified}' style="width:unset; white-space: nowrap;")
@@ -137,7 +137,7 @@ main#subdomain
                                     .resizer(@mousedown="mousedown")
                         tbody
                             template(v-for="(file, index) in files")
-                                tr(v-if='file.name !== "!"')
+                                tr(v-if='file.name !== "!"' :id="file.name" @click="(e) => clickedFileList(e, index)")
                                     td.name
                                         .material-symbols-outlined.mid.type(v-if="file.name[0] == '#'") folder
                                         .material-symbols-outlined.mid.type(v-else-if="file.name.includes('.html')") html
@@ -147,6 +147,23 @@ main#subdomain
                                         .material-symbols-outlined.mid.type(v-else-if="vid.includes(file.name.split('.').slice(-1)[0])") movie
                                         .material-symbols-outlined.mid.type(v-else) draft
                                         .overflow {{ file.name[0] === '#' ? file.name.slice(1) : file.name }}
+                                    td.center 
+                                        .overflow {{ formatBytes(file?.size || 0) }}
+                                    td(style="padding-left:40px")
+                                        .overflow {{ file?.upl ? new Date(file.upl).toString().split(' ').slice(0, 5).join(' ') : 'Unknown' }}
+                                        .menu(@click.stop="(e) => showfileSetting(e, index)")
+                                            .material-symbols-outlined.mid.clickable(:class='{"nonClickable": !account.email_verified}') more_vert
+                                        #moreVert.hide(ref="moreVert" @click.stop style="--moreVert-right: 30px;top:15px;")
+                                            .inner
+                                                .more(:class='{"nonClickable": !account.email_verified}')
+                                                    .material-symbols-outlined.mid download_2
+                                                    span download
+                                                .more(:class='{"nonClickable": !account.email_verified}' @click="showDeleteFile = true; showEdit = false;")
+                                                    .material-symbols-outlined.mid delete
+                                                    span delete
+                                                .more(:class='{"nonClickable": !account.email_verified}' @click="copyFileUrl(file)")
+                                                    .material-symbols-outlined.mid file_copy
+                                                    span copy link
 
 UploadFileList(
     v-if="uploading && fileList && Object.keys(fileList).length"
@@ -225,6 +242,64 @@ let showRemoveAllFiles = ref(false);
 
 let computedSubdomain = ref('')
 let subdomainPromiseRunning = ref(false);
+let moreVert = ref(null);
+let settingIndex = null;
+let clickedIndex = null;
+
+let showfileSetting = (e, index) => {
+    if(settingIndex == index-1) {
+        moreVert.value[index-1].classList.remove('show');
+        settingIndex = null;
+
+        return;
+    }
+
+    for(let i=0; i<moreVert.value.length; i++) {
+        if(moreVert.value[i].className.includes('show')) { 
+            moreVert.value[i].classList.remove('show');
+        }
+    }
+
+    settingIndex = index-1;
+    moreVert.value[index-1].classList.add('show');
+}
+
+let clickedFileList = (e, index) => {
+    let removeIndex = checkedFiles.value.findIndex(id=>id == e.currentTarget.id);
+
+    if(removeIndex >= 0 || clickedIndex == index-1) {
+        checkedFiles.value.splice(removeIndex, 1);
+        e.currentTarget.classList.remove('clicked');
+        clickedIndex = null;
+
+        return;
+    }
+
+    checkedFiles.value.push(e.currentTarget.id);
+    e.currentTarget.classList.add('clicked');
+    clickedIndex = index-1;
+}
+
+let copyFileUrl = (file) => {
+    console.log(file.value)
+
+    let path = file.value.path.split(computedSubdomain.value).slice(1).join('');
+    console.log(path)
+
+    // if (!fileInfo.value) {
+    //     return '';
+    // }
+    // let path = fileInfo.value.path.split(computedSubdomain.value).slice(1).join('');
+
+    // if (path[0] === '/') {
+    //     path = path.slice(1);
+    // }
+
+    // let filename = encodeURI(fileInfo.value.name);
+    // path = path ? encodeURI(path) + '/' + filename : filename;
+
+    // return 'https://' + computedSubdomain.value + `.${domain}/` + path;
+}
 
 let pathArray = computed(() => {
     return searchDir.value.split('/').slice(1);
@@ -1157,12 +1232,28 @@ function formatBytes(bytes, decimals = 2) {
 
                 tr {
                     cursor: pointer;
+
+                    &:hover {
+                        background-color: rgba(41, 63, 230, 0.05);
+                    }
+                    &.clicked {
+                        background-color: rgba(41, 63, 230, 0.10);
+                    }
+                    &:last-child {
+                        td {
+                            &::after {
+                                display: none;
+                            }
+                        }
+                    }
                 }
 
                 td {
                     position: relative;
-                    height: 40px;
-                    padding-left: 20px;
+                    // height: 40px;
+                    // line-height: 40px;
+                    padding: 8px 20px;
+                    color: rgba(0,0,0,0.6);
 
                     &::after {
                         position: absolute;
@@ -1173,10 +1264,6 @@ function formatBytes(bytes, decimals = 2) {
                         bottom: 0;
                         background: rgba(0, 0, 0, 0.1);
                         box-shadow: 0px 1px 3px 0px rgba(0, 0, 0, 0.06);
-                    }
-
-                    &:first-child {
-                        padding-left: 0;
                     }
 
                     &.center {
@@ -1192,21 +1279,34 @@ function formatBytes(bytes, decimals = 2) {
                         font-size: 0.8rem;
                     }
 
-                    .block {
-                        color: rgba(0, 0, 0, 0.4);
+                    .menu {
+                        position: absolute;
+                        right: 8px;
+                        top: 50%;
+                        padding: 4px;
+                        text-align: center;
+                        border-radius: 50%;
+                        transform: translateY(-50%);
+                        z-index: 1;
+
+                        &:hover {
+                            background-color: rgba(41, 63, 230, 0.10);
+                        }
                     }
 
-                    .enable {
-                        color: rgba(90, 216, 88, 1);
+                    #moreVert {
+                        &.hide {
+                            display: none;
+                        }
+
+                        &.show {
+                            display: block;
+                        }
                     }
 
-                    .disable {
-                        color: rgba(240, 78, 78, 1);
+                    .type {
+                        padding-right: 20px;
                     }
-
-                    // .type, .name {
-                    //     display: inline-block;
-                    // }
 
                     .overflow {
                         position: relative;

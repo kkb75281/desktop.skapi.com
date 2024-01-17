@@ -174,24 +174,48 @@
 
     .inner {
         padding: 1rem;
+        padding-right: 1.2rem;
         border-radius: 8px;
         border: 1px solid rgba(0, 0, 0, 0.15);
         background: #FAFAFA;
         box-shadow: 8px 12px 36px 0px rgba(0, 0, 0, 0.10);
 
         .more {
-            width: 100px;
+            // width: 100px;
             margin-bottom: 0.8rem;
             text-align: left;
             cursor: pointer;
+            white-space: nowrap;
 
             &:last-child {
                 margin-bottom: 0;
             }
 
             &:hover {
-                span {
-                    font-weight: 700;
+                .material-symbols-outlined {
+                    &::before {
+                        display: block;
+                    }
+                }
+                // span {
+                    // font-weight: 700;
+                // }
+            }
+
+            .material-symbols-outlined {
+                position: relative;
+
+                &::before {
+                    position: absolute;
+                    content: '';
+                    left: 50%;
+                    top: 50%;
+                    width: 32px;
+                    height: 32px;
+                    transform: translate(-50%, -50%);
+                    background-color: rgba(41, 63, 230, 0.10);
+                    border-radius: 50%;
+                    display: none;
                 }
             }
             
