@@ -158,10 +158,10 @@ main#subdomain
                                                 .more(:class='{"nonClickable": !account.email_verified}')
                                                     .material-symbols-outlined.mid download_2
                                                     span download
-                                                .more(:class='{"nonClickable": !account.email_verified}' @click="showDeleteFile = true; showEdit = false;")
+                                                .more(:class='{"nonClickable": !account.email_verified}' @click="showDeleteFile = true; moreVert[index-1].classList.remove('show');")
                                                     .material-symbols-outlined.mid delete
                                                     span delete
-                                                .more(:class='{"nonClickable": !account.email_verified}' @click="copyFileUrl(file)")
+                                                .more(:class='{"nonClickable": !account.email_verified}' @click="fileInfo = file; copy(selectedFileUrl, index)")
                                                     .material-symbols-outlined.mid file_copy
                                                     span copy link
 
@@ -181,40 +181,6 @@ DeleteFileOverlay(v-if="showRemoveAllFiles" :callback='removeAllFiles' title='De
     | You sure want to delete all files? The storage will be emptied. 
     br
 
-msgOverlay(v-if="fileInfo" @close="fileInfo = null" :title="fileInfo?.name" style='--max-width: 600px;')
-    .fileInfo
-        span
-            b Filename:&nbsp;
-        a(target="_blank" :href='selectedFileUrl') {{ fileInfo.name }}
-
-        br
-        br
-
-        span
-            b Size:&nbsp;
-        span.value {{ formatBytes(fileInfo?.size || 0) }}
-
-        br
-        br
-
-        span
-            b Last Modified:&nbsp;
-        span.value {{ fileInfo?.upl ? new Date(fileInfo.upl).toString().split(' ').slice(0, 5).join(' ') : 'Unknown' }}
-
-        br
-        br
-
-        span
-            b URL:&nbsp;
-        span.value {{ selectedFileUrl }}
-
-        br
-        br
-        br
-        br
-
-        div(style='text-align: right;')
-            button.msgButton(@click='fileInfo=false') Close
 </template>
 
 <script setup>
@@ -280,25 +246,14 @@ let clickedFileList = (e, index) => {
     clickedIndex = index-1;
 }
 
-let copyFileUrl = (file) => {
-    console.log(file.value)
-
-    let path = file.value.path.split(computedSubdomain.value).slice(1).join('');
-    console.log(path)
-
-    // if (!fileInfo.value) {
-    //     return '';
-    // }
-    // let path = fileInfo.value.path.split(computedSubdomain.value).slice(1).join('');
-
-    // if (path[0] === '/') {
-    //     path = path.slice(1);
-    // }
-
-    // let filename = encodeURI(fileInfo.value.name);
-    // path = path ? encodeURI(path) + '/' + filename : filename;
-
-    // return 'https://' + computedSubdomain.value + `.${domain}/` + path;
+let copy = (url, index) => {
+    let doc = document.createElement('textarea');
+    doc.textContent = url;
+    document.body.append(doc);
+    doc.select();
+    document.execCommand('copy');
+    doc.remove();
+    moreVert.value[index-1].classList.remove('show');
 }
 
 let pathArray = computed(() => {
