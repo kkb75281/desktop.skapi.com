@@ -67,7 +67,7 @@ main#subdomain
         // path navigation
         .filesHeader
             .filesPathWrap
-                .material-symbols-outlined.mid.clickable(@click="launch(computedSubdomain)") hard_drive
+                .material-symbols-outlined.mid.clickable(title="root folder" @click="launch(computedSubdomain)") hard_drive
                 span /
                 template(v-for='(p, index) in pathArray')
                     span.clickable(@click='gotoFolder(index)') {{ p }}
@@ -79,7 +79,7 @@ main#subdomain
                     span empty storage
                 // file menu
                 .menu(@click.stop="showEdit = !showEdit" :class='{"nonClickable": !checkedFiles.length || !account.email_verified}')
-                    .material-symbols-outlined.mid.clickable more_vert
+                    .material-symbols-outlined.mid.clickable(title="menu") more_vert
                     #moreVert(v-if="showEdit" @click.stop style="--moreVert-right: 0;")
                         .inner
                             .more(:class='{"nonClickable": !checkedFiles.length || !account.email_verified}' style="width:unset; white-space: nowrap;")
@@ -88,10 +88,10 @@ main#subdomain
                             .more(:class='{"nonClickable": !checkedFiles.length || !account.email_verified}' @click="showDeleteFile = true; showEdit = false;")
                                 .material-symbols-outlined.mid delete
                                 span delete
-                .menu.material-symbols-outlined.mid.refresh.clickable(:class='{"rotate_animation": fetching }' @click='refresh(searchDir)') cached
+                .menu.material-symbols-outlined.mid.refresh.clickable(title="refresh" :class='{"rotate_animation": fetching }' @click='refresh(searchDir)') cached
                 .customFile(:class="{'nonClickable': !account.email_verified || Object.keys(fileList).length}")
                     label.uploadBtn(for="files")
-                        .material-symbols-outlined.mid upload
+                        .material-symbols-outlined.mid(title="upload") upload
                         span Upload
                     input#files(hidden type="file" @change="e=>onDrop(null,e.target.files)" multiple)
 
@@ -132,7 +132,7 @@ main#subdomain
                                 th.th.center(style="width:155px;")
                                     | Size
                                     .resizer(@mousedown="mousedown")
-                                th.th(style="padding-left:90px;")
+                                th.th(style="padding-left:90px;white-space:nowrap;")
                                     | Last Modified
                                     .resizer(@mousedown="mousedown")
                         tbody
@@ -1279,7 +1279,7 @@ function formatBytes(bytes, decimals = 2) {
 
                     .overflow {
                         position: relative;
-                        width: 100%;
+                        width: 90%;
                         white-space: nowrap;
                         overflow: hidden;
                         text-overflow: ellipsis;
