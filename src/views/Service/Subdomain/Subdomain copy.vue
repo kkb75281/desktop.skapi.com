@@ -74,7 +74,7 @@ main#subdomain
                     span /
 
             .filesButtonWrap
-                .menu(@click="showRemoveAllFiles = true;")
+                .menu(@click="showRemoveAllFiles = true; showEdit = false;")
                     .material-symbols-outlined.mid.clickable delete
                     span empty storage
                 // file menu
@@ -151,19 +151,19 @@ main#subdomain
                                         .overflow {{ formatBytes(file?.size || 0) }}
                                     td(style="padding-left:40px")
                                         .overflow {{ file?.upl ? new Date(file.upl).toString().split(' ').slice(0, 5).join(' ') : 'Unknown' }}
-                                        .menu(@click.stop="(e) => showfileSetting(index)" :class='{"nonClickable": checkedFiles.length > 1 || !account.email_verified}')
-                                            .material-symbols-outlined.mid.clickable more_vert
-        #moreVert(v-if="showMore" @click.stop style="--moreVert-right: 90px;" :style="{top: clientY}")
-            .inner
-                .more(:class='{"nonClickable": !account.email_verified}' @click="showMore = false;")
-                    .material-symbols-outlined.mid download_2
-                    span download
-                .more(:class='{"nonClickable": !account.email_verified}' @click="showDeleteFile = true;showMore = false;")
-                    .material-symbols-outlined.mid delete
-                    span delete
-                .more(:class='{"nonClickable": !account.email_verified}' @click="fileInfo = files[clickedIndex+1]; copy(selectedFileUrl)")
-                    .material-symbols-outlined.mid file_copy
-                    span copy link
+                                        .menu(@click.stop="(e) => showfileSetting(e, index, file)")
+                                            .material-symbols-outlined.mid.clickable(:class='{"nonClickable": !account.email_verified}') more_vert
+                                        #moreVert.hide(ref="moreVert" @click.stop style="--moreVert-right: 30px;top:15px;")
+                                            .inner
+                                                .more(:class='{"nonClickable": !account.email_verified}')
+                                                    .material-symbols-outlined.mid download_2
+                                                    span download
+                                                .more(:class='{"nonClickable": !account.email_verified}' @click="(e) => showDeleteOverlay(e, index, file)")
+                                                    .material-symbols-outlined.mid delete
+                                                    span delete
+                                                .more(:class='{"nonClickable": !account.email_verified}' @click="fileInfo = file; copy(selectedFileUrl, index)")
+                                                    .material-symbols-outlined.mid file_copy
+                                                    span copy link
 
 UploadFileList(
     v-if="uploading && fileList && Object.keys(fileList).length"
@@ -198,7 +198,6 @@ let route = useRoute();
 let currnetPath = route.path.split('/')[2];
 let modifySudomain = ref(false);
 let showEdit = ref(false);
-let showMore = ref(false);
 let showDeleteFile = ref(false);
 let inputSubdomain = ref('');
 let errorFile = ref('');
@@ -209,22 +208,20 @@ let showRemoveAllFiles = ref(false);
 
 let computedSubdomain = ref('')
 let subdomainPromiseRunning = ref(false);
+let moreVert = ref(null);
 let uploadedFile = ref(null);
 let settingIndex = null;
 let clickedIndex = null;
-let clientY = 0;
 
-let showfileSetting = (index) => {
+let showfileSetting = (e, index, file) => {
     checkedFiles.value = [];
-    clickedIndex = index-1;
-    clientY = 145 + (40 *(index-1)) + 'px';
 
-    if(settingIndex == index-1 && showMore.value) {
-        showMore.value = false;
+    if(settingIndex == index-1) {
+        moreVert.value[index-1].classList.remove('show');
         settingIndex = null;
         checkedFiles.value = [];
         uploadedFile.value[index-1].classList.remove('clicked');
-        console.log(checkedFiles.value)
+        // console.log(checkedFiles.value)
 
         return;
     }
@@ -233,13 +230,16 @@ let showfileSetting = (index) => {
         if(uploadedFile.value[i].className.includes('clicked')) { 
             uploadedFile.value[i].classList.remove('clicked');
         }
+        if(moreVert.value[i].className.includes('show')) { 
+            moreVert.value[i].classList.remove('show');
+        }
     }
 
-    showMore.value = true;
     settingIndex = index-1;
+    moreVert.value[index-1].classList.add('show');
     checkedFiles.value.push(files.value[index].path + "/" + files.value[index].name);
     uploadedFile.value[index-1].classList.add('clicked');
-    console.log(checkedFiles.value)
+    // console.log(checkedFiles.value)
 }
 
 let clickedFileList = (e, index) => {
@@ -260,14 +260,21 @@ let clickedFileList = (e, index) => {
     console.log(checkedFiles.value)
 }
 
-let copy = (url) => {
+let copy = (url, index) => {
     let doc = document.createElement('textarea');
     doc.textContent = url;
     document.body.append(doc);
     doc.select();
     document.execCommand('copy');
     doc.remove();
-    showMore.value = false;
+    moreVert.value[index-1].classList.remove('show');
+}
+
+let showDeleteOverlay = (e, index, file) => {
+    checkedFiles.value.push(file.path + "/" + file.name);
+    showDeleteFile = true;
+    moreVert.value[index-1].classList.remove('show');
+    console.log(checkedFiles.value)
 }
 
 let pathArray = computed(() => {
@@ -361,11 +368,7 @@ let deleteSelectedFiles = async () => {
         return fullpath;
     });
 
-    for(let i=0; i<uploadedFile.value.length; i++) {
-        if(uploadedFile.value[i].className.includes('clicked')) { 
-            uploadedFile.value[i].classList.remove('clicked');
-        }
-    }
+    selectNone();
 
     for (let f of fileList) {
         await dirPage.deleteItem(f);
@@ -688,7 +691,6 @@ let trackSelectedFiles = () => {
 }
 bodyClick.recordPage = () => {
     showEdit.value = false;
-    showMore.value = false;
 }
 function formatBytes(bytes, decimals = 2) {
     if (!+bytes) return '0 Bytes'
@@ -1270,6 +1272,16 @@ function formatBytes(bytes, decimals = 2) {
 
                         &:hover {
                             background-color: rgba(41, 63, 230, 0.10);
+                        }
+                    }
+
+                    #moreVert {
+                        &.hide {
+                            display: none;
+                        }
+
+                        &.show {
+                            display: block;
                         }
                     }
 
