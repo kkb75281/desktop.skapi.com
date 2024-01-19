@@ -22,15 +22,15 @@ main#accountSetting(v-if='account')
                                     pattern="[a-zA-Z0-9\+]+[@][a-zA-Z0-9]+[.]+[a-zA-Z]+[.]*[a-zA-Z]*" 
                                     title="Please enter a valid email address." 
                                     @input="(e) => {email = e.target.value;}")
-                                    .material-symbols-outlined.sml.cancel(@click="changeEmail = false;") cancel
                                 template(v-if="promiseRunning")
                                     img.loading(src="@/assets/img/loading.png")
                                 template(v-else)
-                                    button.save(type="submit") Save
+                                    .material-symbols-outlined.big.save(type="submit") done
+                                    .material-symbols-outlined.sml.cancel(@click="changeEmail = false;") close
                         template(v-else) 
                             img(v-if="account.approved.includes('ggl')" src="@/assets/img/icon/google.svg" style="display:inline-block;width:24px;height:24px;vertical-align:middle;margin-right:5px;")
                             span {{ account.email }}
-                    .btn(v-if="!changeEmail && !account.approved.includes('ggl')" @click="email=account.email; changeEmail = true;") Change email
+                    .btn(v-if="!changeEmail && account.approved.includes('ggl')" @click="email=account.email; changeEmail = true;") Change email
                     .btnIcon(v-if="!changeEmail && !account.approved.includes('ggl')" @click="email=account.email; changeEmail = true;")
                         .material-symbols-outlined.mid.clickable edit
                 .row
@@ -381,7 +381,6 @@ let verifyEmail = () => {
     .modifyInputForm {
         .customInput {
             max-width: unset;
-            width: calc(100% - 50px);
         }
     }
     #accountSetting {

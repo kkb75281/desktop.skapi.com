@@ -118,6 +118,68 @@ main#dashboard
                         h3 No Services
                         br
                         p Get started by creating a new service.
+
+#createNewService
+    header
+        h4.title Create New Service
+    main 
+        form
+            .label
+                h6 Name of Service
+            input#serviceName(type="text" @input='e=>newServiceName=e.target.value' placeholder="Name of Service" required)
+        
+            br
+            br
+        
+            .label 
+                h6 Service Plan
+                span Please choose one of the plans
+            .customSelect
+                select
+                    option Trial Mode
+                    option Standard Mode
+                    option Premium Mode
+                .material-symbols-outlined.mid.search.selectArrowDown arrow_drop_down
+
+            br
+            br
+
+        .planCard
+            .header 
+                h3.mode Trial Mode
+                .price $0
+            .content 
+                ul
+                    li asdaasd asdasdasdaasd asdasdasdaasd asdasdasdaasd asdasd
+                    li asdaasd asdasdasdaasd asdasdasdaasd asdasdasdaasd asdasd
+                    li asdaasd asdasdasdaasd asdasdasdaasd asdasdasdaasd asdasd
+                    li asdaasd asdasdasdaasd asdasdasdaasd asdasdasdaasd asdasd
+        
+        br
+
+        .planCard
+            .header 
+                h3.mode Trial Mode
+                .price $19
+            .content 
+                ul
+                    li asdaasd asdasdasdaasd asdasdasdaasd asdasdasdaasd asdasd
+                    li asdaasd asdasdasdaasd asdasdasdaasd asdasdasdaasd asdasd
+                    li asdaasd asdasdasdaasd asdasdasdaasd asdasdasdaasd asdasd
+                    li asdaasd asdasdasdaasd asdasdasdaasd asdasdasdaasd asdasd
+
+        br
+
+        .planCard
+            .header 
+                h3.mode Trial Mode
+                .price $129
+            .content 
+                ul
+                    li asdaasd asdasdasdaasd asdasdasdaasd asdasdasdaasd asdasd
+                    li asdaasd asdasdasdaasd asdasdasdaasd asdasdasdaasd asdasd
+                    li asdaasd asdasdasdaasd asdasdasdaasd asdasdasdaasd asdasd
+                    li asdaasd asdasdasdaasd asdasdasdaasd asdasdasdaasd asdasd
 </template>
 
 <script setup>
@@ -352,6 +414,105 @@ skapi.getProfile().then(u => {
     margin-top: 3.4rem;
     padding: 0 2rem;
 }
+
+#createNewService {
+    position: fixed;
+    right: 0;
+    top: 0;
+    width: 50%;
+    height: 100%;
+    background: #FFF;
+    box-shadow: -8px 4px 20px 0px rgba(0, 0, 0, 0.10);
+    z-index: 999;
+
+    header {
+        padding: 2rem;
+        border-bottom: 1px solid rgba(0, 0, 0, 0.10);
+        box-shadow: 0px 1px 3px 0px rgba(0, 0, 0, 0.06);
+        .title {
+            color: #293FE6;
+        }
+    }
+    main {
+        padding: 30px 40px;
+
+        h6 {
+            display: inline-block;
+            color: rgba(0, 0, 0, 0.60);
+            margin-bottom: 8px;
+        }
+        span {
+            color: rgba(0, 0, 0, 0.40);
+            font-size: 14px;
+            font-weight: 400;
+            margin-left: 16px;
+        }
+        input {
+            width: 100%;
+            height: 44px;
+            border: 0;
+            border-radius: 8px;
+            background: rgba(0, 0, 0, 0.05);
+            padding: 0 20px;
+        }
+        .customSelect {
+            select {
+                height: 44px;
+                background: rgba(0, 0, 0, 0.05);
+                padding: 0 20px;
+            }
+        }
+        .planCard {
+            border-radius: 8px;
+            border: 0.5px solid rgba(0, 0, 0, 0.25);
+            background: #FAFAFA;
+
+            .header {
+                display: flex;
+                align-items: center;
+                justify-content: space-between;
+                padding: 1rem;
+                border-bottom: 1px solid rgba(0, 0, 0, 0.10);
+                box-shadow: 0px 1px 3px 0px rgba(0, 0, 0, 0.06);
+
+                .mode {
+                    display: inline-block;
+                    font-weight: 500;
+                    color: #293FE6;
+                }
+                .price {
+                    position: relative;
+                    display: inline-block;
+                    padding-right: 60px;
+                    font-size: 28px;
+                    font-weight: 700;
+
+                    &::after {
+                        position: absolute;
+                        content: '/month';
+                        right: 0;
+                        top: 50%;
+                        transform: translateY(-50%);
+                        font-size: 14px;
+                        font-weight: 500;
+                        color: rgba(0, 0, 0, 0.40);
+                    }
+                }
+            }
+            .content {
+                padding: 1rem;
+                
+                ul {
+                    li {
+                        box-sizing: border-box;
+
+                    }
+                }
+            }
+        }
+    }
+}
+
 .createButton {
     display: inline-block;
     // height: 40px;

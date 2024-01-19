@@ -8,11 +8,11 @@ main#service
                         form.modifyInputForm(@submit.prevent="changeServiceName")
                             .customInput
                                 input#modifyServiceName(type="text" placeholder="Service name" :value='inputServiceName' @input="(e) => inputServiceName = e.target.value" required)
-                                .material-symbols-outlined.sml.cancel(@click="modifyServiceName = false;") cancel
                             template(v-if="promiseRunning")
                                 img.loading(src="@/assets/img/loading.png")
                             template(v-else)
-                                button.save(type="submit") Save
+                                .material-symbols-outlined.big.save(type="submit") done
+                                .material-symbols-outlined.sml.cancel(@click="modifyServiceName = false;") close
                     template(v-else)
                         h4 {{ currentService.name }}
                         .material-symbols-outlined.mid.modify.clickable(:class="{'nonClickable' : !account?.email_verified}" @click="editServiceName") edit
@@ -49,11 +49,11 @@ main#service
                         form.modifyInputForm(style="margin-top: 8px" @submit.prevent="changeCors")
                             .customInput
                                 input#modifyCors(:disabled="promiseRunningCors || null" type="text" placeholder='https://your.domain.com' :value='inputCors' @input="(e) => {e.target.setCustomValidity(''); inputCors = e.target.value;}")
-                                .material-symbols-outlined.sml.cancel(@click="modifyCors = false;") cancel
                             template(v-if="promiseRunningCors")
                                 img.loading(src="@/assets/img/loading.png")
                             template(v-else)
-                                button.save(type="submit") Save
+                                .material-symbols-outlined.big.save(type="submit") done
+                                .material-symbols-outlined.sml.cancel(@click="modifyCors = false;") close
                     template(v-else)
                         h5 {{ currentService.cors || '*' }}
                             .material-symbols-outlined.mid.pen.clickable(:class="{'nonClickable' : !account?.email_verified}" @click="editCors") edit
@@ -64,11 +64,11 @@ main#service
                         form.modifyInputForm(style="margin-top: 8px" @submit.prevent="setSecretKey")
                             .customInput
                                 input#modifyKey(:disabled="promiseRunningSecKey || null" type="text" placeholder="Secret key for external request" :value='inputKey' @input="(e) => inputKey = e.target.value")
-                                .material-symbols-outlined.sml.cancel(@click="modifyKey = false;") cancel
                             template(v-if="promiseRunningSecKey")
                                 img.loading(src="@/assets/img/loading.png")
                             template(v-else)
-                                button.save(type="submit") Save
+                                .material-symbols-outlined.big.save(type="submit") done
+                                .material-symbols-outlined.sml.cancel(@click="modifyKey = false;") close
                     template(v-else)
                         h5 {{ currentService.api_key || 'No key' }}
                             .material-symbols-outlined.mid.pen.clickable(:class="{'nonClickable' : !account?.email_verified}" @click="editKey") edit
@@ -773,6 +773,15 @@ watch(modifyCors, () => {
                 .right {
                     > div {
                         text-align: left;
+                    }
+                }
+            }
+            .listWrap {
+                display: block;
+                .list {
+                    width: unset;
+                    .customInput {
+                        max-width: unset;
                     }
                 }
             }

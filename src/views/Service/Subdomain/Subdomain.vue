@@ -20,17 +20,17 @@ main#subdomain
                     form.modifyInputForm.sub(@submit.prevent='registerSubdomain')
                         .customInput(style="max-width:350px")
                             input#modifySudomain(:disabled="subdomainState || subdomainPromiseRunning ? true : null" type="text" placeholder="Name of Subdomain" required minlength='5' pattern='[a-z0-9]+' title='Subdomain should be lowercase alphanumeric.' :value='inputSubdomain' @input="(e) => {e.target.setCustomValidity(''); inputSubdomain = e.target.value}")
-                            .material-symbols-outlined.sml.cancel(@click="modifySudomain = false;") cancel
                         template(v-if="subdomainPromiseRunning")
                             img.loading(src="@/assets/img/loading.png")
                         template(v-else)
-                            button.save(type="submit" :disabled="subdomainState ? true : null") Save
+                            .material-symbols-outlined.big.save(type="submit" :disabled="subdomainState ? true : null") done
+                            .material-symbols-outlined.sml.cancel(@click="modifySudomain = false;") close
                 template(v-else)
                     .cont
                         p {{ computedSubdomain }}
                             a.link(:href="'http://' + computedSubdomain + '.' + domain" target="_blank")
                                 .material-symbols-outlined.sml link
-                        .material-symbols-outlined.mid.clickable(:class="{'nonClickable' : !account.email_verified}") edit
+                        .material-symbols-outlined.mid.clickable(@click="modifySudomain=true;" :class="{'nonClickable' : !account.email_verified}") edit
             .setting
                 h6.tit HTML file for 404 page
                 .cont.line
@@ -106,22 +106,6 @@ main#subdomain
                         .material-symbols-outlined.empty(style="font-size:80px") file_present
                         p Drag and Drop Files or Folders here
             template(v-else-if="files.length")
-                //- .fileWrapper
-                    template(v-for="(file, index) in files")
-                        .file.clickable(v-if='file.name !== "!"' @click="file.name[0] == '#' ? launch(file.path + '/' + file.name.slice(1)) : viewFileInfo(file)")
-                            .customCheckBox(@click.stop)
-                                input(type="checkbox" :id="index" :value='file.path + "/" + file.name' @change='trackSelectedFiles')
-                                label(:for="index")
-                                    .material-symbols-outlined.mid.check check
-                            .material-symbols-outlined.mid.type(v-if="file.name[0] == '#'") folder
-                            .material-symbols-outlined.mid.type(v-else-if="file.name.includes('.html')") html
-                            .material-symbols-outlined.mid.type(v-else-if="file.name.includes('.css')") css
-                            .material-symbols-outlined.mid.type(v-else-if="file.name.includes('.pdf')") picture_as_pdf
-                            .material-symbols-outlined.mid.type(v-else-if="img.includes(file.name.split('.').slice(-1)[0])") image
-                            .material-symbols-outlined.mid.type(v-else-if="vid.includes(file.name.split('.').slice(-1)[0])") movie
-                            .material-symbols-outlined.mid.type(v-else) draft
-                            .pathWrapper(:data-filetype="'.'+file.name.split('.').splice(-1)[0]")
-                                .path {{ file.name[0] === '#' ? file.name.slice(1) : file.name }}
                 .tableWrap 
                     table#resizeMe.table
                         thead
@@ -137,7 +121,7 @@ main#subdomain
                                     .resizer(@mousedown="mousedown")
                         tbody
                             template(v-for="(file, index) in files")
-                                tr(v-if='file.name !== "!"' ref="uploadedFile" :id='file.path + "/" + file.name' @click="(e) => clickedFileList(e, index)")
+                                tr(v-if='file.name !== "!"' ref="uploadedFile" :id='file.path + "/" + file.name' @click="(e) => clickedFileList(e, index)" @dblclick="clickedIndex = index-1; openPreviewFile(selectedFileUrl())")
                                     td.name
                                         .material-symbols-outlined.mid.type(v-if="file.name[0] == '#'") folder
                                         .material-symbols-outlined.mid.type(v-else-if="file.name.includes('.html')") html
@@ -155,13 +139,13 @@ main#subdomain
                                             .material-symbols-outlined.mid.clickable more_vert
         #moreVert(v-if="showMore" @click.stop style="--moreVert-right: 90px;" :style="{top: clientY}")
             .inner
-                .more(:class='{"nonClickable": !account.email_verified}' @click="showMore = false;")
+                .more(:class='{"nonClickable": !account.email_verified}' @click="download(selectedFileUrl()); showMore = false;")
                     .material-symbols-outlined.mid download_2
                     span download
                 .more(:class='{"nonClickable": !account.email_verified}' @click="showDeleteFile = true;showMore = false;")
                     .material-symbols-outlined.mid delete
                     span delete
-                .more(:class='{"nonClickable": !account.email_verified}' @click="fileInfo = files[clickedIndex+1]; copy(selectedFileUrl)")
+                .more(:class='{"nonClickable": !account.email_verified}' @click="copy(selectedFileUrl())")
                     .material-symbols-outlined.mid file_copy
                     span copy link
 
@@ -217,6 +201,7 @@ let clientY = 0;
 let showfileSetting = (index) => {
     checkedFiles.value = [];
     clickedIndex = index-1;
+    console.log(files.value[clickedIndex+1])
     clientY = 145 + (40 *(index-1)) + 'px';
 
     if(settingIndex == index-1 && showMore.value) {
@@ -252,13 +237,74 @@ let clickedFileList = (e, index) => {
         console.log(checkedFiles.value)
 
         return;
-    }
+    } 
+    if(!controlKey.value) {
+        checkedFiles.value = [];
 
+        for(let i=0; i<uploadedFile.value.length; i++) {
+            if(uploadedFile.value[i].className.includes('clicked')) { 
+                uploadedFile.value[i].classList.remove('clicked');
+            }
+        }
+    }
+    if(shiftKey.value) {
+        // clickedIndex = index-1;
+
+        if (!endIndex.value) {
+            endIndex.value = index-1;
+            console.log(endIndex.value)
+        }
+
+        for(let j = Math.min(startIndex.value, endIndex.value); j < Math.max(startIndex.value, endIndex.value) + 1; j++) {
+            if(!uploadedFile.value[j].className.includes('clicked')) { 
+                uploadedFile.value[j].classList.add('clicked');
+            }
+        }
+        // let startIndex = clickedIndex;
+        // let endIndex = index;
+        // console.log(startIndex, endIndex)
+        return;
+    }
+    
     checkedFiles.value.push(e.currentTarget.id);
     e.currentTarget.classList.add('clicked');
     clickedIndex = index-1;
+    console.log(files.value[clickedIndex+1])
+
+    startIndex.value = index-1;
     console.log(checkedFiles.value)
 }
+
+let controlKey = ref(false);
+let shiftKey = ref(false);
+let startIndex = ref(null);
+let endIndex = ref(null);
+
+let handleKeydown = (e) => {
+    if(e.keyCode == 91) {
+        controlKey.value = true;
+    } else if(e.keyCode == 16) {
+        shiftKey.value = true;
+    }
+}
+let handleKeyup = (e) => {
+    if(e.keyCode == 91) {
+        controlKey.value = false;
+    } else if(e.keyCode == 16) {
+        shiftKey.value = false;
+    }
+}
+
+// 방향키 select Record
+watch(() => checkedFiles.value, () => {
+    if (checkedFiles.value) {
+        document.addEventListener('keydown', handleKeydown);
+        document.addEventListener('keyup', handleKeyup);
+    } else {
+        document.removeEventListener('keydown', handleKeydown);
+        document.removeEventListener('keyup', handleKeyup);
+    }
+})
 
 let copy = (url) => {
     let doc = document.createElement('textarea');
@@ -268,6 +314,15 @@ let copy = (url) => {
     document.execCommand('copy');
     doc.remove();
     showMore.value = false;
+}
+
+let openPreviewFile = (url) => {
+    let element = document.createElement('a');
+    element.setAttribute('href', url + '?download=true');
+    element.setAttribute('target', '_blank');
+    document.body.appendChild(element);
+    element.click();
+    document.body.removeChild(element);
 }
 
 let pathArray = computed(() => {
@@ -382,34 +437,36 @@ let deleteSelectedFiles = async () => {
     });
 }
 
-let fileInfo = ref(null);
-let viewFileInfo = f => {
-    fileInfo.value = f;
-}
-
-let selectedFileUrl = computed(() => {
-    if (!fileInfo.value) {
+let selectedFileUrl = () => {
+    console.log(files.value[clickedIndex+1])
+    if (!files.value[clickedIndex+1]) {
         return '';
     }
-    let path = fileInfo.value.path.split(computedSubdomain.value).slice(1).join('');
+    let path = files.value[clickedIndex+1].path.split(computedSubdomain.value).slice(1).join('');
 
     if (path[0] === '/') {
         path = path.slice(1);
     }
 
-    let filename = encodeURI(fileInfo.value.name);
-    path = path ? encodeURI(path) + '/' + filename : filename;
+    // let filename = encodeURI(files.value[clickedIndex+1].name);
+    let filename = files.value[clickedIndex+1].name;
+    // path = path ? encodeURI(path) + '/' + filename : filename;
+    path = path ? path + '/' + filename : filename;
 
     return 'https://' + computedSubdomain.value + `.${domain}/` + path;
-});
+};
 
-// let downloadFile = (f) => {
-//     let path = f.path + '/' + f.name;
-//     let pathSplit = path.split('/');
-//     path = pathSplit.slice(1).join('/');
-//     let endpoint = 'https://' + pathSplit[0] + '.skapi.com/' + path;
-//     skapi.getFile(endpoint, { expires: 30 });
-// }
+let download = (url) => {
+    console.log(url)
+    skapi.getFile(url, {dataType: 'download', expires: 60});
+    // let fileName = url.split('/').slice(-1)[0];
+    // let element = document.createElement('a');
+    // element.setAttribute('href', url + '?download=true');
+    // element.setAttribute('download', fileName);
+    // element.setAttribute('target', '_blank');
+    // document.body.appendChild(element);
+    // element.click();
+}
 
 let subdomainCallback = async e => {
     if (!e) {
@@ -701,6 +758,55 @@ function formatBytes(bytes, decimals = 2) {
 
     return `${parseFloat((bytes / Math.pow(k, i)).toFixed(dm))} ${sizes[i]}`
 }
+
+// table resize
+let prevX, prevW, nextW = 0;
+let prevCol, nextCol = null;
+let mouseMoveHandler = function (e) {
+    // let ths = document.getElementsByTagName('th');
+    // let thsArr = Array.from(ths);
+    // let dx = e.clientX - prevX;
+    // let widthSum = 0;
+
+    // thsArr.forEach((e) => {
+    //     widthSum += e.offsetWidth - 2;
+    // });
+
+    // if ((widthSum < window.innerWidth || dx < 0) && (prevW + dx > 200 && nextW - dx > 200)) {
+    //     prevCol.style.width = `${prevW + dx}px`;
+    //     nextCol.style.width = `${nextW - dx}px`;
+    // }
+    let dx = e.clientX - prevX;
+
+    // 현재 이동 중인 컬럼의 너비 변경
+    let newPrevWidth = prevW + dx;
+
+    // 최소 너비
+    const minColumnWidth = 100;
+    if (newPrevWidth < minColumnWidth) {
+        return;
+    }
+
+    // 현재 이동 중인 컬럼만 위치 이동
+    prevCol.style.width = `${newPrevWidth}px`;
+};
+
+let mousedown = function (e) {
+    prevCol = e.target.parentNode;
+    nextCol = prevCol.nextSibling;
+
+    let prevStyles = window.getComputedStyle(e.target.parentNode);
+    let nextStyles = window.getComputedStyle(prevCol.nextSibling);
+
+    prevX = e.clientX;
+    prevW = parseInt(prevStyles.width, 10);
+    nextW = parseInt(nextStyles.width, 10);
+    document.addEventListener('mousemove', mouseMoveHandler);
+};
+
+document.addEventListener('mouseup', function () {
+    document.removeEventListener('mousemove', mouseMoveHandler);
+});
 </script>
 
 <style lang="less" scoped>
@@ -1210,6 +1316,7 @@ function formatBytes(bytes, decimals = 2) {
                 font-weight: 400;
 
                 tr {
+                    user-select: none;
                     cursor: pointer;
 
                     &:hover {
@@ -1298,7 +1405,6 @@ function formatBytes(bytes, decimals = 2) {
     .modifyInputForm.sub {
         .customInput {
             max-width: unset !important;
-            width: calc(100% - 50px);
         }
     }
     #subdomain {
