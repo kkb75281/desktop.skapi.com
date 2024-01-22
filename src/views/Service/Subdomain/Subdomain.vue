@@ -97,7 +97,9 @@ main#subdomain
 
         // file part
         .filesWrapper(
-            @dragover.stop.prevent="e=>{e.dataTransfer.dropEffect = 'copy'}"
+            :class="{'dragHere' : dragHere}"
+            @dragover.stop.prevent="e=>{e.dataTransfer.dropEffect = 'copy'; dragHere = true;}"
+            @dragleave.stop.prevent="dragHere = false;"
             @drop.stop.prevent="onDrop")
             template(v-if="!fetching && (files.length == 0 || files.length === 1 && files[0].name === '!')")
                 .dragNdropUpload
@@ -150,10 +152,11 @@ main#subdomain
                     span copy link
 
 UploadFileList(
-    v-if="uploading && fileList && Object.keys(fileList).length"
+    v-if="uploading"
     :fileList = "fileList"
-    @cancel='uploading = null;'
-    :wholeProgress='uploadWholeProgress')
+    @cancel='uploading = null; fileList = {};'
+    :wholeProgress='uploadWholeProgress'
+    :uploadingPromise = 'uploadingPromise')
 
 DeleteFileOverlay(v-if="showDeleteFile" @close="showDeleteFile = false;" title='Delete Files' :callback='deleteSelectedFiles')
     | Are you sure want to delete the selected file(s)?
@@ -161,7 +164,7 @@ DeleteFileOverlay(v-if="showDeleteFile" @close="showDeleteFile = false;" title='
 DeleteFileOverlay(v-if="showDeleteSubdomain" :callback='removeSubdomain' title='Delete Subdomain' @close="showDeleteSubdomain = false;")
     | Are you sure want to delete your subdomain? All your hosted files will be lost.
     br
-DeleteFileOverlay(v-if="showRemoveAllFiles" :callback='removeAllFiles' title='Delete All Files' @close="showRemoveAllFiles = false;")
+DeleteFileOverlay(v-if="showRemoveAllFiles" :callback='removeAllFiles' title='Empty Storage' @close="showRemoveAllFiles = false;")
     | You sure want to delete all files? The storage will be emptied. 
     br
 
@@ -190,6 +193,7 @@ let checkedFiles = ref([]);
 let showDeleteSubdomain = ref(false);
 let subdomainState = ref('');
 let showRemoveAllFiles = ref(false);
+let dragHere = ref(false);
 
 let computedSubdomain = ref('')
 let subdomainPromiseRunning = ref(false);
@@ -229,6 +233,15 @@ let showfileSetting = (index) => {
 
 let clickedFileList = (e, index) => {
     let removeIndex = checkedFiles.value.findIndex(id=>id == e.currentTarget.id);
+    let initialCheckedFiles = () => {
+        checkedFiles.value = [];
+
+        for(let i=0; i<uploadedFile.value.length; i++) {
+            if(uploadedFile.value[i].className.includes('clicked')) { 
+                uploadedFile.value[i].classList.remove('clicked');
+            }
+        }
+    }
 
     if(removeIndex >= 0 || clickedIndex == index-1) {
         checkedFiles.value.splice(removeIndex, 1);
@@ -239,30 +252,23 @@ let clickedFileList = (e, index) => {
         return;
     } 
     if(!controlKey.value) {
-        checkedFiles.value = [];
-
-        for(let i=0; i<uploadedFile.value.length; i++) {
-            if(uploadedFile.value[i].className.includes('clicked')) { 
-                uploadedFile.value[i].classList.remove('clicked');
-            }
-        }
+        initialCheckedFiles();
+    }
+    if(startIndex.value == endIndex.value) {
+        endIndex.value = null;
     }
     if(shiftKey.value) {
-        // clickedIndex = index-1;
-
-        if (!endIndex.value) {
-            endIndex.value = index-1;
-            console.log(endIndex.value)
-        }
+        initialCheckedFiles();
+        endIndex.value = index-1;
+        console.log(startIndex.value, endIndex.value)
 
         for(let j = Math.min(startIndex.value, endIndex.value); j < Math.max(startIndex.value, endIndex.value) + 1; j++) {
             if(!uploadedFile.value[j].className.includes('clicked')) { 
                 uploadedFile.value[j].classList.add('clicked');
             }
+            // checkedFiles.value.push(files.value[j+1].path + '/' + files.value[j+1].name);
         }
-        // let startIndex = clickedIndex;
-        // let endIndex = index;
-        // console.log(startIndex, endIndex)
+        console.log(checkedFiles.value)
         return;
     }
     
@@ -610,7 +616,11 @@ function traverseFileTree(item, path = '') {
     });
 }
 
+let uploadingPromise = ref(false);
 let onDrop = async (event, files) => {
+    uploadingPromise.value = true;
+    dragHere.value = false;
+
     if(subdomainState.value) {
         return;
     }
@@ -620,7 +630,7 @@ let onDrop = async (event, files) => {
     }
 
     if (Object.keys(fileList.value).length > 0) {
-        return;
+        // return;
     }
 
     let formData = new FormData();
@@ -633,6 +643,8 @@ let onDrop = async (event, files) => {
             allFiles.push({ file, path: file.name });
             formData.append('files[]', file, file.name);
         }
+        console.log(files)
+        console.log(allFiles)
     }
     else {
         let items = event.dataTransfer.items;
@@ -640,10 +652,17 @@ let onDrop = async (event, files) => {
 
         for (let i = 0; i < items.length; i++) {
             let item = items[i].webkitGetAsEntry();
+            console.log(item.name)
+
             if (item) {
                 filePromises.push(traverseFileTree(item));
+                // filePromises.push(item)
             }
         }
+
+        console.log(items)
+        console.log(filePromises)
+
 
         let allFileGroups = await Promise.all(filePromises);
         allFiles = [].concat(...allFileGroups);
@@ -651,6 +670,9 @@ let onDrop = async (event, files) => {
         allFiles.forEach(({ file, path }) => {
             formData.append('files[]', file, path);
         });
+
+        console.log(allFileGroups)
+
     }
 
     if (!allFiles.length) {
@@ -707,8 +729,9 @@ let onDrop = async (event, files) => {
             launch(searchDir.value, () => { }, true);
         }
     }).finally(() => {
-        uploading.value = null;
-        fileList.value = {};
+        uploadingPromise.value = false;
+        // uploading.value = null;
+        // fileList.value = {};
     });
 }
 
@@ -1016,12 +1039,16 @@ document.addEventListener('mouseup', function () {
             position: relative;
             // width: 100%;
             // min-height: 448px;
-            height: 450px;
+            height: 660px;
             overflow: hidden;
             // padding: 1.5rem 1.4rem;
             padding: 0 1rem;
             border-radius: 8px;
             border: 1px solid rgba(0, 0, 0, 0.10);
+
+            &.dragHere {
+                outline: 4px solid #A5AFFF;
+            }
 
             .fileWrapper {
                 height: 100%;

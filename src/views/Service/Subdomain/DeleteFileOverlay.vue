@@ -14,7 +14,8 @@
                         img.loading(src="@/assets/img/loading.png")
                     template(v-else)
                         button.noLine(@click="emits('close')") Cancel
-                        button.unFinished.warning(@click="runCallback") Delete
+                        button.unFinished.warning(v-if="props.title == 'Empty Storage'" @click="runCallback") Empty
+                        button.unFinished.warning(v-else @click="runCallback") Delete
 </template>
 
 <script setup>

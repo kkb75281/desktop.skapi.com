@@ -3,9 +3,10 @@
     .header
         .number Uploading {{ fileList.length }} files
         .buttonWrap
-            button.cancel(@click="emits('cancel')") Cancel
-            .material-symbols-outlined.mid(v-if="!hideList" @click="hideList = true;") expand_more
-            .material-symbols-outlined.mid(v-else @click="hideList = false;") expand_less
+            //- button.cancel(@click="emits('cancel')") Cancel
+            .material-symbols-outlined.big(v-if="!hideList" @click="hideList = true;") expand_more
+            .material-symbols-outlined.big(v-else @click="hideList = false;") expand_less
+            .material-symbols-outlined.mid(:class="{'nonClickable' : props.uploadingPromise}" @click="emits('cancel')" style="margin-left:10px") close
     .progressBar
         .progress(:style="{ width: props.wholeProgress + '%', height: '100%', background: '#293FE6', position: 'absolute' }")
     .content   
@@ -35,10 +36,11 @@
 import { ref } from "vue";
 import { img, vid } from '@/views/Service/Subdomain/extensions';
 import ProgressCircle from "@/components/ProgressCircle.vue";
-let props = defineProps(['fileList', 'wholeProgress']);
+let props = defineProps(['fileList', 'wholeProgress', 'uploadingPromise']);
 let emits = defineEmits(['cancel']);
 let hideList = ref(false);
 
+console.log(props.wholeProgress)
 </script>
 <style lang="less">
 .uploadListWrapper {
@@ -52,7 +54,7 @@ let hideList = ref(false);
     overflow: hidden;
 
     &.hide {
-        bottom: -328px;
+        bottom: -321px;
     }
 
     .header {

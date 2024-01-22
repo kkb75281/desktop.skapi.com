@@ -56,7 +56,8 @@ header#navBar(style='--position: relative;')
                 .setting(@click="logout")
                     span.material-symbols-outlined.sml logout
                     span Logout
-            a.policy(href="https://broadwayinc.com/pp/skapi.html" target="_blank") terms of service ● privacy policy
+            a.policy
+                router-link(to="/privacy") terms of service ● privacy policy
 </template>
 
 <script setup>

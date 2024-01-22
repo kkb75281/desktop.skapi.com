@@ -1,6 +1,6 @@
 <template lang="pug">
 main#dashboard
-    .createButton(@click="console.log('create')" :class="{'nonClickable' : !account?.email_verified}")
+    .createButton(@click="create=true;" :class="{'nonClickable' : !account?.email_verified}")
         .material-symbols-outlined.mid add
         span Create new service
     
@@ -62,12 +62,6 @@ main#dashboard
                                 .percent.green 0%
                             .menu(@click.stop="(e) => showPlanSetting(e, index)" :class='{"nonClickable": !account.email_verified}')
                                 .material-symbols-outlined.mid.clickable more_vert
-                            #moreVert.hide(ref="moreVert" @click.stop style="--moreVert-right: 20px; top:44px;")
-                                .inner
-                                    .more(style="width:unset;white-space:nowrap;") Downgrade Plan
-                                    .more Upgrade Plan
-                                    .more Stop Plan
-                                    .more Cancel Plan
                     tr.cont(ref="trCont" :class="{'active' : showInfo}")
                         td(colspan="8")
                             br
@@ -118,12 +112,22 @@ main#dashboard
                         h3 No Services
                         br
                         p Get started by creating a new service.
+    br
+    .material-symbols-outlined.big(style="width:100%;text-align:center;color:#293FE6;cursor:pointer;" @click="create=true;") add_circle
+   
+    #moreVert.hide(v-if="showMore" @click.stop style="--moreVert-right: 100px;" :style="{top: clientY}")
+        .inner
+            .more(style="width:unset;white-space:nowrap;") Downgrade Plan
+            .more Upgrade Plan
+            .more Stop Plan
+            .more Cancel Plan
 
-#createNewService
+#createNewService(:class="{'show' : create}")
+    .material-symbols-outlined.mid.close(@click="create=false;") close
     header
         h4.title Create New Service
     main 
-        form
+        form(@submit.prevent="addService")
             .label
                 h6 Name of Service
             input#serviceName(type="text" @input='e=>newServiceName=e.target.value' placeholder="Name of Service" required)
@@ -134,52 +138,128 @@ main#dashboard
             .label 
                 h6 Service Plan
                 span Please choose one of the plans
-            .customSelect
-                select
-                    option Trial Mode
-                    option Standard Mode
-                    option Premium Mode
-                .material-symbols-outlined.mid.search.selectArrowDown arrow_drop_down
+            //- .customSelect
+            //-     select
+            //-         option Trial Mode
+            //-         option Standard Mode
+            //-         option Premium Mode
+            //-     .material-symbols-outlined.mid.search.selectArrowDown arrow_drop_down
 
             br
-            br
 
-        .planCard
-            .header 
-                h3.mode Trial Mode
-                .price $0
-            .content 
-                ul
-                    li asdaasd asdasdasdaasd asdasdasdaasd asdasdasdaasd asdasd
-                    li asdaasd asdasdasdaasd asdasdasdaasd asdasdasdaasd asdasd
-                    li asdaasd asdasdasdaasd asdasdasdaasd asdasdasdaasd asdasd
-                    li asdaasd asdasdasdaasd asdasdasdaasd asdasdasdaasd asdasd
+            .card.clicked.nonClickable(@click="serviceMode='trial'" style="border-radius:8px;cursor:pointer;")
+                .inner
+                    .title 
+                        h4 Trial Mode
+                        .price $0
+                    .contWrap(style="justify-content:space-between;")
+                        ul
+                            li 
+                                .material-symbols-outlined.sml.li check_circle
+                                span asdaasd asdasdasdaasd asdasdasdaasd
+                            li 
+                                .material-symbols-outlined.sml.li check_circle
+                                span asdaasd asdasdasdaasd asdasdasdaasd
+                            li 
+                                .material-symbols-outlined.sml.li check_circle
+                                span asdaasd asdasdasdaasd asdasdasdaasd
+                            li 
+                                .material-symbols-outlined.sml.li check_circle
+                                span asdaasd asdasdasdaasd asdasdasdaasd
+
+                        ul
+                            li 
+                                .material-symbols-outlined.sml.li check_circle
+                                span asdaasd asdasdasdaasd asdasdasdaasd
+                            li 
+                                .material-symbols-outlined.sml.li check_circle
+                                span asdaasd asdasdasdaasd asdasdasdaasd
+                            li 
+                                .material-symbols-outlined.sml.li check_circle
+                                span asdaasd asdasdasdaasd asdasdasdaasd
+                            li 
+                                .material-symbols-outlined.sml.li check_circle
+                                span asdaasd asdasdasdaasd asdasdasdaasd
         
-        br
+            br
 
-        .planCard
-            .header 
-                h3.mode Trial Mode
-                .price $19
-            .content 
-                ul
-                    li asdaasd asdasdasdaasd asdasdasdaasd asdasdasdaasd asdasd
-                    li asdaasd asdasdasdaasd asdasdasdaasd asdasdasdaasd asdasd
-                    li asdaasd asdasdasdaasd asdasdasdaasd asdasdasdaasd asdasd
-                    li asdaasd asdasdasdaasd asdasdasdaasd asdasdasdaasd asdasd
+            .card.clicked(@click="serviceMode='standard'" style="border-radius:8px;cursor:pointer;")
+                .inner
+                    .title 
+                        h4 Standard Mode
+                        .price $19
+                    .contWrap(style="justify-content:space-between;")
+                        ul
+                            li 
+                                .material-symbols-outlined.sml.li check_circle
+                                span asdaasd asdasdasdaasd asdasdasdaasd
+                            li 
+                                .material-symbols-outlined.sml.li check_circle
+                                span asdaasd asdasdasdaasd asdasdasdaasd
+                            li 
+                                .material-symbols-outlined.sml.li check_circle
+                                span asdaasd asdasdasdaasd asdasdasdaasd
+                            li 
+                                .material-symbols-outlined.sml.li check_circle
+                                span asdaasd asdasdasdaasd asdasdasdaasd
 
-        br
+                        ul
+                            li 
+                                .material-symbols-outlined.sml.li check_circle
+                                span asdaasd asdasdasdaasd asdasdasdaasd
+                            li 
+                                .material-symbols-outlined.sml.li check_circle
+                                span asdaasd asdasdasdaasd asdasdasdaasd
+                            li 
+                                .material-symbols-outlined.sml.li check_circle
+                                span asdaasd asdasdasdaasd asdasdasdaasd
+                            li 
+                                .material-symbols-outlined.sml.li check_circle
+                                span asdaasd asdasdasdaasd asdasdasdaasd
+        
+            br
 
-        .planCard
-            .header 
-                h3.mode Trial Mode
-                .price $129
-            .content 
-                ul
-                    li asdaasd asdasdasdaasd asdasdasdaasd asdasdasdaasd asdasd
-                    li asdaasd asdasdasdaasd asdasdasdaasd asdasdasdaasd asdasd
-                    li asdaasd asdasdasdaasd asdasdasdaasd asdasdasdaasd asdasd
-                    li asdaasd asdasdasdaasd asdasdasdaasd asdasdasdaasd asdasd
+            .card.clicked.nonClickable(@click="serviceMode='premium'" style="border-radius:8px;cursor:pointer;")
+                .inner
+                    .title 
+                        h4 Premium Mode
+                        .price $129
+                    .contWrap(style="justify-content:space-between;")
+                        ul
+                            li 
+                                .material-symbols-outlined.sml.li check_circle
+                                span asdaasd asdasdasdaasd asdasdasdaasd
+                            li 
+                                .material-symbols-outlined.sml.li check_circle
+                                span asdaasd asdasdasdaasd asdasdasdaasd
+                            li 
+                                .material-symbols-outlined.sml.li check_circle
+                                span asdaasd asdasdasdaasd asdasdasdaasd
+                            li 
+                                .material-symbols-outlined.sml.li check_circle
+                                span asdaasd asdasdasdaasd asdasdasdaasd
+
+                        ul
+                            li 
+                                .material-symbols-outlined.sml.li check_circle
+                                span asdaasd asdasdasdaasd asdasdasdaasd
+                            li 
+                                .material-symbols-outlined.sml.li check_circle
+                                span asdaasd asdasdasdaasd asdasdasdaasd
+                            li 
+                                .material-symbols-outlined.sml.li check_circle
+                                span asdaasd asdasdasdaasd asdasdasdaasd
+                            li 
+                                .material-symbols-outlined.sml.li check_circle
+                                span asdaasd asdasdasdaasd asdasdasdaasd
+
+            br
+        
+            .buttonWrap(style="display:flex; justify-content:space-between;")
+                button.noLine(@click="create=false;") Cancel 
+                button.final(v-if="serviceMode='trial'" type="submit") Create
+                //- button.unFinished(v-else type="submit") Create
+            
 </template>
 
 <script setup>
@@ -194,16 +274,18 @@ onMounted(() => {
 })
 
 const router = useRouter();
+let serviceMode = ref('trial');
 let searchFor = ref('service');
 let searchText = ref('');
 let showInfo = ref(false);
 let tr = ref(null);
-let moreVert = ref(null);
 let downArrow = ref(null);
 let upArrow = ref(null);
 let trCont = ref(null);
 let currnetServiceIndex = null;
 let currnetPlanIndex = null;
+let showMore = ref(false);
+let clientY = 0;
 
 let convertToMb = (size) => {
     if (size) {
@@ -238,21 +320,23 @@ let showServiceInfo = (e, index) => {
 }
 
 let showPlanSetting = (e, index) => {
-    if(currnetPlanIndex == index) {
-        moreVert.value[index].classList.remove('show');
+    showMore.value = false;
+    currnetServiceIndex = index;
+    console.log(index)
+
+    nextTick(() => {
+        clientY = 200 + (60 *(index-1)) + 'px';
+    })
+
+    if(currnetPlanIndex == index && showMore.value) {
+        showMore.value = false;
         currnetPlanIndex = null;
 
         return;
     }
 
-    for(let i=0; i<moreVert.value.length; i++) {
-        if(moreVert.value[i].className.includes('show')) { 
-            moreVert.value[i].classList.remove('show');
-        }
-    }
-
+    showMore.value = true;
     currnetPlanIndex = index;
-    moreVert.value[index].classList.add('show');
 }
 
 let goServiceDashboard = (e, service) => {
@@ -423,8 +507,81 @@ skapi.getProfile().then(u => {
     height: 100%;
     background: #FFF;
     box-shadow: -8px 4px 20px 0px rgba(0, 0, 0, 0.10);
+    transform: translateX(100%);
+    transition: all 0.3s;
     z-index: 999;
 
+    &.show {
+        transform: translateX(0px);
+    }
+    .close {
+        position: absolute;
+        right: 25px;
+        top: 25px;
+        font-size: 32px;
+        cursor: pointer;
+    }
+    .card {
+        background-color: #fafafa;
+
+        &.clicked {
+            &:hover {
+                .inner {
+                    .contWrap {
+                        ul {
+                            li {
+                                .li {
+                                    color: #293FE6;
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        .inner {
+            .title {
+                font-weight: 500;
+                color: #293FE6;
+
+                .price {
+                    position: relative;
+                    display: inline-block;
+                    padding-right: 60px;
+                    font-size: 28px;
+                    font-weight: 700;
+
+                    &::after {
+                        position: absolute;
+                        content: '/month';
+                        right: 0;
+                        top: 50%;
+                        transform: translateY(-50%);
+                        font-size: 14px;
+                        font-weight: 500;
+                        color: rgba(0, 0, 0, 0.40);
+                    }
+                }
+            }
+            .contWrap {
+                ul {
+                    width: 50%;
+                    list-style: none;
+
+                    li {
+                        .li {
+                            font-size: 12px;
+                        }
+                        span {
+                            font-size: 14px;
+                            color: rgba(0, 0, 0, 0.60);
+                            font-weight: 400;
+                        }
+                    }
+                }
+            }
+        }
+    }
     header {
         padding: 2rem;
         border-bottom: 1px solid rgba(0, 0, 0, 0.10);
@@ -462,53 +619,61 @@ skapi.getProfile().then(u => {
                 padding: 0 20px;
             }
         }
-        .planCard {
-            border-radius: 8px;
-            border: 0.5px solid rgba(0, 0, 0, 0.25);
-            background: #FAFAFA;
+        // .planCard {
+        //     border-radius: 8px;
+        //     border: 0.5px solid rgba(0, 0, 0, 0.25);
+        //     background: #FAFAFA;
 
-            .header {
-                display: flex;
-                align-items: center;
-                justify-content: space-between;
-                padding: 1rem;
-                border-bottom: 1px solid rgba(0, 0, 0, 0.10);
-                box-shadow: 0px 1px 3px 0px rgba(0, 0, 0, 0.06);
+        //     .header {
+        //         display: flex;
+        //         align-items: center;
+        //         justify-content: space-between;
+        //         padding: 1rem;
+        //         border-bottom: 1px solid rgba(0, 0, 0, 0.10);
+        //         box-shadow: 0px 1px 3px 0px rgba(0, 0, 0, 0.06);
 
-                .mode {
-                    display: inline-block;
-                    font-weight: 500;
-                    color: #293FE6;
-                }
-                .price {
-                    position: relative;
-                    display: inline-block;
-                    padding-right: 60px;
-                    font-size: 28px;
-                    font-weight: 700;
+        //         .mode {
+        //             display: inline-block;
+        //             font-weight: 500;
+        //             color: #293FE6;
+        //         }
+        //         .price {
+        //             position: relative;
+        //             display: inline-block;
+        //             padding-right: 60px;
+        //             font-size: 28px;
+        //             font-weight: 700;
 
-                    &::after {
-                        position: absolute;
-                        content: '/month';
-                        right: 0;
-                        top: 50%;
-                        transform: translateY(-50%);
-                        font-size: 14px;
-                        font-weight: 500;
-                        color: rgba(0, 0, 0, 0.40);
-                    }
-                }
-            }
-            .content {
-                padding: 1rem;
+        //             &::after {
+        //                 position: absolute;
+        //                 content: '/month';
+        //                 right: 0;
+        //                 top: 50%;
+        //                 transform: translateY(-50%);
+        //                 font-size: 14px;
+        //                 font-weight: 500;
+        //                 color: rgba(0, 0, 0, 0.40);
+        //             }
+        //         }
+        //     }
+        //     .content {
+        //         padding: 1rem;
                 
-                ul {
-                    li {
-                        box-sizing: border-box;
+        //         ul {
+        //             li {
+        //                 box-sizing: border-box;
 
-                    }
-                }
-            }
+        //             }
+        //         }
+        //     }
+        // }
+    }
+}
+
+#moreVert {
+    .inner {
+        .more {
+            font-size: 0.8rem;
         }
     }
 }
@@ -531,7 +696,7 @@ skapi.getProfile().then(u => {
 
 .tableWrap {
     position: relative;
-    min-height: calc(100vh - 3.4rem - 160px);
+    // min-height: calc(100vh - 3.4rem - 160px);
     margin-top: 16px;
     overflow-x: auto;
 
