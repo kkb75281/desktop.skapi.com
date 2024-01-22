@@ -27,8 +27,8 @@
                         br
                         br
                         .buttonWrap.block
-                            button.no(type="button" @click="emits('close')") No, keep my account
-                            button.yes(type="submit") Yes, delete my account
+                            button.unFinished(type="button" @click="emits('close')") No, keep my account
+                            button.noLine(type="submit" style="color:#F04E4E") Yes, delete my account
                         br
                 template(v-if="step === 2")
                     form.reasonForm(@submit.prevent="reasonCheck" action="")
@@ -62,8 +62,8 @@
                         br
                         br
                         .buttonWrap 
-                            button.cancel(type="button" @click="emits('close')") Cancel
-                            button.save(type="submit") Submit
+                            button.noLine(type="button" @click="emits('close')") Cancel
+                            button.unFinished(type="submit") Submit
                 template(v-if="step >= 3")
                     form(@submit.prevent="deleteAccount" action="")
                         p Please enter your password.
@@ -84,8 +84,8 @@
                             template(v-if="promiseRunning")
                                 img.loading(src="@/assets/img/loading.png")
                             template(v-else)
-                                button.cancel(type="button" @click="closeWindow") Cancel
-                                button.save(type="submit") Delete
+                                button.noLine(type="button" @click="closeWindow") Cancel
+                                button.final(type="submit") Delete
                 br
                 .navigator(v-if="step <= 3")
                     .ball(v-for="num in 3" @click="() => { num < step ? step = num : null; password = ''; }" :class="{'active': step === num}")

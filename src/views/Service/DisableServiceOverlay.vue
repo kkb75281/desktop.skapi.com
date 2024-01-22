@@ -9,8 +9,8 @@
                 br
                 br
                 .buttonWrap 
-                    button.cancel(@click="emits('close')") Cancel
-                    button.save(@click="emits('close','disable')") Disable
+                    button.noLine(@click="emits('close')") Cancel
+                    button.unFinished.warning(@click="emits('close','disable')") Disable
 </template>
 
 <script setup>

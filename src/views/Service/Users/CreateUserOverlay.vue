@@ -51,8 +51,8 @@
                             img.loading(src="@/assets/img/loading.png")
 
                         template(v-else)
-                            button.cancel(type="button" @click="emits('close')") Cancel
-                            button.save Create User
+                            button.noLine(type="button" @click="emits('close')") Cancel
+                            button.final Create User
 </template>
 
 <script setup>

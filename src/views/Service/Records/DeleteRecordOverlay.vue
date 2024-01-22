@@ -13,8 +13,8 @@
                     //- template(v-if="promiseRunning")
                     //-     img.loading(src="@/assets/img/loading.png")
                     //- template(v-else)
-                    button.cancel(@click="emits('close')") Cancel
-                    button.save(@click="toDelete.cb();emits('close')") Delete
+                    button.noLine(@click="emits('close')") Cancel
+                    button.unFinished.warning(@click="toDelete.cb();emits('close')") Delete
 </template>
 
 <script setup>

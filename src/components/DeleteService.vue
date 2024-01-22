@@ -21,8 +21,8 @@
                     template(v-if="promiseRunning")
                         img.loading(src="@/assets/img/loading.png")
                     template(v-else)
-                        button.cancel(type="button" @click="closeWindow") Cancel
-                        button.save(type="submit") Delete
+                        button.noLine(type="button" @click="closeWindow") Cancel
+                        button.unFinished.warning(type="submit") Delete
 </template>
 
 <script setup>

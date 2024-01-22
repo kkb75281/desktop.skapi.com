@@ -87,14 +87,14 @@ main#database
                         .textFormWrap(:class="{'disabled' : advancedForm.index.condition !== '~' || !advancedForm.index.name}")
                             input#indexRangeSearchInput(type="text" name='index_range' placeholder='From index value ~ to:' :disabled="advancedForm.index.condition !== '~' || !advancedForm.index.name" @input="e => {e.target.setCustomValidity(''); advancedForm.index.range = e.target.value}")
 
-                .buttonWrap(style='min-height:43px')
+                .buttonWrap(style='width:100%; min-height:43px; text-align:right;')
                     template(v-if="fetching && advancedForm.searchText")
                         // the additional div is for alignment
                         div(style='display: inline-flex;align-items: center;height: 43px;')
                             img.loading(style='padding:0' src="@/assets/img/loading.png")
                     template(v-else)
-                        input.clear(type="reset" value="Clear filter" @click="clearSearchFilter")
-                        button.search(type="submit") Search
+                        input.clear(type="reset" value="Clear filter" @click="clearSearchFilter" style="border:0;background-color:unset;color: #293FE6 !important;font-size: 0.8rem;font-weight: 700; cursor:pointer;")
+                        button.final(type="submit" style="margin-left:2rem;") Search
 
     section#section 
         // view / edit record / create record
@@ -1337,31 +1337,6 @@ watch(() => selectedRecord.value, () => {
                         }
                     }
                 }
-            }
-        }
-
-        .buttonWrap {
-            width: 100%;
-            text-align: right;
-
-            * {
-                padding: 0.6rem 1.4rem;
-                border: 0;
-                font-size: 0.8rem;
-                font-weight: 700;
-                border-radius: 8px;
-                background-color: unset;
-                cursor: pointer;
-            }
-
-            .clear {
-                color: #293FE6;
-            }
-
-            .search {
-                color: #fff;
-                background-color: #293FE6;
-                box-shadow: 0px -1px 1px 0px rgba(0, 0, 0, 0.15) inset;
             }
         }
     }

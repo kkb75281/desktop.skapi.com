@@ -13,8 +13,8 @@
                         .material-symbols-outlined.mid error
                         span {{ error }}
                     .buttonWrap 
-                        button.cancel(@click="emits('close')") Cancel
-                        button.save(@click='()=>{if(error) return; emits("save", dataCopy);}') Save
+                        button.noLine(@click="emits('close')") Cancel
+                        button.final(@click='()=>{if(error) return; emits("save", dataCopy);}') Save
 
         template(v-else)
             // view
