@@ -1,6 +1,6 @@
 <template lang="pug">
 main#dashboard
-    .createButton(@click="create=true;" :class="{'nonClickable' : !account?.email_verified}")
+    .createButton(@click="createService" :class="{'nonClickable' : !account?.email_verified}")
         .material-symbols-outlined.mid add
         span Create new service
     
@@ -113,7 +113,7 @@ main#dashboard
                         br
                         p Get started by creating a new service.
     br
-    .material-symbols-outlined.big(style="width:100%;text-align:center;color:#293FE6;cursor:pointer;" @click="create=true;") add_circle
+    .material-symbols-outlined.big(@click="createService" style="width:100%;text-align:center;color:#293FE6;cursor:pointer;") add_circle
    
     #moreVert.hide(v-if="showMore" @click.stop style="--moreVert-right: 100px;" :style="{top: clientY}")
         .inner
@@ -126,12 +126,15 @@ main#dashboard
     .material-symbols-outlined.mid.close(@click="create=false;") close
     header
         h4.title Create New Service
-    main 
+    main(v-if="create")
         form(@submit.prevent="addService")
             .label
                 h6 Name of Service
-            input#serviceName(type="text" @input='e=>newServiceName=e.target.value' placeholder="Name of Service" required)
-        
+            input#serviceName(type="text" :class="{'error' : error}" @input='e=>newServiceName=e.target.value' placeholder="Name of Service" required)
+            .error(v-if="error")
+                .material-symbols-outlined.mid error
+                span {{ error }}
+
             br
             br
         
@@ -147,7 +150,7 @@ main#dashboard
 
             br
 
-            .card.clicked.nonClickable(@click="serviceMode='trial'" style="border-radius:8px;cursor:pointer;")
+            .card.clicked.nonClickable(:class="{'checked' : serviceMode == 'trial'}" @click="serviceMode='trial'" style="border-radius:8px;cursor:pointer;")
                 .inner
                     .title 
                         h4 Trial Mode
@@ -183,11 +186,15 @@ main#dashboard
         
             br
 
-            .card.clicked(@click="serviceMode='standard'" style="border-radius:8px;cursor:pointer;")
+            .card.clicked(:class="{'checked' : serviceMode == 'standard'}" @click="serviceMode='standard'" style="border-radius:8px;cursor:pointer;")
                 .inner
                     .title 
-                        h4 Standard Mode
-                        .price $19
+                        h4(style="display:inline-block;") Standard Mode
+                        .right(style="display:inline-block; text-align:right;")
+                            .free 
+                                span (Only for promotion period)
+                                p(style="display:inline-block; margin-left:10px") Free
+                            .price.discount $19
                     .contWrap(style="justify-content:space-between;")
                         ul
                             li 
@@ -219,7 +226,7 @@ main#dashboard
         
             br
 
-            .card.clicked.nonClickable(@click="serviceMode='premium'" style="border-radius:8px;cursor:pointer;")
+            .card.clicked.nonClickable(:class="{'checked' : serviceMode == 'premium'}" @click="serviceMode='premium'" style="border-radius:8px;cursor:pointer;")
                 .inner
                     .title 
                         h4 Premium Mode
@@ -256,16 +263,19 @@ main#dashboard
             br
         
             .buttonWrap(style="display:flex; justify-content:space-between;")
-                button.noLine(@click="create=false;") Cancel 
-                button.final(v-if="serviceMode='trial'" type="submit") Create
-                //- button.unFinished(v-else type="submit") Create
+                template(v-if="promiseRunning")
+                    img.loading(src="@/assets/img/loading.png")
+                template(v-else)
+                    button.noLine(@click="create=false;") Cancel 
+                    button.final(type="submit") Create
+                    //- button.unFinished(v-else type="submit") Create
             
 </template>
 
 <script setup>
 import { computed, nextTick, onMounted, ref } from 'vue';
 import { useRouter } from 'vue-router';
-import { skapi, account } from '@/main.js';
+import { skapi, account, bodyClick } from '@/main.js';
 import { services, serviceFetching } from '@/data.js';
 import { launch } from '@/views/Service/Subdomain/SubdomainFetch.js';
 
@@ -274,7 +284,7 @@ onMounted(() => {
 })
 
 const router = useRouter();
-let serviceMode = ref('trial');
+let serviceMode = ref('standard');
 let searchFor = ref('service');
 let searchText = ref('');
 let showInfo = ref(false);
@@ -282,10 +292,12 @@ let tr = ref(null);
 let downArrow = ref(null);
 let upArrow = ref(null);
 let trCont = ref(null);
-let currnetServiceIndex = null;
-let currnetPlanIndex = null;
+let currentServiceIndex = null;
+let currentPlanIndex = null;
 let showMore = ref(false);
 let clientY = 0;
+// let inputError = ref(false);
+let error = ref('');
 
 let convertToMb = (size) => {
     if (size) {
@@ -297,46 +309,45 @@ let convertToMb = (size) => {
 }
 
 let showServiceInfo = (e, index) => {
-    if(currnetServiceIndex == index) {
+    if(currentServiceIndex == index) {
         downArrow.value[index].classList.remove('hide');
         upArrow.value[index].classList.add('hide');
         trCont.value[index].classList.remove('active');
-        currnetServiceIndex = null;
+        currentServiceIndex = null;
 
         return;
     } else if(e.target.classList.contains('upArrow')) {
         downArrow.value[index].classList.remove('hide');
         upArrow.value[index].classList.add('hide');
         trCont.value[index].classList.remove('active');
-        currnetServiceIndex = null;
+        currentServiceIndex = null;
 
         return;
     }
 
-    currnetServiceIndex = index;
+    currentServiceIndex = index;
     downArrow.value[index].classList.add('hide');
     upArrow.value[index].classList.remove('hide');
     trCont.value[index].classList.add('active');
 }
 
 let showPlanSetting = (e, index) => {
-    showMore.value = false;
-    currnetServiceIndex = index;
     console.log(index)
+    showMore.value = false;
+    currentServiceIndex = index;
+    clientY = 200 + (60 *(index-1)) + 'px';
 
-    nextTick(() => {
-        clientY = 200 + (60 *(index-1)) + 'px';
-    })
-
-    if(currnetPlanIndex == index && showMore.value) {
+    if(currentPlanIndex == index && showMore.value) {
+        console.log('dd')
         showMore.value = false;
-        currnetPlanIndex = null;
+        currentPlanIndex = null;
 
         return;
     }
 
     showMore.value = true;
-    currnetPlanIndex = index;
+    currentPlanIndex = index;
+    console.log(currentPlanIndex == index, showMore.value)
 }
 
 let goServiceDashboard = (e, service) => {
@@ -345,6 +356,10 @@ let goServiceDashboard = (e, service) => {
     setTimeout(() => {
         router.push('/dashboard/' + service.service);
     }, 500);
+}
+
+bodyClick.recordPage = () => {
+    showMore.value = false;
 }
 
 // table resize
@@ -467,8 +482,11 @@ let addService = () => {
             skapi.insertService(s);
             services.value[0] = s;
             create.value = false;
+            newServiceName = '';
         }).catch(err => {
-            alert(err.message);
+            // alert(err.message);
+            console.log(err)
+            error.value = 'Please fill in the name of service';
             services.value.shift();
         })
         .finally(_ => promiseRunning.value = false)
@@ -505,6 +523,7 @@ skapi.getProfile().then(u => {
     top: 0;
     width: 50%;
     height: 100%;
+    overflow: scroll;
     background: #FFF;
     box-shadow: -8px 4px 20px 0px rgba(0, 0, 0, 0.10);
     transform: translateX(100%);
@@ -524,6 +543,9 @@ skapi.getProfile().then(u => {
     .card {
         background-color: #fafafa;
 
+        &.checked {
+            box-shadow: 0 0 0 4px #A5AFFF inset !important;
+        }
         &.clicked {
             &:hover {
                 .inner {
@@ -544,14 +566,27 @@ skapi.getProfile().then(u => {
                 font-weight: 500;
                 color: #293FE6;
 
+                .free {
+                    position: relative;
+                    display: inline-block;
+                    color: #293FE6;
+                    font-size: 1.2rem;
+                    font-weight: 700;
+
+                    span {
+                        color: rgba(0,0,0,0.6);
+                    }
+                }
+
                 .price {
                     position: relative;
                     display: inline-block;
                     padding-right: 60px;
+                    padding-left: 10px;
                     font-size: 28px;
                     font-weight: 700;
 
-                    &::after {
+                    &::before {
                         position: absolute;
                         content: '/month';
                         right: 0;
@@ -560,6 +595,21 @@ skapi.getProfile().then(u => {
                         font-size: 14px;
                         font-weight: 500;
                         color: rgba(0, 0, 0, 0.40);
+                    }
+                    &.discount {
+                        margin-left: 10px;
+                        color: #A7A8AD;
+
+                        &::after {
+                            position: absolute;
+                            content: '';
+                            width: 50%;
+                            height: 2px;
+                            left: 5px;
+                            top: 50%;
+                            transform: translateY(-50%);
+                            background-color: #A7A8AD;
+                        }
                     }
                 }
             }
