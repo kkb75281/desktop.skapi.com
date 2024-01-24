@@ -26,7 +26,7 @@
                     img.loading(src="@/assets/img/loading.png")
                 template(v-else)
                     RouterLink(:to="{name: 'login'}") Back to Log in
-                    button(type="submit") Continue
+                    button.unFinished(type="submit") Continue
     template(v-else-if="step === 2")
         form(@submit.prevent="step++")
             p 
@@ -52,8 +52,8 @@
                 .material-symbols-outlined.mid error
                 span {{ codeError }}
             .bottom
-                button.back(type="button" @click="back") Back
-                button(type="submit") Continue
+                button.noLine(type="button" @click="back") Back
+                button.unFinished(type="submit") Continue
     template(v-else-if="step === 3")
         form(@submit.prevent="changePassword" action="")
             p Create a new password.
@@ -90,7 +90,7 @@
                     template(v-else)
                         .material-symbols-outlined.sml visibility_off
             .bottom(style="justify-content: flex-end;")
-                button(type="submit") Continue
+                button.final(type="submit") Change
     .navigator(v-if="step <= 3")
         .ball(v-for="num in 3" @click="() => { num < step ? step = num : null; password = '';  passwordConfirm = '';}" :class="{'active': step === num}")
 changeSuccess(:showSuccess="showSuccess")
@@ -272,24 +272,24 @@ let validateNewPassword = () => {
                 font-size: 16px;
             }
 
-            button {
-                border-radius: 8px;
-                background: #293FE6;
-                box-shadow: 0px -1px 1px 0px rgba(0, 0, 0, 0.15) inset;
-                border: 0;
-                padding: 12px 28px;
-                color: #fff;
-                font-size: 16px;
-                font-weight: 700;
-                cursor: pointer;
+            // button {
+            //     border-radius: 8px;
+            //     background: #293FE6;
+            //     box-shadow: 0px -1px 1px 0px rgba(0, 0, 0, 0.15) inset;
+            //     border: 0;
+            //     padding: 12px 28px;
+            //     color: #fff;
+            //     font-size: 16px;
+            //     font-weight: 700;
+            //     cursor: pointer;
 
-                &.back {
-                    background-color: unset;
-                    color: #293FE6;
-                    padding: 0;
-                    box-shadow: unset;
-                }
-            }
+            //     &.back {
+            //         background-color: unset;
+            //         color: #293FE6;
+            //         padding: 0;
+            //         box-shadow: unset;
+            //     }
+            // }
         }
     }
 
