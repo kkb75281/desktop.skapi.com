@@ -533,8 +533,8 @@ watch(modifyCors, () => {
                         height: 32px;
                         margin-left: 1rem;
                         border-radius: 16px;
-                        background-color: rgba(0, 0, 0, 0.25);
-                        transition: all 1s;
+                        background-color: rgba(0, 0, 0, 0.6);
+                        transition: all 0.5s;
 
                         &.nonClickable {
                             .toggleBtn {

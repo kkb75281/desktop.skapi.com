@@ -2,7 +2,9 @@
 #overlayWindow.deleteService(@click="closeWindow" style='--max-width: 480px;')
     form.overlayWrap(@click.stop @submit.prevent="deleteService")
         header
-            h5.title.red Delete the Service
+            .title.withIcon.red
+                .material-symbols-outlined.mid.icon warning
+                h5 Delete the Service
         main
             .content
                 p Are you sure you want to delete "{{ currentService.name }}" #[br]permanently? You can’t undo this action.

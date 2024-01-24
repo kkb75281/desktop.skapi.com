@@ -899,7 +899,7 @@ document.addEventListener('mouseup', function () {
             label {
                 display: block;
                 width: 105px;
-                border: 2px solid #293FE6;
+                // border: 2px solid #293FE6;
                 border-radius: 8px;
                 text-align: center;
                 color: #293FE6;

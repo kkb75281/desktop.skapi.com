@@ -2,7 +2,9 @@
 #overlayWindow.deleteRecord(@click="emits('close')" style='--max-width: 376px;')
     .overlayWrap(@click.stop)
         header
-            h5.title.red Delete Record
+            .title.withIcon.red
+                .material-symbols-outlined.mid.icon warning
+                h5 Delete Record
         main
             .content
                 p You sure want to delete {{ toDelete.count > 1 ? toDelete.count + ' records' : 'the record'}}?
