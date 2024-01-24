@@ -2,7 +2,9 @@
 #overlayWindow.deleteFile(@click="emits('close')" style="--max-width: 376px;")
     .overlayWrap(@click.stop)
         header
-            h5.title.red {{ props.title }}
+            .title.red(:class="{'withIcon' : props.title == 'Empty Storage'}")
+                .material-symbols-outlined.mid.icon(v-if="props.title == 'Empty Storage'") warning
+                h5 {{ props.title }}
         main
             .content
                 p 
