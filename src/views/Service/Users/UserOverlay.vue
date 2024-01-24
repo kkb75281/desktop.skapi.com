@@ -2,7 +2,9 @@
 #overlayWindow.userDialog(@click="closeDialog" @mousedown="pendClose = true" style='--max-width: 376px;')
     .overlayWrap(@mousedown.stop @mouseup='pendClose = false')
         header
-            h5.title(:class="{'red' : props.state == 'Delete', 'blue' : props.state !== 'Delete'}") {{ props.state }} User
+            .title(:class="{'red' : props.state == 'Delete', 'withIcon' : props.state == 'Delete', 'blue' : props.state !== 'Delete'}")
+                .material-symbols-outlined.mid.icon(v-if="props.state == 'Delete'") warning
+                h5 {{ props.state }} User
         main
             .content
                 slot
