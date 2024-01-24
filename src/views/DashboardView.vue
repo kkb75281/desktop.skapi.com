@@ -113,7 +113,8 @@ main#dashboard
                         br
                         p Get started by creating a new service.
     br
-    .material-symbols-outlined.big(@click="createService" style="width:100%;text-align:center;color:#293FE6;cursor:pointer;") add_circle
+    .plus(style="display:block;text-align:center;")
+        .material-symbols-outlined.big(@click="createService" style="color:#293FE6;cursor:pointer;") add_circle
    
     #moreVert.hide(v-if="showMore" @click.stop style="--moreVert-right: 100px;" :style="{top: clientY}")
         .inner
@@ -332,11 +333,6 @@ let showServiceInfo = (e, index) => {
 }
 
 let showPlanSetting = (e, index) => {
-    console.log(index)
-    showMore.value = false;
-    currentServiceIndex = index;
-    clientY = 200 + (60 *(index-1)) + 'px';
-
     if(currentPlanIndex == index && showMore.value) {
         console.log('dd')
         showMore.value = false;
@@ -344,6 +340,10 @@ let showPlanSetting = (e, index) => {
 
         return;
     }
+
+    showMore.value = false;
+    currentServiceIndex = index;
+    clientY = 200 + (60 *(index-1)) + 'px';
 
     showMore.value = true;
     currentPlanIndex = index;
@@ -519,6 +519,7 @@ skapi.getProfile().then(u => {
 <style lang="less" scoped>
 #dashboard {
     position: relative;
+    height: calc(100vh - 60px - 3.4rem);
     margin-top: 3.4rem;
     padding: 0 2rem;
 }
@@ -527,7 +528,7 @@ skapi.getProfile().then(u => {
     position: fixed;
     right: 0;
     top: 0;
-    width: 50%;
+    width: 700px;
     height: 100%;
     overflow: scroll;
     background: #FFF;
@@ -1064,5 +1065,11 @@ skapi.getProfile().then(u => {
             }
         }
     }
+}
+
+@media (max-width: 700px) {
+    #createNewService {
+            width: 100%;
+    } 
 }
 </style>
