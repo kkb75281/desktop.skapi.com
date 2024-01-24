@@ -409,9 +409,12 @@ onBeforeUnmount(() => {
             justify-content: center;
             font-size: 0.6rem;
             font-weight: 500;
-            color: rgba(0, 0, 0, 0.6);
             padding: 10px 0;
-            text-decoration: none;
+            
+            a {
+                text-decoration: none;
+                color: rgba(0, 0, 0, 0.6);
+            }
         }
     }
 }
