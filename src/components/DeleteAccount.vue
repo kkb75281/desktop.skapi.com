@@ -2,7 +2,9 @@
 #overlayWindow.deleteAccount(@click="closeWindow" style='--max-width: 480px;')
     .overlayWrap(@click.stop)
         header
-            h5.title.red Delete Your Account
+            .title.withIcon.red
+                .material-symbols-outlined.mid.icon warning
+                h5 Delete Your Account
         main
             .content
                 template(v-if="step === 1")
@@ -26,9 +28,9 @@
                             .material-symbols-outlined.mid error
                             span {{ acknowledgeError }}
                         br
-                        .buttonWrap.block
-                            button.no(type="button" @click="emits('close')") No, keep my account
-                            button.yes(type="submit") Yes, delete my account
+                        .buttonWrap
+                            button.noLine(type="button" @click="emits('close')") Keep Account
+                            button.yes(type="submit") Delete Account
                         br
                 template(v-if="step === 2")
                     form.reasonForm(@submit.prevent="reasonCheck" action="")
