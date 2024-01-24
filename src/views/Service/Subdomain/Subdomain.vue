@@ -816,7 +816,7 @@ function formatBytes(bytes, decimals = 2) {
                 }
 
                 .refresh {
-                    color: rgba(0,0,0,0.6);
+                    color: #293FE6;
                 }
             }
         }

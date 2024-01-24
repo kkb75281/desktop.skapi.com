@@ -2054,7 +2054,7 @@ watch(() => selectedRecord.value, () => {
             .refresh,
             .create {
                 margin-right: 1rem;
-                color: rgba(0,0,0,0.6);
+                color: #293FE6;
             }
 
             .menu {
