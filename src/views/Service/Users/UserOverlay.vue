@@ -2,7 +2,7 @@
 #overlayWindow.userDialog(@click="closeDialog" @mousedown="pendClose = true" style='--max-width: 376px;')
     .overlayWrap(@mousedown.stop @mouseup='pendClose = false')
         header
-            h5.title(:class="{'red' : props.state == 'Delete'}") {{ props.state }} User
+            h5.title(:class="{'red' : props.state == 'Delete', 'blue' : props.state !== 'Delete'}") {{ props.state }} User
         main
             .content
                 slot
@@ -12,8 +12,8 @@
                     template(v-if="promiseRunning")
                         img.loading(src="@/assets/img/loading.png")
                     template(v-else)
-                        button.cancel(@click="emits('close');") Cancel
-                        button.save(@click="changeUserState") {{ props.state }}
+                        button.noLine(@click="emits('close');") Cancel
+                        button(@click="changeUserState" :class="{'final' : props.state !== 'Delete', 'unFinished' : props.state == 'Delete', 'warning' : props.state == 'Delete'}") {{ props.state }}
 </template>
     
 <script setup>
@@ -57,4 +57,4 @@ let changeUserState = () => {
         alert(e.message);
     })
 }
-</script>
+</script>    
