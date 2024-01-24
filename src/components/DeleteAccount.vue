@@ -30,7 +30,7 @@
                         br
                         .buttonWrap
                             button.noLine(type="button" @click="emits('close')") Keep Account
-                            button.yes(type="submit") Delete Account
+                            button.unFinished.warning(type="submit") Delete Account
                         br
                 template(v-if="step === 2")
                     form.reasonForm(@submit.prevent="reasonCheck" action="")
