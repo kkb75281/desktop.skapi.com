@@ -365,36 +365,32 @@ bodyClick.recordPage = () => {
 // table resize
 let prevX, prevW, nextW = 0;
 let prevCol, nextCol = null;
-let mouseMoveHandler = function (e) {
+let widthSum = 0;
+
+nextTick(() => {
     let ths = document.getElementsByTagName('th');
     let thsArr = Array.from(ths);
+
+    thsArr.forEach((e) => {
+        let widthStyle = window.getComputedStyle(e).width;
+        e.style.width = widthStyle;
+        widthSum += widthStyle;
+    });
+})
+
+let mouseMoveHandler = function (e) {
     let dx = e.clientX - prevX;
-    let widthSum = 0;
+    let ths = document.getElementsByTagName('th');
+    let thsArr = Array.from(ths);
 
     thsArr.forEach((e) => {
         widthSum += e.offsetWidth;
     });
 
-    console.log({prevCol})
-    console.log({nextCol})
-
     if ((widthSum < window.innerWidth || dx < 0) && (prevW + dx > 100 && nextW - dx > 100)) {
         prevCol.style.width = `${prevW + dx}px`;
         nextCol.style.width = `${nextW - dx}px`;
     }
-    // let dx = e.clientX - prevX;
-
-    // // 현재 이동 중인 컬럼의 너비 변경
-    // let newPrevWidth = prevW + dx;
-
-    // // 최소 너비
-    // const minColumnWidth = 100;
-    // if (newPrevWidth < minColumnWidth) {
-    //     return;
-    // }
-
-    // // 현재 이동 중인 컬럼만 위치 이동
-    // prevCol.style.width = `${newPrevWidth}px`;
 };
 
 let mousedown = function (e) {
@@ -536,7 +532,7 @@ skapi.getProfile().then(u => {
     overflow: scroll;
     background: #FFF;
     box-shadow: -8px 4px 20px 0px rgba(0, 0, 0, 0.10);
-    transform: translateX(100%);
+    transform: translateX(110%);
     transition: all 0.3s;
     z-index: 999;
 
