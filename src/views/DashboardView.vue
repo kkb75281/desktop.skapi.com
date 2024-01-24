@@ -130,7 +130,7 @@ main#dashboard
         form(@submit.prevent="addService")
             .label
                 h6 Name of Service
-            input#serviceName(type="text" :class="{'error' : error}" @input='e=>newServiceName=e.target.value' placeholder="Name of Service" required)
+            input#serviceName(type="text" :class="{'error' : error}" @input='e=>newServiceName=e.target.value' placeholder="Name of Service")
             .error(v-if="error")
                 .material-symbols-outlined.mid error
                 span {{ error }}
@@ -457,6 +457,7 @@ let create = ref(false);
 let createService = () => {
     if (account?.value.email_verified) {
         create.value = true;
+        error.value = '';
         nextTick(() => {
             document.getElementById('serviceName').focus();
         });
@@ -468,6 +469,12 @@ let newServiceName = '';
 let promiseRunning = ref(false);
 let addService = () => {
     promiseRunning.value = true;
+    if(newServiceName == '') {
+        promiseRunning.value = false;
+        error.value = 'Please fill in the name of service';
+
+        return;
+    }
     services.value.unshift({
         service: '',
         name: newServiceName,
@@ -486,7 +493,6 @@ let addService = () => {
         }).catch(err => {
             // alert(err.message);
             console.log(err)
-            error.value = 'Please fill in the name of service';
             services.value.shift();
         })
         .finally(_ => promiseRunning.value = false)
@@ -545,6 +551,17 @@ skapi.getProfile().then(u => {
 
         &.checked {
             box-shadow: 0 0 0 4px #A5AFFF inset !important;
+            .inner {
+                .contWrap {
+                    ul {
+                        li {
+                            .li {
+                                color: #293FE6;
+                            }
+                        }
+                    }
+                }
+            }
         }
         &.clicked {
             &:hover {
@@ -575,6 +592,8 @@ skapi.getProfile().then(u => {
 
                     span {
                         color: rgba(0,0,0,0.6);
+                        font-size: 0.7rem;
+                        font-weight: 400;
                     }
                 }
 
@@ -620,7 +639,8 @@ skapi.getProfile().then(u => {
 
                     li {
                         .li {
-                            font-size: 12px;
+                            font-size: 14px;
+                            margin-right: 5px;
                         }
                         span {
                             font-size: 14px;
@@ -648,11 +668,13 @@ skapi.getProfile().then(u => {
             color: rgba(0, 0, 0, 0.60);
             margin-bottom: 8px;
         }
-        span {
-            color: rgba(0, 0, 0, 0.40);
-            font-size: 14px;
-            font-weight: 400;
-            margin-left: 16px;
+        .label {
+            span {
+                color: rgba(0, 0, 0, 0.40);
+                font-size: 14px;
+                font-weight: 400;
+                margin-left: 16px;
+            }
         }
         input {
             width: 100%;
