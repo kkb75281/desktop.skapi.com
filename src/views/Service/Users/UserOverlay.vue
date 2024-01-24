@@ -59,5 +59,4 @@ let changeUserState = () => {
         alert(e.message);
     })
 }
-}
 </script>    
