@@ -56,7 +56,7 @@
                 img.loading(src="@/assets/img/loading.png")
             
             template(v-else)
-                button.create Continue
+                button.final Sign up
                 .signup 
                     span Have an account?
                     RouterLink(:to="{name: 'login'}") Login
@@ -318,7 +318,7 @@ let signup = () => {
                     justify-content: space-between;
                 }
 
-                .create {
+                .final {
                     width: 100%;
                     margin-bottom: 40px;
                 }
