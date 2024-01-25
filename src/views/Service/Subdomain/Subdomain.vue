@@ -123,7 +123,7 @@ main#subdomain
                                     .resizer(@mousedown="mousedown")
                         tbody
                             template(v-for="(file, index) in files")
-                                tr(v-if='file.name !== "!"' ref="uploadedFile" :id='file.path + "/" + file.name' @click="(e) => clickedFileList(e, index)" @dblclick="clickedIndex = index-1; openPreviewFile(selectedFileUrl())")
+                                tr(v-if='file.name !== "!"' ref="uploadedFile" :id='file.path + "/" + file.name' @click="(e) => clickedFileList(e, index)" @dblclick="dblclick(index)")
                                     td.name
                                         .material-symbols-outlined.mid.type(v-if="file.name[0] == '#'") folder
                                         .material-symbols-outlined.mid.type(v-else-if="file.name.includes('.html')") html
@@ -482,6 +482,14 @@ let download = (url) => {
     // element.setAttribute('target', '_blank');
     // document.body.appendChild(element);
     // element.click();
+}
+
+let dblclick = (index) => {
+    if(files.value[index+1].name[0] === '#') {
+        launch(index);
+    } else {
+        openPreviewFile(selectedFileUrl());
+    }
 }
 
 let subdomainCallback = async e => {
