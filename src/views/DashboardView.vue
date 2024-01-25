@@ -160,30 +160,30 @@ main#dashboard
                         ul
                             li 
                                 .material-symbols-outlined.sml.li check_circle
-                                span asdaasd asdasdasdaasd asdasdasdaasd
+                                span Provides 10k user accounts
                             li 
                                 .material-symbols-outlined.sml.li check_circle
-                                span asdaasd asdasdasdaasd asdasdasdaasd
+                                span 4 GB of database
                             li 
                                 .material-symbols-outlined.sml.li check_circle
-                                span asdaasd asdasdasdaasd asdasdasdaasd
+                                span 50 GB of file storage
                             li 
-                                .material-symbols-outlined.sml.li check_circle
-                                span asdaasd asdasdasdaasd asdasdasdaasd
+                                .material-symbols-outlined.sml.li warning
+                                span All the users and data will be deleted every 7 days
 
-                        ul
-                            li 
-                                .material-symbols-outlined.sml.li check_circle
-                                span asdaasd asdasdasdaasd asdasdasdaasd
-                            li 
-                                .material-symbols-outlined.sml.li check_circle
-                                span asdaasd asdasdasdaasd asdasdasdaasd
-                            li 
-                                .material-symbols-outlined.sml.li check_circle
-                                span asdaasd asdasdasdaasd asdasdasdaasd
-                            li 
-                                .material-symbols-outlined.sml.li check_circle
-                                span asdaasd asdasdasdaasd asdasdasdaasd
+                        //- ul
+                        //-     li 
+                        //-         .material-symbols-outlined.sml.li check_circle
+                        //-         span asdaasd asdasdasdaasd asdasdasdaasd
+                        //-     li 
+                        //-         .material-symbols-outlined.sml.li check_circle
+                        //-         span asdaasd asdasdasdaasd asdasdasdaasd
+                        //-     li 
+                        //-         .material-symbols-outlined.sml.li check_circle
+                        //-         span asdaasd asdasdasdaasd asdasdasdaasd
+                        //-     li 
+                        //-         .material-symbols-outlined.sml.li check_circle
+                        //-         span asdaasd asdasdasdaasd asdasdasdaasd
         
             br
 
@@ -200,30 +200,30 @@ main#dashboard
                         ul
                             li 
                                 .material-symbols-outlined.sml.li check_circle
-                                span asdaasd asdasdasdaasd asdasdasdaasd
+                                span Provides 10k user accounts
                             li 
                                 .material-symbols-outlined.sml.li check_circle
-                                span asdaasd asdasdasdaasd asdasdasdaasd
+                                span 4GB of database
                             li 
                                 .material-symbols-outlined.sml.li check_circle
-                                span asdaasd asdasdasdaasd asdasdasdaasd
+                                span 50GB each for file storage and hosting storage
                             li 
                                 .material-symbols-outlined.sml.li check_circle
-                                span asdaasd asdasdasdaasd asdasdasdaasd
+                                span Real-time data
 
                         ul
                             li 
                                 .material-symbols-outlined.sml.li check_circle
-                                span asdaasd asdasdasdaasd asdasdasdaasd
+                                span Automated emails and sending newsletters
                             li 
                                 .material-symbols-outlined.sml.li check_circle
-                                span asdaasd asdasdasdaasd asdasdasdaasd
+                                span 1GB of email storage
                             li 
                                 .material-symbols-outlined.sml.li check_circle
-                                span asdaasd asdasdasdaasd asdasdasdaasd
-                            li 
-                                .material-symbols-outlined.sml.li check_circle
-                                span asdaasd asdasdasdaasd asdasdasdaasd
+                                span Subdomain hosting
+                            //- li 
+                            //-     .material-symbols-outlined.sml.li check_circle
+                            //-     span asdaasd asdasdasdaasd asdasdasdaasd
         
             br
 
@@ -236,30 +236,30 @@ main#dashboard
                         ul
                             li 
                                 .material-symbols-outlined.sml.li check_circle
-                                span asdaasd asdasdasdaasd asdasdasdaasd
+                                span 100k user accounts
                             li 
                                 .material-symbols-outlined.sml.li check_circle
-                                span asdaasd asdasdasdaasd asdasdasdaasd
+                                span 100GB of database
                             li 
                                 .material-symbols-outlined.sml.li check_circle
-                                span asdaasd asdasdasdaasd asdasdasdaasd
+                                span 1TB each for file storage and hosting storage
                             li 
                                 .material-symbols-outlined.sml.li check_circle
-                                span asdaasd asdasdasdaasd asdasdasdaasd
+                                span Real-time data
 
                         ul
                             li 
                                 .material-symbols-outlined.sml.li check_circle
-                                span asdaasd asdasdasdaasd asdasdasdaasd
+                                span Automated emails and sending newsletters
                             li 
                                 .material-symbols-outlined.sml.li check_circle
-                                span asdaasd asdasdasdaasd asdasdasdaasd
+                                span 10GB of email storage
                             li 
                                 .material-symbols-outlined.sml.li check_circle
-                                span asdaasd asdasdasdaasd asdasdasdaasd
+                                span Subdomain hosting
                             li 
                                 .material-symbols-outlined.sml.li check_circle
-                                span asdaasd asdasdasdaasd asdasdasdaasd
+                                span unlimited use with pay-as-you-go when exceeding the limit
 
             br
         
@@ -634,7 +634,7 @@ skapi.getProfile().then(u => {
             }
             .contWrap {
                 ul {
-                    width: 50%;
+                    width: 50%; // <- i don't advise horizontal layout if unnecessary
                     list-style: none;
 
                     li {

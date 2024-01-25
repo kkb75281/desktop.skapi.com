@@ -323,6 +323,11 @@ let copy = (url) => {
 }
 
 let openPreviewFile = (url) => {
+    
+    if(url[0] === '#') {
+        gotoFolder(url);
+    }
+
     let element = document.createElement('a');
     element.setAttribute('href', url + '?download=true');
     element.setAttribute('target', '_blank');
@@ -445,6 +450,11 @@ let deleteSelectedFiles = async () => {
 
 let selectedFileUrl = () => {
     console.log(files.value[clickedIndex+1])
+
+    if(files.value[clickedIndex+1].name[0] === '#') {
+        return files.value[clickedIndex+1].name; // is a folder
+    }
+
     if (!files.value[clickedIndex+1]) {
         return '';
     }

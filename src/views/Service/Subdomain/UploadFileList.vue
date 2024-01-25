@@ -37,6 +37,7 @@ import { ref } from "vue";
 import { img, vid } from '@/views/Service/Subdomain/extensions';
 import ProgressCircle from "@/components/ProgressCircle.vue";
 let props = defineProps(['fileList', 'wholeProgress', 'uploadingPromise']);
+console.log(props.fileList.value)
 let emits = defineEmits(['cancel']);
 let hideList = ref(false);
 
