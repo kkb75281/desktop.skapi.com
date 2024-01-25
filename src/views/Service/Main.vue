@@ -42,6 +42,7 @@ const router = useRouter();
 let getCurrentService = () => {
     let srvcId = route.path.split('/')[2];
     currentService.value = skapi.services[srvcId];
+    console.log(currentService.value)
 
     if (currentService.value) {
         if (!newsletter_sender.value?.[currentService.value.service]?.public) {
@@ -62,31 +63,31 @@ let getCurrentService = () => {
             });
         }
 
-        if (!storageInfo.value[currentService.value.service]) {
-            storageInfo.value[currentService.value.service] = {};
-        }
-        let sd = currentService.value.subdomain;
-        if (sd && (sd[0] !== '*' || sd[0] !== '+')) {
-            // get subdomain storage info (404 file info)
-            skapi.getSubdomainInfo(currentService.value.service, {
-                subdomain: sd,
-            }).then(s =>
-                subdomainInfo.value[sd] = s
-            ).catch(err=>err);
+        // if (!storageInfo.value[currentService.value.service]) {
+        //     storageInfo.value[currentService.value.service] = {};
+        // }
+        // let sd = currentService.value.subdomain;
+        // if (sd && (sd[0] !== '*' || sd[0] !== '+')) {
+        //     // get subdomain storage info (404 file info)
+        //     skapi.getSubdomainInfo(currentService.value.service, {
+        //         subdomain: sd,
+        //     }).then(s =>
+        //         subdomainInfo.value[sd] = s
+        //     ).catch(err=>err);
 
-            launch(currentService.value.subdomain, f => {
-                if (f.length) {
-                    storageInfo.value[currentService.value.service].host = f[0].size;
-                }
-            }, true);
-        }
+        //     launch(currentService.value.subdomain, f => {
+        //         if (f.length) {
+        //             storageInfo.value[currentService.value.service].host = f[0].size;
+        //         }
+        //     }, true);
+        // }
 
-        skapi.storageInformation(currentService.value.service).then(i => {
-            // get storage info
-            for (let k in i) {
-                storageInfo.value[currentService.value.service][k] = i[k];
-            }
-        });
+        // skapi.storageInformation(currentService.value.service).then(i => {
+        //     // get storage info
+        //     for (let k in i) {
+        //         storageInfo.value[currentService.value.service][k] = i[k];
+        //     }
+        // });
     }
     else {
         if(account.value) {

@@ -52,6 +52,7 @@ console.log(props.wholeProgress)
     background-color: #fafafa;
     border: 1px solid rgba(0, 0, 0, 0.15);
     overflow: hidden;
+    z-index: 999;
 
     &.hide {
         bottom: -321px;
