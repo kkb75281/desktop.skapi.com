@@ -46,18 +46,19 @@ main#dashboard
                             .overflow {{ service.cors }}
                         td.center {{ typeof service.timestamp === 'string' ? service.timestamp : new Date(service.timestamp).toDateString() }}
                         td.center
-                            template(v-if="Math.ceil(service.users/100*100)")
-                                .percent(:class='{"green": 0 <= Math.ceil(service.users/100*100) && Math.ceil(service.users/100*100) < 51, "orange": 51 <= Math.ceil(service.users/100*100) && Math.ceil(service.users/100*100) < 81, "red": 81 <= Math.ceil(service.users/100*100) && Math.ceil(service.users/100*100) < 101}') {{ Math.ceil(service.users/100*100) + '%' }}
+                            template(v-if="Math.ceil(service.users/10000*100)")
+                                .percent(:class='{"green": 0 <= Math.ceil(service.users/10000*100) && Math.ceil(service.users/10000*100) < 51, "orange": 51 <= Math.ceil(service.users/10000*100) && Math.ceil(service.users/10000*100) < 81, "red": 81 <= Math.ceil(service.users/10000*100) && Math.ceil(service.users/10000*100) < 101}') {{ Math.ceil(service.users/10000*100) + '%' }}
                             template(v-else) 
                                 .percent.green 0%
                         td.center
-                            template(v-if="Math.ceil(service?.info?.cloud/5000*100)")
-                                .percent(:class='{"green": 0 <= Math.ceil(service?.info?.cloud/5000*100) && Math.ceil(service?.info?.cloud/5000*100) < 51, "orange": 51 <= Math.ceil(service?.info?.cloud/5000*100) && Math.ceil(service?.info?.cloud/5000*100) < 81, "red": 81 <= Math.ceil(service?.info?.cloud/5000*100)}') {{ Math.ceil(service?.info?.cloud/5000*100) + '%' }}
+                            template(v-if="Math.ceil(service?.info?.cloud/53687091200*100)")
+                                // 1 = 1 byte, 53687091200 = 50 gb
+                                .percent(:class='{"green": 0 <= Math.ceil(service?.info?.cloud/53687091200*100) && Math.ceil(service?.info?.cloud/53687091200*100) < 51, "orange": 51 <= Math.ceil(service?.info?.cloud/53687091200*100) && Math.ceil(service?.info?.cloud/53687091200*100) < 81, "red": 81 <= Math.ceil(service?.info?.cloud/53687091200*100)}') {{ Math.ceil(service?.info?.cloud/53687091200*100) + '%' }}
                             template(v-else)
                                 .percent.green 0%
                         td(style="padding-left:40px;")
-                            template(v-if="Math.ceil(service?.info?.database/5000*100)")
-                                .percent(:class='{"green": 0 <= Math.ceil(service?.info?.database/5000*100) && Math.ceil(service?.info?.database/5000*100) < 51, "orange": 51 <= Math.ceil(service?.info?.database/5000*100) && Math.ceil(service?.info?.database/5000*100) < 81, "red": 81 <= Math.ceil(service?.info?.database/5000*100)}') {{ Math.ceil(service?.info?.database/5000*100) + '%' }}
+                            template(v-if="Math.ceil(service?.info?.database/4294967296*100)")
+                                .percent(:class='{"green": 0 <= Math.ceil(service?.info?.database/4294967296*100) && Math.ceil(service?.info?.database/4294967296*100) < 51, "orange": 51 <= Math.ceil(service?.info?.database/4294967296*100) && Math.ceil(service?.info?.database/4294967296*100) < 81, "red": 81 <= Math.ceil(service?.info?.database/4294967296*100)}') {{ Math.ceil(service?.info?.database/4294967296*100) + '%' }}
                             template(v-else)
                                 .percent.green 0%
                             .menu(@click.stop="(e) => showPlanSetting(e, index)" :class='{"nonClickable": !account.email_verified}')
@@ -77,14 +78,14 @@ main#dashboard
                                 span {{ service.users }}
                             .info.inline 
                                 h6 Database Used
-                                span {{ service?.info?.database + '/5000' }}
+                                span {{ convertToMb(service?.info?.database) + '/4000MB' }}
                             .info.inline 
                                 h6 Subscription Plan
-                                span asdasd
+                                span Standard
                             .info.inline 
                                 h6 Hosting Strorage
                                 template(v-if="service?.subdomain")
-                                    span {{ convertToMb(service?.info?.host) + '/100' }}
+                                    span {{ convertToMb(service?.info?.host) + '/50000MB' }}
                                 template(v-else)
                                     span -
                             br
@@ -94,7 +95,7 @@ main#dashboard
                                 span {{ regions?.[service.region] || service.region }}
                             .info.inline 
                                 h6 Cloud Storage Used
-                                span {{ service?.info?.cloud + '/5000' }}
+                                span {{ convertToMb(service?.info?.cloud) + '/50000MB' }}
                             .info.inline 
                                 h6 Date Created
                                 span {{ typeof service.timestamp === 'string' ? service.timestamp : new Date(service.timestamp).toDateString() }}

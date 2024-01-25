@@ -123,7 +123,7 @@ main#subdomain
                                     .resizer(@mousedown="mousedown")
                         tbody
                             template(v-for="(file, index) in files")
-                                tr(v-if='file.name !== "!"' ref="uploadedFile" :id='file.path + "/" + file.name' @click="(e) => clickedFileList(e, index)" @dblclick="dblclick(index)")
+                                tr(v-if='file.name !== "!"' ref="uploadedFile" :id='file.path + "/" + file.name' @click="(e) => clickedFileList(e, index)" @dblclick="dblclick(index, file)")
                                     td.name
                                         .material-symbols-outlined.mid.type(v-if="file.name[0] == '#'") folder
                                         .material-symbols-outlined.mid.type(v-else-if="file.name.includes('.html')") html
@@ -313,6 +313,9 @@ watch(() => checkedFiles.value, () => {
 })
 
 let copy = (url) => {
+    if(url[0] === '#') {
+        return; // is a folder
+    }
     let doc = document.createElement('textarea');
     doc.textContent = url;
     document.body.append(doc);
@@ -323,11 +326,6 @@ let copy = (url) => {
 }
 
 let openPreviewFile = (url) => {
-    
-    if(url[0] === '#') {
-        gotoFolder(url);
-    }
-
     let element = document.createElement('a');
     element.setAttribute('href', url + '?download=true');
     element.setAttribute('target', '_blank');
@@ -473,7 +471,10 @@ let selectedFileUrl = () => {
 };
 
 let download = (url) => {
-    console.log(url)
+    if(url[0] === '#') {
+        return; // is a folder
+    }
+
     skapi.getFile(url, {dataType: 'download', expires: 60});
     // let fileName = url.split('/').slice(-1)[0];
     // let element = document.createElement('a');
@@ -484,9 +485,10 @@ let download = (url) => {
     // element.click();
 }
 
-let dblclick = (index) => {
-    if(files.value[index+1].name[0] === '#') {
-        launch(index);
+let dblclick = (index, file) => {
+    if(file.name[0] == '#') {
+        // is a folder. goto the folder
+        launch(file.path + '/' + file.name.slice(1));
     } else {
         openPreviewFile(selectedFileUrl());
     }
@@ -699,6 +701,8 @@ let onDrop = async (event, files) => {
 
     let wholeSize = 0;
     let loadedSize = 0;
+    let prevLoaded = 0;
+
     for (let f of allFiles) {
         fileList.value[f.path] = {
             name: f.file.name,
@@ -710,6 +714,7 @@ let onDrop = async (event, files) => {
         wholeSize += f.file.size;
     }
 
+    wholeSize = parseInt(wholeSize * 1.37); // estimate wholesize when converted to base64
     uploadWholeProgress.value = 0;
 
     let fileLength = 0;
@@ -719,14 +724,18 @@ let onDrop = async (event, files) => {
             track.abort();
         }
         if (track.status === 'upload' && track.currentFile) {
-            loadedSize += track.loaded - fileList.value[track.currentFile.name].loaded;
-            uploadWholeProgress.value = Math.round(loadedSize / wholeSize * 100);
-            fileList.value[track.currentFile.name].progress = track.progress;
-            fileList.value[track.currentFile.name].loaded = track.loaded;
 
+            loadedSize += track.loaded - prevLoaded;
+            uploadWholeProgress.value = Math.round(loadedSize / wholeSize * 100);
             if (track.progress == 100) {
+                prevLoaded = 0;
                 fileLength ++;
             }
+            else {
+                prevLoaded = track.loaded;
+            }
+            fileList.value[track.currentFile.name].progress = track.progress;
+            fileList.value[track.currentFile.name].loaded = track.loaded;
         }
 
         nextTick(() => {
@@ -743,6 +752,7 @@ let onDrop = async (event, files) => {
         progress: trackUpload,
         nestKey: pathArray.value.join('/')
     }).then(async e => {
+        uploadWholeProgress.value = 100;
         if (uploading.value) {
             launch(searchDir.value, () => { }, true);
         }
