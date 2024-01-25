@@ -327,7 +327,7 @@ let copy = (url) => {
 
 let openPreviewFile = (url) => {
     let element = document.createElement('a');
-    element.setAttribute('href', url + '?download=true');
+    element.setAttribute('href', url);
     element.setAttribute('target', '_blank');
     document.body.appendChild(element);
     element.click();
@@ -490,6 +490,7 @@ let dblclick = (index, file) => {
         // is a folder. goto the folder
         launch(file.path + '/' + file.name.slice(1));
     } else {
+        clickedIndex = index-1;
         openPreviewFile(selectedFileUrl());
     }
 }
