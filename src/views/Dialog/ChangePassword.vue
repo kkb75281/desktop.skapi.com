@@ -26,8 +26,8 @@ dialog#changePasswordDialog(@click="closeDialog")
                     template(v-if="promiseRunning")
                         img.loading(src="@/assets/img/loading.png")
                     template(v-else)
-                        button.cancel(@click="close") Cancel
-                        button.save(type="submit") Continue
+                        button.noLine(@click="close") Cancel
+                        button.unFinished(type="submit") Continue
         template(v-if="step >= 2")
             form(@submit.prevent="changePassword" action="")
                 p Please enter new password.
@@ -67,8 +67,8 @@ dialog#changePasswordDialog(@click="closeDialog")
                     template(v-if="promiseRunning")
                         img.loading(src="@/assets/img/loading.png")
                     template(v-else)
-                        button.cancel(@click="close") Cancel
-                        button.save(type="submit" :loading="promiseRunning") Change
+                        button.noLine(@click="close") Cancel
+                        button.final(type="submit" :loading="promiseRunning") Change
         .navigator(v-if="step <= 2")
             .ball(v-for="num in 2" @click="() => { num < step ? step = num : null; currentPassword=''; password = '';  passwordConfirm = '';}" :class="{'active': step === num}")
 </template>

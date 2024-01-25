@@ -20,17 +20,17 @@ main#subdomain
                     form.modifyInputForm.sub(@submit.prevent='registerSubdomain')
                         .customInput(style="max-width:350px")
                             input#modifySudomain(:disabled="subdomainState || subdomainPromiseRunning ? true : null" type="text" placeholder="Name of Subdomain" required minlength='5' pattern='[a-z0-9]+' title='Subdomain should be lowercase alphanumeric.' :value='inputSubdomain' @input="(e) => {e.target.setCustomValidity(''); inputSubdomain = e.target.value}")
+                            .material-symbols-outlined.sml.cancel(@click="modifySudomain = false;") cancel
                         template(v-if="subdomainPromiseRunning")
                             img.loading(src="@/assets/img/loading.png")
                         template(v-else)
-                            .material-symbols-outlined.big.save(type="submit" :disabled="subdomainState ? true : null") done
-                            .material-symbols-outlined.sml.cancel(@click="modifySudomain = false;") close
+                            button.save(type="submit" :disabled="subdomainState ? true : null") Save
                 template(v-else)
                     .cont
                         p {{ computedSubdomain }}
                             a.link(:href="'http://' + computedSubdomain + '.' + domain" target="_blank")
                                 .material-symbols-outlined.sml link
-                        .material-symbols-outlined.mid.clickable(@click="modifySudomain=true;" :class="{'nonClickable' : !account.email_verified}") edit
+                        .material-symbols-outlined.mid.clickable(:class="{'nonClickable' : !account.email_verified}") edit
             .setting
                 h6.tit HTML file for 404 page
                 .cont.line
@@ -67,19 +67,19 @@ main#subdomain
         // path navigation
         .filesHeader
             .filesPathWrap
-                .material-symbols-outlined.mid.clickable(title="root folder" @click="launch(computedSubdomain)") hard_drive
+                .material-symbols-outlined.mid.clickable(@click="launch(computedSubdomain)") hard_drive
                 span /
                 template(v-for='(p, index) in pathArray')
                     span.clickable(@click='gotoFolder(index)') {{ p }}
                     span /
 
             .filesButtonWrap
-                .menu(@click="showRemoveAllFiles = true;")
+                .menu(@click="showRemoveAllFiles = true; showEdit = false;")
                     .material-symbols-outlined.mid.clickable delete
                     span empty storage
                 // file menu
                 .menu(@click.stop="showEdit = !showEdit" :class='{"nonClickable": !checkedFiles.length || !account.email_verified}')
-                    .material-symbols-outlined.mid.clickable(title="menu") more_vert
+                    .material-symbols-outlined.mid.clickable more_vert
                     #moreVert(v-if="showEdit" @click.stop style="--moreVert-right: 0;")
                         .inner
                             .more(:class='{"nonClickable": !checkedFiles.length || !account.email_verified}' style="width:unset; white-space: nowrap;")
@@ -88,18 +88,16 @@ main#subdomain
                             .more(:class='{"nonClickable": !checkedFiles.length || !account.email_verified}' @click="showDeleteFile = true; showEdit = false;")
                                 .material-symbols-outlined.mid delete
                                 span delete
-                .menu.material-symbols-outlined.mid.refresh.clickable(title="refresh" :class='{"rotate_animation": fetching }' @click='refresh(searchDir)') cached
+                .menu.material-symbols-outlined.mid.refresh.clickable(:class='{"rotate_animation": fetching }' @click='refresh(searchDir)') cached
                 .customFile(:class="{'nonClickable': !account.email_verified || Object.keys(fileList).length}")
                     label.uploadBtn(for="files")
-                        .material-symbols-outlined.mid(title="upload") upload
+                        .material-symbols-outlined.mid upload
                         span Upload
                     input#files(hidden type="file" @change="e=>onDrop(null,e.target.files)" multiple)
 
         // file part
         .filesWrapper(
-            :class="{'dragHere' : dragHere}"
-            @dragover.stop.prevent="e=>{e.dataTransfer.dropEffect = 'copy'; dragHere = true;}"
-            @dragleave.stop.prevent="dragHere = false;"
+            @dragover.stop.prevent="e=>{e.dataTransfer.dropEffect = 'copy'}"
             @drop.stop.prevent="onDrop")
             template(v-if="!fetching && (files.length == 0 || files.length === 1 && files[0].name === '!')")
                 .dragNdropUpload
@@ -108,6 +106,22 @@ main#subdomain
                         .material-symbols-outlined.empty(style="font-size:80px") file_present
                         p Drag and Drop Files or Folders here
             template(v-else-if="files.length")
+                //- .fileWrapper
+                    template(v-for="(file, index) in files")
+                        .file.clickable(v-if='file.name !== "!"' @click="file.name[0] == '#' ? launch(file.path + '/' + file.name.slice(1)) : viewFileInfo(file)")
+                            .customCheckBox(@click.stop)
+                                input(type="checkbox" :id="index" :value='file.path + "/" + file.name' @change='trackSelectedFiles')
+                                label(:for="index")
+                                    .material-symbols-outlined.mid.check check
+                            .material-symbols-outlined.mid.type(v-if="file.name[0] == '#'") folder
+                            .material-symbols-outlined.mid.type(v-else-if="file.name.includes('.html')") html
+                            .material-symbols-outlined.mid.type(v-else-if="file.name.includes('.css')") css
+                            .material-symbols-outlined.mid.type(v-else-if="file.name.includes('.pdf')") picture_as_pdf
+                            .material-symbols-outlined.mid.type(v-else-if="img.includes(file.name.split('.').slice(-1)[0])") image
+                            .material-symbols-outlined.mid.type(v-else-if="vid.includes(file.name.split('.').slice(-1)[0])") movie
+                            .material-symbols-outlined.mid.type(v-else) draft
+                            .pathWrapper(:data-filetype="'.'+file.name.split('.').splice(-1)[0]")
+                                .path {{ file.name[0] === '#' ? file.name.slice(1) : file.name }}
                 .tableWrap 
                     table#resizeMe.table
                         thead
@@ -118,12 +132,12 @@ main#subdomain
                                 th.th.center(style="width:155px;")
                                     | Size
                                     .resizer(@mousedown="mousedown")
-                                th.th(style="padding-left:90px;white-space:nowrap;")
+                                th.th(style="padding-left:90px;")
                                     | Last Modified
                                     .resizer(@mousedown="mousedown")
                         tbody
                             template(v-for="(file, index) in files")
-                                tr(v-if='file.name !== "!"' ref="uploadedFile" :id='file.path + "/" + file.name' @click="(e) => clickedFileList(e, index)" @dblclick="clickedIndex = index-1; openPreviewFile(selectedFileUrl())")
+                                tr(v-if='file.name !== "!"' ref="uploadedFile" :id='file.path + "/" + file.name' @click="(e) => clickedFileList(e, index)")
                                     td.name
                                         .material-symbols-outlined.mid.type(v-if="file.name[0] == '#'") folder
                                         .material-symbols-outlined.mid.type(v-else-if="file.name.includes('.html')") html
@@ -137,26 +151,25 @@ main#subdomain
                                         .overflow {{ formatBytes(file?.size || 0) }}
                                     td(style="padding-left:40px")
                                         .overflow {{ file?.upl ? new Date(file.upl).toString().split(' ').slice(0, 5).join(' ') : 'Unknown' }}
-                                        .menu(@click.stop="(e) => showfileSetting(index)" :class='{"nonClickable": checkedFiles.length > 1 || !account.email_verified}')
-                                            .material-symbols-outlined.mid.clickable more_vert
-        #moreVert(v-if="showMore" @click.stop style="--moreVert-right: 90px;" :style="{top: clientY}")
-            .inner
-                .more(:class='{"nonClickable": !account.email_verified}' @click="download(selectedFileUrl()); showMore = false;")
-                    .material-symbols-outlined.mid download_2
-                    span download
-                .more(:class='{"nonClickable": !account.email_verified}' @click="showDeleteFile = true;showMore = false;")
-                    .material-symbols-outlined.mid delete
-                    span delete
-                .more(:class='{"nonClickable": !account.email_verified}' @click="copy(selectedFileUrl())")
-                    .material-symbols-outlined.mid file_copy
-                    span copy link
+                                        .menu(@click.stop="(e) => showfileSetting(e, index, file)")
+                                            .material-symbols-outlined.mid.clickable(:class='{"nonClickable": !account.email_verified}') more_vert
+                                        #moreVert.hide(ref="moreVert" @click.stop style="--moreVert-right: 30px;top:15px;")
+                                            .inner
+                                                .more(:class='{"nonClickable": !account.email_verified}')
+                                                    .material-symbols-outlined.mid download_2
+                                                    span download
+                                                .more(:class='{"nonClickable": !account.email_verified}' @click="(e) => showDeleteOverlay(e, index, file)")
+                                                    .material-symbols-outlined.mid delete
+                                                    span delete
+                                                .more(:class='{"nonClickable": !account.email_verified}' @click="fileInfo = file; copy(selectedFileUrl, index)")
+                                                    .material-symbols-outlined.mid file_copy
+                                                    span copy link
 
 UploadFileList(
-    v-if="uploading"
+    v-if="uploading && fileList && Object.keys(fileList).length"
     :fileList = "fileList"
-    @cancel='uploading = null; fileList = {};'
-    :wholeProgress='uploadWholeProgress'
-    :uploadingPromise = 'uploadingPromise')
+    @cancel='uploading = null;'
+    :wholeProgress='uploadWholeProgress')
 
 DeleteFileOverlay(v-if="showDeleteFile" @close="showDeleteFile = false;" title='Delete Files' :callback='deleteSelectedFiles')
     | Are you sure want to delete the selected file(s)?
@@ -164,7 +177,7 @@ DeleteFileOverlay(v-if="showDeleteFile" @close="showDeleteFile = false;" title='
 DeleteFileOverlay(v-if="showDeleteSubdomain" :callback='removeSubdomain' title='Delete Subdomain' @close="showDeleteSubdomain = false;")
     | Are you sure want to delete your subdomain? All your hosted files will be lost.
     br
-DeleteFileOverlay(v-if="showRemoveAllFiles" :callback='removeAllFiles' title='Empty Storage' @close="showRemoveAllFiles = false;")
+DeleteFileOverlay(v-if="showRemoveAllFiles" :callback='removeAllFiles' title='Delete All Files' @close="showRemoveAllFiles = false;")
     | You sure want to delete all files? The storage will be emptied. 
     br
 
@@ -185,7 +198,6 @@ let route = useRoute();
 let currnetPath = route.path.split('/')[2];
 let modifySudomain = ref(false);
 let showEdit = ref(false);
-let showMore = ref(false);
 let showDeleteFile = ref(false);
 let inputSubdomain = ref('');
 let errorFile = ref('');
@@ -193,27 +205,23 @@ let checkedFiles = ref([]);
 let showDeleteSubdomain = ref(false);
 let subdomainState = ref('');
 let showRemoveAllFiles = ref(false);
-let dragHere = ref(false);
 
 let computedSubdomain = ref('')
 let subdomainPromiseRunning = ref(false);
+let moreVert = ref(null);
 let uploadedFile = ref(null);
 let settingIndex = null;
 let clickedIndex = null;
-let clientY = 0;
 
-let showfileSetting = (index) => {
+let showfileSetting = (e, index, file) => {
     checkedFiles.value = [];
-    clickedIndex = index-1;
-    console.log(files.value[clickedIndex+1])
-    clientY = 145 + (40 *(index-1)) + 'px';
 
-    if(settingIndex == index-1 && showMore.value) {
-        showMore.value = false;
+    if(settingIndex == index-1) {
+        moreVert.value[index-1].classList.remove('show');
         settingIndex = null;
         checkedFiles.value = [];
         uploadedFile.value[index-1].classList.remove('clicked');
-        console.log(checkedFiles.value)
+        // console.log(checkedFiles.value)
 
         return;
     }
@@ -222,26 +230,20 @@ let showfileSetting = (index) => {
         if(uploadedFile.value[i].className.includes('clicked')) { 
             uploadedFile.value[i].classList.remove('clicked');
         }
+        if(moreVert.value[i].className.includes('show')) { 
+            moreVert.value[i].classList.remove('show');
+        }
     }
 
-    showMore.value = true;
     settingIndex = index-1;
+    moreVert.value[index-1].classList.add('show');
     checkedFiles.value.push(files.value[index].path + "/" + files.value[index].name);
     uploadedFile.value[index-1].classList.add('clicked');
-    console.log(checkedFiles.value)
+    // console.log(checkedFiles.value)
 }
 
 let clickedFileList = (e, index) => {
     let removeIndex = checkedFiles.value.findIndex(id=>id == e.currentTarget.id);
-    let initialCheckedFiles = () => {
-        checkedFiles.value = [];
-
-        for(let i=0; i<uploadedFile.value.length; i++) {
-            if(uploadedFile.value[i].className.includes('clicked')) { 
-                uploadedFile.value[i].classList.remove('clicked');
-            }
-        }
-    }
 
     if(removeIndex >= 0 || clickedIndex == index-1) {
         checkedFiles.value.splice(removeIndex, 1);
@@ -250,85 +252,29 @@ let clickedFileList = (e, index) => {
         console.log(checkedFiles.value)
 
         return;
-    } 
-    if(!controlKey.value) {
-        initialCheckedFiles();
     }
-    if(startIndex.value == endIndex.value) {
-        endIndex.value = null;
-    }
-    if(shiftKey.value) {
-        initialCheckedFiles();
-        endIndex.value = index-1;
-        console.log(startIndex.value, endIndex.value)
 
-        for(let j = Math.min(startIndex.value, endIndex.value); j < Math.max(startIndex.value, endIndex.value) + 1; j++) {
-            if(!uploadedFile.value[j].className.includes('clicked')) { 
-                uploadedFile.value[j].classList.add('clicked');
-            }
-            // checkedFiles.value.push(files.value[j+1].path + '/' + files.value[j+1].name);
-        }
-        console.log(checkedFiles.value)
-        return;
-    }
-    
     checkedFiles.value.push(e.currentTarget.id);
     e.currentTarget.classList.add('clicked');
     clickedIndex = index-1;
-    console.log(files.value[clickedIndex+1])
-
-    startIndex.value = index-1;
     console.log(checkedFiles.value)
 }
 
-let controlKey = ref(false);
-let shiftKey = ref(false);
-let startIndex = ref(null);
-let endIndex = ref(null);
-
-let handleKeydown = (e) => {
-    if(e.keyCode == 91) {
-        controlKey.value = true;
-    } else if(e.keyCode == 16) {
-        shiftKey.value = true;
-    }
-}
-let handleKeyup = (e) => {
-    if(e.keyCode == 91) {
-        controlKey.value = false;
-    } else if(e.keyCode == 16) {
-        shiftKey.value = false;
-    }
-}
-
-// 방향키 select Record
-watch(() => checkedFiles.value, () => {
-    if (checkedFiles.value) {
-        document.addEventListener('keydown', handleKeydown);
-        document.addEventListener('keyup', handleKeyup);
-    } else {
-        document.removeEventListener('keydown', handleKeydown);
-        document.removeEventListener('keyup', handleKeyup);
-    }
-})
-
-let copy = (url) => {
+let copy = (url, index) => {
     let doc = document.createElement('textarea');
     doc.textContent = url;
     document.body.append(doc);
     doc.select();
     document.execCommand('copy');
     doc.remove();
-    showMore.value = false;
+    moreVert.value[index-1].classList.remove('show');
 }
 
-let openPreviewFile = (url) => {
-    let element = document.createElement('a');
-    element.setAttribute('href', url + '?download=true');
-    element.setAttribute('target', '_blank');
-    document.body.appendChild(element);
-    element.click();
-    document.body.removeChild(element);
+let showDeleteOverlay = (e, index, file) => {
+    checkedFiles.value.push(file.path + "/" + file.name);
+    showDeleteFile = true;
+    moreVert.value[index-1].classList.remove('show');
+    console.log(checkedFiles.value)
 }
 
 let pathArray = computed(() => {
@@ -422,11 +368,7 @@ let deleteSelectedFiles = async () => {
         return fullpath;
     });
 
-    for(let i=0; i<uploadedFile.value.length; i++) {
-        if(uploadedFile.value[i].className.includes('clicked')) { 
-            uploadedFile.value[i].classList.remove('clicked');
-        }
-    }
+    selectNone();
 
     for (let f of fileList) {
         await dirPage.deleteItem(f);
@@ -443,36 +385,34 @@ let deleteSelectedFiles = async () => {
     });
 }
 
-let selectedFileUrl = () => {
-    console.log(files.value[clickedIndex+1])
-    if (!files.value[clickedIndex+1]) {
+let fileInfo = ref(null);
+let viewFileInfo = f => {
+    fileInfo.value = f;
+}
+
+let selectedFileUrl = computed(() => {
+    if (!fileInfo.value) {
         return '';
     }
-    let path = files.value[clickedIndex+1].path.split(computedSubdomain.value).slice(1).join('');
+    let path = fileInfo.value.path.split(computedSubdomain.value).slice(1).join('');
 
     if (path[0] === '/') {
         path = path.slice(1);
     }
 
-    // let filename = encodeURI(files.value[clickedIndex+1].name);
-    let filename = files.value[clickedIndex+1].name;
-    // path = path ? encodeURI(path) + '/' + filename : filename;
-    path = path ? path + '/' + filename : filename;
+    let filename = encodeURI(fileInfo.value.name);
+    path = path ? encodeURI(path) + '/' + filename : filename;
 
     return 'https://' + computedSubdomain.value + `.${domain}/` + path;
-};
+});
 
-let download = (url) => {
-    console.log(url)
-    skapi.getFile(url, {dataType: 'download', expires: 60});
-    // let fileName = url.split('/').slice(-1)[0];
-    // let element = document.createElement('a');
-    // element.setAttribute('href', url + '?download=true');
-    // element.setAttribute('download', fileName);
-    // element.setAttribute('target', '_blank');
-    // document.body.appendChild(element);
-    // element.click();
-}
+// let downloadFile = (f) => {
+//     let path = f.path + '/' + f.name;
+//     let pathSplit = path.split('/');
+//     path = pathSplit.slice(1).join('/');
+//     let endpoint = 'https://' + pathSplit[0] + '.skapi.com/' + path;
+//     skapi.getFile(endpoint, { expires: 30 });
+// }
 
 let subdomainCallback = async e => {
     if (!e) {
@@ -616,11 +556,7 @@ function traverseFileTree(item, path = '') {
     });
 }
 
-let uploadingPromise = ref(false);
 let onDrop = async (event, files) => {
-    uploadingPromise.value = true;
-    dragHere.value = false;
-
     if(subdomainState.value) {
         return;
     }
@@ -630,7 +566,7 @@ let onDrop = async (event, files) => {
     }
 
     if (Object.keys(fileList.value).length > 0) {
-        // return;
+        return;
     }
 
     let formData = new FormData();
@@ -643,8 +579,6 @@ let onDrop = async (event, files) => {
             allFiles.push({ file, path: file.name });
             formData.append('files[]', file, file.name);
         }
-        console.log(files)
-        console.log(allFiles)
     }
     else {
         let items = event.dataTransfer.items;
@@ -652,17 +586,10 @@ let onDrop = async (event, files) => {
 
         for (let i = 0; i < items.length; i++) {
             let item = items[i].webkitGetAsEntry();
-            console.log(item.name)
-
             if (item) {
                 filePromises.push(traverseFileTree(item));
-                // filePromises.push(item)
             }
         }
-
-        console.log(items)
-        console.log(filePromises)
-
 
         let allFileGroups = await Promise.all(filePromises);
         allFiles = [].concat(...allFileGroups);
@@ -670,9 +597,6 @@ let onDrop = async (event, files) => {
         allFiles.forEach(({ file, path }) => {
             formData.append('files[]', file, path);
         });
-
-        console.log(allFileGroups)
-
     }
 
     if (!allFiles.length) {
@@ -729,9 +653,8 @@ let onDrop = async (event, files) => {
             launch(searchDir.value, () => { }, true);
         }
     }).finally(() => {
-        uploadingPromise.value = false;
-        // uploading.value = null;
-        // fileList.value = {};
+        uploading.value = null;
+        fileList.value = {};
     });
 }
 
@@ -768,7 +691,6 @@ let trackSelectedFiles = () => {
 }
 bodyClick.recordPage = () => {
     showEdit.value = false;
-    showMore.value = false;
 }
 function formatBytes(bytes, decimals = 2) {
     if (!+bytes) return '0 Bytes'
@@ -781,55 +703,6 @@ function formatBytes(bytes, decimals = 2) {
 
     return `${parseFloat((bytes / Math.pow(k, i)).toFixed(dm))} ${sizes[i]}`
 }
-
-// table resize
-let prevX, prevW, nextW = 0;
-let prevCol, nextCol = null;
-let mouseMoveHandler = function (e) {
-    // let ths = document.getElementsByTagName('th');
-    // let thsArr = Array.from(ths);
-    // let dx = e.clientX - prevX;
-    // let widthSum = 0;
-
-    // thsArr.forEach((e) => {
-    //     widthSum += e.offsetWidth - 2;
-    // });
-
-    // if ((widthSum < window.innerWidth || dx < 0) && (prevW + dx > 200 && nextW - dx > 200)) {
-    //     prevCol.style.width = `${prevW + dx}px`;
-    //     nextCol.style.width = `${nextW - dx}px`;
-    // }
-    let dx = e.clientX - prevX;
-
-    // 현재 이동 중인 컬럼의 너비 변경
-    let newPrevWidth = prevW + dx;
-
-    // 최소 너비
-    const minColumnWidth = 100;
-    if (newPrevWidth < minColumnWidth) {
-        return;
-    }
-
-    // 현재 이동 중인 컬럼만 위치 이동
-    prevCol.style.width = `${newPrevWidth}px`;
-};
-
-let mousedown = function (e) {
-    prevCol = e.target.parentNode;
-    nextCol = prevCol.nextSibling;
-
-    let prevStyles = window.getComputedStyle(e.target.parentNode);
-    let nextStyles = window.getComputedStyle(prevCol.nextSibling);
-
-    prevX = e.clientX;
-    prevW = parseInt(prevStyles.width, 10);
-    nextW = parseInt(nextStyles.width, 10);
-    document.addEventListener('mousemove', mouseMoveHandler);
-};
-
-document.addEventListener('mouseup', function () {
-    document.removeEventListener('mousemove', mouseMoveHandler);
-});
 </script>
 
 <style lang="less" scoped>
@@ -899,7 +772,7 @@ document.addEventListener('mouseup', function () {
             label {
                 display: block;
                 width: 105px;
-                // border: 2px solid #293FE6;
+                border: 2px solid #293FE6;
                 border-radius: 8px;
                 text-align: center;
                 color: #293FE6;
@@ -1039,16 +912,12 @@ document.addEventListener('mouseup', function () {
             position: relative;
             // width: 100%;
             // min-height: 448px;
-            height: 660px;
+            height: 450px;
             overflow: hidden;
             // padding: 1.5rem 1.4rem;
             padding: 0 1rem;
             border-radius: 8px;
             border: 1px solid rgba(0, 0, 0, 0.10);
-
-            &.dragHere {
-                outline: 4px solid #A5AFFF;
-            }
 
             .fileWrapper {
                 height: 100%;
@@ -1343,7 +1212,6 @@ document.addEventListener('mouseup', function () {
                 font-weight: 400;
 
                 tr {
-                    user-select: none;
                     cursor: pointer;
 
                     &:hover {
@@ -1407,13 +1275,23 @@ document.addEventListener('mouseup', function () {
                         }
                     }
 
+                    #moreVert {
+                        &.hide {
+                            display: none;
+                        }
+
+                        &.show {
+                            display: block;
+                        }
+                    }
+
                     .type {
                         padding-right: 20px;
                     }
 
                     .overflow {
                         position: relative;
-                        width: 90%;
+                        width: 100%;
                         white-space: nowrap;
                         overflow: hidden;
                         text-overflow: ellipsis;
@@ -1432,6 +1310,7 @@ document.addEventListener('mouseup', function () {
     .modifyInputForm.sub {
         .customInput {
             max-width: unset !important;
+            width: calc(100% - 50px);
         }
     }
     #subdomain {

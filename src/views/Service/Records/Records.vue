@@ -87,14 +87,14 @@ main#database
                         .textFormWrap(:class="{'disabled' : advancedForm.index.condition !== '~' || !advancedForm.index.name}")
                             input#indexRangeSearchInput(type="text" name='index_range' placeholder='From index value ~ to:' :disabled="advancedForm.index.condition !== '~' || !advancedForm.index.name" @input="e => {e.target.setCustomValidity(''); advancedForm.index.range = e.target.value}")
 
-                .buttonWrap(style='min-height:43px')
+                .buttonWrap(style='width:100%; min-height:43px; text-align:right;')
                     template(v-if="fetching && advancedForm.searchText")
                         // the additional div is for alignment
                         div(style='display: inline-flex;align-items: center;height: 43px;')
                             img.loading(style='padding:0' src="@/assets/img/loading.png")
                     template(v-else)
-                        input.clear(type="reset" value="Clear filter" @click="clearSearchFilter")
-                        button.search(type="submit") Search
+                        input.clear(type="reset" value="Clear filter" @click="clearSearchFilter" style="border:0;background-color:unset;color: #293FE6 !important;font-size: 0.8rem;font-weight: 700; cursor:pointer;")
+                        button.final(type="submit" style="margin-left:2rem;") Search
 
     section#section 
         // view / edit record / create record
@@ -328,7 +328,7 @@ main#database
                             template(v-if="!recordInfoEdit" v-for="i in dataTrCount" :key="'extra-' + i")
                                 .row.empty
 
-                        .noData(v-else-if="!recordInfoEdit")
+                        .noData(v-else-if="!recordInfoEdit" style="margin-top:150px;")
                             .material-symbols-outlined.big scan_delete
                             p No data
 
@@ -337,7 +337,7 @@ main#database
                             span Add data
 
                 // right panel top right menu
-                .menu(v-if="!recordInfoEdit" @click.stop="showEdit = !showEdit") 
+                .menu(:class='{"nonClickable": !account.email_verified}' v-if="!recordInfoEdit" @click.stop="showEdit = !showEdit") 
                     // drop down menu (no edit)
                     .material-symbols-outlined.mid.clickable more_vert
                     #moreVert(v-if="showEdit" @click.stop style="--moreVert-right: 0")
@@ -355,7 +355,7 @@ main#database
                 // buttons (edit)
                 .editBtnWrap(v-if="recordInfoEdit") 
                     template(v-if="promiseRunning")
-                        img.loading(src="@/assets/img/loading.png" style="width:20px;height:20px;")
+                        img.loading(src="@/assets/img/loading.png" style="width:20px;height:20px;margin-top:4px;")
                     template(v-else)
                         button.cancel(type='button' @click="()=>{recordInfoEdit = false; selectedRecord = recordPage.list[selectedRecord.record_id] ? JSON.parse(JSON.stringify(recordPage.list[selectedRecord.record_id])) : null; }") 
                             .material-symbols-outlined.mid(v-if="isSmallScreen") close
@@ -439,8 +439,8 @@ main#database
             .actions 
                 .material-symbols-outlined.mid.refresh.clickable(@click='()=>{selectedRecord=null; refresh(fetchParams);}' :class='{"rotate_animation": fetching }') cached
                 .material-symbols-outlined.mid.create.clickable(:class="{'nonClickable' : !account.email_verified}" @click="()=>{ !account.email_verified ? false : selectedRecord = JSON.parse(JSON.stringify(createRecordTemplate)); recordInfoEdit=true; }") note_stack_add
-                .menu(@click.stop="!account.email_verified ? false : showRecordSetting = !showRecordSetting") 
-                    .material-symbols-outlined.mid.clickable(:class='{"nonClickable": !checkedRecords.length || !account.email_verified}') more_vert
+                .menu(:class='{"nonClickable": !checkedRecords.length || !account.email_verified}' @click.stop="!account.email_verified ? false : showRecordSetting = !showRecordSetting") 
+                    .material-symbols-outlined.mid.clickable more_vert
                     #moreVert(v-if="showRecordSetting" @click.stop style="--moreVert-left: 0")
                         .inner
                             .more(@click="()=>{recordDelete(); showRecordSetting=false;}")
@@ -457,7 +457,7 @@ main#database
                     tr
                         th(style="min-width:50px; padding-left:5px;")
                             .customCheckBox(:class='{"nonClickable": fetching || records && !records.length}')
-                                input#allRecords(type="checkbox" value='allRecords' @click="selectAll")
+                                input#allRecords(type="checkbox" value='allRecords' @click="selectAll" :checked="checkedRecords.length >= 10")
                                 label(for="allRecords")
                                     .material-symbols-outlined.mid.check check
                         th(style="min-width:150px;") Table Name
@@ -829,7 +829,7 @@ let clearSearchFilter = () => {
 let selectAll = (e) => {
     let checkboxes = document.querySelectorAll('input[type="checkbox"]');
     checkboxes.forEach((checkbox) => {
-        checkbox.checked = e.target.checked
+        checkbox.checked = e.target.checked;
     })
     trackSelectedRecords();
 }
@@ -843,6 +843,9 @@ let trackSelectedRecords = () => {
         }
     })
     checkedRecords.value = checked;
+    if(checkedRecords.value[0] == 'allRecords') {
+        checkedRecords.value.shift();
+    }
 }
 
 // recordData edit
@@ -977,14 +980,14 @@ let saveRecordData = async () => {
         return
     }
 
-    // 문제 생기면 복귀
-    // if (res.bin && Object.keys(res.bin).length > 0 && !Array.isArray(res.bin)) {
-    //     for (let i in res.bin) {
-    //         for (let j of res.bin[i]) {
-    //             delete j.getFile;
-    //         }
-    //     }
-    // }
+    // do not remove the code below!
+    if (res.bin && Object.keys(res.bin).length > 0 && !Array.isArray(res.bin)) {
+        for (let i in res.bin) {
+            for (let j of res.bin[i]) {
+                delete j.getFile; // deleting because pager cannot parse a function
+            }
+        }
+    }
 
     recordInfoEdit.value = false;
 
@@ -1334,31 +1337,6 @@ watch(() => selectedRecord.value, () => {
                         }
                     }
                 }
-            }
-        }
-
-        .buttonWrap {
-            width: 100%;
-            text-align: right;
-
-            * {
-                padding: 0.6rem 1.4rem;
-                border: 0;
-                font-size: 0.8rem;
-                font-weight: 700;
-                border-radius: 8px;
-                background-color: unset;
-                cursor: pointer;
-            }
-
-            .clear {
-                color: #293FE6;
-            }
-
-            .search {
-                color: #fff;
-                background-color: #293FE6;
-                box-shadow: 0px -1px 1px 0px rgba(0, 0, 0, 0.15) inset;
             }
         }
     }
@@ -1801,6 +1779,7 @@ watch(() => selectedRecord.value, () => {
 
                 .row {
                     position: relative;
+                    height: 2rem;
                     padding: 0 20px;
                     border-radius: 4px;
                     font-size: 0.7rem;
@@ -2451,6 +2430,7 @@ watch(() => selectedRecord.value, () => {
 
                 .content {
                     .row {
+                        height: unset;
                         flex-wrap: wrap;
                     }
                     .data {

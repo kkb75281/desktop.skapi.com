@@ -4,16 +4,15 @@ NavBar(style='--position: fixed; --background-color:#262626')
     section.intro.gradback
         .introInner
             .introTop.intact
-                h1.long Mastering#[br]Backend&nbsp;Developemnt,#[br]Do It With HTML
-                h1.mobile Mastering#[br]Backend Developemnt,#[br]Do It With HTML
+                h1.long Build Fullstack Applications#[br]Just From HTML & Javascript
+                h1.mobile Build Fullstack Applications#[br]Just From HTML & Javascript
                 .side
-                    p(style="font-weight:400;") Instantly Power Your Application with a&nbsp;Robust Backend API
+                    p(style="font-weight:400;") Skapi is a serverless backend JS library that allows you to build fullstack applications without writing a single line of backend code.
 
                     br
 
                     .tabletCenter
-                        a.customButton.shadow(v-if='!account' href='/signup' style='background-color:white;color:#293FE6;') Try Out For Free
-                        a.customButton.shadow(v-else href='/dashboard' style='background-color:white;color:#293FE6;') Go To Dashboard
+                        a.customButton.shadow(target="_blank" href='https://docs.skapi.com/introduction/getting-started.html' style='background-color:white;color:#293FE6;') Learn More
             .introBottom
                 Swiper.swiper(:modules="[Autoplay]" :autoplay="{delay: 2500,disableOnInteraction: false}" :loop="true") 
                     SwiperSlide.slider 
@@ -31,9 +30,7 @@ NavBar(style='--position: fixed; --background-color:#262626')
                                     span(style="color:#33adff") form
                                     span(style="color:#58dfff")  onsubmit
                                     | =
-                                    span(style="color:#ffa600") "skapi.postRecord(event, { table:
-                                    span(style="color:#ffa600")  'my_collection'}).then(record =>
-                                    span(style="color:#ffa600")  console.log(record))"
+                                    span(style="color:#ffa600") "skapi.postRecord(event, { table: 'my_photos'}).then(record => console.log(record))"
                                     span(style="color:#33adff") &gt;
 
                                     br
@@ -42,10 +39,10 @@ NavBar(style='--position: fixed; --background-color:#262626')
                                     span(style="color:#33adff") input
                                     span(style="color:#58dfff")  type
                                     | =
-                                    span(style="color:#ffa600") "text" 
+                                    span(style="color:#ffa600") "file" 
                                     span(style="color:#58dfff") name
                                     | =
-                                    span(style="color:#ffa600") "myData"
+                                    span(style="color:#ffa600") "myPhoto"
                                     span(style="color:#33adff") &gt;
 
                                     br
@@ -65,7 +62,7 @@ NavBar(style='--position: fixed; --background-color:#262626')
                                     span(style="color:#33adff") &lt;/
                                     span(style="color:#33adff") form
                                     span(style="color:#33adff") &gt;
-                    SwiperSlide.slider
+                    SwiperSlide.slider.sec
                       .sliderInner
                         img.login(src="@/assets/img/landingpage/intro_login.png")
                         img.users(src="@/assets/img/landingpage/intro_user.png")
@@ -141,7 +138,8 @@ NavBar(style='--position: fixed; --background-color:#262626')
         br
         br
 
-        iframe(width="100%" height="400" style="border-radius:8px;" src="https://www.youtube.com/embed/y31F1ko9LbU?si=R3jS_reo2N1vY3hb" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen)
+        .iframeContainer
+          iframe(src="https://www.youtube.com/embed/y31F1ko9LbU?si=R3jS_reo2N1vY3hb" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen)
 
     br
     br
@@ -160,6 +158,13 @@ NavBar(style='--position: fixed; --background-color:#262626')
         .techWrap 
             .tech
                 div(style="text-align: center;")
+                  img(src="@/assets/img/landingpage/tech3.svg")
+                br
+                h5 No Setup, No Deployment 
+                br
+                p Farewell to complex backend deployment hassles. Everything is managed from the frontend, streamlining your development process.
+            .tech
+                div(style="text-align: center;")
                   img(src="@/assets/img/landingpage/tech1.svg")
                 br
                 h5 Lower Your Costs By 10x
@@ -172,14 +177,7 @@ NavBar(style='--position: fixed; --background-color:#262626')
                 h5 Scale Without Limits 
                 br
                 p Built to scale effortlessly, Skapi handles your concurrent connections without any manual intervention.
-            .tech
-                div(style="text-align: center;")
-                  img(src="@/assets/img/landingpage/tech3.svg")
-                br
-                h5 No Setup, No Deployment 
-                br
-                p Farewell to complex backend deployment hassles. Everything is managed from the frontend, streamlining your development process.
-
+            
     br
     br
     br
@@ -373,11 +371,6 @@ NavBar(style='--position: fixed; --background-color:#262626')
     br
     br
     br
-    br
-    br
-    br
-    br
-    br
 
     section.intact.banner(style="text-align:right;")
         h2 Huge Files, Fast Delivery 
@@ -391,14 +384,9 @@ NavBar(style='--position: fixed; --background-color:#262626')
     br
     br
     br
-    br
-    br
-    br
-    br
-    br
 
     section.intact.features
-        h2 Skapi Features 
+        h2 Features 
 
         br
         br
@@ -408,7 +396,7 @@ NavBar(style='--position: fixed; --background-color:#262626')
                 .titWrap 
                     .icon
                         img(src="@/assets/img/landingpage/database.png")
-                    h5 Database
+                    h5.tit Database
                 
                 br
 
@@ -418,7 +406,7 @@ NavBar(style='--position: fixed; --background-color:#262626')
                 .titWrap 
                     .icon 
                         img(src="@/assets/img/landingpage/security.png")
-                    h5 Security
+                    h5.tit Security
                 
                 br
 
@@ -429,7 +417,7 @@ NavBar(style='--position: fixed; --background-color:#262626')
                 .titWrap 
                     .icon 
                         img(src="@/assets/img/landingpage/cloud.png")
-                    h5 Cloud Storage 
+                    h5.tit Cloud Storage 
                 
                 br
 
@@ -439,7 +427,7 @@ NavBar(style='--position: fixed; --background-color:#262626')
                 .titWrap 
                     .icon 
                         img(src="@/assets/img/landingpage/cdn.png")
-                    h5 CDN
+                    h5.tit CDN
                 
                 br
 
@@ -449,7 +437,7 @@ NavBar(style='--position: fixed; --background-color:#262626')
                 .titWrap 
                     .icon 
                         img(src="@/assets/img/landingpage/hosting.png")
-                    h5 Instant Hosting 
+                    h5.tit Instant Hosting 
                 
                 br
 
@@ -459,7 +447,7 @@ NavBar(style='--position: fixed; --background-color:#262626')
                 .titWrap 
                     .icon 
                         img(src="@/assets/img/landingpage/email.png")
-                    h5 Automated E-Mail Service
+                    h5.tit Automated E-Mail Service
                 
                 br
 
@@ -469,7 +457,7 @@ NavBar(style='--position: fixed; --background-color:#262626')
                 .titWrap 
                     .icon 
                         img(src="@/assets/img/landingpage/api.png")
-                    h5 API Bridge
+                    h5.tit API Bridge
                 
                 br
 
@@ -479,7 +467,7 @@ NavBar(style='--position: fixed; --background-color:#262626')
                 .titWrap 
                     .icon 
                         img(src="@/assets/img/landingpage/realtime.png")
-                    h5 Realtime Data
+                    h5.tit Realtime Data
                 
                 br
 
@@ -514,11 +502,13 @@ NavBar(style='--position: fixed; --background-color:#262626')
     br
 
     section.line
-        h2(style="width:100%;") Sign-up while it's free!
+        h2(v-if='account' style="width:100%;") Start a new project!
+        h2(v-else style="width:100%;") Sign-up while it's free!
 
         br
 
-        a.customButton(href="/" style="background-color:#293FE6;color:white;") Start my project
+        a.customButton(v-if='account' href="/dashboard" style="background-color:#293FE6;color:white;") Start
+        a.customButton(v-else href="/signup" style="background-color:#293FE6;color:white;") Sign up
 
     br
     br
@@ -563,7 +553,7 @@ NavBar(style='--position: fixed; --background-color:#262626')
             summary Where can I get help?
             p(style="color: rgba(0,0,0,0.6);") 
                 | You can reach us at our 
-                a(href="https://discord.com/channels/1164154380816236626/1164154381269213188") Discord server
+                a(href="https://discord.com/channels/1164154380816236626/1164154381269213188" target="_blank") Discord server
                 | . We are happy to help you with any questions you may have.
             br
             br
@@ -633,7 +623,7 @@ summary {
   &:after {
     position: absolute;
     content: "";
-    background: url("@/assets/img/landingpage/plus.png") no-repeat;
+    background: url("@/assets/img/landingpage/plus.svg") no-repeat;
     right: 0;
     width: 30px;
     height: 30px;
@@ -641,7 +631,7 @@ summary {
   }
 }
 details[open] summary:after {
-  background: url("@/assets/img/landingpage/minus.png") no-repeat;
+  background: url("@/assets/img/landingpage/minus.svg") no-repeat;
   width: 30px;
   height: 30px;
   background-size: contain;
@@ -674,13 +664,14 @@ details[open] summary:after {
   position: absolute;
   left: 50%;
   transform: translateX(-50%);
-  bottom: 50px;
+  bottom: 120px;
   .windowInner {
     width: 500px;
     padding: 10px 15px 15px;
     border-radius: 20px;
     background-color: #434343;
     box-shadow: 8px 12px 16px 8px rgba(0, 0, 0, 0.2);
+    text-align: left;
     .circle {
       .cir {
         display: inline-block;
@@ -735,7 +726,7 @@ section {
   &.intact {
     max-width: 1080px;
     position: relative;
-    padding: 0 1rem 2rem 1rem;
+    padding: 0 1rem;
   }
   &.intro {
     width: 100%;
@@ -747,6 +738,8 @@ section {
       margin: 0 auto;
     }
     .introTop {
+      max-width: 1100px;
+      margin: 0 auto;
       text-align: left;
       color: #fff;
       h1 {
@@ -762,7 +755,6 @@ section {
         display: inline-block;
       }
       p {
-        max-width: 470px;
         padding-top: 2rem;
         margin-bottom: 1rem;
         font-size: 1.2rem;
@@ -774,44 +766,84 @@ section {
     .introBottom {
       max-width: calc(100vw - 80px);
       margin: 0 auto;
-      margin-bottom: -20px;
+      margin-bottom: -100px;
       text-align: left;
       overflow: hidden;
       .slider {
         position: relative;
-        
+
+        &.sec {
+          .codeWindow {
+            bottom: 50px;
+          }
+        }
         .sliderInner {
-            width: 1000px;
-            margin: 0 auto;
+          max-width: 1000px;
+          margin: 0 auto;
+          text-align: center;
+
+          > img {
+            border-radius: 8px;
+            box-shadow: 8px 12px 16px 8px rgba(0, 0, 0, 0.2);
+          }
         }
         .login {
-          width: 28%;
+          width: 30%;
+          margin-top: 4%;
           margin-right: 4%;
         }
         .users {
-          width: 68%;
+          width: 53%;
+          margin-bottom: 9%;
         }
         .upload {
-          width: 38%;
+          width: 30%;
           margin-right: 4%;
+          margin-bottom: 15%;
         }
         .comment {
-          width: 58%;
+          width: 50%;
+          margin-bottom: 15%;
         }
       }
     }
   }
   &.banner {
+    display: grid;
+    align-content: center;
+    padding-bottom: 0;
     width: 100%;
-    height: 300px;
-    background: url(@/assets/img/landingpage/intro_banner.png);
-    background-size: cover;
-    background-position-y: -560px;
+    // height: 300px;
+    height: 475px;
+    background: url(@/assets/img/landingpage/intro_banner.png) no-repeat;
+    // background-size: 1200px;
+    background-size: 900px;
+    // background-position-x: -50px;
+    // background-position-y: -150px;
+    background-position-y: -20px;
   }
   &.line {
     text-align: center;
     background-color: #e5e9f3;
     padding: 5rem 0;
+  }
+}
+
+.iframeContainer {
+  position: relative;
+  width: 100%;
+  height: 0;
+  overflow: hidden;  
+  padding-top: calc(9/16 * 100%);
+
+  iframe {
+    position: absolute;
+    padding: 0;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    border-radius: 8px;
   }
 }
 
@@ -823,28 +855,18 @@ section {
     flex-grow: 1;
     flex-shrink: 0;
     // display: inline-block; // display type not relevant when parent is a flexbox
-    // vertical-align: middle;
-    // width: 32%;
-    // height: 372px;
-    // min-width: 300px;
     width: 300px; // width effect as min-width in flex box
-    // margin-right: 20px;
-    // margin-bottom: 20px;
-    // padding: 1rem;
     padding: 2rem 1rem;
     border-radius: 12px;
     border: 1px solid rgba(0, 0, 0, 0.05);
     background-color: #e5e9f3;
     box-shadow: 0px 2px 4px 0px rgba(0, 0, 0, 0.1);
+    text-align: center;
 
-    // &:last-child {
-    //   margin-right: 0;
-    // }
     img {
       width: 120px;
       height: 120px;
       display: inline-block;
-      text-align: center;
     }
     p {
       font-size: max(0.8rem, 14px);
@@ -923,6 +945,10 @@ section {
     .titWrap {
       display: flex;
       align-items: center;
+
+      .tit {
+        font-size: 20px;
+      }
     }
     .icon {
       position: relative;
@@ -951,6 +977,27 @@ section {
 }
 
 @media (max-width: 825px) {
+  section {
+    &.intro {
+      .introBottom {
+        .slider {
+          &:first-child, &:last-child {
+            .codeWindow {
+              bottom: 130px !important;
+            }
+          }
+          .sliderInner {
+            > img {
+              opacity: 0;
+            }
+          }
+          .comment, .users {
+            margin-bottom: 0;
+          }
+        }
+      }
+    }
+  }
   .cardWrap {
     .card {
       &:nth-child(1),
@@ -971,7 +1018,7 @@ section {
   }
 }
 
-@media (max-width: 650px) {
+@media (max-width: 740px) {
   section {
     &.intro {
       .introTop {
@@ -994,33 +1041,18 @@ section {
         display: none;
       }
     }
+    &.video {
+      padding: 0;
+    }
   }
-  // .techWrap {
-  //   .tech {
-  //     margin-right: 0;
-  //   }
-  // }
-  // .data,
-  // .dataCode {
-  //   width: 100%;
-  //   margin-right: 0;
-  // }
-  // .data {
-  //   margin-bottom: 3rem;
-  // }
 }
 
 @media (max-width: 580px) {
   section {
     &.banner {
-      height: 500px;
+      text-align: left !important;
     }
   }
-  // .techWrap {
-  //   .tech {
-  //     width: 100%;
-  //   }
-  // }
   .cardWrap {
     .card {
       &:nth-child(1),

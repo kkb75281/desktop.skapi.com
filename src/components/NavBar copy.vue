@@ -13,8 +13,22 @@ header#navBar(style='--position: relative;')
                 img.small(v-else src="@/assets/img/logo/symbol-logo.png")
         .right(:class="{'flex' : route.params.service && currentService}")
             .topRoute(v-if="route.params.service && currentService" ref="topRoute") 
+                ol
+                    li 
+                        router-link(to="/dashboard") My Services
+                    li(:class="{'active': route.name == 'service'}")
+                        router-link(:to="`/dashboard/${currentService.service}`") 
+                            h5 Dashboard
+                    li(v-if="route.name == 'users'" :class="{'active': route.name == 'users'}")
+                        router-link(:to="`/dashboard/${currentService.service}/users`") Users
+                    li(v-if="route.name == 'records'" :class="{'active': route.name == 'records'}")
+                        router-link(:to="`/dashboard/${currentService.service}/records`") Records
+                    li(v-if="route.name == 'mail'" :class="{'active': route.name == 'mail'}")
+                        router-link(:to="`/dashboard/${currentService.service}/records`") Mail
+                    li(v-if="route.name == 'subdomain'" :class="{'active': route.name == 'subdomain'}")
+                        router-link(:to="`/dashboard/${currentService.service}/records`") Hosting
                 router-link.service(:to="`/dashboard/${currentService.service}`") 
-                    h5 {{ currentService.name }}
+                    h5 Dashboard
             .topMenu(:class="{'white' : route.name == 'home'}")
                 template(v-if="account")
                     ul
@@ -28,7 +42,7 @@ header#navBar(style='--position: relative;')
                         li.doc
                             a(href="https://docs.skapi.com" target="_blank") Documentation
                         li.dash
-                            router-link(to="/dashboard") My Services
+                            router-link(to="/dashboard") Dashboard
                         li.account(@click.stop="accountInfo = !accountInfo") {{ account.email.charAt(0).toUpperCase() }}
                 template(v-else)
                     ul
@@ -47,7 +61,7 @@ header#navBar(style='--position: relative;')
                             router-link.signup(to="/signup") Sign-up
         .prof(v-if="accountInfo && account" @click.stop)
             .member 
-                //- img(v-if="account.approved.includes('ggl')" src="@/assets/img/icon/google.svg" style="display:inline-block;width:20px;height:20px;vertical-align:middle;margin-right:10px;")
+                img(v-if="account.approved.includes('ggl')" src="@/assets/img/icon/google.svg" style="display:inline-block;width:20px;height:20px;vertical-align:middle;margin-right:10px;")
                 span {{ account.email }}
             .settings 
                 .setting(@click="navigateToPage")
@@ -56,8 +70,7 @@ header#navBar(style='--position: relative;')
                 .setting(@click="logout")
                     span.material-symbols-outlined.sml logout
                     span Logout
-            a.policy
-                router-link(to="/privacy") terms of service ● privacy policy
+            .policy terms of service ● privacy policy
 </template>
 
 <script setup>
@@ -134,7 +147,7 @@ onBeforeUnmount(() => {
     transition: all 0.3s;
     .left {
         position: relative;
-        width: 236px;
+        width: 220px;
         .logo {
             display: block;
             height: 32px;
@@ -214,7 +227,7 @@ onBeforeUnmount(() => {
                 }
             }
             .service {
-                // display: none;
+                display: none;
                 text-decoration: none;
                 color: #293FE6;
             }
@@ -354,6 +367,7 @@ onBeforeUnmount(() => {
         right: 40px;
         top: 70px;
         min-width: 265px;
+        padding: 20px 20px 0;
         overflow: hidden;
         background-color: #fafafa;
         color: rgba(0, 0, 0, 0.80);
@@ -364,9 +378,6 @@ onBeforeUnmount(() => {
         z-index: 99;
 
         .member {
-            padding: 20px;
-            border-bottom: 1px solid rgba(0, 0, 0, 0.15);
-
             h4 {
                 font-size: 0.8rem;
                 font-weight: 700;
@@ -378,8 +389,30 @@ onBeforeUnmount(() => {
         }
 
         .settings {
-            padding: 20px;
-            border-bottom: 1px solid rgba(0, 0, 0, 0.15);
+            position: relative;
+            margin-top: 40px;
+
+            &::before {
+                position: absolute;
+                content: '';
+                left: 0;
+                top: -20px;
+                width: 120%;
+                height: 1px;
+                transform: translateX(-20px);
+                background-color: rgba(0, 0, 0, 0.15);
+            }
+
+            &::after {
+                position: absolute;
+                content: '';
+                left: 0;
+                bottom: -20px;
+                width: 120%;
+                height: 1px;
+                transform: translateX(-20px);
+                background-color: rgba(0, 0, 0, 0.15);
+            }
 
             .setting {
                 display: flex;
@@ -409,12 +442,8 @@ onBeforeUnmount(() => {
             justify-content: center;
             font-size: 0.6rem;
             font-weight: 500;
-            padding: 10px 0;
-            
-            a {
-                text-decoration: none;
-                color: rgba(0, 0, 0, 0.6);
-            }
+            color: rgba(0, 0, 0, 0.15);
+            padding: 27px 0 10px;
         }
     }
 }
@@ -427,14 +456,14 @@ onBeforeUnmount(() => {
         }
         .right {
             width: calc(100% - 65px);
-            // .topRoute {
-            //     ol {
-            //         display: none;
-            //     }
-            //     .service {
-            //         display: block;
-            //     }
-            // }
+            .topRoute {
+                ol {
+                    display: none;
+                }
+                .service {
+                    display: block;
+                }
+            }
         }
     }
 }

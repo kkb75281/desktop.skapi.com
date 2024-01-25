@@ -6,32 +6,32 @@ main#accountSetting(v-if='account')
     .container
         .wrapper 
             .accountWrap 
-                // info 변수를 정의하는 경우가 없는것같습니다. info의 역활은?
-                h5.account(@click="info = true" :class="{'active': info}") Account info
-                h5.account(:class="{'red': !info, 'nonClickable' : !account.email_verified}" @click="!account.email_verified ? false : openDeleteAccount = true") Delete Account
-            .accountCont(v-if="info")    
+                h5.account.active Account info
+                h5.account(:class="{'nonClickable' : !account.email_verified}" @click="!account.email_verified ? false : openDeleteAccount = true") Delete Account
+            .accountCont
                 .row
                     h6.tit Email
                     .cont 
                         template(v-if="changeEmail")
-                            form(@submit.prevent="reqeustEmailChange")
-                                input#changeEmail(type="text" 
-                                :value="email" 
-                                :placeholder="account.email"
-                                :disabled="promiseRunning"
-                                pattern="[a-zA-Z0-9\+]+[@][a-zA-Z0-9]+[.]+[a-zA-Z]+[.]*[a-zA-Z]*" 
-                                title="Please enter a valid email address." 
-                                @input="(e) => {email = e.target.value;}")
-                                .buttonWrap 
-                                    template(v-if="promiseRunning")
-                                        img.loading(src="@/assets/img/loading.png")
-                                    template(v-else)
-                                        button.cancel(type="button" @click="changeEmail = false;") Cancel
-                                        button.save(type="submit") Save
+                            form.modifyInputForm(@submit.prevent="reqeustEmailChange")
+                                .customInput
+                                    input#changeEmail(type="text" 
+                                    :value="email" 
+                                    :placeholder="account.email"
+                                    :disabled="promiseRunning"
+                                    pattern="[a-zA-Z0-9\+]+[@][a-zA-Z0-9]+[.]+[a-zA-Z]+[.]*[a-zA-Z]*" 
+                                    title="Please enter a valid email address." 
+                                    @input="(e) => {email = e.target.value;}")
+                                template(v-if="promiseRunning")
+                                    img.loading(src="@/assets/img/loading.png")
+                                template(v-else)
+                                    .material-symbols-outlined.big.save(type="submit") done
+                                    .material-symbols-outlined.sml.cancel(@click="changeEmail = false;") close
                         template(v-else) 
+                            img(v-if="account.approved.includes('ggl')" src="@/assets/img/icon/google.svg" style="display:inline-block;width:24px;height:24px;vertical-align:middle;margin-right:5px;")
                             span {{ account.email }}
-                    .btn(v-if="!changeEmail" @click="email=account.email; changeEmail = true;") Change email
-                    .btnIcon(v-if="!changeEmail" @click="email=account.email; changeEmail = true;")
+                    .btn(v-if="!changeEmail && account.approved.includes('ggl')" @click="email=account.email; changeEmail = true;") Change email
+                    .btnIcon(v-if="!changeEmail && !account.approved.includes('ggl')" @click="email=account.email; changeEmail = true;")
                         .material-symbols-outlined.mid.clickable edit
                 .row
                     h6.tit Verify Email
@@ -49,8 +49,6 @@ main#accountSetting(v-if='account')
                     h6.tit Subscription
                     .cont 
                         .customCheckBox(:class="{'nonClickable' : !account.email_verified}" :style='{opacity: disableNewsletterCheckbox ? ".5" : "1"}')
-                            // !(account.email_verified || false) <- account.email_verified 가 undefined 인 경우도 있어서
-                            // 사용자 email이 인증이 안되었을시 뉴스레터를 구독할수없습니다.
                             input#subscribeCheckbox(
                                 type="checkbox"
                                 v-model='newsletterSubscribed'
@@ -59,7 +57,7 @@ main#accountSetting(v-if='account')
                             label(for="subscribeCheckbox")
                                 span Subscribe to Skapi newsletter
                                 .material-symbols-outlined.mid.check(:style="{cursor: disableNewsletterCheckbox ? 'default' : null }") check
-                .row
+                .row(v-if="!account.approved.includes('ggl')")
                     h6.tit Password
                     .cont(v-if='passwordChanged')
                         .material.verified
@@ -84,7 +82,6 @@ import ChangePassword from '@/components/ChangePassword.vue';
 import VerifyEmail from '@/components/VerifyEmail.vue';
 import DeleteAccount from '@/components/DeleteAccount.vue';
 
-let info = ref(true);
 let email = ref('');
 let emailConfirmed = ref(false);
 let changeEmail = ref(false);
@@ -332,6 +329,7 @@ let verifyEmail = () => {
                 }
 
                 .cont {
+                    width: calc(100% - 130px);
                     display: inline-block;
                     vertical-align: middle;
 
@@ -346,55 +344,13 @@ let verifyEmail = () => {
 
                     .material {
                         color: rgba(255, 141, 59, 1);
+
                         &.verified {
                             color: rgba(90, 216, 88, 1);
                         }
-                    }
-
-                    form {
-                        // display: flex;
-                        // flex-wrap: nowrap;
-                        // align-items: center;
-                        // justify-content: space-between;
-                    }
-
-                    input#changeEmail {
-                        display: inline-block;
-                        width: 280px;
-                        height: 44px;
-                        padding: 0 17px;
-                        border-radius: 8px;
-                        background-color: rgba(0, 0, 0, 0.05);
-                        border: 0;
-                        font-size: 0.8rem;
-                    }
-
-                    .buttonWrap {
-                        display: inline-block;
-                        vertical-align: middle;
-                        padding-left: 1rem;
-
-                        button {
-                            display: inline-block;
-                            height: 32px;
-                            padding: 0 0.6rem;
-                            border-radius: 8px;
-                            font-size: 0.8rem;
-                            font-weight: 700;
-                            cursor: pointer;
-
-                            &.cancel {
-                                border: 2px solid #293FE6;
-                                background-color: unset;
-                                margin-right: 0.6rem;
-                                color: #293FE6;
-                            }
-
-                            &.save {
-                                border: 0;
-                                background: #293FE6;
-                                color: #fff;
-                            }
+                        .material-symbols-outlined {
+                            font-size: 24px;
+                            margin-right: 5px;
                         }
                     }
                 }
@@ -422,20 +378,19 @@ let verifyEmail = () => {
 }
 
 @media (max-width: 1023px) {
+    .modifyInputForm {
+        .customInput {
+            max-width: unset;
+        }
+    }
     #accountSetting {
         .wrapper {
             .accountCont {
                 .row {
                     .cont {
+                        width: 100%;
                         display: block;
                         margin-top: 1rem;
-
-                        input#changeEmail {
-                            width: 60%;
-                        }
-                        .buttonWrap {
-                            width: 40%;
-                        }
                     }
                 }
             }
@@ -461,16 +416,6 @@ let verifyEmail = () => {
                     }
                     &.delete {
                         display: block;
-                    }
-                    .cont {
-                        input#changeEmail, .buttonWrap {
-                            display: block;
-                            width: 100%;
-                        }
-                        .buttonWrap {
-                            margin-top: 1rem;
-                            text-align: right;
-                        }
                     }
                     .btn {
                         display: none;

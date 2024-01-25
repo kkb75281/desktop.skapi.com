@@ -37,8 +37,8 @@
                         template(v-if="promiseRunning")
                             img.loading(src="@/assets/img/loading.png")
                         template(v-else)
-                            button.cancel(type="button" @click="emits('close')") Cancel
-                            button.save(type="submit") Verify
+                            button.noLine(type="button" @click="emits('close')") Cancel
+                            button.final(type="submit") Verify
 </template>
 <script setup>
 import { ref } from "vue";

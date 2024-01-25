@@ -1,74 +1,462 @@
 <template lang="pug">
 main#dashboard
-    .titleWrap
-        .inner 
-            h2 Dashboard
-            span All Services
-    .container
-        .wrapper(v-if="!serviceFetching")
-            // service 로딩이 완료 되면 표시
-            .boxWrap
-                .box.btn(v-if="!create" @click="createService" :class="{'nonClickable' : !account?.email_verified}")
-                    .material-symbols-outlined.mid add
-                    span Create Service
-
-                .box.create(v-if="create")
-                    form(@submit.prevent="addService")
-                        h5 Create a new service
-                        input#serviceName(type="text" @input='e=>newServiceName=e.target.value' placeholder="Name of Service" required)
-                        .buttons
-                            template(v-if="promiseRunning")
-                                img.loading(src="@/assets/img/loading.png")
+    .createButton(@click="createService" :class="{'nonClickable' : !account?.email_verified}")
+        .material-symbols-outlined.mid add
+        span Create new service
+    
+    .tableWrap
+        table#resizeMe.table
+            thead
+                tr
+                    th.th.center(style="width:150px;")
+                    th.th.center(style="width:128px;")
+                        | Name of Service
+                        .resizer(@mousedown="mousedown")
+                    th.th.center(style="width:140px;")
+                        | Locale
+                        .resizer(@mousedown="mousedown")
+                    th.th.center(style="width:160px;")
+                        | Cors
+                        .resizer(@mousedown="mousedown")
+                    th.th.center(style="width:168px;")
+                        | Date Created
+                        .resizer(@mousedown="mousedown")
+                    th.th.center(style="width:140px;")
+                        | Users
+                        .resizer(@mousedown="mousedown")
+                    th.th.center(style="width:168px;")
+                        | Cloud Storage
+                        .resizer(@mousedown="mousedown")
+                    th.th(style="width:240px;")
+                        | Datebase
+                        .resizer(@mousedown="mousedown")
+            tbody
+                template(v-if="services.length" v-for="(service, index) in services")
+                    tr(ref="tr" :class="{'active' : showInfo}" @click="(e) => goServiceDashboard(e, service)")
+                        td(style="display:flex;align-items:center;")
+                            .material-symbols-outlined.mid.upArrow.hide(ref="upArrow" @click.stop="(e) => showServiceInfo(e, index)") arrow_forward_ios
+                            .material-symbols-outlined.mid.downArrow(ref="downArrow" @click.stop="(e) => showServiceInfo(e, index)") arrow_forward_ios
+                            .serviceActive(:class="{'active': service.active == 1 }")
+                                .material-symbols-outlined.sml.power power_settings_new
+                        td
+                            .overflow {{ service.name }}
+                        td
+                            .overflow {{ regions?.[service.region] || service.region }}
+                        td
+                            .overflow {{ service.cors }}
+                        td.center {{ typeof service.timestamp === 'string' ? service.timestamp : new Date(service.timestamp).toDateString() }}
+                        td.center
+                            template(v-if="Math.ceil(service.users/100*100)")
+                                .percent(:class='{"green": 0 <= Math.ceil(service.users/100*100) && Math.ceil(service.users/100*100) < 51, "orange": 51 <= Math.ceil(service.users/100*100) && Math.ceil(service.users/100*100) < 81, "red": 81 <= Math.ceil(service.users/100*100) && Math.ceil(service.users/100*100) < 101}') {{ Math.ceil(service.users/100*100) + '%' }}
+                            template(v-else) 
+                                .percent.green 0%
+                        td.center
+                            template(v-if="Math.ceil(service?.info?.cloud/5000*100)")
+                                .percent(:class='{"green": 0 <= Math.ceil(service?.info?.cloud/5000*100) && Math.ceil(service?.info?.cloud/5000*100) < 51, "orange": 51 <= Math.ceil(service?.info?.cloud/5000*100) && Math.ceil(service?.info?.cloud/5000*100) < 81, "red": 81 <= Math.ceil(service?.info?.cloud/5000*100)}') {{ Math.ceil(service?.info?.cloud/5000*100) + '%' }}
                             template(v-else)
-                                button(type="button" @click="create = false;").cancel Cancel
-                                button(type="submit").create Create
-
-                template(v-if='services.length')
-                    router-link.box.service.clicked(v-for="service in services" :to="'/dashboard/' + service.service" :style='{opacity: service?.pending ? ".5" : null}')
-                        .inner
-                            .tit 
-                                h5 {{ service.name }}
-                                .material-symbols-outlined.mid arrow_forward_ios
-                            .contWrap 
-                                .cont 
-                                    span Locale
-                                    p {{ regions?.[service.region] || service.region }}
-                                .cont 
-                                    span Date Created
-                                    p {{ typeof service.timestamp === 'string' ? service.timestamp : new Date(service.timestamp).toDateString() }}
-                                .cont 
-                                    span CORS
-                                    p {{ service.cors }}
-
-                            .serviceActive(v-if='service?.pending')
-                                // 왜 인지 모르겠으나 조건 class가 에니메이션을 영향줌 (생성될때 active가 켜졌다->꺼졌다->서비스 생성 완료되면 다시 켜짐)
-                                .material-symbols-outlined.big power_settings_new
-                            .serviceActive(v-else :class="{'active': service.active == 1 }")
-                                .material-symbols-outlined.big power_settings_new
-                template(v-else)
-                    .box.noService
-                        h2 No Services
+                                .percent.green 0%
+                        td(style="padding-left:40px;")
+                            template(v-if="Math.ceil(service?.info?.database/5000*100)")
+                                .percent(:class='{"green": 0 <= Math.ceil(service?.info?.database/5000*100) && Math.ceil(service?.info?.database/5000*100) < 51, "orange": 51 <= Math.ceil(service?.info?.database/5000*100) && Math.ceil(service?.info?.database/5000*100) < 81, "red": 81 <= Math.ceil(service?.info?.database/5000*100)}') {{ Math.ceil(service?.info?.database/5000*100) + '%' }}
+                            template(v-else)
+                                .percent.green 0%
+                            .menu(@click.stop="(e) => showPlanSetting(e, index)" :class='{"nonClickable": !account.email_verified}')
+                                .material-symbols-outlined.mid.clickable more_vert
+                    tr.cont(ref="trCont" :class="{'active' : showInfo}")
+                        td(colspan="8")
+                            br
+                            .info
+                                h6 Name
+                                span {{ service.name }}
+                            .info 
+                                h6 CORS 
+                                span {{ service.cors }}
+                            br
+                            .info.inline
+                                h6 # of Users 
+                                span {{ service.users }}
+                            .info.inline 
+                                h6 Database Used
+                                span {{ service?.info?.database + '/5000' }}
+                            .info.inline 
+                                h6 Subscription Plan
+                                span asdasd
+                            .info.inline 
+                                h6 Hosting Strorage
+                                template(v-if="service?.subdomain")
+                                    span {{ convertToMb(service?.info?.host) + '/100' }}
+                                template(v-else)
+                                    span -
+                            br
+                            br
+                            .info.inline 
+                                h6 Locale
+                                span {{ regions?.[service.region] || service.region }}
+                            .info.inline 
+                                h6 Cloud Storage Used
+                                span {{ service?.info?.cloud + '/5000' }}
+                            .info.inline 
+                                h6 Date Created
+                                span {{ typeof service.timestamp === 'string' ? service.timestamp : new Date(service.timestamp).toDateString() }}
+                            .info.inline 
+                                h6 Subdomain
+                                template(v-if="service?.subdomain")
+                                    span {{ service.subdomain }}
+                                template(v-else)
+                                    span -
+                tr.loadingWrap(v-else-if="serviceFetching")
+                    td(colspan="8" style="text-align:center; padding-top:20px;")
+                        img.loading(src="@/assets/img/loading.png")
+                tr.noServices(v-else)
+                    td(colspan="8" style="text-align:center; padding-top:20px;")
+                        h3 No Services
+                        br
                         p Get started by creating a new service.
+    br
+    .plus(style="display:block;text-align:center;")
+        .material-symbols-outlined.big(@click="createService" style="color:#293FE6;cursor:pointer;") add_circle
+   
+    #moreVert.hide(v-if="showMore" @click.stop style="--moreVert-right: 100px;" :style="{top: clientY}")
+        .inner
+            .more(style="width:unset;white-space:nowrap;") Downgrade Plan
+            .more Upgrade Plan
+            .more Stop Plan
+            .more Cancel Plan
+
+#createNewService(:class="{'show' : create}")
+    .material-symbols-outlined.mid.close(@click="create=false;") close
+    header
+        h4.title Create New Service
+    main(v-if="create")
+        form(@submit.prevent="addService")
+            .label
+                h6 Name of Service
+            input#serviceName(type="text" :class="{'error' : error}" @input='e=>newServiceName=e.target.value' placeholder="Name of Service")
+            .error(v-if="error")
+                .material-symbols-outlined.mid error
+                span {{ error }}
+
+            br
+            br
+        
+            .label 
+                h6 Service Plan
+                span Please choose one of the plans
+            //- .customSelect
+            //-     select
+            //-         option Trial Mode
+            //-         option Standard Mode
+            //-         option Premium Mode
+            //-     .material-symbols-outlined.mid.search.selectArrowDown arrow_drop_down
+
+            br
+
+            .card.clicked.nonClickable(:class="{'checked' : serviceMode == 'trial'}" @click="serviceMode='trial'" style="border-radius:8px;cursor:pointer;")
+                .inner
+                    .title 
+                        h4 Trial Mode
+                        .price $0
+                    .contWrap(style="justify-content:space-between;")
+                        ul
+                            li 
+                                .material-symbols-outlined.sml.li check_circle
+                                span asdaasd asdasdasdaasd asdasdasdaasd
+                            li 
+                                .material-symbols-outlined.sml.li check_circle
+                                span asdaasd asdasdasdaasd asdasdasdaasd
+                            li 
+                                .material-symbols-outlined.sml.li check_circle
+                                span asdaasd asdasdasdaasd asdasdasdaasd
+                            li 
+                                .material-symbols-outlined.sml.li check_circle
+                                span asdaasd asdasdasdaasd asdasdasdaasd
+
+                        ul
+                            li 
+                                .material-symbols-outlined.sml.li check_circle
+                                span asdaasd asdasdasdaasd asdasdasdaasd
+                            li 
+                                .material-symbols-outlined.sml.li check_circle
+                                span asdaasd asdasdasdaasd asdasdasdaasd
+                            li 
+                                .material-symbols-outlined.sml.li check_circle
+                                span asdaasd asdasdasdaasd asdasdasdaasd
+                            li 
+                                .material-symbols-outlined.sml.li check_circle
+                                span asdaasd asdasdasdaasd asdasdasdaasd
+        
+            br
+
+            .card.clicked(:class="{'checked' : serviceMode == 'standard'}" @click="serviceMode='standard'" style="border-radius:8px;cursor:pointer;")
+                .inner
+                    .title 
+                        h4(style="display:inline-block;") Standard Mode
+                        .right(style="display:inline-block; text-align:right;")
+                            .free 
+                                span (Only for promotion period)
+                                p(style="display:inline-block; margin-left:10px") Free
+                            .price.discount $19
+                    .contWrap(style="justify-content:space-between;")
+                        ul
+                            li 
+                                .material-symbols-outlined.sml.li check_circle
+                                span asdaasd asdasdasdaasd asdasdasdaasd
+                            li 
+                                .material-symbols-outlined.sml.li check_circle
+                                span asdaasd asdasdasdaasd asdasdasdaasd
+                            li 
+                                .material-symbols-outlined.sml.li check_circle
+                                span asdaasd asdasdasdaasd asdasdasdaasd
+                            li 
+                                .material-symbols-outlined.sml.li check_circle
+                                span asdaasd asdasdasdaasd asdasdasdaasd
+
+                        ul
+                            li 
+                                .material-symbols-outlined.sml.li check_circle
+                                span asdaasd asdasdasdaasd asdasdasdaasd
+                            li 
+                                .material-symbols-outlined.sml.li check_circle
+                                span asdaasd asdasdasdaasd asdasdasdaasd
+                            li 
+                                .material-symbols-outlined.sml.li check_circle
+                                span asdaasd asdasdasdaasd asdasdasdaasd
+                            li 
+                                .material-symbols-outlined.sml.li check_circle
+                                span asdaasd asdasdasdaasd asdasdasdaasd
+        
+            br
+
+            .card.clicked.nonClickable(:class="{'checked' : serviceMode == 'premium'}" @click="serviceMode='premium'" style="border-radius:8px;cursor:pointer;")
+                .inner
+                    .title 
+                        h4 Premium Mode
+                        .price $129
+                    .contWrap(style="justify-content:space-between;")
+                        ul
+                            li 
+                                .material-symbols-outlined.sml.li check_circle
+                                span asdaasd asdasdasdaasd asdasdasdaasd
+                            li 
+                                .material-symbols-outlined.sml.li check_circle
+                                span asdaasd asdasdasdaasd asdasdasdaasd
+                            li 
+                                .material-symbols-outlined.sml.li check_circle
+                                span asdaasd asdasdasdaasd asdasdasdaasd
+                            li 
+                                .material-symbols-outlined.sml.li check_circle
+                                span asdaasd asdasdasdaasd asdasdasdaasd
+
+                        ul
+                            li 
+                                .material-symbols-outlined.sml.li check_circle
+                                span asdaasd asdasdasdaasd asdasdasdaasd
+                            li 
+                                .material-symbols-outlined.sml.li check_circle
+                                span asdaasd asdasdasdaasd asdasdasdaasd
+                            li 
+                                .material-symbols-outlined.sml.li check_circle
+                                span asdaasd asdasdasdaasd asdasdasdaasd
+                            li 
+                                .material-symbols-outlined.sml.li check_circle
+                                span asdaasd asdasdasdaasd asdasdasdaasd
+
+            br
+        
+            .buttonWrap(style="display:flex; justify-content:space-between;")
+                template(v-if="promiseRunning")
+                    img.loading(src="@/assets/img/loading.png")
+                template(v-else)
+                    button.noLine(@click="create=false;") Cancel 
+                    button.final(type="submit") Create
+                    //- button.unFinished(v-else type="submit") Create
+            
 </template>
 
 <script setup>
+import { computed, nextTick, onMounted, ref } from 'vue';
+import { useRouter } from 'vue-router';
+import { skapi, account, bodyClick } from '@/main.js';
 import { services, serviceFetching } from '@/data.js';
-import { nextTick, ref } from 'vue';
-import { skapi, account } from '@/main.js';
+import { launch } from '@/views/Service/Subdomain/SubdomainFetch.js';
+
+onMounted(() => {
+    document.querySelector('body').classList.add('fa');
+})
+
+const router = useRouter();
+let serviceMode = ref('standard');
+let searchFor = ref('service');
+let searchText = ref('');
+let showInfo = ref(false);
+let tr = ref(null);
+let downArrow = ref(null);
+let upArrow = ref(null);
+let trCont = ref(null);
+let currentServiceIndex = null;
+let currentPlanIndex = null;
+let showMore = ref(false);
+let clientY = 0;
+// let inputError = ref(false);
+let error = ref('');
+
+let convertToMb = (size) => {
+    if (size) {
+        return (size / (1024 * 1024)).toFixed(2) + ' MB'
+    }
+    else {
+        return '-'
+    }
+}
+
+let showServiceInfo = (e, index) => {
+    if(currentServiceIndex == index) {
+        downArrow.value[index].classList.remove('hide');
+        upArrow.value[index].classList.add('hide');
+        trCont.value[index].classList.remove('active');
+        currentServiceIndex = null;
+
+        return;
+    } else if(e.target.classList.contains('upArrow')) {
+        downArrow.value[index].classList.remove('hide');
+        upArrow.value[index].classList.add('hide');
+        trCont.value[index].classList.remove('active');
+        currentServiceIndex = null;
+
+        return;
+    }
+
+    currentServiceIndex = index;
+    downArrow.value[index].classList.add('hide');
+    upArrow.value[index].classList.remove('hide');
+    trCont.value[index].classList.add('active');
+}
+
+let showPlanSetting = (e, index) => {
+    if(currentPlanIndex == index && showMore.value) {
+        console.log('dd')
+        showMore.value = false;
+        currentPlanIndex = null;
+
+        return;
+    }
+
+    showMore.value = false;
+    currentServiceIndex = index;
+    clientY = 200 + (60 *(index-1)) + 'px';
+
+    showMore.value = true;
+    currentPlanIndex = index;
+    console.log(currentPlanIndex == index, showMore.value)
+}
+
+let goServiceDashboard = (e, service) => {
+    e.currentTarget.classList.add('active');
+
+    setTimeout(() => {
+        router.push('/dashboard/' + service.service);
+    }, 500);
+}
+
+bodyClick.recordPage = () => {
+    showMore.value = false;
+}
+
+// table resize
+let prevX, prevW, nextW = 0;
+let prevCol, nextCol = null;
+let widthSum = 0;
+
+nextTick(() => {
+    let ths = document.getElementsByTagName('th');
+    let thsArr = Array.from(ths);
+
+    thsArr.forEach((e) => {
+        let widthStyle = window.getComputedStyle(e).width;
+        e.style.width = widthStyle;
+        widthSum += widthStyle;
+    });
+})
+
+let mouseMoveHandler = function (e) {
+    let dx = e.clientX - prevX;
+    let ths = document.getElementsByTagName('th');
+    let thsArr = Array.from(ths);
+
+    thsArr.forEach((e) => {
+        widthSum += e.offsetWidth;
+    });
+
+    if ((widthSum < window.innerWidth || dx < 0) && (prevW + dx > 100 && nextW - dx > 100)) {
+        prevCol.style.width = `${prevW + dx}px`;
+        nextCol.style.width = `${nextW - dx}px`;
+    }
+};
+
+let mousedown = function (e) {
+    prevCol = e.target.parentNode;
+    nextCol = prevCol.nextSibling;
+
+    let prevStyles = window.getComputedStyle(e.target.parentNode);
+    let nextStyles = window.getComputedStyle(prevCol.nextSibling);
+
+    prevX = e.clientX;
+    prevW = parseInt(prevStyles.width, 10);
+    nextW = parseInt(nextStyles.width, 10);
+    document.addEventListener('mousemove', mouseMoveHandler);
+};
+
+document.addEventListener('mouseup', function () {
+    document.removeEventListener('mousemove', mouseMoveHandler);
+});
 
 // update services
 if (serviceFetching.value) {
     serviceFetching.value.then(() => {
         services.value = skapi.serviceMap.map(sid => skapi.services[sid]).reverse();
+        for(let i=0; i<services.value.length; i++) {
+            let sd = services.value[i]?.subdomain;
+            let host = 0;
+            if (sd) {
+                launch(services.value[i].subdomain, f => {
+                    if (f.length) {
+                        host = f[0].size;
+                    }
+                }, true);
+            }
+            skapi.storageInformation(services.value[i].service).then(async(info) => {
+                info.host = host
+                services.value[i].info = info;
+            });
+
+        }
+        console.log(services.value)
     })
 }
 else {
     services.value = skapi.serviceMap.map(sid => skapi.services[sid]).reverse();
+    for(let i=0; i<services.value.length; i++) {
+        let sd = services.value[i]?.subdomain;
+            let host = 0;
+            if (sd) {
+                launch(services.value[i].subdomain, f => {
+                    if (f.length) {
+                        host = f[0].size;
+                    }
+                }, true);
+            }
+        skapi.storageInformation(services.value[i].service).then(info => {
+            services.value[i].info = info;
+        });
+    }
+    console.log(services.value)
 }
+
 let create = ref(false);
 let createService = () => {
     if (account?.value.email_verified) {
         create.value = true;
+        error.value = '';
         nextTick(() => {
             document.getElementById('serviceName').focus();
         });
@@ -80,6 +468,12 @@ let newServiceName = '';
 let promiseRunning = ref(false);
 let addService = () => {
     promiseRunning.value = true;
+    if(newServiceName == '') {
+        promiseRunning.value = false;
+        error.value = 'Please fill in the name of service';
+
+        return;
+    }
     services.value.unshift({
         service: '',
         name: newServiceName,
@@ -94,333 +488,587 @@ let addService = () => {
             skapi.insertService(s);
             services.value[0] = s;
             create.value = false;
+            newServiceName = '';
         }).catch(err => {
-            alert(err.message);
+            // alert(err.message);
+            console.log(err)
             services.value.shift();
         })
         .finally(_ => promiseRunning.value = false)
 }
+
 const regions = {
     'us-west-2': 'US',
     'ap-northeast-2': 'KR',
     'ap-southeast-1': 'SG',
     'ap-south-1': 'IN'
 }
+
+skapi.getProfile().then(u => {
+    if (u.misc === 'kdu') {
+        skapi.consumeTicket({ ticket_id: 'kdu' }).catch(err => console.log({ err })).finally(() => {
+            skapi.updateProfile({ misc: '' }).then(up => {
+                account.value = up;
+            });
+        });
+    }
+}).catch(err => err);
 </script>
 
 <style lang="less" scoped>
 #dashboard {
     position: relative;
+    height: calc(100vh - 60px - 3.4rem);
     margin-top: 3.4rem;
+    padding: 0 2rem;
+}
 
-    .titleWrap {
-        padding: 0 2rem;
+#createNewService {
+    position: fixed;
+    right: 0;
+    top: 0;
+    width: 700px;
+    height: 100%;
+    overflow: scroll;
+    background: #FFF;
+    box-shadow: -8px 4px 20px 0px rgba(0, 0, 0, 0.10);
+    transform: translateX(110%);
+    transition: all 0.3s;
+    z-index: 999;
 
-        .inner {
-            max-width: 1200px;
-            margin: 0 auto;
-            padding-bottom: 2.1rem;
-    
-            h2 {
-                display: inline-block;
-                font-weight: 700;
-            }
-    
-            span {
-                font-size: 1.2rem;
-                font-weight: 500;
-                margin-left: 18px;
-                color: rgba(0, 0, 0, 0.40);
-            }
-        }
+    &.show {
+        transform: translateX(0px);
     }
-
-    .container {
-        width: 100%;
-        min-height: calc(100vh - 10.1rem);
-        padding: 2rem;
+    .close {
+        position: absolute;
+        right: 25px;
+        top: 25px;
+        font-size: 32px;
+        cursor: pointer;
+    }
+    .card {
         background-color: #fafafa;
-        box-shadow: 8px 12px 36px rgba(0, 0, 0, 0.10);
-        border-radius: 8px;
-    }
-    
-    .wrapper {
-        max-width: 1200px;
-        margin: 0 auto;
 
-        .boxWrap {
-            width: 100%;
-            margin: 0 auto;
-            display: flex;
-            flex-wrap: wrap;
-
-            .box {
-                width: 31%;
-                // height: 254px;
-                margin-right: 3.5%;
-                margin-bottom: 3.5%;
-                border-radius: 8px;
-                padding: 1.5rem;
-                background-color: #fafafa;
-                box-shadow: 0px 2px 4px 0px rgba(0, 0, 0, 0.10);
-                transition: all 0.1s;
-
-                &:nth-child(3n+3) {
-                    margin-right: 0;
-                }
-
-                &.btn {
-                    background: rgba(41, 63, 230, 0.05);
-                    display: flex;
-                    align-items: center;
-                    justify-content: center;
-                    font-size: 1rem;
-                    font-weight: 700;
-                    color: #293FE6;
-                    cursor: pointer;
-
-                    .material-symbols-outlined {
-                        margin-right: 8px;
+        &.checked {
+            box-shadow: 0 0 0 4px #A5AFFF inset !important;
+            .inner {
+                .contWrap {
+                    ul {
+                        li {
+                            .li {
+                                color: #293FE6;
+                            }
+                        }
                     }
                 }
-
-                &.create {
-                    box-shadow: 0 0 0 4px #A5AFFF inset;
-
-                    form {
-                        h5 {
-                            color: #293FE6;
-                            font-weight: 500;
-                            margin-bottom: 20px;
-                        }
-
-                        input {
-                            width: 100%;
-                            border-radius: 8px;
-                            background: rgba(0, 0, 0, 0.05);
-                            border: 0;
-                            padding: 15px 20px;
-                            font-size: 0.8rem;
-                            margin-bottom: 45px;
-                        }
-
-                        .buttons {
-                            height: 44px;
-                            display: flex;
-                            align-items: center;
-                            justify-content: space-between;
-
-                            button {
-                                height: 100%;
-                                border: 0;
-                                padding: 0 28px;
-                                border-radius: 8px;
-                                font-size: 0.8rem;
-                                font-weight: 700;
-                                cursor: pointer;
-
-                                &.cancel {
-                                    padding-left: 10px;
-                                    background-color: unset;
+            }
+        }
+        &.clicked {
+            &:hover {
+                .inner {
+                    .contWrap {
+                        ul {
+                            li {
+                                .li {
                                     color: #293FE6;
-                                }
-
-                                &.create {
-                                    background-color: #293FE6;
-                                    color: #fff;
                                 }
                             }
                         }
                     }
                 }
+            }
+        }
+        .inner {
+            .title {
+                font-weight: 500;
+                color: #293FE6;
 
-                &.service {
-                    color: unset;
-                    text-decoration: unset;
-
+                .free {
                     position: relative;
-                    border: 1px solid rgba(0, 0, 0, 0.15);
-                    overflow: hidden;
+                    display: inline-block;
+                    color: #293FE6;
+                    font-size: 1.2rem;
+                    font-weight: 700;
+
+                    span {
+                        color: rgba(0,0,0,0.6);
+                        font-size: 0.7rem;
+                        font-weight: 400;
+                    }
+                }
+
+                .price {
+                    position: relative;
+                    display: inline-block;
+                    padding-right: 60px;
+                    padding-left: 10px;
+                    font-size: 28px;
+                    font-weight: 700;
+
+                    &::before {
+                        position: absolute;
+                        content: '/month';
+                        right: 0;
+                        top: 50%;
+                        transform: translateY(-50%);
+                        font-size: 14px;
+                        font-weight: 500;
+                        color: rgba(0, 0, 0, 0.40);
+                    }
+                    &.discount {
+                        margin-left: 10px;
+                        color: #A7A8AD;
+
+                        &::after {
+                            position: absolute;
+                            content: '';
+                            width: 50%;
+                            height: 2px;
+                            left: 5px;
+                            top: 50%;
+                            transform: translateY(-50%);
+                            background-color: #A7A8AD;
+                        }
+                    }
+                }
+            }
+            .contWrap {
+                ul {
+                    width: 50%;
+                    list-style: none;
+
+                    li {
+                        .li {
+                            font-size: 14px;
+                            margin-right: 5px;
+                        }
+                        span {
+                            font-size: 14px;
+                            color: rgba(0, 0, 0, 0.60);
+                            font-weight: 400;
+                        }
+                    }
+                }
+            }
+        }
+    }
+    header {
+        padding: 2rem;
+        border-bottom: 1px solid rgba(0, 0, 0, 0.10);
+        box-shadow: 0px 1px 3px 0px rgba(0, 0, 0, 0.06);
+        .title {
+            color: #293FE6;
+        }
+    }
+    main {
+        padding: 30px 40px;
+
+        h6 {
+            display: inline-block;
+            color: rgba(0, 0, 0, 0.60);
+            margin-bottom: 8px;
+        }
+        .label {
+            span {
+                color: rgba(0, 0, 0, 0.40);
+                font-size: 14px;
+                font-weight: 400;
+                margin-left: 16px;
+            }
+        }
+        input {
+            width: 100%;
+            height: 44px;
+            border: 0;
+            border-radius: 8px;
+            background: rgba(0, 0, 0, 0.05);
+            padding: 0 20px;
+        }
+        .customSelect {
+            select {
+                height: 44px;
+                background: rgba(0, 0, 0, 0.05);
+                padding: 0 20px;
+            }
+        }
+        // .planCard {
+        //     border-radius: 8px;
+        //     border: 0.5px solid rgba(0, 0, 0, 0.25);
+        //     background: #FAFAFA;
+
+        //     .header {
+        //         display: flex;
+        //         align-items: center;
+        //         justify-content: space-between;
+        //         padding: 1rem;
+        //         border-bottom: 1px solid rgba(0, 0, 0, 0.10);
+        //         box-shadow: 0px 1px 3px 0px rgba(0, 0, 0, 0.06);
+
+        //         .mode {
+        //             display: inline-block;
+        //             font-weight: 500;
+        //             color: #293FE6;
+        //         }
+        //         .price {
+        //             position: relative;
+        //             display: inline-block;
+        //             padding-right: 60px;
+        //             font-size: 28px;
+        //             font-weight: 700;
+
+        //             &::after {
+        //                 position: absolute;
+        //                 content: '/month';
+        //                 right: 0;
+        //                 top: 50%;
+        //                 transform: translateY(-50%);
+        //                 font-size: 14px;
+        //                 font-weight: 500;
+        //                 color: rgba(0, 0, 0, 0.40);
+        //             }
+        //         }
+        //     }
+        //     .content {
+        //         padding: 1rem;
+                
+        //         ul {
+        //             li {
+        //                 box-sizing: border-box;
+
+        //             }
+        //         }
+        //     }
+        // }
+    }
+}
+
+#moreVert {
+    .inner {
+        .more {
+            font-size: 0.8rem;
+        }
+    }
+}
+
+.createButton {
+    display: inline-block;
+    // height: 40px;
+    padding: 6px 28px 8px;
+    border-radius: 8px;
+    border: 1px solid #D9D9D9;
+    color: #293FE6;
+    cursor: pointer;
+    
+    * {
+        user-select: none;
+        font-size: 16px;
+        font-weight: 500;
+    }
+}
+
+.tableWrap {
+    position: relative;
+    // min-height: calc(100vh - 3.4rem - 160px);
+    margin-top: 16px;
+    overflow-x: auto;
+
+    .noServices {
+        position: absolute;
+        left: 50%;
+        top: 50%;
+        transform: translate(-50%, -50%);
+        text-align: center;
+
+        h3 {
+            color: rgba(0, 0, 0, 0.40);
+        }
+
+        p {
+            color: rgba(0, 0, 0, 0.40);
+            font-weight: 500;
+        }
+    }
+
+    table {
+        width: 100%;
+        border-collapse: collapse;
+        table-layout: fixed;
+
+        thead {
+            position: sticky;
+            top: 0px;
+            background-color: #fafafa;
+            z-index: 10;
+            text-align: left;
+
+            tr {
+                height: 60px;
+
+                th {
+                    position: relative;
+                    color: rgba(0, 0, 0, 0.40);
+                    font-size: 0.7rem;
+                    font-weight: 500;
+                    padding-left: 40px;
+
+                    &::after {
+                        position: absolute;
+                        content: '';
+                        width: 100%;
+                        height: 1px;
+                        left: 0;
+                        bottom: 0;
+                        background: rgba(0, 0, 0, 0.1);
+                        box-shadow: 0px 1px 3px 0px rgba(0, 0, 0, 0.06);
+                    }
+
+                    &:first-child {
+                        padding-left: 0;
+                    }
+
+                    &:last-child {
+                        .resizer {
+                            display: none;
+                        }
+                    }
+
+                    &.center {
+                        padding: 0;
+                        text-align: center;
+                    }
+
+                    .resizer {
+                        position: absolute;
+                        top: 50%;
+                        right: 0px;
+                        transform: translateY(-50%);
+                        width: 4px;
+                        height: 20px;
+                        background-color: rgba(0, 0, 0, 0.1);
+                        cursor: col-resize;
+
+                        &.contrast {
+                            background-color: #fff !important;
+                        }
+                    }
+
+                    .resizable {
+                        height: 100px;
+                        width: 100px;
+                        position: relative;
+                    }
+                }
+            }
+        }
+
+        tbody {
+            overflow-y: auto;
+            font-weight: 400;
+
+            tr {
+                &:not(.cont, .active, .loadingWrap, .noServices):hover {
+                    background-color: rgba(41,63,230,0.05);
+                    cursor: pointer;
+                }
+                &.active {
+                    background-color: rgba(41, 63, 230, 0.10);
+                }
+                &.cont {
+                    height: 250px;
+                    background-color: rgba(0, 0, 0, 0.02);
+                    display: none;
+
+                    &.active {
+                        display: table-row;
+                    }
+
+                    td {
+                        padding: 0 75px;
+                    }
+
+                    .info {
+                        display: block;
+                        margin-bottom: 10px;
+
+                        &.inline {
+                            display: inline-block;
+                            width: 25%;
+
+                            h6 {
+                                display: block;
+                                margin-bottom: 8px;
+                            }
+                        }
+                        h6 {
+                            display: inline-block;
+                            font-weight: 400;
+                            color: rgba(0, 0, 0, 0.40);
+                            margin-right: 10px;
+                        }
+                        span {
+                            color: rgba(0, 0, 0, 0.60);
+                        }
+                    }
+                }
+                &.loadingWrap, &.noServices {
+                    td {
+                        &::after {
+                            display: none !important;
+                        }
+                    }
+                }
+            }
+
+            td {
+                position: relative;
+                height: 60px;
+                padding: 0 20px;
+                font-size: 0.8rem;
+
+                &::after {
+                    position: absolute;
+                    content: '';
+                    width: 100%;
+                    height: 1px;
+                    left: 0;
+                    bottom: 0;
+                    background: rgba(0, 0, 0, 0.1);
+                    box-shadow: 0px 1px 3px 0px rgba(0, 0, 0, 0.06);
+                }
+
+                &.center {
+                    padding: 0;
+                    text-align: center;
+                    font-size: 0.8rem;
+                }
+
+                .percent {
+                    display: inline-block;
+                    padding: 3px 12px;
+                    border-radius: 4px;
+                    box-shadow: 0px -1px 1px 0px rgba(0, 0, 0, 0.15) inset;
+                    color: #fff;
+
+                    &.green {
+                        background-color: #52D687;
+                    }
+                    &.orange {
+                        background-color: #FCA642;
+                    }
+                    &.red {
+                        background-color: #F04E4E;
+                    }
+                }
+
+                .upArrow, .downArrow {
+                    display: inline-block;
+                    vertical-align: middle;
+                    padding: 10px;
+                    border-radius: 50%;
+                    font-size: 24px;
+                    color: rgba(0,0,0,0.4);
                     cursor: pointer;
 
                     &:hover {
-                        background: #F5F7FF;
+                        background-color: rgba(41, 63, 230, 0.10);
                     }
-
-                    a {
-                        text-decoration: none;
-                        color: unset;
-                    }
-
-                    &.clicked:active {
-                        box-shadow: 0 0 0 4px #A5AFFF inset;
-                    }
-
-                    .inner {
-                        .tit {
-                            position: relative;
-                            display: flex;
-                            justify-content: space-between;
-                            margin-bottom: 45px;
-
-                            > h5,
-                            span {
-                                font-weight: 500;
-                            }
-
-                            &::after {
-                                position: absolute;
-                                content: '';
-                                width: 200%;
-                                height: 1px;
-                                background: rgba(0, 0, 0, 0.15);
-                                left: 50%;
-                                bottom: -20px;
-                                transform: translateX(-50%);
-                            }
-                        }
-
-                        .contWrap {
-                            display: flex;
-                            flex-wrap: wrap;
-
-                            .cont {
-                                width: 50%;
-                                margin-bottom: 25px;
-
-                                span {
-                                    font-size: 0.8rem;
-                                    color: rgba(0, 0, 0, 0.40);
-                                }
-
-                                p {
-                                    font-size: 0.8rem;
-                                    font-weight: 700;
-                                    padding-top: 12px;
-                                    color: rgba(0, 0, 0, 0.60);
-                                }
-
-                                &:last-child {
-                                    width: 65%;
-                                    margin-bottom: 0;
-
-                                    p {
-                                        white-space: nowrap;
-                                        overflow: hidden;
-                                        text-overflow: ellipsis;
-                                    }
-                                }
-                            }
-                        }
-
-                        .serviceActive {
-                            position: absolute;
-                            width: 36px;
-                            height: 36px;
-                            right: 29px;
-                            bottom: 27px;
-                            display: flex;
-                            align-items: center;
-                            justify-content: center;
-                            color: #fff;
-                            background-color: rgba(0, 0, 0, 0.25);
-                            border-radius: 50%;
-
-                            &.active {
-                                background-color: rgba(90, 216, 88, 1);
-                            }
-
-                            .toggleBg {
-                                position: relative;
-                                width: 63px;
-                                height: 32px;
-                                border-radius: 16px;
-                                background-color: rgba(0, 0, 0, 0.25);
-                                transition: all 1s;
-
-                                .toggleBtn {
-                                    position: absolute;
-                                    width: 26px;
-                                    height: 26px;
-                                    right: unset;
-                                    left: 3px;
-                                    top: 50%;
-                                    transform: translateY(-50%);
-                                    border-radius: 50%;
-                                    background-color: #eee;
-                                    transition: all 1s;
-                                    cursor: pointer;
-                                }
-                            }
-                        }
+                    &.hide {
+                        display: none;
                     }
                 }
 
-                &.noService {
-                    width: 360px;
-                    padding: 80px 0;
-                    box-shadow: unset;
-                    display: flex;
-                    flex-wrap: wrap;
-                    align-items: center;
-                    justify-content: center;
-                    color: rgba(0, 0, 0, 0.40);
+                .upArrow {
+                    rotate: 270deg;
+                }
 
-                    h2 {
-                        font-size: 28px;
-                        font-weight: 700;
+                .downArrow {
+                    rotate: 90deg;
+                }
+
+                .menu {
+                    position: absolute;
+                    right: 28px;
+                    top: 50%;
+                    padding: 10px;
+                    text-align: center;
+                    padding-top: 8px;
+                    border-radius: 50%;
+                    transform: translateY(-50%);
+                    z-index: 1;
+
+                    &:hover {
+                        background-color: rgba(41, 63, 230, 0.10);
+                    }
+
+                }
+                #moreVert {
+                    &.hide {
+                        display: none;
+                    }
+
+                    &.show {
+                        display: block;
                     }
                 }
-            }
-        }
-    }
-}
 
-@media (max-width: 1023px) {
-    #dashboard {
-        .wrapper {
-            .boxWrap {
-                .box {
-                    width: 48%;
-                    margin-right: 4%;
-                    margin-bottom: 4%;
+                .serviceActive {
+                    position: relative;
+                    display: inline-block;
+                    vertical-align: middle;
+                    width: 20px;
+                    height: 20px;
+                    margin: 0 auto;
+                    border-radius: 50%;
+                    background-color: rgba(0,0,0,0.25);
 
-                    &:nth-child(2n+2) {
-                        margin-right: 0;
+                    &.active {
+                        background-color: #5AD858;
                     }
 
-                    &:nth-child(6n+6) {
-                        margin-right: 0;
-                    }
-
-                    &:nth-child(3n+3) {
-                        margin-right: 4%;
+                    .power {
+                        position: absolute;
+                        left: 50%;
+                        top: 50%;
+                        transform: translate(-50%, -50%);
+                        color: #fff;
                     }
                 }
-            }
-        }
-    }
-}
 
-@media (max-width: 767px) {
-    #dashboard {
-        .wrapper {
-            .boxWrap {
-                .box {
+                > div:not(.material-symbols-outlined) {
+                    font-size: 0.8rem;
+                }
+
+                .block {
+                    color: rgba(0, 0, 0, 0.4);
+                }
+
+                .enable {
+                    color: rgba(90, 216, 88, 1);
+                }
+
+                .disable {
+                    color: rgba(240, 78, 78, 1);
+                }
+
+                .overflow {
+                    position: relative;
                     width: 100%;
-                    margin-right: 0%;
-                    margin-bottom: 30px;
+                    white-space: nowrap;
+                    overflow: hidden;
+                    text-overflow: ellipsis;
 
-                    &:nth-child(3n+3) {
-                        margin-right: 0;
-                    }
-
-                    &.btn {
-                        height: 240px;
+                    &::-webkit-scrollbar {
+                        display: none;
                     }
                 }
             }
         }
     }
+}
+
+@media (max-width: 700px) {
+    #createNewService {
+            width: 100%;
+    } 
 }
 </style>

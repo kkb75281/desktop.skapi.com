@@ -10,8 +10,8 @@
                 br
                 br
                 .buttonWrap 
-                    button.cancel(@click="emits('close')") Cancel
-                    button.save(@click='()=>{save(); emits("close")}') Save
+                    button.noLine(@click="emits('close')") Cancel
+                    button.final(@click='()=>{save(); emits("close")}') Save
 
 </template>
 

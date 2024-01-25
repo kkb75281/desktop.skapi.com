@@ -1,5 +1,5 @@
 <template lang="pug">
-.container
+.container#openid_script
     RouterLink(to="/")
         img.logo(src="@/assets/img/logo/symbol-logo.png")
     .title Sign up
@@ -60,12 +60,18 @@
                 .signup 
                     span Have an account?
                     RouterLink(:to="{name: 'login'}") Login
+
+    br
+    br
+
+    // google login button
+    //- a(:href="googleOpenId") Google Login (OpenID)
 </template>
 
 <script setup>
 import { onBeforeUnmount, onMounted, reactive, ref } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
-import { skapi, account } from '@/main.js';
+import { skapi, account, googleOpenId } from '@/main.js';
 
 let route = useRoute();
 let router = useRouter();
@@ -81,6 +87,12 @@ let promiseRunning = ref(false);
 let error = ref(null);
 let passwordField = ref(null);
 let confirmPasswordField = ref(null);
+
+// get promocode query params
+let promocode = ref('');
+if(route.query?.hasOwnProperty('kdu')) {
+    promocode.value = 'kdu'; // kook dong university
+}
 
 onMounted(() => {
     document.querySelector('body').classList.add('fa');
@@ -107,6 +119,7 @@ let signup = () => {
     let params = {
         email: form.email,
         password: form.password,
+        misc: promocode.value
     }
     let options = {
         signup_confirmation: '/success',

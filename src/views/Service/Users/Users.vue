@@ -95,7 +95,7 @@ main#users
                                         span Locale
                             //- .filter 
                             //-     .customCheckBox
-                            //-         input#group(type="checkbox" :checked="filterOptions.group" @change="filterOptions.group = !filterOptions.group")
+                            //-         input#group(type="checkbox" :checked="filterOptions.access_group" @change="filterOptions.access_group = !filterOptions.access_group")
                             //-         label(for="group")
                             //-             .material-symbols-outlined.mid.check check
                             //-             span Group
@@ -108,8 +108,8 @@ main#users
                 .material-symbols-outlined.mid.refresh(@click='refresh' :class='{"rotate_animation": fetching }') cached
                 .material-symbols-outlined.mid.create(:class="{'nonClickable' : !account.email_verified}" @click="!account.email_verified ? false : inviteUserShow=true") mail
                 .material-symbols-outlined.mid.create(:class="{'nonClickable' : !account.email_verified}" @click="!account.email_verified ? false : createUserShow=true") person_add
-                .menu(@click.stop="!account.email_verified ? false : showUserSetting = !showUserSetting")
-                    .material-symbols-outlined.mid.clickable(:class='{"nonClickable": !checkedUsers.length || !account.email_verified}') more_vert
+                .menu(:class='{"nonClickable": !checkedUsers.length || !account.email_verified}' @click.stop="!account.email_verified ? false : showUserSetting = !showUserSetting")
+                    .material-symbols-outlined.mid.clickable more_vert
                     #moreVert(v-if="showUserSetting" @click.stop style="--moreVert-left: 0")
                         .inner
                             .more(@click="()=>{stateText='Block'; showBlockUser=true; showUserSetting=false;}")
@@ -156,7 +156,7 @@ main#users
                         th.th(v-if="filterOptions.gender" style="width:160px;")
                             | Gender
                             .resizer(@mousedown="mousedown")
-                        //- th.th(v-if="filterOptions.group" style="width:160px;")
+                        //- th.th(v-if="filterOptions.access_group" style="width:160px;")
                         //-     | Group
                         //-     .resizer(@mousedown="mousedown")
                         th.th(v-if="filterOptions.locale" style="width:160px;")
@@ -176,7 +176,7 @@ main#users
                             .material-symbols-outlined.mid.block(v-if="user.approved.includes('suspended')") no_accounts
                             .material-symbols-outlined.mid.unblock(v-else) account_circle
                         td.center(v-if="filterOptions.status")
-                            .material-symbols-outlined.mid.enable(v-if="user.group > 0") check_circle
+                            .material-symbols-outlined.mid.enable(v-if="user.access_group > 0") check_circle
                             .material-symbols-outlined.mid.disable(v-else) cancel
                         td(v-if="filterOptions.userID") 
                             .overflow {{ user.user_id }}
@@ -190,8 +190,8 @@ main#users
                             .overflow {{ user.gender }}
                         td(v-if="filterOptions.locale")
                             .overflow {{ Countries[user.locale].flag }}
-                        //- td(v-if="filterOptions.group")
-                        //-     h6.overflow {{ user.group }}
+                        //- td(v-if="filterOptions.access_group")
+                        //-     h6.overflow {{ user.access_group }}
                         td(v-if="filterOptions.timestamp")
                             h6.overflow {{ new Date(user.timestamp).toLocaleString() }}
                     tr(v-if="users.length < 10" v-for="i in (10 - users.length)" :key="'extra-' + i")

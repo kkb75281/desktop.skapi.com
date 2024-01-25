@@ -1,20 +1,23 @@
 <template lang="pug">
 #serviceMain(v-if='currentService')
     .left
+        router-link.back(:to="`/dashboard`")
+            .material-symbols-outlined.mid arrow_back_ios
+            p My services
         nav.menuWrap 
             router-link.menu(:to="`/dashboard/${currentService.service}`" :class="{'active': route.name == 'service'}")
                 .material-symbols-outlined.big home
-                h3 Home
+                h3 Dashboard
             router-link.menu(:to="`/dashboard/${currentService.service}/users`" :class="{'active': route.name == 'users'}")
                 .material-symbols-outlined.big supervisor_account
                 h3 Users
             router-link.menu(:to="`/dashboard/${currentService.service}/records`" :class="{'active': route.name == 'records'}")
                 .material-symbols-outlined.big database
                 h3 Database
-            router-link.menu(:to="`/dashboard/${currentService.service}/mail`" :class="{'active': route.name == 'mail'}")
+            router-link.menu(:to="`/dashboard/${currentService.service}/mail`" :class="{'active': route.name == 'mail', 'nonClick' : account.access_group == 1}")
                 .material-symbols-outlined.big email
                 h3 Mail
-            router-link.menu(:to="`/dashboard/${currentService.service}/subdomain`" :class="{'active': route.name == 'subdomain'}")
+            router-link.menu(:to="`/dashboard/${currentService.service}/subdomain`" :class="{'active': route.name == 'subdomain', 'nonClick' : account.access_group == 1}")
                 .material-symbols-outlined.big language
                 h3 Hosting
     .right 
@@ -100,6 +103,7 @@ if (serviceFetching.value instanceof Promise) {
 else {
     getCurrentService()
 }
+
 </script>
 
 <style lang="less" scoped>
@@ -111,7 +115,26 @@ else {
         display: inline-block;
         vertical-align: top;
         
+        .back {
+            display: block;
+            margin: 0 16px;
+            padding: 12px 20px;
+            color: #293FE6;
+            text-decoration: none;
+            margin-bottom: 4px;
+
+            * {
+                display: inline-block;
+                vertical-align: middle;
+            }
+
+            p {
+                margin-left: 13px;
+                font-weight: 500;
+            }
+        }
         .menuWrap {
+            margin-top: 63px;
             padding: 0 16px;
 
             .menu {
@@ -137,16 +160,18 @@ else {
                 }
 
                 &.active {
-                    background: rgba(0, 0, 0, 0.05);
+                    background: #293FE60D;
                     box-shadow: 0px -1px 1px 0px rgba(0, 0, 0, 0.15) inset;
 
-                    span {
+                    h3 {
                         font-weight: 700;
                     }
                 }
 
-                &:first-child {
-                    margin-bottom: 66px;
+                &.nonClick {
+                    opacity: 0.5;
+                    pointer-events: none;
+                    cursor: default;
                 }
 
                 svg {
@@ -166,7 +191,7 @@ else {
     }
     .right {
         display: inline-block;
-        width: calc(100vw - 240px);
+        width: calc(100vw - 250px);
         padding: 0 20px 20px 0;
         flex-grow: 1;
     }
@@ -175,6 +200,11 @@ else {
 @media (max-width:1023px) {
     #serviceMain {
         .left {
+            .back {
+                p {
+                    display: none;
+                }
+            }
             .menuWrap {
                 .menu {
                     h3 {

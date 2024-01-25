@@ -2,7 +2,9 @@
 #overlayWindow.deleteAccount(@click="closeWindow" style='--max-width: 480px;')
     .overlayWrap(@click.stop)
         header
-            h5.title.red Delete Your Account
+            .title.withIcon.red
+                .material-symbols-outlined.mid.icon warning
+                h5 Delete Your Account
         main
             .content
                 template(v-if="step === 1")
@@ -25,10 +27,10 @@
                             .material-symbols-outlined.mid error
                             span {{ acknowledgeError }}
                         br
+                        .buttonWrap
+                            button.noLine(type="button" @click="emits('close')") Keep Account
+                            button.unFinished.warning(type="submit") Delete Account
                         br
-                        .buttonWrap.block
-                            button.no(type="button" @click="emits('close')") No, keep my account
-                            button.yes(type="submit") Yes, delete my account
                 template(v-if="step === 2")
                     form.reasonForm(@submit.prevent="reasonCheck" action="")
                         p Please tell us why you’re leaving :
@@ -61,8 +63,8 @@
                         br
                         br
                         .buttonWrap 
-                            button.cancel(type="button" @click="emits('close')") Cancel
-                            button.save(type="submit") Submit
+                            button.noLine(type="button" @click="emits('close')") Cancel
+                            button.unFinished(type="submit") Submit
                 template(v-if="step >= 3")
                     form(@submit.prevent="deleteAccount" action="")
                         p Please enter your password.
@@ -83,8 +85,8 @@
                             template(v-if="promiseRunning")
                                 img.loading(src="@/assets/img/loading.png")
                             template(v-else)
-                                button.cancel(type="button" @click="closeWindow") Cancel
-                                button.save(type="submit") Delete
+                                button.noLine(type="button" @click="closeWindow") Cancel
+                                button.final(type="submit") Delete
                 br
                 .navigator(v-if="step <= 3")
                     .ball(v-for="num in 3" @click="() => { num < step ? step = num : null; password = ''; }" :class="{'active': step === num}")

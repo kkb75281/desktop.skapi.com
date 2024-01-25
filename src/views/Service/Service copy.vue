@@ -5,14 +5,14 @@ main#service
             .title 
                 .name(style="height: 44px;")
                     template(v-if="modifyServiceName")
-                        form.modifyInputForm(@submit.prevent="changeServiceName")
-                            .customInput
-                                input#modifyServiceName(type="text" placeholder="Service name" :value='inputServiceName' @input="(e) => inputServiceName = e.target.value" required)
-                            template(v-if="promiseRunning")
-                                img.loading(src="@/assets/img/loading.png")
-                            template(v-else)
-                                .material-symbols-outlined.big.save(type="submit") done
-                                .material-symbols-outlined.sml.cancel(@click="modifyServiceName = false;") close
+                        form.modifyForm.first(@submit.prevent="changeServiceName")
+                            input#modifyServiceName(type="text" placeholder="Service name" :value='inputServiceName' @input="(e) => inputServiceName = e.target.value" required)
+                            .buttonWrap
+                                template(v-if="promiseRunning")
+                                    img.loading(src="@/assets/img/loading.png")
+                                template(v-else)
+                                    button.cancel(type="button" @click="modifyServiceName = false;") Cancel
+                                    button.save(type="submit") Save
                     template(v-else)
                         h4 {{ currentService.name }}
                         .material-symbols-outlined.mid.modify.clickable(:class="{'nonClickable' : !account?.email_verified}" @click="editServiceName") edit
@@ -35,7 +35,7 @@ main#service
             a.question(href="https://docs.skapi.com/introduction/getting-started.html" target="_blank")
                 .material-symbols-outlined.empty.sml help 
                 span Where do I put this code?
-
+        
         .info 
             .title 
                 h4 Security Setting
@@ -46,14 +46,14 @@ main#service
                 .list
                     h6(:class="{ active: modifyCors }") Cors
                     template(v-if="modifyCors")
-                        form.modifyInputForm(style="margin-top: 8px" @submit.prevent="changeCors")
-                            .customInput
-                                input#modifyCors(:disabled="promiseRunningCors || null" type="text" placeholder='https://your.domain.com' :value='inputCors' @input="(e) => {e.target.setCustomValidity(''); inputCors = e.target.value;}")
-                            template(v-if="promiseRunningCors")
-                                img.loading(src="@/assets/img/loading.png")
-                            template(v-else)
-                                .material-symbols-outlined.big.save(type="submit") done
-                                .material-symbols-outlined.sml.cancel(@click="modifyCors = false;") close
+                        form.modifyForm(style="margin-top: 8px" @submit.prevent="changeCors")
+                            input#modifyCors(:disabled="promiseRunningCors || null" type="text" placeholder='https://your.domain.com' :value='inputCors' @input="(e) => {e.target.setCustomValidity(''); inputCors = e.target.value;}")
+                            .buttonWrap 
+                                template(v-if="promiseRunningCors")
+                                    img.loading(src="@/assets/img/loading.png")
+                                template(v-else)
+                                    button.cancel(type="button" @click="modifyCors = false;") Cancel
+                                    button.save(type="submit") Save
                     template(v-else)
                         h5 {{ currentService.cors || '*' }}
                             .material-symbols-outlined.mid.pen.clickable(:class="{'nonClickable' : !account?.email_verified}" @click="editCors") edit
@@ -61,90 +61,72 @@ main#service
                 .list
                     h6(:class="{ active: modifyKey }") Secret Key
                     template(v-if="modifyKey")
-                        form.modifyInputForm(style="margin-top: 8px" @submit.prevent="setSecretKey")
-                            .customInput
-                                input#modifyKey(:disabled="promiseRunningSecKey || null" type="text" placeholder="Secret key for external request" :value='inputKey' @input="(e) => inputKey = e.target.value")
-                            template(v-if="promiseRunningSecKey")
-                                img.loading(src="@/assets/img/loading.png")
-                            template(v-else)
-                                .material-symbols-outlined.big.save(type="submit") done
-                                .material-symbols-outlined.sml.cancel(@click="modifyKey = false;") close
+                        form.modifyForm(style="margin-top: 8px" @submit.prevent="setSecretKey")
+                            input#modifyKey(:disabled="promiseRunningSecKey || null" type="text" placeholder="Secret key for external request" :value='inputKey' @input="(e) => inputKey = e.target.value")
+                            .buttonWrap 
+                                template(v-if="promiseRunningSecKey")
+                                    img.loading(src="@/assets/img/loading.png")
+                                template(v-else)
+                                    button.cancel(type="button" @click="modifyKey = false;") Cancel
+                                    button.save(type="submit") Save
                     template(v-else)
                         h5 {{ currentService.api_key || 'No key' }}
                             .material-symbols-outlined.mid.pen.clickable(:class="{'nonClickable' : !account?.email_verified}" @click="editKey") edit
 
-        .info.card
-            .inner
+        router-link.info.hover.user.clicked(:to='`/dashboard/${currentService.service}/users`')
+            .titleWrap
                 .title 
-                    .logoTitle
-                        .material-symbols-outlined.big group
-                        h4 Users
-                    router-link.material-symbols-outlined.arrowIcon.mid(:to='`/dashboard/${currentService.service}/users`') arrow_forward_ios
-                .contWrap.noWrap
-                    .cont 
-                        h6 # of Users
-                        p {{ currentService.users }}
-                    .cont(style="width:unset;")
-                        h6 Creating User
-                        .customSelect 
-                            select(:value="currentService.prevent_signup ? 'admin' : 'anyone'" @change="(e) => changeCreateUserMode(e)")
-                                option(value="admin") Only Admin allowed 
-                                option(value="anyone") Anyone allowed
-                            .material-symbols-outlined.mid.search.selectArrowDown(style="right:-30px;top:66%;") arrow_drop_down
+                    .material-symbols-outlined.big group
+                    h4 Users
+            .listWrap.noWrap
+                .list
+                    h6 # of Users
+                    h5 {{ currentService.users }}
 
-        .info.card
-            .inner
+        router-link.info.hover.record.clicked(:to='`/dashboard/${currentService.service}/records`')
+            .titleWrap
                 .title 
-                    .logoTitle
-                        .material-symbols-outlined.big database
-                        h4 Database
-                    router-link.material-symbols-outlined.arrowIcon.mid(:to='`/dashboard/${currentService.service}/records`') arrow_forward_ios
-                .contWrap.noWrap
-                    .cont 
-                        h6 # of database storage Used
-                        p {{ convertToMb(storageInfo?.[currentService.service]?.database) }}
-                    .cont 
-                        h6 # of cloud storage Used
-                        p {{ convertToMb(storageInfo?.[currentService.service]?.cloud) }}
-
-        .info.card
-            .inner
+                    .material-symbols-outlined.big database
+                    h4 Database
+            .listWrap.noWrap
+                .list
+                    h6 # of database storage Used
+                    h5 {{ convertToMb(storageInfo?.[currentService.service]?.database) }}
+                .list
+                    h6 # of cloud storage Used
+                    h5 {{ convertToMb(storageInfo?.[currentService.service]?.cloud) }}
+        router-link.info.hover.mail.clicked(:to='`/dashboard/${currentService.service}/mail`' :class="{'nonClick' : account.access_group == 1}")
+            .titleWrap
                 .title 
-                    .logoTitle
-                        .material-symbols-outlined.big mail
-                        h4 Mail
-                    router-link.material-symbols-outlined.arrowIcon.mid(:to='`/dashboard/${currentService.service}/mail`' :class="{'nonClick' : account.access_group == 1}") arrow_forward_ios
-                .contWrap.noWrap
-                    template(v-if="account.access_group == 1")
-                        .cont(style="width:100%; padding:0;")
-                            h6 Trial service does not provide mail.
-                    template(v-else)
-                        .cont 
-                            h6 # Subscribers
-                            p {{ currentService.newsletter_subscribers }}
-                        .cont 
-                            h6 # Mail storage used 
-                            p {{ convertToMb(storageInfo?.[currentService.service]?.email) }}
-
-        .info.card
-            .inner
+                    .material-symbols-outlined.big mail
+                    h4 Mail
+            .listWrap.noWrap
+                template(v-if="account.access_group == 1")
+                    .list(style="width:100%; padding:0;")
+                        h6 Trial service does not provide mail.
+                template(v-else)
+                    .list
+                        h6 # Subscribers
+                        h5 {{ currentService.newsletter_subscribers }}
+                    .list 
+                        h6 # Mail storage used 
+                        h5 {{ convertToMb(storageInfo?.[currentService.service]?.email) }}
+        router-link.info.hover.domain.clicked(:to='`/dashboard/${currentService.service}/subdomain`' :class="{'nonClick' : account.access_group == 1}")
+            .titleWrap
                 .title 
-                    .logoTitle
-                        .material-symbols-outlined.big language
-                        h4 Hosting
-                    router-link.material-symbols-outlined.arrowIcon.mid(:to='`/dashboard/${currentService.service}/subdomain`' :class="{'nonClick' : account.access_group == 1}") arrow_forward_ios
-                .contWrap.noWrap
-                    template(v-if="account.access_group == 1")
-                        .cont(style="width:100%; padding:0;")
-                            h6 Trial service does not provide hosting.
-                    template(v-else)
-                        .cont 
-                            h6 Registered Subdomain
-                            p {{ currentSubdomain }}
-                        .cont 
-                            h6 Host storage used
-                            p {{ convertToMb(storageInfo?.[currentService.service]?.host) }}
-
+                    .material-symbols-outlined.big language
+                    h4 Hosting
+            .listWrap.noWrap
+                template(v-if="account.access_group == 1")
+                    .list(style="width:100%; padding:0;")
+                        h6 Trial service does not provide hosting.
+                template(v-else)
+                    .list
+                        h6 Registered Subdomain
+                        h5 {{ currentSubdomain }}
+                    .list
+                        h6 Host storage used
+                        h5 {{ convertToMb(storageInfo?.[currentService.service]?.host) }}
     .deleteWrap(:class="{'nonClickable' : !account?.email_verified}")
         .deleteInner(@click="!account?.email_verified ? false : openDeleteService = true;")
             .material-symbols-outlined.mid delete
@@ -157,7 +139,8 @@ DeleteService(v-if="openDeleteService" @close="openDeleteService = false;")
 import { computed, nextTick, ref, watch } from 'vue';
 import { useRouter } from 'vue-router';
 import { currentService, storageInfo } from '@/data.js';
-import { skapi, account, domain } from '@/main.js';
+import { skapi, account } from '@/main.js';
+import { onlyAdminCreateUsers } from '@/views/Service/functions.js'
 import DisableServiceOverlay from '@/views/Service/DisableServiceOverlay.vue';
 import DeleteService from '@/components/DeleteService.vue';
 
@@ -187,9 +170,9 @@ let currentSubdomain = computed(() => {
     if (currentService.value.subdomain) {
         if (currentService.value.subdomain[0] === '*' || currentService.value.subdomain[0] === '+') {
             // subdomain will start with * or + when in pending state or removal state
-            return currentService.value.subdomain.slice(1) + '.' + domain;
+            return currentService.value.subdomain.slice(1) + '.skapi.com';
         }
-        return currentService.value.subdomain + '.' + domain;
+        return currentService.value.subdomain + '.skapi.com';
     }
     else {
         return 'No subdomain';
@@ -245,11 +228,11 @@ let copy = (e) => {
     // document.execCommand('copy');
     // doc.remove();
     const range = document.createRange();
-    range.selectNode(currentTarget.previousSibling);
-    window.getSelection().removeAllRanges();
-    window.getSelection().addRange(range);
-    document.execCommand('copy');
-    window.getSelection().removeAllRanges();
+      range.selectNode(currentTarget.previousSibling);
+      window.getSelection().removeAllRanges();
+      window.getSelection().addRange(range);
+      document.execCommand('copy');
+      window.getSelection().removeAllRanges();
 
     currentTarget.classList.add('copied');
     setTimeout(() => {
@@ -341,15 +324,6 @@ let enableDisableToggle = () => {
         // disable (opens disable service dialog)
         openDisableService.value = true;
     }
-}
-let changeCreateUserMode = (e) => {
-    e.target.parentNode.classList.add('nonClickable');
-
-    skapi.setServiceOption({
-        serviceId: currentService.value.service, option: {'prevent_signup': e.target.value == 'admin' ? true : false}
-    }).then(() => {
-        e.target.parentNode.classList.remove('nonClickable');
-    }).catch(err => console.log(err));
 }
 let disableService = (e) => {
     if (enableDisablePromise.value) {
@@ -452,10 +426,6 @@ watch(modifyCors, () => {
             }
         }
 
-        &.card {
-            padding-top: 1.4rem;
-        }
-
         .title {
             position: relative;
             width: 100%;
@@ -485,46 +455,46 @@ watch(modifyCors, () => {
                     display: inline-block;
                     height: 30px;
                 }
-                .date {
+                .date {        
                     span {
                         color: rgba(0, 0, 0, 0.40);
                         font-size: 0.8rem;
                         font-weight: 500;
                         margin-right: 10px;
                     }
-
+    
                     h6 {
                         display: inline-block;
                         color: rgba(0, 0, 0, 0.60);
                     }
                 }
-
+    
                 .toggleWrap {
                     display: inline-block;
                     margin-left: 30px;
                     opacity: 1;
-
+    
                     &.locked {
                         opacity: 0.4;
                     }
-
+    
                     &.active {
                         .toggleBg {
                             background-color: #293FE6;
-
+    
                             .toggleBtn {
                                 transform: translate(31px, -50%);
                                 transition: all 1s;
                             }
                         }
                     }
-
+    
                     span {
                         color: rgba(0, 0, 0, 0.40);
                         font-size: 0.8rem;
                         font-weight: 500;
                     }
-
+    
                     .toggleBg {
                         position: relative;
                         display: inline-block;
@@ -533,10 +503,10 @@ watch(modifyCors, () => {
                         height: 32px;
                         margin-left: 1rem;
                         border-radius: 16px;
-                        background-color: rgba(0, 0, 0, 0.6);
-                        transition: all 0.5s;
-
-                        &.nonClickable {
+                        background-color: rgba(0, 0, 0, 0.25);
+                        transition: all 1s;
+    
+                        &.nonClickable { 
                             .toggleBtn {
                                 cursor: default;
                             }
@@ -558,11 +528,9 @@ watch(modifyCors, () => {
                 }
             }
 
-            .logoTitle {
-                .material-symbols-outlined {
-                    margin-right: 17px;
-                    vertical-align: middle;
-                }
+            .material-symbols-outlined {
+                margin-right: 17px;
+                vertical-align: middle;
             }
 
             .modify {
@@ -587,7 +555,7 @@ watch(modifyCors, () => {
             .title {
                 justify-content: start;
             }
-
+            
             h4 {
                 display: inline-block;
             }
@@ -688,7 +656,7 @@ watch(modifyCors, () => {
     margin-top: 1.5rem;
     user-select: text !important;
     margin-bottom: 1rem;
-
+    
     .codeInner {
         width: 100%;
         white-space: pre;
@@ -750,6 +718,65 @@ watch(modifyCors, () => {
     }
 }
 
+.modifyForm {
+    width: 100%;
+    display: flex;
+    flex-wrap: nowrap;
+    justify-content: space-between;
+
+    &.first {
+        input {
+            width: 52%;
+            margin-right: 3%;
+        }
+
+        .buttonWrap {
+            width: 45%;
+        }
+    }
+
+    input {
+        width: max(246px, 65%);
+        height: 44px;
+        margin-right: 3%;
+        background-color: #EDEDED;
+        border: 0;
+        padding: 12px 20px;
+        border-radius: 8px;
+        font-size: 16px;
+        font-weight: 500;
+        color: rgba(0, 0, 0, 0.8);
+    }
+
+    .buttonWrap {
+        width: max(153px, 32%);
+        display: flex;
+        align-items: center;
+        flex-wrap: nowrap;
+
+        button {
+            height: 32px;
+            border: 2px solid #293FE6;
+            border-radius: 8px;
+            padding: 0 12px;
+            font-size: 16px;
+            font-weight: 700;
+            cursor: pointer;
+
+            &.cancel {
+                background-color: unset;
+                color: #293FE6;
+                margin-right: 10px;
+            }
+
+            &.save {
+                background-color: #293FE6;
+                color: #fff;
+            }
+        }
+    }
+}
+
 @media (max-width: 1023px) {
     .infoWrap {
         .info {
@@ -762,7 +789,7 @@ watch(modifyCors, () => {
 @media (max-width:767px) {
     .infoWrap {
         .info {
-            >.title {
+            .title {
                 display: block;
 
                 .name {
@@ -773,15 +800,6 @@ watch(modifyCors, () => {
                 .right {
                     > div {
                         text-align: left;
-                    }
-                }
-            }
-            .listWrap {
-                display: block;
-                .list {
-                    width: unset;
-                    .customInput {
-                        max-width: unset;
                     }
                 }
             }
