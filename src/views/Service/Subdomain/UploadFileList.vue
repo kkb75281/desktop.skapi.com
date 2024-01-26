@@ -11,38 +11,54 @@
         .progress(:style="{ width: props.wholeProgress + '%', height: '100%', background: '#293FE6', position: 'absolute' }")
     .content   
         .listWrap 
-            .list(v-for="(file, index) in fileList") 
-                .file 
-                    .material-symbols-outlined.mid.type(v-if="file.name[0] == '#'") folder
-                    .material-symbols-outlined.mid.type(v-else-if="file.name.includes('.html')") html
-                    .material-symbols-outlined.mid.type(v-else-if="file.name.includes('.css')") css
-                    .material-symbols-outlined.mid.type(v-else-if="file.name.includes('.pdf')") picture_as_pdf
-                    .material-symbols-outlined.mid.type(v-else-if="img.includes(file.name.split('.').slice(-1)[0])") image
-                    .material-symbols-outlined.mid.type(v-else-if="vid.includes(file.name.split('.').slice(-1)[0])") movie
-                    .material-symbols-outlined.mid.type(v-else) draft
-                    .pathWrapper
-                        .path {{ file.name }}
+            .list(v-for="(file, key, idx) in fileList" :class="hideDuplicateFolder(fileList, key, idx)" :key="idx")
+                .material-symbols-outlined.mid.type(v-if="file.path.split('/').length > 1") folder
+                .material-symbols-outlined.mid.type(v-else-if="file.name.includes('.html')") html
+                .material-symbols-outlined.mid.type(v-else-if="file.name.includes('.css')") css
+                .material-symbols-outlined.mid.type(v-else-if="file.name.includes('.pdf')") picture_as_pdf
+                .material-symbols-outlined.mid.type(v-else-if="img.includes(file.name.split('.').slice(-1)[0])") image
+                .material-symbols-outlined.mid.type(v-else-if="vid.includes(file.name.split('.').slice(-1)[0])") movie
+                .material-symbols-outlined.mid.type(v-else) draft
+                .pathWrapper
+                    .path {{ file.path.split('/')[0] }}
                 .status
                     //- .material-symbols-outlined.mid(v-if="file.status == 'uploading'") cloud_upload
-                    
+
                     .material-symbols-outlined.mid(v-if="file.progress === 100") check_circle
                     img.loading(v-else-if='file.progress < 1' src="@/assets/img/loading.png")
                     ProgressCircle(v-else :percent='file.progress')
-                    
+
                     //- .material-symbols-outlined.mid(v-else-if="file.status == 'error'") error
                     //- .material-symbols-outlined.mid(v-else) pending
 </template>
 <script setup>
-import { ref } from "vue";
+import { computed, ref } from "vue";
 import { img, vid } from '@/views/Service/Subdomain/extensions';
 import ProgressCircle from "@/components/ProgressCircle.vue";
 let props = defineProps(['fileList', 'wholeProgress', 'uploadingPromise']);
 let emits = defineEmits(['cancel']);
 let hideList = ref(false);
+let hideDuplicateFolder = (fileList, key, idx) => {
+    let keys = Object.keys(fileList);
+    let thisFile = fileList[key];
+    let thisFileIsFolder = thisFile.path.split('/').length > 1;
+    let nextFile = keys?.[idx + 1] ? fileList[keys[idx + 1]] : null;
+    let nextFileIsFolder = nextFile ? nextFile.path.split('/').length > 1 : false;
+    if(thisFileIsFolder && nextFileIsFolder) {
+        if(thisFile.path.split('/')[0] === nextFile.path.split('/')[0]) {
+            // is same folder
+            return 'displayNone';
+        }
+    }
 
-console.log(props.wholeProgress)
+    return '';
+}
+
 </script>
 <style lang="less">
+.displayNone {
+    display: none !important;
+}
 .uploadListWrapper {
     position: fixed;
     width: 500px;
@@ -124,7 +140,7 @@ console.log(props.wholeProgress)
 
                 .pathWrapper {
                     margin-left: 12px;
-                    
+
                     .path {
                         width: 360px;
                         white-space: nowrap;
@@ -135,4 +151,5 @@ console.log(props.wholeProgress)
             }
         }
     }
-}</style>
+}
+</style>

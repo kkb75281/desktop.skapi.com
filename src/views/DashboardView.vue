@@ -46,17 +46,17 @@ main#dashboard
                             .overflow {{ service.cors }}
                         td.center {{ typeof service.timestamp === 'string' ? service.timestamp : new Date(service.timestamp).toDateString() }}
                         td.center
-                            template(v-if="Math.ceil(service.users/100*100)")
-                                .percent(:class='{"green": 0 <= Math.ceil(service.users/100*100) && Math.ceil(service.users/100*100) < 51, "orange": 51 <= Math.ceil(service.users/100*100) && Math.ceil(service.users/100*100) < 81, "red": 81 <= Math.ceil(service.users/100*100) && Math.ceil(service.users/100*100) < 101}') {{ Math.ceil(service.users/100*100) + '%' }}
+                            template(v-if="Math.ceil(service.users/10000*100)")
+                                .percent(:class='{"green": 0 <= Math.ceil(service.users/10000*100) && Math.ceil(service.users/10000*100) < 51, "orange": 51 <= Math.ceil(service.users/10000*100) && Math.ceil(service.users/10000*100) < 81, "red": 81 <= Math.ceil(service.users/10000*100) && Math.ceil(service.users/10000*100) < 101}') {{ Math.ceil(service.users/10000*100) + '%' }}
                             template(v-else) 
                                 .percent.green 0%
                         td.center
-                            template(v-if="Math.ceil(storageInfo?.[service.service]?.cloud/5000*100)")
+                            template(v-if="Math.ceil(storageInfo?.[service.service]?.cloud/53687091200*100)")
                                 .percent(:class='{"green": 0 <= Math.ceil(storageInfo?.[service.service]?.cloud/5000*100) && Math.ceil(storageInfo?.[service.service]?.cloud/5000*100) < 51, "orange": 51 <= Math.ceil(storageInfo?.[service.service]?.cloud/5000*100) && Math.ceil(storageInfo?.[service.service]?.cloud/5000*100) < 81, "red": 81 <= Math.ceil(storageInfo?.[service.service]?.cloud/5000*100)}') {{ Math.ceil(storageInfo?.[service.service]?.cloud/5000*100) + '%' }}
                             template(v-else)
                                 .percent.green 0%
                         td(style="padding-left:40px;")
-                            template(v-if="Math.ceil(storageInfo?.[service.service]?.database/5000*100)")
+                            template(v-if="Math.ceil(storageInfo?.[service.service]?.database/4294967296*100)")
                                 .percent(:class='{"green": 0 <= Math.ceil(storageInfo?.[service.service]?.database/5000*100) && Math.ceil(storageInfo?.[service.service]?.database/5000*100) < 51, "orange": 51 <= Math.ceil(storageInfo?.[service.service]?.database/5000*100) && Math.ceil(storageInfo?.[service.service]?.database/5000*100) < 81, "red": 81 <= Math.ceil(storageInfo?.[service.service]?.database/5000*100)}') {{ Math.ceil(storageInfo?.[service.service]?.database/5000*100) + '%' }}
                             template(v-else)
                                 .percent.green 0%
@@ -77,14 +77,14 @@ main#dashboard
                                 span {{ service.users }}
                             .info.inline 
                                 h6 Database Used
-                                span {{ storageInfo?.[service.service]?.database + '/5000' }}
+                                span {{ storageInfo?.[service.service]?.database + '/4000MB' }}
                             .info.inline 
                                 h6 Subscription Plan
-                                span asdasd
+                                span Standard
                             .info.inline 
                                 h6 Hosting Strorage
                                 template(v-if="service?.subdomain")
-                                    span {{ convertToMb(storageInfo?.[service.service]?.host) + '/100' }}
+                                    span {{ convertToMb(storageInfo?.[service.service]?.host) + '/50000MB' }}
                                 template(v-else)
                                     span -
                             br
@@ -94,7 +94,7 @@ main#dashboard
                                 span {{ regions?.[service.region] || service.region }}
                             .info.inline 
                                 h6 Cloud Storage Used
-                                span {{ storageInfo?.[service.service]?.cloud + '/5000' }}
+                                span {{ storageInfo?.[service.service]?.cloud + '/50000MB' }}
                             .info.inline 
                                 h6 Date Created
                                 span {{ typeof service.timestamp === 'string' ? service.timestamp : new Date(service.timestamp).toDateString() }}
@@ -160,30 +160,30 @@ main#dashboard
                         ul
                             li 
                                 .material-symbols-outlined.sml.li check_circle
-                                span asdaasd asdasdasdaasd asdasdasdaasd
+                                span Provides 10k user accounts
                             li 
                                 .material-symbols-outlined.sml.li check_circle
-                                span asdaasd asdasdasdaasd asdasdasdaasd
+                                span 4 GB of database
                             li 
                                 .material-symbols-outlined.sml.li check_circle
-                                span asdaasd asdasdasdaasd asdasdasdaasd
+                                span 50 GB of file storage
                             li 
-                                .material-symbols-outlined.sml.li check_circle
-                                span asdaasd asdasdasdaasd asdasdasdaasd
+                                .material-symbols-outlined.sml.li warning
+                                span All the users and data will be deleted every 7 days
 
-                        ul
-                            li 
-                                .material-symbols-outlined.sml.li check_circle
-                                span asdaasd asdasdasdaasd asdasdasdaasd
-                            li 
-                                .material-symbols-outlined.sml.li check_circle
-                                span asdaasd asdasdasdaasd asdasdasdaasd
-                            li 
-                                .material-symbols-outlined.sml.li check_circle
-                                span asdaasd asdasdasdaasd asdasdasdaasd
-                            li 
-                                .material-symbols-outlined.sml.li check_circle
-                                span asdaasd asdasdasdaasd asdasdasdaasd
+                        //- ul
+                        //-     li 
+                        //-         .material-symbols-outlined.sml.li check_circle
+                        //-         span asdaasd asdasdasdaasd asdasdasdaasd
+                        //-     li 
+                        //-         .material-symbols-outlined.sml.li check_circle
+                        //-         span asdaasd asdasdasdaasd asdasdasdaasd
+                        //-     li 
+                        //-         .material-symbols-outlined.sml.li check_circle
+                        //-         span asdaasd asdasdasdaasd asdasdasdaasd
+                        //-     li 
+                        //-         .material-symbols-outlined.sml.li check_circle
+                        //-         span asdaasd asdasdasdaasd asdasdasdaasd
         
             br
 
@@ -200,30 +200,30 @@ main#dashboard
                         ul
                             li 
                                 .material-symbols-outlined.sml.li check_circle
-                                span asdaasd asdasdasdaasd asdasdasdaasd
+                                span Provides 10k user accounts
                             li 
                                 .material-symbols-outlined.sml.li check_circle
-                                span asdaasd asdasdasdaasd asdasdasdaasd
+                                span 4GB of database
                             li 
                                 .material-symbols-outlined.sml.li check_circle
-                                span asdaasd asdasdasdaasd asdasdasdaasd
+                                span 50GB each for file storage and hosting storage
                             li 
                                 .material-symbols-outlined.sml.li check_circle
-                                span asdaasd asdasdasdaasd asdasdasdaasd
+                                span Real-time data
 
                         ul
                             li 
                                 .material-symbols-outlined.sml.li check_circle
-                                span asdaasd asdasdasdaasd asdasdasdaasd
+                                span Automated emails and sending newsletters
                             li 
                                 .material-symbols-outlined.sml.li check_circle
-                                span asdaasd asdasdasdaasd asdasdasdaasd
+                                span 1GB of email storage
                             li 
                                 .material-symbols-outlined.sml.li check_circle
-                                span asdaasd asdasdasdaasd asdasdasdaasd
-                            li 
-                                .material-symbols-outlined.sml.li check_circle
-                                span asdaasd asdasdasdaasd asdasdasdaasd
+                                span Subdomain hosting
+                            //- li 
+                            //-     .material-symbols-outlined.sml.li check_circle
+                            //-     span asdaasd asdasdasdaasd asdasdasdaasd
         
             br
 
@@ -236,30 +236,30 @@ main#dashboard
                         ul
                             li 
                                 .material-symbols-outlined.sml.li check_circle
-                                span asdaasd asdasdasdaasd asdasdasdaasd
+                                span 100k user accounts
                             li 
                                 .material-symbols-outlined.sml.li check_circle
-                                span asdaasd asdasdasdaasd asdasdasdaasd
+                                span 100GB of database
                             li 
                                 .material-symbols-outlined.sml.li check_circle
-                                span asdaasd asdasdasdaasd asdasdasdaasd
+                                span 1TB each for file storage and hosting storage
                             li 
                                 .material-symbols-outlined.sml.li check_circle
-                                span asdaasd asdasdasdaasd asdasdasdaasd
+                                span Real-time data
 
                         ul
                             li 
                                 .material-symbols-outlined.sml.li check_circle
-                                span asdaasd asdasdasdaasd asdasdasdaasd
+                                span Automated emails and sending newsletters
                             li 
                                 .material-symbols-outlined.sml.li check_circle
-                                span asdaasd asdasdasdaasd asdasdasdaasd
+                                span 10GB of email storage
                             li 
                                 .material-symbols-outlined.sml.li check_circle
-                                span asdaasd asdasdasdaasd asdasdasdaasd
+                                span Subdomain hosting
                             li 
                                 .material-symbols-outlined.sml.li check_circle
-                                span asdaasd asdasdasdaasd asdasdasdaasd
+                                span unlimited use with pay-as-you-go when exceeding the limit
 
             br
         
@@ -676,7 +676,7 @@ skapi.getProfile().then(u => {
             }
             .contWrap {
                 ul {
-                    width: 50%;
+                    width: 50%; // <- i don't advise horizontal layout if unnecessary
                     list-style: none;
 
                     li {
