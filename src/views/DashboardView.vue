@@ -51,14 +51,13 @@ main#dashboard
                             template(v-else) 
                                 .percent.green 0%
                         td.center
-                            template(v-if="Math.ceil(service?.info?.cloud/53687091200*100)")
-                                // 1 = 1 byte, 53687091200 = 50 gb
-                                .percent(:class='{"green": 0 <= Math.ceil(service?.info?.cloud/53687091200*100) && Math.ceil(service?.info?.cloud/53687091200*100) < 51, "orange": 51 <= Math.ceil(service?.info?.cloud/53687091200*100) && Math.ceil(service?.info?.cloud/53687091200*100) < 81, "red": 81 <= Math.ceil(service?.info?.cloud/53687091200*100)}') {{ Math.ceil(service?.info?.cloud/53687091200*100) + '%' }}
+                            template(v-if="Math.ceil(storageInfo?.[service.service]?.cloud/53687091200*100)")
+                                .percent(:class='{"green": 0 <= Math.ceil(storageInfo?.[service.service]?.cloud/5000*100) && Math.ceil(storageInfo?.[service.service]?.cloud/5000*100) < 51, "orange": 51 <= Math.ceil(storageInfo?.[service.service]?.cloud/5000*100) && Math.ceil(storageInfo?.[service.service]?.cloud/5000*100) < 81, "red": 81 <= Math.ceil(storageInfo?.[service.service]?.cloud/5000*100)}') {{ Math.ceil(storageInfo?.[service.service]?.cloud/5000*100) + '%' }}
                             template(v-else)
                                 .percent.green 0%
                         td(style="padding-left:40px;")
-                            template(v-if="Math.ceil(service?.info?.database/4294967296*100)")
-                                .percent(:class='{"green": 0 <= Math.ceil(service?.info?.database/4294967296*100) && Math.ceil(service?.info?.database/4294967296*100) < 51, "orange": 51 <= Math.ceil(service?.info?.database/4294967296*100) && Math.ceil(service?.info?.database/4294967296*100) < 81, "red": 81 <= Math.ceil(service?.info?.database/4294967296*100)}') {{ Math.ceil(service?.info?.database/4294967296*100) + '%' }}
+                            template(v-if="Math.ceil(storageInfo?.[service.service]?.database/4294967296*100)")
+                                .percent(:class='{"green": 0 <= Math.ceil(storageInfo?.[service.service]?.database/5000*100) && Math.ceil(storageInfo?.[service.service]?.database/5000*100) < 51, "orange": 51 <= Math.ceil(storageInfo?.[service.service]?.database/5000*100) && Math.ceil(storageInfo?.[service.service]?.database/5000*100) < 81, "red": 81 <= Math.ceil(storageInfo?.[service.service]?.database/5000*100)}') {{ Math.ceil(storageInfo?.[service.service]?.database/5000*100) + '%' }}
                             template(v-else)
                                 .percent.green 0%
                             .menu(@click.stop="(e) => showPlanSetting(e, index)" :class='{"nonClickable": !account.email_verified}')
@@ -78,14 +77,14 @@ main#dashboard
                                 span {{ service.users }}
                             .info.inline 
                                 h6 Database Used
-                                span {{ convertToMb(service?.info?.database) + '/4000MB' }}
+                                span {{ storageInfo?.[service.service]?.database + '/4000MB' }}
                             .info.inline 
                                 h6 Subscription Plan
                                 span Standard
                             .info.inline 
                                 h6 Hosting Strorage
                                 template(v-if="service?.subdomain")
-                                    span {{ convertToMb(service?.info?.host) + '/50000MB' }}
+                                    span {{ convertToMb(storageInfo?.[service.service]?.host) + '/50000MB' }}
                                 template(v-else)
                                     span -
                             br
@@ -95,7 +94,7 @@ main#dashboard
                                 span {{ regions?.[service.region] || service.region }}
                             .info.inline 
                                 h6 Cloud Storage Used
-                                span {{ convertToMb(service?.info?.cloud) + '/50000MB' }}
+                                span {{ storageInfo?.[service.service]?.cloud + '/50000MB' }}
                             .info.inline 
                                 h6 Date Created
                                 span {{ typeof service.timestamp === 'string' ? service.timestamp : new Date(service.timestamp).toDateString() }}
@@ -114,7 +113,7 @@ main#dashboard
                         br
                         p Get started by creating a new service.
     br
-    .plus(style="display:block;text-align:center;")
+    .plus(style="display:block;text-align:center;padding-bottom:2rem;")
         .material-symbols-outlined.big(@click="createService" style="color:#293FE6;cursor:pointer;") add_circle
    
     #moreVert.hide(v-if="showMore" @click.stop style="--moreVert-right: 100px;" :style="{top: clientY}")
@@ -132,7 +131,7 @@ main#dashboard
         form(@submit.prevent="addService")
             .label
                 h6 Name of Service
-            input#serviceName(type="text" :class="{'error' : error}" @input='e=>newServiceName=e.target.value' placeholder="Name of Service")
+            input#serviceName(type="text" :class="{'warning' : error}" @input='(e)=>{newServiceName=e.target.value;error="";}' placeholder="Name of Service")
             .error(v-if="error")
                 .material-symbols-outlined.mid error
                 span {{ error }}
@@ -278,8 +277,8 @@ main#dashboard
 import { computed, nextTick, onMounted, ref } from 'vue';
 import { useRouter } from 'vue-router';
 import { skapi, account, bodyClick } from '@/main.js';
-import { services, serviceFetching } from '@/data.js';
-import { launch } from '@/views/Service/Subdomain/SubdomainFetch.js';
+import { services, serviceFetching, storageInfo } from '@/data.js';
+import { launch, subdomainInfo } from '@/views/Service/Subdomain/SubdomainFetch.js';
 
 onMounted(() => {
     document.querySelector('body').classList.add('fa');
@@ -411,46 +410,88 @@ document.addEventListener('mouseup', function () {
     document.removeEventListener('mousemove', mouseMoveHandler);
 });
 
+let getServiceInfo = () => {
+    if (services.value) {
+        for(let i=0; i<services.value.length; i++) {
+            let service = services.value[i].service
+    
+            if (!storageInfo.value[service]) {
+                storageInfo.value[service] = {};
+            }
+
+            skapi.storageInformation(service).then(i => {
+                console.log(i)
+                // get storage info
+                for (let k in i) {
+                    storageInfo.value[service][k] = i[k];
+                }
+            });
+    
+            let sd = services.value[i].subdomain;
+            if (sd && (sd[0] !== '*' || sd[0] !== '+')) {
+                // get subdomain storage info (404 file info)
+                skapi.getSubdomainInfo(service, {
+                    subdomain: sd,
+                }).then(s => {
+                    subdomainInfo.value[sd] = s
+                }).catch(err=>err);
+
+                launch(services.value[i].subdomain, f => {
+                    console.log(f)
+                    if (f.length) {
+                        storageInfo.value[services.value[i].service].host = f[0].size;
+                        console.log(storageInfo.value[services.value[i].service])
+                    }
+                }, true);
+            }
+        }
+        // console.log(storageInfo.value)
+        // console.log(subdomainInfo.value)
+    }
+}
+
 // update services
 if (serviceFetching.value) {
     serviceFetching.value.then(() => {
         services.value = skapi.serviceMap.map(sid => skapi.services[sid]).reverse();
-        for(let i=0; i<services.value.length; i++) {
-            let sd = services.value[i]?.subdomain;
-            let host = 0;
-            if (sd) {
-                launch(services.value[i].subdomain, f => {
-                    if (f.length) {
-                        host = f[0].size;
-                    }
-                }, true);
-            }
-            skapi.storageInformation(services.value[i].service).then(async(info) => {
-                info.host = host
-                services.value[i].info = info;
-            });
+        getServiceInfo();
+        // for(let i=0; i<services.value.length; i++) {
+        //     let sd = services.value[i]?.subdomain;
+        //     let host = 0;
+        //     if (sd) {
+        //         launch(services.value[i].subdomain, f => {
+        //             if (f.length) {
+        //                 host = f[0].size;
+        //             }
+        //         }, true);
+        //     }
+        //     skapi.storageInformation(services.value[i].service).then(async(info) => {
+        //         info.host = host
+        //         services.value[i].info = info;
+        //     });
 
-        }
-        console.log(services.value)
+        // }
+        // console.log(services.value)
     })
 }
 else {
     services.value = skapi.serviceMap.map(sid => skapi.services[sid]).reverse();
-    for(let i=0; i<services.value.length; i++) {
-        let sd = services.value[i]?.subdomain;
-            let host = 0;
-            if (sd) {
-                launch(services.value[i].subdomain, f => {
-                    if (f.length) {
-                        host = f[0].size;
-                    }
-                }, true);
-            }
-        skapi.storageInformation(services.value[i].service).then(info => {
-            services.value[i].info = info;
-        });
-    }
-    console.log(services.value)
+    getServiceInfo();
+    // for(let i=0; i<services.value.length; i++) {
+    //     let sd = services.value[i]?.subdomain;
+    //         let host = 0;
+    //         if (sd) {
+    //             launch(services.value[i].subdomain, f => {
+    //                 if (f.length) {
+    //                     host = f[0].size;
+    //                 }
+    //             }, true);
+    //         }
+    //     skapi.storageInformation(services.value[i].service).then(info => {
+    //         services.value[i].info = info;
+    //     });
+    // }
+    // console.log(services.value)
 }
 
 let create = ref(false);
