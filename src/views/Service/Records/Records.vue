@@ -3,16 +3,26 @@ main#database
     section#section
         // search form
         form(@submit.prevent='searchRecords')
+            .searchWhat
+                .material-symbols-outlined.mid.search(style="margin-right:10px;") search
+                .customSelect(style="display:inline-block;width:176px;")
+                    select(v-model="advancedForm.selectedOption" style="font-size:1rem;font-weight:700")
+                        option(value="Table") Table Name
+                        option(value="User") User ID
+                        option(value="Record ID") Record ID
+                    .material-symbols-outlined.mid.selectArrowDown arrow_drop_down
+            br
             .searchForm
-                .selectBar
+                .selectBar(v-if="advancedForm.selectedOption == 'Table'")
                     .customSelect
-                        select(v-model="advancedForm.selectedOption")
-                            option(value="Table") Table Name
-                            option(value="User") User ID
-                            option(value="Record ID") Record ID
+                        //- select(name='access_group' v-model="advancedForm.table.access_group")
+                        select(name='access_group' @change="e=>{advancedForm.table.access_group = e.target.value}" required)
+                            option(value="" selected disabled hidden) Access Group
+                            option(value="0") Public
+                            option(value="1") Authorized
+                            option(value="private") Private
                         .material-symbols-outlined.mid.selectArrowDown arrow_drop_down
-                .searchBar
-                    .material-symbols-outlined.mid.search search
+                .searchBar(:class="{'fullWidth' : advancedForm.selectedOption !== 'Table'}")
                     input(
                         ref='mainSearchInput'
                         :placeholder="'Search by ' + advancedForm.selectedOption"
@@ -26,15 +36,15 @@ main#database
                     .material-symbols-outlined.mid.delete(v-if="advancedForm.searchText" @click="e=>{advancedForm.searchText = ''; mainSearchInput.focus()}") close
             .advancedForm(v-if="advancedForm.selectedOption === 'Table'")
                 .left 
-                    .condition
-                        .label Access Group
-                        .radioFormWrap
-                            .customSelect
-                                select(name='access_group' v-model="advancedForm.table.access_group" style='width:114px;padding-left:4px;')
-                                    option(value="0") Public
-                                    option(value="1") Authorized
-                                    option(value="private") Private
-                                .material-symbols-outlined.mid.selectArrowDown arrow_drop_down
+                    //- .condition
+                    //-     .label Access Group
+                    //-     .radioFormWrap
+                    //-         .customSelect
+                    //-             select(name='access_group' v-model="advancedForm.table.access_group" style='width:114px;padding-left:4px;')
+                    //-                 option(value="0") Public
+                    //-                 option(value="1") Authorized
+                    //-                 option(value="private") Private
+                    //-             .material-symbols-outlined.mid.selectArrowDown arrow_drop_down
 
                     .condition 
                         .label Subscription
@@ -51,7 +61,7 @@ main#database
                         .textFormWrap
                             input(type="text" name='tag' placeholder='Tag name' @input="e=>{e.target.setCustomValidity(''); advancedForm.tag=e.target.value;}" @change="e=>{if(!specialChars(e.target.value, false, true)) { e.target.setCustomValidity('Special characters are not allowed'); e.target.reportValidity(); }}")
                 .right
-                    .title Index
+                    //- .title Index
                     .condition 
                         .label Index Name
                         .textFormWrap
@@ -1147,13 +1157,20 @@ watch(() => selectedRecord.value, () => {
                 font-size: 0.8rem;
                 padding: 0 1rem;
                 font-weight: 500;
-                color: rgba(0, 0, 0, 0.80);
+                color: rgba(0,0,0,0.6);
+            }
+            .selectArrowDown {
+                color: rgba(0,0,0,0.6);
             }
         }
 
         .searchBar {
             position: relative;
             width: calc(100% - 200px - 1rem);
+
+            &.fullWidth {
+                width: 100%;
+            }
 
             input {
                 width: 100%;
@@ -1162,7 +1179,7 @@ watch(() => selectedRecord.value, () => {
                 border-radius: 8px;
                 background: rgba(0, 0, 0, 0.05);
                 font-size: 0.8rem;
-                padding-left: 50px;
+                padding-left: 20px;
                 font-weight: 400;
             }
 
@@ -1196,7 +1213,7 @@ watch(() => selectedRecord.value, () => {
 
         .right {
             .title {
-                color: rgba(0, 0, 0, 0.80);
+                color: rgba(0, 0, 0, 0.60);
                 font-size: 0.7rem;
                 font-weight: 700;
                 margin-bottom: 20px;
@@ -1204,7 +1221,7 @@ watch(() => selectedRecord.value, () => {
         }
 
         .condition {
-            margin-bottom: 1rem;
+            margin-bottom: 0.5rem;
 
             &:last-child {
                 margin-bottom: 1.4rem;
@@ -1218,7 +1235,7 @@ watch(() => selectedRecord.value, () => {
 
             .label {
                 width: 90px;
-                color: rgba(0, 0, 0, 0.80);
+                color: rgba(0, 0, 0, 0.60);
                 font-size: max(0.7rem, 13px);
                 font-weight: 700;
                 margin-right: 1.7rem;
@@ -1460,7 +1477,7 @@ watch(() => selectedRecord.value, () => {
             .editBtnWrap {
                 position: absolute;
                 right: 20px;
-                top: 5px;
+                top: -2px;
 
                 &.smallver {
                     top: 8px;
@@ -1474,6 +1491,7 @@ watch(() => selectedRecord.value, () => {
                     font-size: 0.8rem;
                     font-weight: 700;
                     border: 0;
+                    padding: 0;
                     background-color: unset;
                     cursor: pointer;
 
