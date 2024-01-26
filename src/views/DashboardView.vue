@@ -52,12 +52,12 @@ main#dashboard
                                 .percent.green 0%
                         td.center
                             template(v-if="Math.ceil(storageInfo?.[service.service]?.cloud/53687091200*100)")
-                                .percent(:class='{"green": 0 <= Math.ceil(storageInfo?.[service.service]?.cloud/5000*100) && Math.ceil(storageInfo?.[service.service]?.cloud/5000*100) < 51, "orange": 51 <= Math.ceil(storageInfo?.[service.service]?.cloud/5000*100) && Math.ceil(storageInfo?.[service.service]?.cloud/5000*100) < 81, "red": 81 <= Math.ceil(storageInfo?.[service.service]?.cloud/5000*100)}') {{ Math.ceil(storageInfo?.[service.service]?.cloud/5000*100) + '%' }}
+                                .percent(:class='{"green": 0 <= Math.ceil(storageInfo?.[service.service]?.cloud/53687091200*100) && Math.ceil(storageInfo?.[service.service]?.cloud/53687091200*100) < 51, "orange": 51 <= Math.ceil(storageInfo?.[service.service]?.cloud/53687091200*100) && Math.ceil(storageInfo?.[service.service]?.cloud/53687091200*100) < 81, "red": 81 <= Math.ceil(storageInfo?.[service.service]?.cloud/53687091200*100)}') {{ Math.ceil(storageInfo?.[service.service]?.cloud/53687091200*100) + '%' }}
                             template(v-else)
                                 .percent.green 0%
                         td(style="padding-left:40px;")
                             template(v-if="Math.ceil(storageInfo?.[service.service]?.database/4294967296*100)")
-                                .percent(:class='{"green": 0 <= Math.ceil(storageInfo?.[service.service]?.database/5000*100) && Math.ceil(storageInfo?.[service.service]?.database/5000*100) < 51, "orange": 51 <= Math.ceil(storageInfo?.[service.service]?.database/5000*100) && Math.ceil(storageInfo?.[service.service]?.database/5000*100) < 81, "red": 81 <= Math.ceil(storageInfo?.[service.service]?.database/5000*100)}') {{ Math.ceil(storageInfo?.[service.service]?.database/5000*100) + '%' }}
+                                .percent(:class='{"green": 0 <= Math.ceil(storageInfo?.[service.service]?.database/4294967296*100) && Math.ceil(storageInfo?.[service.service]?.database/4294967296*100) < 51, "orange": 51 <= Math.ceil(storageInfo?.[service.service]?.database/4294967296*100) && Math.ceil(storageInfo?.[service.service]?.database/4294967296*100) < 81, "red": 81 <= Math.ceil(storageInfo?.[service.service]?.database/4294967296*100)}') {{ Math.ceil(storageInfo?.[service.service]?.database/4294967296*100) + '%' }}
                             template(v-else)
                                 .percent.green 0%
                             .menu(@click.stop="(e) => showPlanSetting(e, index)" :class='{"nonClickable": !account.email_verified}')
@@ -142,12 +142,6 @@ main#dashboard
             .label 
                 h6 Service Plan
                 span Please choose one of the plans
-            //- .customSelect
-            //-     select
-            //-         option Trial Mode
-            //-         option Standard Mode
-            //-         option Premium Mode
-            //-     .material-symbols-outlined.mid.search.selectArrowDown arrow_drop_down
 
             br
 
@@ -428,6 +422,7 @@ let getServiceInfo = () => {
             });
     
             let sd = services.value[i].subdomain;
+
             if (sd && (sd[0] !== '*' || sd[0] !== '+')) {
                 // get subdomain storage info (404 file info)
                 skapi.getSubdomainInfo(service, {
@@ -437,10 +432,12 @@ let getServiceInfo = () => {
                 }).catch(err=>err);
 
                 launch(services.value[i].subdomain, f => {
-                    console.log(f)
+                    // console.log(f)
                     if (f.length) {
                         storageInfo.value[services.value[i].service].host = f[0].size;
                         console.log(storageInfo.value[services.value[i].service])
+                        console.log(storageInfo?.value[services.value[i].service]?.host)
+                        console.log(convertToMb(storageInfo?.value[services.value[i].service]?.host))
                     }
                 }, true);
             }

@@ -12,14 +12,14 @@
     .content   
         .listWrap 
             .list(v-for="(file, key, idx) in fileList" :class="hideDuplicateFolder(fileList, key, idx)" :key="idx")
-                .material-symbols-outlined.mid.type(v-if="file.path.split('/').length > 1") folder
-                .material-symbols-outlined.mid.type(v-else-if="file.name.includes('.html')") html
-                .material-symbols-outlined.mid.type(v-else-if="file.name.includes('.css')") css
-                .material-symbols-outlined.mid.type(v-else-if="file.name.includes('.pdf')") picture_as_pdf
-                .material-symbols-outlined.mid.type(v-else-if="img.includes(file.name.split('.').slice(-1)[0])") image
-                .material-symbols-outlined.mid.type(v-else-if="vid.includes(file.name.split('.').slice(-1)[0])") movie
-                .material-symbols-outlined.mid.type(v-else) draft
                 .pathWrapper
+                    .material-symbols-outlined.mid.type(v-if="file.path.split('/').length > 1") folder
+                    .material-symbols-outlined.mid.type(v-else-if="file.name.includes('.html')") html
+                    .material-symbols-outlined.mid.type(v-else-if="file.name.includes('.css')") css
+                    .material-symbols-outlined.mid.type(v-else-if="file.name.includes('.pdf')") picture_as_pdf
+                    .material-symbols-outlined.mid.type(v-else-if="img.includes(file.name.split('.').slice(-1)[0])") image
+                    .material-symbols-outlined.mid.type(v-else-if="vid.includes(file.name.split('.').slice(-1)[0])") movie
+                    .material-symbols-outlined.mid.type(v-else) draft
                     .path {{ file.path.split('/')[0] }}
                 .status
                     //- .material-symbols-outlined.mid(v-if="file.status == 'uploading'") cloud_upload
@@ -132,21 +132,20 @@ let hideDuplicateFolder = (fileList, key, idx) => {
             align-items: center;
             justify-content: space-between;
 
-            .file {
+            .pathWrapper {
                 display: flex;
                 flex-wrap: nowrap;
-                align-items: center;
-                color: rgba(0, 0, 0, 0.6);
+                margin-left: 12px;
 
-                .pathWrapper {
-                    margin-left: 12px;
+                .type {
+                    margin-right: 20px;
+                }
 
-                    .path {
-                        width: 360px;
-                        white-space: nowrap;
-                        overflow: hidden;
-                        text-overflow: ellipsis;
-                    }
+                .path {
+                    width: 360px;
+                    white-space: nowrap;
+                    overflow: hidden;
+                    text-overflow: ellipsis;
                 }
             }
         }

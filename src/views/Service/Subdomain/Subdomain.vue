@@ -53,11 +53,7 @@ main#subdomain
 
         // head panel when there is NO subdomain
         .create(v-else) 
-            p You can host your website with Skapi by simply uploading your website files in your Hosting page of your service. 
-                a(href="https://docs.skapi.com/hosting/hosting.html" target="_blank") Documentation
-            br
-            br
-            h6 Register Subdomain
+            h3.tit Register Subdomain
             form.createForm(@submit.prevent='registerSubdomain')
                 .input
                     input#modifySudomain(@input='e=>e.target.setCustomValidity("")' :disabled="subdomainPromiseRunning || null" type="text" placeholder="Name of Subdomain" required minlength='5' pattern='[a-z0-9]+' title='Subdomain should be lowercase alphanumeric.')
@@ -65,7 +61,7 @@ main#subdomain
                     template(v-if="subdomainPromiseRunning")
                         img.loading(src="@/assets/img/loading.png")
                     template(v-else)
-                        button.final(type="submit") Create
+                        button(type="submit") Create
 
     section#section(v-if="currentService.subdomain" :class="{'nonClickable': subdomainState }")
         // path navigation
@@ -1204,21 +1200,19 @@ document.addEventListener('mouseup', function () {
         }
 
         .create {
-            p {
-                color: rgba(0, 0, 0, 0.60);
-                font-size: 0.8rem;
-                font-weight: 400;
-                line-height: 1.5;
-                a {
-                    color: #293FE6;
-                    font-size: 0.8rem;
-                    font-weight: 700;
-                }
-            }
+            position: relative;
+            width: 100%;
+            padding: 1.4rem;
+            border-radius: 8px;
+            background-color: #fff;
+            box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.10);
+            border: 1px solid rgba(0, 0, 0, 0.15);
 
-            h6 {
-                color: rgba(0, 0, 0, 0.60);
-                margin-bottom: 0.5rem;
+            .tit {
+                color: #293FE6;
+                font-size: 1rem;
+                font-weight: 700;
+                margin-bottom: 0.6rem;
             }
 
             .createForm {
@@ -1250,7 +1244,6 @@ document.addEventListener('mouseup', function () {
                         transform: translateY(-50%);
                         font-size: 0.8rem;
                         font-weight: 400;
-                        color: rgba(0,0,0,0.4);
                     }
 
                     input {
@@ -1261,6 +1254,20 @@ document.addEventListener('mouseup', function () {
                         background-color: unset;
                         font-size: 0.8rem;
                         font-weight: 400;
+                    }
+                }
+
+                .btn {
+                    button {
+                        border: 0;
+                        padding: 0 1.4rem;
+                        height: 44px;
+                        border-radius: 8px;
+                        color: #FFF;
+                        font-size: 0.8rem;
+                        font-weight: 700;
+                        background: #293FE6;
+                        box-shadow: 0px -1px 1px 0px rgba(0, 0, 0, 0.15) inset;
                     }
                 }
             }
