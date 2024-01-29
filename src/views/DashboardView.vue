@@ -3,7 +3,7 @@ main#dashboard
     .createButton(@click="createService" :class="{'nonClickable' : !account?.email_verified}")
         .material-symbols-outlined.mid add
         span Create new service
-
+    
     .tableWrap
         table#resizeMe.table
             thead
@@ -115,7 +115,7 @@ main#dashboard
     br
     .plus(style="display:block;text-align:center;padding-bottom:2rem;")
         .material-symbols-outlined.big(@click="createService" style="color:#293FE6;cursor:pointer;") add_circle
-
+   
     #moreVert.hide(v-if="showMore" @click.stop style="--moreVert-right: 100px;" :style="{top: clientY}")
         .inner
             .more(style="width:unset;white-space:nowrap;") Downgrade Plan
@@ -138,7 +138,7 @@ main#dashboard
 
             br
             br
-
+        
             .label 
                 h6 Service Plan
                 span Please choose one of the plans
@@ -178,7 +178,7 @@ main#dashboard
                         //-     li 
                         //-         .material-symbols-outlined.sml.li check_circle
                         //-         span asdaasd asdasdasdaasd asdasdasdaasd
-
+        
             br
 
             .card.clicked(:class="{'checked' : serviceMode == 'standard'}" @click="serviceMode='standard'" style="border-radius:8px;cursor:pointer;")
@@ -218,7 +218,7 @@ main#dashboard
                             //- li 
                             //-     .material-symbols-outlined.sml.li check_circle
                             //-     span asdaasd asdasdasdaasd asdasdasdaasd
-
+        
             br
 
             .card.clicked.nonClickable(:class="{'checked' : serviceMode == 'premium'}" @click="serviceMode='premium'" style="border-radius:8px;cursor:pointer;")
@@ -256,7 +256,7 @@ main#dashboard
                                 span unlimited use with pay-as-you-go when exceeding the limit
 
             br
-
+        
             .buttonWrap(style="display:flex; justify-content:space-between;")
                 template(v-if="promiseRunning")
                     img.loading(src="@/assets/img/loading.png")
@@ -304,14 +304,14 @@ let convertToMb = (size) => {
 }
 
 let showServiceInfo = (e, index) => {
-    if (currentServiceIndex == index) {
+    if(currentServiceIndex == index) {
         downArrow.value[index].classList.remove('hide');
         upArrow.value[index].classList.add('hide');
         trCont.value[index].classList.remove('active');
         currentServiceIndex = null;
 
         return;
-    } else if (e.target.classList.contains('upArrow')) {
+    } else if(e.target.classList.contains('upArrow')) {
         downArrow.value[index].classList.remove('hide');
         upArrow.value[index].classList.add('hide');
         trCont.value[index].classList.remove('active');
@@ -327,7 +327,7 @@ let showServiceInfo = (e, index) => {
 }
 
 let showPlanSetting = (e, index) => {
-    if (currentPlanIndex == index && showMore.value) {
+    if(currentPlanIndex == index && showMore.value) {
         console.log('dd')
         showMore.value = false;
         currentPlanIndex = null;
@@ -337,7 +337,7 @@ let showPlanSetting = (e, index) => {
 
     showMore.value = false;
     currentServiceIndex = index;
-    clientY = 200 + (60 * (index - 1)) + 'px';
+    clientY = 200 + (60 *(index-1)) + 'px';
 
     showMore.value = true;
     currentPlanIndex = index;
@@ -406,32 +406,44 @@ document.addEventListener('mouseup', function () {
 
 let getServiceInfo = () => {
     if (services.value) {
-        for (let i = 0; i < services.value.length; i++) {
+        for(let i=0; i<services.value.length; i++) {
             let service = services.value[i].service
-
+    
             if (!storageInfo.value[service]) {
                 storageInfo.value[service] = {};
             }
 
             skapi.storageInformation(service).then(i => {
+                console.log(i)
                 // get storage info
                 for (let k in i) {
                     storageInfo.value[service][k] = i[k];
                 }
             });
-
+    
             let sd = services.value[i].subdomain;
 
             if (sd && (sd[0] !== '*' || sd[0] !== '+')) {
-                skapi.listHostDirectory({ dir: sd, info: true }, { limit: 1 }).then(u => {
-                    if (!storageInfo.value[service]) {
-                        storageInfo.value[service] = {};
-                    }
+                // get subdomain storage info (404 file info)
+                skapi.getSubdomainInfo(service, {
+                    subdomain: sd,
+                }).then(s => {
+                    subdomainInfo.value[sd] = s
+                }).catch(err=>err);
 
-                    storageInfo.value[service].host = u.size;
-                });
+                launch(services.value[i].subdomain, f => {
+                    // console.log(f)
+                    if (f.length) {
+                        storageInfo.value[services.value[i].service].host = f[0].size;
+                        console.log(storageInfo.value[services.value[i].service])
+                        console.log(storageInfo?.value[services.value[i].service]?.host)
+                        console.log(convertToMb(storageInfo?.value[services.value[i].service]?.host))
+                    }
+                }, true);
             }
         }
+        // console.log(storageInfo.value)
+        // console.log(subdomainInfo.value)
     }
 }
 
@@ -495,7 +507,7 @@ let newServiceName = '';
 let promiseRunning = ref(false);
 let addService = () => {
     promiseRunning.value = true;
-    if (newServiceName == '') {
+    if(newServiceName == '') {
         promiseRunning.value = false;
         error.value = 'Please fill in the name of service';
 
@@ -566,7 +578,6 @@ skapi.getProfile().then(u => {
     &.show {
         transform: translateX(0px);
     }
-
     .close {
         position: absolute;
         right: 25px;
@@ -574,13 +585,11 @@ skapi.getProfile().then(u => {
         font-size: 32px;
         cursor: pointer;
     }
-
     .card {
         background-color: #fafafa;
 
         &.checked {
             box-shadow: 0 0 0 4px #A5AFFF inset !important;
-
             .inner {
                 .contWrap {
                     ul {
@@ -593,7 +602,6 @@ skapi.getProfile().then(u => {
                 }
             }
         }
-
         &.clicked {
             &:hover {
                 .inner {
@@ -609,7 +617,6 @@ skapi.getProfile().then(u => {
                 }
             }
         }
-
         .inner {
             .title {
                 font-weight: 500;
@@ -623,7 +630,7 @@ skapi.getProfile().then(u => {
                     font-weight: 700;
 
                     span {
-                        color: rgba(0, 0, 0, 0.6);
+                        color: rgba(0,0,0,0.6);
                         font-size: 0.7rem;
                         font-weight: 400;
                     }
@@ -647,7 +654,6 @@ skapi.getProfile().then(u => {
                         font-weight: 500;
                         color: rgba(0, 0, 0, 0.40);
                     }
-
                     &.discount {
                         margin-left: 10px;
                         color: #A7A8AD;
@@ -665,7 +671,6 @@ skapi.getProfile().then(u => {
                     }
                 }
             }
-
             .contWrap {
                 ul {
                     width: 50%; // <- i don't advise horizontal layout if unnecessary
@@ -676,7 +681,6 @@ skapi.getProfile().then(u => {
                             font-size: 14px;
                             margin-right: 5px;
                         }
-
                         span {
                             font-size: 14px;
                             color: rgba(0, 0, 0, 0.60);
@@ -687,17 +691,14 @@ skapi.getProfile().then(u => {
             }
         }
     }
-
     header {
         padding: 2rem;
         border-bottom: 1px solid rgba(0, 0, 0, 0.10);
         box-shadow: 0px 1px 3px 0px rgba(0, 0, 0, 0.06);
-
         .title {
             color: #293FE6;
         }
     }
-
     main {
         padding: 30px 40px;
 
@@ -706,7 +707,6 @@ skapi.getProfile().then(u => {
             color: rgba(0, 0, 0, 0.60);
             margin-bottom: 8px;
         }
-
         .label {
             span {
                 color: rgba(0, 0, 0, 0.40);
@@ -715,7 +715,6 @@ skapi.getProfile().then(u => {
                 margin-left: 16px;
             }
         }
-
         input {
             width: 100%;
             height: 44px;
@@ -724,7 +723,6 @@ skapi.getProfile().then(u => {
             background: rgba(0, 0, 0, 0.05);
             padding: 0 20px;
         }
-
         .customSelect {
             select {
                 height: 44px;
@@ -732,7 +730,6 @@ skapi.getProfile().then(u => {
                 padding: 0 20px;
             }
         }
-
         // .planCard {
         //     border-radius: 8px;
         //     border: 0.5px solid rgba(0, 0, 0, 0.25);
@@ -772,7 +769,7 @@ skapi.getProfile().then(u => {
         //     }
         //     .content {
         //         padding: 1rem;
-
+                
         //         ul {
         //             li {
         //                 box-sizing: border-box;
@@ -800,7 +797,7 @@ skapi.getProfile().then(u => {
     border: 1px solid #D9D9D9;
     color: #293FE6;
     cursor: pointer;
-
+    
     * {
         user-select: none;
         font-size: 16px;
@@ -909,14 +906,12 @@ skapi.getProfile().then(u => {
 
             tr {
                 &:not(.cont, .active, .loadingWrap, .noServices):hover {
-                    background-color: rgba(41, 63, 230, 0.05);
+                    background-color: rgba(41,63,230,0.05);
                     cursor: pointer;
                 }
-
                 &.active {
                     background-color: rgba(41, 63, 230, 0.10);
                 }
-
                 &.cont {
                     height: 250px;
                     background-color: rgba(0, 0, 0, 0.02);
@@ -943,22 +938,18 @@ skapi.getProfile().then(u => {
                                 margin-bottom: 8px;
                             }
                         }
-
                         h6 {
                             display: inline-block;
                             font-weight: 400;
                             color: rgba(0, 0, 0, 0.40);
                             margin-right: 10px;
                         }
-
                         span {
                             color: rgba(0, 0, 0, 0.60);
                         }
                     }
                 }
-
-                &.loadingWrap,
-                &.noServices {
+                &.loadingWrap, &.noServices {
                     td {
                         &::after {
                             display: none !important;
@@ -1000,30 +991,26 @@ skapi.getProfile().then(u => {
                     &.green {
                         background-color: #52D687;
                     }
-
                     &.orange {
                         background-color: #FCA642;
                     }
-
                     &.red {
                         background-color: #F04E4E;
                     }
                 }
 
-                .upArrow,
-                .downArrow {
+                .upArrow, .downArrow {
                     display: inline-block;
                     vertical-align: middle;
                     padding: 10px;
                     border-radius: 50%;
                     font-size: 24px;
-                    color: rgba(0, 0, 0, 0.4);
+                    color: rgba(0,0,0,0.4);
                     cursor: pointer;
 
                     &:hover {
                         background-color: rgba(41, 63, 230, 0.10);
                     }
-
                     &.hide {
                         display: none;
                     }
@@ -1053,7 +1040,6 @@ skapi.getProfile().then(u => {
                     }
 
                 }
-
                 #moreVert {
                     &.hide {
                         display: none;
@@ -1072,7 +1058,7 @@ skapi.getProfile().then(u => {
                     height: 20px;
                     margin: 0 auto;
                     border-radius: 50%;
-                    background-color: rgba(0, 0, 0, 0.25);
+                    background-color: rgba(0,0,0,0.25);
 
                     &.active {
                         background-color: #5AD858;
@@ -1087,7 +1073,7 @@ skapi.getProfile().then(u => {
                     }
                 }
 
-                >div:not(.material-symbols-outlined) {
+                > div:not(.material-symbols-outlined) {
                     font-size: 0.8rem;
                 }
 
@@ -1121,7 +1107,7 @@ skapi.getProfile().then(u => {
 
 @media (max-width: 700px) {
     #createNewService {
-        width: 100%;
-    }
+            width: 100%;
+    } 
 }
 </style>
