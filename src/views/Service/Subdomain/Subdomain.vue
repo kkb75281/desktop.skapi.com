@@ -60,8 +60,12 @@ main#subdomain
 
         // head panel when there is NO subdomain
         .create(v-else) 
-            h3.tit Register Subdomain
+            p You can host your website with Skapi by simply uploading your website files in your Hosting page of your service. 
+                a(href="https://docs.skapi.com/hosting/hosting.html" target="_blank") Documentation
+            br
+            br
             form.createForm(@submit.prevent='registerSubdomain')
+                .label Register Subdomain
                 .input
                     input#modifySudomain(@input='e=>e.target.setCustomValidity("")' :disabled="subdomainPromiseRunning || null" type="text" placeholder="Name of Subdomain" required minlength='5' pattern='[a-z0-9]+' title='Subdomain should be lowercase alphanumeric.')
                 .btn(:class="{'nonClickable': !account.email_verified}" style='cursor:pointer')
@@ -953,28 +957,30 @@ function formatBytes(bytes, decimals = 2) {
 
         .create {
             position: relative;
-            width: 100%;
-            padding: 1.4rem;
-            border-radius: 8px;
-            background-color: #fff;
-            box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.10);
-            border: 1px solid rgba(0, 0, 0, 0.15);
 
-            .tit {
-                color: #293FE6;
-                font-size: 1rem;
-                font-weight: 700;
-                margin-bottom: 0.6rem;
+            p {
+                color: rgba(0,0,0,0.6);
+                font-size: 0.8rem;
+
+                a {
+                    color: #293FE6;
+                    font-weight: 700;
+                }
             }
 
             .createForm {
-                height: 44px;
-                display: flex;
-                align-items: center;
-
+                .label {
+                    width: 100%;
+                    font-size: 0.8rem;
+                    font-weight: 700;     
+                    color: rgba(0,0,0,0.6);
+                    margin-bottom: 0.5rem;
+                }
                 .input {
                     position: relative;
+                    display: inline-block;
                     width: 600px;
+                    width: 60%;
                     margin-right: 1rem;
 
                     &::before {
@@ -1010,6 +1016,8 @@ function formatBytes(bytes, decimals = 2) {
                 }
 
                 .btn {
+                    display: inline-block;
+
                     button {
                         border: 0;
                         padding: 0 1.4rem;
@@ -1020,6 +1028,9 @@ function formatBytes(bytes, decimals = 2) {
                         font-weight: 700;
                         background: #293FE6;
                         box-shadow: 0px -1px 1px 0px rgba(0, 0, 0, 0.15) inset;
+                    }
+                    .loading {
+                        vertical-align: middle;
                     }
                 }
             }
@@ -1107,6 +1118,14 @@ function formatBytes(bytes, decimals = 2) {
                     width: 100%;
                     justify-content: end;
                     margin-bottom: 1rem;
+                }
+            }
+            
+            .create {
+                .createForm {
+                    .input {
+                        width: calc(100% - 101px);
+                    }
                 }
             }
         }
