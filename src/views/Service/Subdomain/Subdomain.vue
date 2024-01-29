@@ -74,9 +74,6 @@ main#subdomain
                     span /
 
             .filesButtonWrap
-                .menu(:class='{"nonClickable": !account.email_verified || currentService.active == 0}' @click="showRemoveAllFiles = true;")
-                    .material-symbols-outlined.mid.clickable delete
-                    span Empty storage
                 // file menu
                 .menu(@click.stop="showEdit = !showEdit" :class='{"nonClickable": !checkedFiles.length || !account.email_verified || currentService.active == 0}')
                     .material-symbols-outlined.mid.clickable(title="menu") more_vert
@@ -89,6 +86,9 @@ main#subdomain
                                 .material-symbols-outlined.mid delete
                                 span delete
                 .menu.material-symbols-outlined.mid.refresh.clickable(title="refresh" :class='{"rotate_animation": fetching }' @click='refresh(searchDir)') cached
+                .menu(:class='{"nonClickable": !account.email_verified || currentService.active == 0}' @click="showRemoveAllFiles = true;")
+                    .material-symbols-outlined.mid.clickable delete
+                    span(style="font-weight:700") Empty storage
                 .customFile(:class="{'nonClickable': !account.email_verified || Object.keys(fileList).length || currentService.active == 0}")
                     label.uploadBtn(for="files")
                         .material-symbols-outlined.mid(title="upload") upload
@@ -1055,7 +1055,7 @@ document.addEventListener('mouseup', function () {
                     
                     span {
                         font-size: 0.8rem;
-                        font-weight: 700;
+                        font-weight: 500;
                         color: rgba(0,0,0,0.6);
                         margin-left: 8px;
                     }
