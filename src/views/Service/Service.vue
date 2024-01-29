@@ -401,11 +401,11 @@ watch(modifyCors, () => {
     .info {
         width: 49%;
         padding: 2rem;
-        background-color: #fafafa;
+        background-color: #fafafa !important;
         border-radius: 8px;
         margin-bottom: 2%;
         margin-right: 2%;
-        box-shadow: 0px 2px 4px 0px rgba(0, 0, 0, 0.1);
+        filter: drop-shadow(0px 2px 4px rgba(0, 0, 0, 0.10));
 
         &:first-child,
         &:nth-child(2) {

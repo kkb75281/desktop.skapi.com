@@ -1129,7 +1129,7 @@ watch(() => selectedRecord.value, () => {
         background-color: #fafafa;
         border-radius: 8px;
         margin-bottom: 2%;
-        box-shadow: 0px 2px 4px 0px rgba(0, 0, 0, 0.1);
+        filter: drop-shadow(0px 2px 4px rgba(0, 0, 0, 0.10));
         overflow: hidden;
     }
 

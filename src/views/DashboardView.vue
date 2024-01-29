@@ -268,7 +268,7 @@ main#dashboard
 </template>
 
 <script setup>
-import { computed, nextTick, onMounted, ref } from 'vue';
+import { computed, nextTick, onBeforeUnmount, onMounted, ref } from 'vue';
 import { useRouter } from 'vue-router';
 import { skapi, account, bodyClick } from '@/main.js';
 import { services, serviceFetching, storageInfo } from '@/data.js';
@@ -276,6 +276,9 @@ import { launch, subdomainInfo } from '@/views/Service/Subdomain/SubdomainFetch.
 
 onMounted(() => {
     document.querySelector('body').classList.add('fa');
+})
+onBeforeUnmount(() => {
+    document.querySelector('body').classList.remove('fa');
 })
 
 const router = useRouter();
