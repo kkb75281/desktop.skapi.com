@@ -152,6 +152,7 @@ let hideDuplicateFolder = (fileList, key, idx) => {
                     white-space: nowrap;
                     overflow: hidden;
                     text-overflow: ellipsis;
+                    font-size: 16px;
                 }
                 .length {
                     width: 100px;

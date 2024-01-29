@@ -355,7 +355,7 @@ main#database
                 // buttons (edit)
                 .editBtnWrap(v-if="recordInfoEdit") 
                     template(v-if="promiseRunning")
-                        img.loading(src="@/assets/img/loading.png" style="width:20px;height:20px;margin-top:4px;")
+                        img.loading(src="@/assets/img/loading.png" style="width:20px;height:20px;margin-top:11px;")
                     template(v-else)
                         button.cancel(type='button' @click="()=>{recordInfoEdit = false; selectedRecord = recordPage.list[selectedRecord.record_id] ? JSON.parse(JSON.stringify(recordPage.list[selectedRecord.record_id])) : null; }") 
                             .material-symbols-outlined.mid(v-if="isSmallScreen") close

@@ -23,7 +23,8 @@ main#subdomain
                         template(v-if="subdomainPromiseRunning")
                             img.loading(src="@/assets/img/loading.png")
                         template(v-else)
-                            .material-symbols-outlined.big.save(type="submit" :disabled="subdomainState ? true : null") done
+                            input#submitInp(type="submit" :disabled="subdomainState ? true : null" hidden)
+                            label.material-symbols-outlined.big.save(for='submitInp') done
                             .material-symbols-outlined.sml.cancel(@click="modifySudomain = false;") close
                 template(v-else)
                     .cont
@@ -560,6 +561,7 @@ let removeSubdomain = e => {
 }
 
 let registerSubdomain = e => {
+    console.log(e)
     subdomainPromiseRunning.value = true;
     skapi.registerSubdomain(currentService.value.service, {
         subdomain: document.getElementById('modifySudomain').value,
