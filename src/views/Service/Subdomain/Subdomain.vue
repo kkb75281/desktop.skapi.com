@@ -266,7 +266,10 @@ let clickedFileList = (e, index) => {
             if(!uploadedFile.value[j].className.includes('clicked')) { 
                 uploadedFile.value[j].classList.add('clicked');
             }
-            // checkedFiles.value.push(files.value[j+1].path + '/' + files.value[j+1].name);
+        }
+        let file = JSON.parse(JSON.stringify(files.value.slice(Math.min(startIndex.value, endIndex.value) + 1, Math.max(startIndex.value, endIndex.value) + 2)));
+        for(let k=0; k<file.length; k++) {
+            checkedFiles.value.push(file[k].path + '/' + file[k].name);
         }
         console.log(checkedFiles.value)
         return;

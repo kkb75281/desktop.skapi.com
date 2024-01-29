@@ -21,6 +21,7 @@
                     .material-symbols-outlined.mid.type(v-else-if="vid.includes(file.name.split('.').slice(-1)[0])") movie
                     .material-symbols-outlined.mid.type(v-else) draft
                     .path {{ file.path.split('/')[0] }}
+                    .length(v-if="file.path.split('/').length > 1") {{ '/' + idx }}
                 .status
                     //- .material-symbols-outlined.mid(v-if="file.status == 'uploading'") cloud_upload
 
@@ -35,9 +36,10 @@
 import { computed, ref } from "vue";
 import { img, vid } from '@/views/Service/Subdomain/extensions';
 import ProgressCircle from "@/components/ProgressCircle.vue";
-let props = defineProps(['fileList', 'wholeProgress', 'uploadingPromise']);
+let props = defineProps(['fileList', 'wholeProgress', 'uploadingPromise', 'folderUpload']);
 let emits = defineEmits(['cancel']);
 let hideList = ref(false);
+console.log(props.fileList)
 let hideDuplicateFolder = (fileList, key, idx) => {
     let keys = Object.keys(fileList);
     let thisFile = fileList[key];
@@ -134,18 +136,23 @@ let hideDuplicateFolder = (fileList, key, idx) => {
 
             .pathWrapper {
                 display: flex;
+                align-items: center;
                 flex-wrap: nowrap;
                 margin-left: 12px;
+                color: rgba(0,0,0,0.6);
 
                 .type {
                     margin-right: 20px;
                 }
 
                 .path {
-                    width: 360px;
+                    width: 300px;
                     white-space: nowrap;
                     overflow: hidden;
                     text-overflow: ellipsis;
+                }
+                .length {
+                    font-size: 0.8rem;
                 }
             }
         }
