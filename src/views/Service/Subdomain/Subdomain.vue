@@ -919,7 +919,7 @@ document.addEventListener('mouseup', function () {
                     span {
                         font-size: 0.8rem;
                         font-weight: 700;
-                        margin-left: 12px;
+                        margin-left: 8px;
                     }
                 }
 
@@ -939,7 +939,7 @@ document.addEventListener('mouseup', function () {
                 cursor: pointer;
 
                 span {
-                    margin-left: 12px;
+                    margin-left: 8px;
                     font-size: 0.8rem;
                     font-weight: 700;
                     color: #293FE6;

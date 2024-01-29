@@ -93,8 +93,8 @@ main#database
                         div(style='display: inline-flex;align-items: center;height: 43px;')
                             img.loading(style='padding:0' src="@/assets/img/loading.png")
                     template(v-else)
-                        input.clear(type="reset" value="Clear filter" @click="clearSearchFilter" style="border:0;background-color:unset;color: #293FE6 !important;font-size: 0.8rem;font-weight: 700; cursor:pointer;")
-                        button.final(type="submit" style="margin-left:2rem;") Search
+                        input.clear(type="reset" value="Clear filter" @click="clearSearchFilter" style="border:0;background-color:unset;color: #293FE6 !important;font-size: 0.8rem;font-weight: 700; cursor:pointer;font-family:'Radio Canada';")
+                        button.final(type="submit" style="margin-left:2rem;font-family:'Radio Canada'") Search
 
     section#section 
         // view / edit record / create record
