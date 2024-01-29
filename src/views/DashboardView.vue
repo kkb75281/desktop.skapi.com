@@ -420,30 +420,19 @@ let getServiceInfo = () => {
                     storageInfo.value[service][k] = i[k];
                 }
             });
-    
+
             let sd = services.value[i].subdomain;
 
             if (sd && (sd[0] !== '*' || sd[0] !== '+')) {
-                // get subdomain storage info (404 file info)
-                skapi.getSubdomainInfo(service, {
-                    subdomain: sd,
-                }).then(s => {
-                    subdomainInfo.value[sd] = s
-                }).catch(err=>err);
-
-                launch(services.value[i].subdomain, f => {
-                    // console.log(f)
-                    if (f.length) {
-                        storageInfo.value[services.value[i].service].host = f[0].size;
-                        console.log(storageInfo.value[services.value[i].service])
-                        console.log(storageInfo?.value[services.value[i].service]?.host)
-                        console.log(convertToMb(storageInfo?.value[services.value[i].service]?.host))
+                skapi.listHostDirectory({ dir: sd, info: true }, { limit: 1 }).then(u => {
+                    if (!storageInfo.value[service]) {
+                        storageInfo.value[service] = {};
                     }
-                }, true);
+
+                    storageInfo.value[service].host = u.size;
+                });
             }
         }
-        // console.log(storageInfo.value)
-        // console.log(subdomainInfo.value)
     }
 }
 
