@@ -118,10 +118,10 @@ main#dashboard
    
     #moreVert.hide(v-if="showMore" @click.stop style="--moreVert-right: 100px;" :style="{top: clientY}")
         .inner
-            .more(style="width:unset;white-space:nowrap;") Downgrade Plan
-            .more Upgrade Plan
-            .more Stop Plan
-            .more Cancel Plan
+            .more(@click="showMore=false;" style="width:unset;white-space:nowrap;opacity:0.2") Downgrade Plan
+            .more(@click="showMore=false;" style="width:unset;white-space:nowrap;opacity:0.2") Upgrade Plan
+            .more(@click="showMore=false;" style="width:unset;white-space:nowrap;opacity:0.2") Stop Plan
+            .more(@click="showMore=false;" style="width:unset;white-space:nowrap;opacity:0.2") Cancel Plan
 
 #createNewService(:class="{'show' : create}")
     .material-symbols-outlined.mid.close(@click="create=false;") close
@@ -662,7 +662,7 @@ skapi.getProfile().then(u => {
             }
             .contWrap {
                 ul {
-                    width: 50%; // <- i don't advise horizontal layout if unnecessary
+                    // width: 50%; // <- i don't advise horizontal layout if unnecessary
                     list-style: none;
 
                     li {
@@ -1090,6 +1090,31 @@ skapi.getProfile().then(u => {
                     }
                 }
             }
+        }
+    }
+}
+
+.plus {
+    .material-symbols-outlined {
+        position: relative;
+
+        &:hover {
+            &::before {
+                display: block;
+            }
+        }
+
+        &::before {
+            position: absolute;
+            content: '';
+            left: 50%;
+            top: 50%;
+            width: 42px;
+            height: 42px;
+            transform: translate(-50%, -50%);
+            background-color: rgba(41, 63, 230, 0.10);
+            border-radius: 50%;
+            display: none;
         }
     }
 }

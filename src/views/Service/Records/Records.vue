@@ -438,8 +438,8 @@ main#database
         .tableHeader 
             .actions 
                 .material-symbols-outlined.mid.refresh.clickable(@click='()=>{selectedRecord=null; refresh(fetchParams);}' :class='{"rotate_animation": fetching }') cached
-                .material-symbols-outlined.mid.create.clickable(:class="{'nonClickable' : !account.email_verified}" @click="()=>{ !account.email_verified ? false : selectedRecord = JSON.parse(JSON.stringify(createRecordTemplate)); recordInfoEdit=true; }") note_stack_add
-                .menu(:class='{"nonClickable": !checkedRecords.length || !account.email_verified}' @click.stop="!account.email_verified ? false : showRecordSetting = !showRecordSetting") 
+                .material-symbols-outlined.mid.create.clickable(:class="{'nonClickable' : !account.email_verified || currentService.active == 0}" @click="()=>{ !account.email_verified ? false : selectedRecord = JSON.parse(JSON.stringify(createRecordTemplate)); recordInfoEdit=true; }") note_stack_add
+                .menu(:class='{"nonClickable": !checkedRecords.length || !account.email_verified || currentService.active == 0}' @click.stop="!account.email_verified ? false : showRecordSetting = !showRecordSetting") 
                     .material-symbols-outlined.mid.clickable more_vert
                     #moreVert(v-if="showRecordSetting" @click.stop style="--moreVert-left: 0")
                         .inner
@@ -2026,7 +2026,11 @@ watch(() => selectedRecord.value, () => {
             flex-wrap: nowrap;
             align-items: center;
 
-            .refresh,
+            .refresh {
+                margin-right: 1rem;
+                color: rgba(0, 0, 0, 0.6);
+            }
+
             .create {
                 margin-right: 1rem;
                 color: #293FE6;

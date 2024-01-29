@@ -15,7 +15,7 @@ main#service
                                 .material-symbols-outlined.sml.cancel(@click="modifyServiceName = false;") close
                     template(v-else)
                         h4 {{ currentService.name }}
-                        .material-symbols-outlined.mid.modify.clickable(:class="{'nonClickable' : !account?.email_verified}" @click="editServiceName") edit
+                        .material-symbols-outlined.mid.modify.clickable(:class="{'nonClickable' : !account?.email_verified || currentService.active == 0}" @click="editServiceName") edit
                 .right
                     .date 
                         span Date Created
@@ -36,7 +36,7 @@ main#service
                 .material-symbols-outlined.empty.sml help 
                 span Where do I put this code?
 
-        .info 
+        .info(:class="{'nonClickable' : !account?.email_verified || currentService.active == 0}") 
             .title 
                 h4 Security Setting
                 a.question.help(href='https://docs.skapi.com/security/security-settings.html' target="_blank")
@@ -73,7 +73,7 @@ main#service
                         h5 {{ currentService.api_key || 'No key' }}
                             .material-symbols-outlined.mid.pen.clickable(:class="{'nonClickable' : !account?.email_verified}" @click="editKey") edit
 
-        .info.card
+        .info.card(:class="{'nonClickable' : !account?.email_verified || currentService.active == 0}") 
             .inner
                 .title 
                     .logoTitle
@@ -86,13 +86,13 @@ main#service
                         p {{ currentService.users }}
                     .cont(style="width:unset;")
                         h6 Creating User
-                        .customSelect 
-                            select(:value="currentService.prevent_signup ? 'admin' : 'anyone'" @change="(e) => changeCreateUserMode(e)")
+                        .customSelect
+                            select(:value="currentService.prevent_signup ? 'admin' : 'anyone'" @change="(e) => changeCreateUserMode(e)" style="color:#293FE6")
                                 option(value="admin") Only Admin allowed 
                                 option(value="anyone") Anyone allowed
-                            .material-symbols-outlined.mid.search.selectArrowDown(style="right:-30px;top:66%;") arrow_drop_down
+                            .material-symbols-outlined.mid.search.selectArrowDown(style="right:-30px;top:66%;color:#293FE6") arrow_drop_down
 
-        .info.card
+        .info.card(:class="{'nonClickable' : !account?.email_verified || currentService.active == 0}") 
             .inner
                 .title 
                     .logoTitle
@@ -107,7 +107,7 @@ main#service
                         h6 # of cloud storage Used
                         p {{ convertToMb(storageInfo?.[currentService.service]?.cloud) }}
 
-        .info.card
+        .info.card(:class="{'nonClickable' : !account?.email_verified || currentService.active == 0}") 
             .inner
                 .title 
                     .logoTitle
@@ -126,7 +126,7 @@ main#service
                             h6 # Mail storage used 
                             p {{ convertToMb(storageInfo?.[currentService.service]?.email) }}
 
-        .info.card
+        .info.card(:class="{'nonClickable' : !account?.email_verified || currentService.active == 0}") 
             .inner
                 .title 
                     .logoTitle
@@ -145,7 +145,7 @@ main#service
                             h6 Host storage used
                             p {{ convertToMb(storageInfo?.[currentService.service]?.host) }}
 
-    .deleteWrap(:class="{'nonClickable' : !account?.email_verified}")
+    .deleteWrap(:class="{'nonClickable' : !account?.email_verified || currentService.active == 0}")
         .deleteInner(@click="!account?.email_verified ? false : openDeleteService = true;")
             .material-symbols-outlined.mid delete
             span Delete Service
@@ -170,7 +170,6 @@ let convertToMb = (size) => {
         return '-'
     }
 }
-
 let modifyServiceName = ref(false);
 let modifyCors = ref(false);
 let modifyKey = ref(false);
