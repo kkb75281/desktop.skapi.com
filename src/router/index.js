@@ -50,6 +50,11 @@ const router = createRouter({
       component: () => import('@/views/EmailConfirmed.vue')
     },
     {
+      path: '/privacy',
+      name: 'privacy',
+      component: () => import('@/views/Privacy.vue')
+    },
+    {
       path: '/bye',
       name: 'bye',
       component: () => import('@/views/Byebye.vue')

@@ -97,14 +97,14 @@ main#database
                         .textFormWrap(:class="{'disabled' : advancedForm.index.condition !== '~' || !advancedForm.index.name}")
                             input#indexRangeSearchInput(type="text" name='index_range' placeholder='From index value ~ to:' :disabled="advancedForm.index.condition !== '~' || !advancedForm.index.name" @input="e => {e.target.setCustomValidity(''); advancedForm.index.range = e.target.value}")
 
-                .buttonWrap(style='min-height:43px')
+                .buttonWrap(style='width:100%; min-height:43px; text-align:right;')
                     template(v-if="fetching && advancedForm.searchText")
                         // the additional div is for alignment
                         div(style='display: inline-flex;align-items: center;height: 43px;')
                             img.loading(style='padding:0' src="@/assets/img/loading.png")
                     template(v-else)
-                        input.clear(type="reset" value="Clear filter" @click="clearSearchFilter")
-                        button.search(type="submit") Search
+                        input.clear(type="reset" value="Clear filter" @click="clearSearchFilter" style="border:0;background-color:unset;color: #293FE6 !important;font-size: 0.8rem;font-weight: 700; cursor:pointer;font-family:'Radio Canada';")
+                        button.final(type="submit" style="margin-left:2rem;font-family:'Radio Canada'") Search
 
     section#section 
         // view / edit record / create record
@@ -349,7 +349,7 @@ main#database
                 // right panel top right menu
                 .menu(:class='{"nonClickable": !account.email_verified}' v-if="!recordInfoEdit" @click.stop="showEdit = !showEdit") 
                     // drop down menu (no edit)
-                    .material-symbols-outlined.mid.clickable(title="Menu") more_vert
+                    .material-symbols-outlined.mid.clickable more_vert
                     #moreVert(v-if="showEdit" @click.stop style="--moreVert-right: 0")
                         .inner
                             .more(@click="recordInfoEdit = true; showEdit = false;")
@@ -365,13 +365,13 @@ main#database
                 // buttons (edit)
                 .editBtnWrap(v-if="recordInfoEdit") 
                     template(v-if="promiseRunning")
-                        img.loading(src="@/assets/img/loading.png" style="width:20px;height:20px;margin-top:4px;")
+                        img.loading(src="@/assets/img/loading.png" style="width:20px;height:20px;margin-top:11px;")
                     template(v-else)
                         button.cancel(type='button' @click="()=>{recordInfoEdit = false; selectedRecord = recordPage.list[selectedRecord.record_id] ? JSON.parse(JSON.stringify(recordPage.list[selectedRecord.record_id])) : null; }") 
-                            .material-symbols-outlined.mid(v-if="isSmallScreen" title="Cancel") close
+                            .material-symbols-outlined.mid(v-if="isSmallScreen") close
                             span(v-else) Cancel
                         button.save
-                            .material-symbols-outlined.mid(v-if="isSmallScreen" title="Save") check
+                            .material-symbols-outlined.mid(v-if="isSmallScreen") check
                             span(v-else) Save
 
             template(v-else)
@@ -447,18 +447,18 @@ main#database
         // top menu of record list
         .tableHeader 
             .actions 
-                .material-symbols-outlined.mid.refresh.clickable(@click='()=>{selectedRecord=null; refresh(fetchParams);}' :class='{"rotate_animation": fetching }' title="Refresh") cached
-                .material-symbols-outlined.mid.create.clickable(:class="{'nonClickable' : !account.email_verified}" @click="()=>{ !account.email_verified ? false : selectedRecord = JSON.parse(JSON.stringify(createRecordTemplate)); recordInfoEdit=true; }" title="Create record") note_stack_add
-                .menu(:class='{"nonClickable": !checkedRecords.length || !account.email_verified}' @click.stop="!account.email_verified ? false : showRecordSetting = !showRecordSetting") 
-                    .material-symbols-outlined.mid.clickable(title="Menu") more_vert
+                .material-symbols-outlined.mid.refresh.clickable(@click='()=>{selectedRecord=null; refresh(fetchParams);}' :class='{"rotate_animation": fetching }') cached
+                .material-symbols-outlined.mid.create.clickable(:class="{'nonClickable' : !account.email_verified || currentService.active == 0}" @click="()=>{ !account.email_verified ? false : selectedRecord = JSON.parse(JSON.stringify(createRecordTemplate)); recordInfoEdit=true; }") note_stack_add
+                .menu(:class='{"nonClickable": !checkedRecords.length || !account.email_verified || currentService.active == 0}' @click.stop="!account.email_verified ? false : showRecordSetting = !showRecordSetting") 
+                    .material-symbols-outlined.mid.clickable more_vert
                     #moreVert(v-if="showRecordSetting" @click.stop style="--moreVert-left: 0")
                         .inner
                             .more(@click="()=>{recordDelete(); showRecordSetting=false;}")
                                 .material-symbols-outlined.mid delete
                                 span delete
             .pagenator 
-                .material-symbols-outlined.sml.prevPage.clickable(:class='{"nonClickable": currentPage === 1 || fetching }' @click='nextPage(false)' title="Previous page") arrow_back_ios
-                .material-symbols-outlined.sml.nextPage.clickable(:class='{"nonClickable": maxPage <= currentPage && recordPage?.endOfList || fetching }' @click='nextPage' title="Next page") arrow_forward_ios
+                .material-symbols-outlined.sml.prevPage.clickable(:class='{"nonClickable": currentPage === 1 || fetching }' @click='nextPage(false)') arrow_back_ios
+                .material-symbols-outlined.sml.nextPage.clickable(:class='{"nonClickable": maxPage <= currentPage && recordPage?.endOfList || fetching }' @click='nextPage') arrow_forward_ios
 
         // record list
         .tableWrap
@@ -1139,7 +1139,7 @@ watch(() => selectedRecord.value, () => {
         background-color: #fafafa;
         border-radius: 8px;
         margin-bottom: 2%;
-        box-shadow: 8px 12px 36px rgba(0, 0, 0, 0.10);
+        filter: drop-shadow(0px 2px 4px rgba(0, 0, 0, 0.10));
         overflow: hidden;
     }
 
@@ -1354,31 +1354,6 @@ watch(() => selectedRecord.value, () => {
                         }
                     }
                 }
-            }
-        }
-
-        .buttonWrap {
-            width: 100%;
-            text-align: right;
-
-            * {
-                padding: 0.6rem 1.4rem;
-                border: 0;
-                font-size: 0.8rem;
-                font-weight: 700;
-                border-radius: 8px;
-                background-color: unset;
-                cursor: pointer;
-            }
-
-            .clear {
-                color: #293FE6;
-            }
-
-            .search {
-                color: #fff;
-                background-color: #293FE6;
-                box-shadow: 0px -1px 1px 0px rgba(0, 0, 0, 0.15) inset;
             }
         }
     }
@@ -2069,7 +2044,11 @@ watch(() => selectedRecord.value, () => {
             flex-wrap: nowrap;
             align-items: center;
 
-            .refresh,
+            .refresh {
+                margin-right: 1rem;
+                color: rgba(0, 0, 0, 0.6);
+            }
+
             .create {
                 margin-right: 1rem;
                 color: #293FE6;

@@ -105,10 +105,10 @@ main#users
                                     label(for="timestamp")
                                         .material-symbols-outlined.mid.check check
                                         span Date Created
-                .material-symbols-outlined.mid.refresh(@click='refresh' :class='{"rotate_animation": fetching }' title="Refresh") cached
-                .material-symbols-outlined.mid.create(:class="{'nonClickable' : !account.email_verified}" @click="!account.email_verified ? false : inviteUserShow=true" title="Invite User") mail
-                .material-symbols-outlined.mid.create(:class="{'nonClickable' : !account.email_verified}" @click="!account.email_verified ? false : createUserShow=true" title="Create User") person_add
-                .menu(:class='{"nonClickable": !checkedUsers.length || !account.email_verified}' @click.stop="!account.email_verified ? false : showUserSetting = !showUserSetting" title="Menu")
+                .material-symbols-outlined.mid.refresh(@click='refresh' :class='{"rotate_animation": fetching }') cached
+                .material-symbols-outlined.mid.create(:class="{'nonClickable' : !account.email_verified || currentService.active == 0}" @click="!account.email_verified ? false : inviteUserShow=true") mail
+                .material-symbols-outlined.mid.create(:class="{'nonClickable' : !account.email_verified || currentService.active == 0}" @click="!account.email_verified ? false : createUserShow=true") person_add
+                .menu(:class='{"nonClickable": !checkedUsers.length || !account.email_verified || currentService.active == 0}' @click.stop="!account.email_verified ? false : showUserSetting = !showUserSetting")
                     .material-symbols-outlined.mid.clickable more_vert
                     #moreVert(v-if="showUserSetting" @click.stop style="--moreVert-left: 0")
                         .inner
@@ -628,7 +628,7 @@ onMounted(() => {
         background-color: #fafafa;
         border-radius: 8px;
         margin-bottom: 2%;
-        box-shadow: 8px 12px 36px rgba(0, 0, 0, 0.10);
+        filter: drop-shadow(0px 2px 4px rgba(0, 0, 0, 0.10));
     }
 
     form {
@@ -713,7 +713,12 @@ onMounted(() => {
                 color: rgba(0, 0, 0, 0.6);
             }
 
-            .refresh, .create {
+            .refresh {
+                margin-right: 1rem;
+                color: rgba(0, 0, 0, 0.6);
+            }
+
+            .create {
                 margin-right: 1rem;
                 color: #293FE6;
             }

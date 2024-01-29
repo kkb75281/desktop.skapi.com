@@ -8,14 +8,14 @@ main#service
                         form.modifyInputForm(@submit.prevent="changeServiceName")
                             .customInput
                                 input#modifyServiceName(type="text" placeholder="Service name" :value='inputServiceName' @input="(e) => inputServiceName = e.target.value" required)
-                                .material-symbols-outlined.sml.cancel(@click="modifyServiceName = false;") cancel
                             template(v-if="promiseRunning")
                                 img.loading(src="@/assets/img/loading.png")
                             template(v-else)
-                                button.save(type="submit") Save
+                                .material-symbols-outlined.big.save(type="submit") done
+                                .material-symbols-outlined.sml.cancel(@click="modifyServiceName = false;") close
                     template(v-else)
                         h4 {{ currentService.name }}
-                        .material-symbols-outlined.mid.modify.clickable(:class="{'nonClickable' : !account?.email_verified}" @click="editServiceName") edit
+                        .material-symbols-outlined.mid.modify.clickable(:class="{'nonClickable' : !account?.email_verified || currentService.active == 0}" @click="editServiceName") edit
                 .right
                     .date 
                         span Date Created
@@ -36,7 +36,7 @@ main#service
                 .material-symbols-outlined.empty.sml help 
                 span Where do I put this code?
 
-        .info 
+        .info(:class="{'nonClickable' : !account?.email_verified || currentService.active == 0}") 
             .title 
                 h4 Security Setting
                 a.question.help(href='https://docs.skapi.com/security/security-settings.html' target="_blank")
@@ -49,11 +49,11 @@ main#service
                         form.modifyInputForm(style="margin-top: 8px" @submit.prevent="changeCors")
                             .customInput
                                 input#modifyCors(:disabled="promiseRunningCors || null" type="text" placeholder='https://your.domain.com' :value='inputCors' @input="(e) => {e.target.setCustomValidity(''); inputCors = e.target.value;}")
-                                .material-symbols-outlined.sml.cancel(@click="modifyCors = false;") cancel
                             template(v-if="promiseRunningCors")
                                 img.loading(src="@/assets/img/loading.png")
                             template(v-else)
-                                button.save(type="submit") Save
+                                .material-symbols-outlined.big.save(type="submit") done
+                                .material-symbols-outlined.sml.cancel(@click="modifyCors = false;") close
                     template(v-else)
                         h5 {{ currentService.cors || '*' }}
                             .material-symbols-outlined.mid.pen.clickable(:class="{'nonClickable' : !account?.email_verified}" @click="editCors") edit
@@ -64,16 +64,16 @@ main#service
                         form.modifyInputForm(style="margin-top: 8px" @submit.prevent="setSecretKey")
                             .customInput
                                 input#modifyKey(:disabled="promiseRunningSecKey || null" type="text" placeholder="Secret key for external request" :value='inputKey' @input="(e) => inputKey = e.target.value")
-                                .material-symbols-outlined.sml.cancel(@click="modifyKey = false;") cancel
                             template(v-if="promiseRunningSecKey")
                                 img.loading(src="@/assets/img/loading.png")
                             template(v-else)
-                                button.save(type="submit") Save
+                                .material-symbols-outlined.big.save(type="submit") done
+                                .material-symbols-outlined.sml.cancel(@click="modifyKey = false;") close
                     template(v-else)
                         h5 {{ currentService.api_key || 'No key' }}
                             .material-symbols-outlined.mid.pen.clickable(:class="{'nonClickable' : !account?.email_verified}" @click="editKey") edit
 
-        .info.card
+        .info.card(:class="{'nonClickable' : !account?.email_verified || currentService.active == 0}") 
             .inner
                 .title 
                     .logoTitle
@@ -86,13 +86,13 @@ main#service
                         p {{ currentService.users }}
                     .cont(style="width:unset;")
                         h6 Creating User
-                        .customSelect 
-                            select(:value="currentService.prevent_signup ? 'admin' : 'anyone'" @change="(e) => changeCreateUserMode(e)")
+                        .customSelect
+                            select(:value="currentService.prevent_signup ? 'admin' : 'anyone'" @change="(e) => changeCreateUserMode(e)" style="color:#293FE6")
                                 option(value="admin") Only Admin allowed 
                                 option(value="anyone") Anyone allowed
-                            .material-symbols-outlined.mid.search.selectArrowDown(style="right:-30px;top:66%;") arrow_drop_down
+                            .material-symbols-outlined.mid.search.selectArrowDown(style="right:-30px;top:66%;color:#293FE6") arrow_drop_down
 
-        .info.card
+        .info.card(:class="{'nonClickable' : !account?.email_verified || currentService.active == 0}") 
             .inner
                 .title 
                     .logoTitle
@@ -107,7 +107,7 @@ main#service
                         h6 # of cloud storage Used
                         p {{ convertToMb(storageInfo?.[currentService.service]?.cloud) }}
 
-        .info.card
+        .info.card(:class="{'nonClickable' : !account?.email_verified || currentService.active == 0}") 
             .inner
                 .title 
                     .logoTitle
@@ -126,7 +126,7 @@ main#service
                             h6 # Mail storage used 
                             p {{ convertToMb(storageInfo?.[currentService.service]?.email) }}
 
-        .info.card
+        .info.card(:class="{'nonClickable' : !account?.email_verified || currentService.active == 0}") 
             .inner
                 .title 
                     .logoTitle
@@ -145,7 +145,7 @@ main#service
                             h6 Host storage used
                             p {{ convertToMb(storageInfo?.[currentService.service]?.host) }}
 
-    .deleteWrap(:class="{'nonClickable' : !account?.email_verified}")
+    .deleteWrap(:class="{'nonClickable' : !account?.email_verified || currentService.active == 0}")
         .deleteInner(@click="!account?.email_verified ? false : openDeleteService = true;")
             .material-symbols-outlined.mid delete
             span Delete Service
@@ -170,7 +170,6 @@ let convertToMb = (size) => {
         return '-'
     }
 }
-
 let modifyServiceName = ref(false);
 let modifyCors = ref(false);
 let modifyKey = ref(false);
@@ -402,11 +401,11 @@ watch(modifyCors, () => {
     .info {
         width: 49%;
         padding: 2rem;
-        background-color: #fafafa;
+        background-color: #fafafa !important;
         border-radius: 8px;
         margin-bottom: 2%;
         margin-right: 2%;
-        box-shadow: 0px 2px 4px 0px rgba(0, 0, 0, 0.10);
+        filter: drop-shadow(0px 2px 4px rgba(0, 0, 0, 0.10));
 
         &:first-child,
         &:nth-child(2) {
@@ -454,7 +453,6 @@ watch(modifyCors, () => {
 
         &.card {
             padding-top: 1.4rem;
-            border: 0;
         }
 
         .title {
@@ -490,13 +488,12 @@ watch(modifyCors, () => {
                     span {
                         color: rgba(0, 0, 0, 0.40);
                         font-size: 0.8rem;
-                        font-weight: 400;
+                        font-weight: 500;
                         margin-right: 10px;
                     }
 
                     h6 {
                         display: inline-block;
-                        font-weight: 400;
                         color: rgba(0, 0, 0, 0.60);
                     }
                 }
@@ -516,7 +513,7 @@ watch(modifyCors, () => {
 
                             .toggleBtn {
                                 transform: translate(31px, -50%);
-                                transition: all 0.5s;
+                                transition: all 1s;
                             }
                         }
                     }
@@ -524,7 +521,7 @@ watch(modifyCors, () => {
                     span {
                         color: rgba(0, 0, 0, 0.40);
                         font-size: 0.8rem;
-                        font-weight: 400;
+                        font-weight: 500;
                     }
 
                     .toggleBg {
@@ -553,7 +550,7 @@ watch(modifyCors, () => {
                             transform: translateY(-50%);
                             border-radius: 50%;
                             background-color: #eee;
-                            transition: all 0.5s;
+                            transition: all 1s;
                             cursor: pointer;
                         }
                     }
@@ -632,7 +629,7 @@ watch(modifyCors, () => {
                 margin-top: 28px;
 
                 h6 {
-                    font-weight: 400;
+                    font-weight: 500;
                     color: rgba(0, 0, 0, 0.4);
 
                     &.active {
@@ -645,7 +642,7 @@ watch(modifyCors, () => {
                     position: relative;
                     display: inline-block;
                     font-size: 16px;
-                    font-weight: 400;
+                    font-weight: 700;
                     color: rgba(0, 0, 0, 0.6);
                     margin-top: 8px;
 
@@ -775,6 +772,15 @@ watch(modifyCors, () => {
                 .right {
                     > div {
                         text-align: left;
+                    }
+                }
+            }
+            .listWrap {
+                display: block;
+                .list {
+                    width: unset;
+                    .customInput {
+                        max-width: unset;
                     }
                 }
             }
