@@ -1435,7 +1435,7 @@ watch(() => selectedRecord.value, () => {
             .editBtnWrap {
                 position: absolute;
                 right: 20px;
-                top: 5px;
+                top: -2px;
 
                 &.smallver {
                     top: 8px;
@@ -1449,6 +1449,7 @@ watch(() => selectedRecord.value, () => {
                     font-size: 0.8rem;
                     font-weight: 700;
                     border: 0;
+                    padding: 0;
                     background-color: unset;
                     cursor: pointer;
 

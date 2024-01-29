@@ -76,7 +76,7 @@ main#subdomain
             .filesButtonWrap
                 .menu(:class='{"nonClickable": !account.email_verified || currentService.active == 0}' @click="showRemoveAllFiles = true;")
                     .material-symbols-outlined.mid.clickable delete
-                    span empty storage
+                    span Empty storage
                 // file menu
                 .menu(@click.stop="showEdit = !showEdit" :class='{"nonClickable": !checkedFiles.length || !account.email_verified || currentService.active == 0}')
                     .material-symbols-outlined.mid.clickable(title="menu") more_vert
@@ -939,7 +939,7 @@ document.addEventListener('mouseup', function () {
                 cursor: pointer;
 
                 span {
-                    margin-left: 3px;
+                    margin-left: 12px;
                     font-size: 0.8rem;
                     font-weight: 700;
                     color: #293FE6;
@@ -1055,7 +1055,7 @@ document.addEventListener('mouseup', function () {
                     
                     span {
                         font-size: 0.8rem;
-                        font-weight: 500;
+                        font-weight: 700;
                         color: rgba(0,0,0,0.6);
                         margin-left: 8px;
                     }
