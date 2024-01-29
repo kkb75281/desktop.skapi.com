@@ -425,9 +425,9 @@ let getServiceInfo = () => {
 
             if (sd && (sd[0] !== '*' || sd[0] !== '+')) {
                 skapi.listHostDirectory({ dir: sd, info: true }, { limit: 1 }).then(u => {
-                    if (!storageInfo.value[service]) {
-                        storageInfo.value[service] = {};
-                    }
+                    // if (!storageInfo.value[service]) {
+                    //     storageInfo.value[service] = {};
+                    // }
 
                     storageInfo.value[service].host = u.size;
                 });
