@@ -1293,7 +1293,7 @@ document.addEventListener('mouseup', function () {
     .tableWrap {
         position: relative;
         // min-height: 660px;
-        max-height: 450px;
+        max-height: 660px;
         overflow: auto;
 
         .noUsers {

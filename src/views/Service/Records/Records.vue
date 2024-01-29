@@ -100,7 +100,7 @@ main#database
                 .buttonWrap(style='width:100%; min-height:43px; text-align:right;')
                     template(v-if="fetching && advancedForm.searchText")
                         // the additional div is for alignment
-                        div(style='display: inline-flex;align-items: center;height: 43px;')
+                        div(style='display: inline-flex;align-items: center;width:108px;height: 43px;')
                             img.loading(style='padding:0' src="@/assets/img/loading.png")
                     template(v-else)
                         input.clear(type="reset" value="Clear filter" @click="clearSearchFilter" style="border:0;background-color:unset;color: #293FE6 !important;font-size: 0.8rem;font-weight: 700; cursor:pointer;font-family:'Radio Canada';")
@@ -368,11 +368,11 @@ main#database
                         img.loading(src="@/assets/img/loading.png" style="width:20px;height:20px;margin-top:11px;")
                     template(v-else)
                         button.cancel(type='button' @click="()=>{recordInfoEdit = false; selectedRecord = recordPage.list[selectedRecord.record_id] ? JSON.parse(JSON.stringify(recordPage.list[selectedRecord.record_id])) : null; }") 
-                            .material-symbols-outlined.mid(v-if="isSmallScreen") close
-                            span(v-else) Cancel
+                            .material-symbols-outlined.mid close
+                            //- span(v-else) Cancel
                         button.save
-                            .material-symbols-outlined.mid(v-if="isSmallScreen") check
-                            span(v-else) Save
+                            .material-symbols-outlined.mid check
+                            //- span(v-else) Save
 
             template(v-else)
                 .searchInfo(v-if='searchInfo')
@@ -1463,6 +1463,7 @@ watch(() => selectedRecord.value, () => {
                 }
 
                 button {
+                    position: relative;
                     font-size: 0.8rem;
                     font-weight: 700;
                     border: 0;
@@ -1477,6 +1478,23 @@ watch(() => selectedRecord.value, () => {
 
                     &.save {
                         color: #293FE6;
+                    }
+
+                    &::after {
+                        position: absolute;
+                        content: '';
+                        top: 50%;
+                        left: 50%;
+                        width: 24px;
+                        height: 24px;
+                        padding: 4px;
+                        transform: translate(-50%, -50%);
+                        border-radius: 50%;
+                        background-color: #293FE61A;
+                        display: none;
+                    }
+                    &:hover::after {
+                        display: block;
                     }
                 }
             }
