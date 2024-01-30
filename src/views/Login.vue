@@ -39,7 +39,7 @@
             template(v-if="promiseRunning")
                 img.loading(src="@/assets/img/loading.png")
             template(v-else)
-                button.login Login
+                button.final Login
                 //- br
                 //- br
                 //- a.googleLogin(:href="googleOpenId")
@@ -211,19 +211,6 @@ let login = () => {
                 }
             }
 
-            .login {
-                border-radius: 8px;
-                background: #293FE6;
-                box-shadow: 0px -1px 1px 0px rgba(0, 0, 0, 0.15) inset;
-                border: 0;
-                height: 44px;
-                padding: 12px 28px;
-                color: #fff;
-                font-size: 16px;
-                font-weight: 700;
-                cursor: pointer;
-            }
-
             .googleLogin {
                 display: none;
             }
@@ -285,7 +272,7 @@ let login = () => {
                 display: block;
                 text-align: center;
 
-                .login {
+                .final {
                     width: 100%;
                     // margin-bottom: 40px;
                 }

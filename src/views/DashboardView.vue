@@ -77,7 +77,7 @@ main#dashboard
                                 span {{ service.users }}
                             .info.inline 
                                 h6 Database Used
-                                span {{ storageInfo?.[service.service]?.database + '/4000MB' }}
+                                span {{ convertToMb(storageInfo?.[service.service]?.database) + '/4000MB' }}
                             .info.inline 
                                 h6 Subscription Plan
                                 span Standard
@@ -94,7 +94,7 @@ main#dashboard
                                 span {{ regions?.[service.region] || service.region }}
                             .info.inline 
                                 h6 Cloud Storage Used
-                                span {{ storageInfo?.[service.service]?.cloud + '/50000MB' }}
+                                span {{ convertToMb(storageInfo?.[service.service]?.cloud) + '/50000MB' }}
                             .info.inline 
                                 h6 Date Created
                                 span {{ typeof service.timestamp === 'string' ? service.timestamp : new Date(service.timestamp).toDateString() }}
