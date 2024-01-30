@@ -57,7 +57,7 @@ header#navBar(style='--position: relative;')
                     span.material-symbols-outlined.sml logout
                     span Logout
             a.policy
-                router-link(to="/privacy") terms of service ● privacy policy
+                router-link(to="/privacy" target="_blank") terms of service ● privacy policy
 </template>
 
 <script setup>

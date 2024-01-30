@@ -347,7 +347,7 @@ main#database
                             span Add data
 
                 // right panel top right menu
-                .menu(:class='{"nonClickable": !account.email_verified}' v-if="!recordInfoEdit" @click.stop="showEdit = !showEdit") 
+                .menu(:class='{"nonClickable": !account.email_verified || currentService.active == 0}' v-if="!recordInfoEdit" @click.stop="showEdit = !showEdit") 
                     // drop down menu (no edit)
                     .material-symbols-outlined.mid.clickable more_vert
                     #moreVert(v-if="showEdit" @click.stop style="--moreVert-right: 0")
