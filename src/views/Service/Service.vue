@@ -57,6 +57,10 @@ main#service
                     template(v-else)
                         h5 {{ currentService.cors || '*' }}
                             .material-symbols-outlined.mid.pen.clickable(:class="{'nonClickable' : !account?.email_verified}" @click="editCors") edit
+                    
+                    br
+                    br
+
                     h6(:class="{ active: modifyKey }") Secret Key
                     template(v-if="modifyKey")
                         form.modifyInputForm(style="margin-top: 8px" @submit.prevent="setSecretKey")
@@ -73,30 +77,36 @@ main#service
 
                 .list 
                     h6 Client Secret Key
-                    .addBtn(@click="addSecretKey")
+                    .addBtn(@click="addSecretKey" :class="{'nonClickable' : secretKeyEdit || secretKeyAdd || promiseRunning}")
                         .material-symbols-outlined.sml add 
                         span Add Secret Key
-                    .keyWrap
-                        template(v-if="key_data.length")
-                            template(v-for="(data, index) in key_data" :key="index")
+                    .keyWrap(:class="{'nonClickable' : promiseRunning}")
+                        template(v-if="clientSecretState.length")
+                            template(v-for="(data, index) in clientSecretState" :key="index")
                                 form(@submit.prevent="saveSecretKey(index)")
                                     template(v-if="!data.keyEdit && !data.keyAdd")
                                         .key
                                             .inputWrap
-                                                .keyName {{ data.name }}
-                                                .secretKey {{ data.key }}
+                                                .keyName {{ data.key }}
+                                                .secretKey {{ data.value.substr(0,4) + '******************************' }}
                                             .buttonWrap
-                                                .material-symbols-outlined.mid.edit(@click="data.keyEdit=true;") edit
+                                                .material-symbols-outlined.mid.edit(@click="editSecretKey(index)" :class="{'none' : secretKeyAdd || secretKeyEdit}") edit
                                     template(v-else)
-                                        .key.edit
-                                            .material-symbols-outlined.sml.minus(v-if="data.keyEdit" @click="removeKey(index)") do_not_disturb_on
-                                            .inputWrap
-                                                input.keyName(type="text" v-model="data.name" name='keyName' placeholder="Key name" required)
-                                                input.secretKey(type="text" v-model="data.key" name='secretKey' placeholder="Secret Key" required)
+                                        .key.edit(ref="keyEditForm")
+                                            .inputWrap(:class="{'edit' : data.keyEdit}")
+                                                .material-symbols-outlined.sml.minus(v-if="data.keyEdit" @click="removeKey(index)") do_not_disturb_on
+                                                input.keyName(type="text" v-model="data.key" name='keyName' placeholder="Key name" required)
+                                                input.secretKey(type="text" v-model="data.value" name='secretKey' placeholder="Secret Key" required)
                                             .buttonWrap
-                                                input#submitInp(type="submit" hidden)
-                                                label.material-symbols-outlined.mid.save(for='submitInp') check
-                                                .material-symbols-outlined.mid.cancel(@click="checkKeyInp(index)") close
+                                                template(v-if="promiseRunning")
+                                                    //- div(style='display: inline-flex;align-items: center;width:108px;height: 43px;')
+                                                    img.loading(style='padding:0;width:18px;height:18px;' src="@/assets/img/loading.png")
+                                                template(v-else)
+                                                    input#submitInp(type="submit" hidden)
+                                                    label.material-symbols-outlined.mid.save(for='submitInp') check
+                                                    .material-symbols-outlined.mid.cancel(@click="checkKeyInp(index)") close
+                        template(v-else)
+                            .empty No data
 
         .info.card(:class="{'nonClickable' : !account?.email_verified || currentService.active == 0}") 
             .inner
@@ -207,39 +217,90 @@ let enableDisablePromise = ref(false);
 let promiseRunningCors = ref(false);
 let promiseRunningSecKey = ref(false);
 let promiseRunning = ref(false);
-let key_data =ref([
-    {
-        name: 'testKey1',
-        key: 'lskdfjlkdsfjglksfjlkgjsldf',
-        keyEdit: false,
-        keyAdd: false
-    }
-]);
-let addSecretKey = () => {
-    key_data.value.unshift({ name: '', key: '', keyEdit: false, keyAdd: true });
+let secretKeyEdit = ref(false);
+let secretKeyAdd = ref(false);
+let keyEditForm = ref(null);
+let clientSecretKey =ref([]);
+let clientSecretState =ref([]);
 
-    nextTick(() => {
-        let scrollTarget = document.querySelector('.keyWrap');
-        if (scrollTarget.getBoundingClientRect().height < scrollTarget.scrollHeight) {
-            scrollTarget.scrollTop = scrollTarget.getBoundingClientRect().height + 30;
-        }
-    })
+if(!currentService.value.client_secret) {
+    clientSecretKey.value = []
+} else {
+    clientSecretKey.value.push(currentService.value.client_secret); 
+    let keys = Object.keys(clientSecretKey.value[0]);
+    let values = Object.values(clientSecretKey.value[0]);
+    for(let i=0; i<keys.length; i++) {
+        clientSecretState.value.push({ key: keys[i], value: values[i], keyAdd : false, keyEdit : false});
+    }
+}
+
+let addSecretKey = () => {
+    clientSecretState.value.unshift({ key: '', value: '', keyEdit: false, keyAdd: true });
+    secretKeyAdd.value = true;
+}
+let editSecretKey = (index) => {
+    clientSecretState.value[index].keyEdit=true;
+    secretKeyEdit.value=true;
 }
 let saveSecretKey = (index) => {
-    key_data.value[index].keyAdd = false;
-    key_data.value[index].keyEdit = false;
+    promiseRunning.value = true;
+    if(clientSecretState.value.length > 1) {
+        let entries = Object.entries(clientSecretKey.value[0]);
+
+        if (secretKeyEdit.value && entries[index][0] == clientSecretState.value[index].key && entries[index][1] == clientSecretState.value[index].value) {
+            clientSecretState.value[index].keyEdit=false;
+            secretKeyEdit.value=false;
+            promiseRunning.value = false;
+            return;
+        }
+    }
+
+    let data = clientSecretState.value;
+    let keyValue = {};
+    let newVersion = [];
+    for(let d of data) {
+        keyValue[d.key] = d.value;
+        newVersion.push({ key: d.key, value: d.value, keyAdd : false, keyEdit : false});
+    }
+    clientSecretState.value = newVersion;
+
+    skapi.setServiceOption({
+        serviceId: currentService.value.service,
+        option: {
+            client_secret: keyValue
+        }
+    }).then(s=>{
+        promiseRunning.value = false;
+        console.log({s});
+        for(let i=0; i<clientSecretState.value.length; i++) {
+            clientSecretState.value[i].keyAdd = false;
+            clientSecretState.value[i].keyEdit = false;
+        }
+        secretKeyEdit.value = false;
+        secretKeyAdd.value = false;
+    });
 }
 let checkKeyInp = (index) => {
-    if (key_data.value[index].keyAdd && key_data.value[index].name == '' && key_data.value[index].key == '') {
-        removeKey(index);
+    if(clientSecretKey.value[0] && clientSecretState.value[index].key !== '' && clientSecretState.value[index].value !== '') {
+        let entries = Object.entries(clientSecretKey.value[0]);
+
+        if (entries[index][0] !== clientSecretState.value[index].key || entries[index][1] !== clientSecretState.value[index].value) {
+            clientSecretState.value[index].key = entries[index][0];
+            clientSecretState.value[index].value = entries[index][1];
+        }
     } else {
-        key_data.value[index].keyAdd = false;
-        key_data.value[index].keyEdit = false;
+        clientSecretState.value.splice(index, 1);
     }
+    clientSecretState.value[index].keyEdit=false;
+    clientSecretState.value[index].keyAdd=false;
+    secretKeyEdit.value=false;
+    secretKeyAdd.value=false;
 }
 let removeKey = (index) => {
-    let data = key_data.value[index];
-    key_data.value.splice(index, 1);
+    let data = clientSecretState.value[index];
+    clientSecretState.value.splice(index, 1);
+    secretKeyEdit.value = false;
+    saveSecretKey();
 }
 let currentSubdomain = computed(() => {
     if (currentService.value.subdomain) {
@@ -733,6 +794,13 @@ watch(modifyCors, () => {
                     overflow-y: auto;
                     padding: 8px 16px;
 
+                    .empty {
+                        line-height: 110px;
+                        color: rgba(0, 0, 0, 0.4);
+                        font-size: 0.8rem;
+                        font-weight: 500;
+                        text-align: center;
+                    }
                     .key {
                         margin-bottom: 12px;
                         &:last-child {
@@ -740,7 +808,11 @@ watch(modifyCors, () => {
                         }
                         &.edit {
                             .inputWrap {
-                                width: calc(100% - 98px);
+                                &.edit {
+                                    .keyName {
+                                        width: calc(33% - 42px);
+                                    }
+                                }
                             }
                         }
                     }
@@ -757,24 +829,31 @@ watch(modifyCors, () => {
                     }
                     .buttonWrap {
                         display: inline-block;
+                        width: 62px;
+                        text-align: right;
+                        vertical-align: middle;
                         .save {
                             margin: 0 5px 0 9px;
                             color: #293FE6;
                         }
                         .edit {
                             color: rgba(0,0,0,0.6);
+
+                            &.none {
+                                display: none;
+                            }
                         }
                     }
                     input {
                         border: 0;
                         border-bottom: 1px solid rgba(0, 0, 0, 0.80);
-                        box-shadow: 0px 1px 3px 0px rgba(0, 0, 0, 0.06);
                         background-color: unset;
                         color: rgba(0,0,0,0.6);
                     }
                     .keyName {
                         display: inline-block;
-                        width: 33%;
+                        vertical-align: middle;
+                        width: 30%;
                         height: 20px;
                         margin-right: 4%;
                         font-size: 14px;
@@ -782,10 +861,14 @@ watch(modifyCors, () => {
                     }
                     .secretKey {
                         display: inline-block;
-                        width: 63%;
+                        vertical-align: middle;
+                        width: 66%;
                         height: 20px;
                         font-size: 14px;
                         color: rgba(0,0,0,0.6);
+                        white-space: nowrap;
+                        overflow: hidden;
+                        text-overflow: ellipsis;
                     }
                 }
             }
