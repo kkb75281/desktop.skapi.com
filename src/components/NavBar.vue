@@ -237,10 +237,10 @@ onBeforeUnmount(() => {
                             color: #fff;
 
                             &:hover {
-                                color: #293FE6;
+                                color: #9BBDFF;
 
                                 img {
-                                    filter: invert(28%) sepia(100%) saturate(5415%) hue-rotate(234deg) brightness(89%) contrast(102%);
+                                    filter: brightness(0) saturate(100%) invert(75%) sepia(81%) saturate(1540%) hue-rotate(186deg) brightness(101%) contrast(102%);
                                 }
                             }
                             img {

@@ -27,9 +27,9 @@ main#service
                             .toggleBtn(@click="enableDisableToggle")
             .codeWrap
                 pre.codeInner.
-                    #[span(style="color:#33adff") &lt;script] #[span(style="color:#58dfff") src]=#[span(style="color:#ffa600") "https://cdn.jsdelivr.net/npm/skapi-js@latest/dist/skapi.js"]#[span(style="color:#33adff") &gt;]#[span(style="color:#33adff") &lt;/script&gt;]
+                    #[span(style="color:#33adff") &lt;script] #[span(style="color:#58dfff") src]=#[span(style="color:#FFED91") "https://cdn.jsdelivr.net/npm/skapi-js@latest/dist/skapi.js"]#[span(style="color:#33adff") &gt;]#[span(style="color:#33adff") &lt;/script&gt;]
                     #[span(style="color:#33adff") &lt;script&gt;]
-                    #[span(style="color:#33adff") &nbsp;&nbsp;&nbsp;&nbsp;const] skapi = #[span(style="color:#33adff") new] Skapi(#[span(style="color:#ffa600") "{{ currentService.service }}"], #[span(style="color:#ffa600") "{{ currentService.owner }}"]);
+                    #[span(style="color:#33adff") &nbsp;&nbsp;&nbsp;&nbsp;const] skapi = #[span(style="color:#33adff") new] Skapi(#[span(style="color:#FFED91") "{{ currentService.service }}"], #[span(style="color:#FFED91") "{{ currentService.owner }}"]);
                     #[span(style="color:#33adff") &lt;/script&gt;]
                 .copy.clickable(@click="copy")
                     .material-symbols-outlined.mid file_copy
