@@ -6,7 +6,7 @@ import App from './App.vue'
 import router from './router'
 import Admin from '@/skapi-extensions/js/admin.js'
 
-console.log(import.meta.env.MODE, '01.29 18:03')
+console.log(import.meta.env.MODE, '02.02 15:10')
 let domain = import.meta.env.VITE_DOMAIN;
 let skapi = new Admin(import.meta.env.VITE_ADMIN, JSON.parse(import.meta.env.VITE_ETC), JSON.parse(import.meta.env.VITE_REG));
 
