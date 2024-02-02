@@ -22,7 +22,7 @@ header#navBar(style='--position: relative;')
                             a(href="https://twitter.com/skapijs" target="_blank")
                                 img(src="@/assets/img/icon/twitter.svg")
                         li
-                            a(href="https://discord.gg/P9aGAcBj" target="_blank")
+                            a(href="https://discord.com/invite/thqvysPnQt" target="_blank")
                                 img(src="@/assets/img/icon/discord.svg")
                     ul
                         li.doc
