@@ -159,6 +159,7 @@ NavBar(style='--position: fixed; --background-color:#262626')
             br
             br
             h3(style="font-size:1.6rem;font-weight:500;") Sign-up while it’s free
+            br
             p(style="font-size:1.2rem;") Now we are in a promotion event !
             br
             a.customButton(v-if='account' href="/dashboard") Start my project
@@ -382,7 +383,7 @@ section {
             border: 1px solid rgba(255, 255, 255, 0.1);
             background: #434343;
             font-size: 0.9rem;
-            font-family: "monospace" !important;
+            font-family: monospace;
             color: #fff;
             filter: drop-shadow(0px 5px 5px rgba(0, 0, 0, 0.3));
             word-break: break-all;
