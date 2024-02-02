@@ -42,7 +42,6 @@ const router = useRouter();
 let getCurrentService = () => {
     let srvcId = route.path.split('/')[2];
     currentService.value = skapi.services[srvcId];
-    console.log(currentService.value)
 
     if (currentService.value) {
         if (!newsletter_sender.value?.[currentService.value.service]?.public) {

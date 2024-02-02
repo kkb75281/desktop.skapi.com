@@ -11,7 +11,8 @@ main#service
                             template(v-if="promiseRunning")
                                 img.loading(src="@/assets/img/loading.png")
                             template(v-else)
-                                .material-symbols-outlined.big.save(type="submit") done
+                                input#submitInp(type="submit" hidden)
+                                label.material-symbols-outlined.big.save(for='submitInp') done
                                 .material-symbols-outlined.sml.cancel(@click="modifyServiceName = false;") close
                     template(v-else)
                         h4 {{ currentService.name }}
@@ -52,7 +53,8 @@ main#service
                             template(v-if="promiseRunningCors")
                                 img.loading(src="@/assets/img/loading.png")
                             template(v-else)
-                                .material-symbols-outlined.big.save(type="submit") done
+                                input#submitInp(type="submit" hidden)
+                                label.material-symbols-outlined.big.save(for='submitInp') done
                                 .material-symbols-outlined.sml.cancel(@click="modifyCors = false;") close
                     template(v-else)
                         h5 {{ currentService.cors || '*' }}
@@ -67,7 +69,8 @@ main#service
                             template(v-if="promiseRunningSecKey")
                                 img.loading(src="@/assets/img/loading.png")
                             template(v-else)
-                                .material-symbols-outlined.big.save(type="submit") done
+                                input#submitInp(type="submit" hidden)
+                                label.material-symbols-outlined.big.save(for='submitInp') done
                                 .material-symbols-outlined.sml.cancel(@click="modifyKey = false;") close
                     template(v-else)
                         h5 {{ currentService.api_key || 'No key' }}
