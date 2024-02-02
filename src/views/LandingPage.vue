@@ -181,7 +181,7 @@ NavBar(style='--position: fixed; --background-color:#262626')
         br
         h6(style="font-weight:500;") broadway Inc. BROADWAYINC PTE. LTD. Singapore.
         br
-        h6(style="font-weight:500;") [Privacy & Policy]
+        router-link(to="/privacy" target="_blank") [Privacy & Policy]
 </template>
 
 <script setup>
@@ -500,6 +500,13 @@ section {
 
 footer {
     background-color: #1f1f1f;
+
+    a {
+        color: #fff;
+        font-size: 0.8rem;
+        font-weight: 500;
+        text-decoration: none;
+    }
 }
 
 @media (max-width: 1072px) {
