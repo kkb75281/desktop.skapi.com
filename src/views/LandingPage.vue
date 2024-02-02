@@ -25,10 +25,8 @@ NavBar(style='--position: fixed; --background-color:#262626')
                 h1 Backend-Powered Frontend
                 p Build full-stack websites directly from your HTML frontend. 
                 p(style="color:#FFED91;") No server required.
-            .image 
-                img(src="@/assets/img/landingpage/code.png")
 
-    section.blue(style="padding: 10rem 0rem;")
+    section.blue(style="padding: 6rem 0rem 10rem;")
         .wrap.intact 
             .explain.one
                 .image(style="width:23%")  
@@ -91,7 +89,7 @@ NavBar(style='--position: fixed; --background-color:#262626')
                     br
                     p Full control of your service data. Execute administrator-level tasks from your browser.
 
-    section.intact.frame(style="padding: 10rem 1rem;")
+    section.intact.frame(style="padding: 7rem 1rem 8rem;")
         .image(style="width:46%;margin-right:4%;")
             img(src="@/assets/img/landingpage/frameworks.png")
         .desc(style="width:50%; color:#000") 
@@ -168,13 +166,11 @@ NavBar(style='--position: fixed; --background-color:#262626')
     section.intact.updates 
         h2 Updates
         .update 
-            span.date(style="color:rgba(0,0,0,0.6);margin-right:20px;") 2024. 02. 01
-            h5(style="display:inline-block;color:#293FE6;") Headline HeadlineHeadline Headline
+            .title(style="line-height:1.8")
+                span.date(style="color:rgba(0,0,0,0.6);margin-right:20px;") 2024. 02. 02
+                h5(style="display:inline-block;color:#293FE6;") Skapi 1.1.0 version will be open soon
             br
-            br
-            p We will soon reach the stable release (1.1.0) of Skapi!
-            p For early adopters who have created a service before the stable release, 
-            p we will continue to provide your service free for an unlimited time.
+            p We will soon reach the stable release (1.1.0) of Skapi! For early adopters who have created a service before the stable release, we will continue to provide your service free for an unlimited time.
 
     footer(style="padding:3.5rem 2rem;color:#fff;")
         img(src="@/assets/img/logo/logo-white.svg" style="width:126px;")
@@ -390,25 +386,32 @@ section {
         }
     }
     &.dark {
-        padding: 4rem 0;
+        padding: 12rem 0;
         background: #1f1f1f;
 
-        .intact {
-            div {
-                display: inline-block;
-                vertical-align: middle;
-                color: #fff;
+        position: relative;
+        &::before {
+            position: absolute;
+            content: '';
+            right: 0;
+            top: 0;
+            left: 0;
+            bottom: 0;
+            background-image: url('@/assets/img/landingpage/code.png');
+            background-size: 100rem;
+            background-repeat: no-repeat;
+            background-position: center center;
+            opacity: 0.7;
+        }
+        .wrap {
+            .image {
+                display: none;
+            }
+            .desc {
+                position: relative;
+                width: unset !important;
+                max-width: 500px !important;
 
-                &:first-child {
-                    width: 43%;
-                    margin-right: 2%;
-                }
-                &:last-child {
-                    width: 55%;
-                }
-                img {
-                    width: 100%;
-                }
                 h1 {
                     font-weight: 700;
                     margin-bottom: 1.5rem;
@@ -420,6 +423,36 @@ section {
                 }
             }
         }
+
+        // .intact {
+        //     div {
+        //         display: inline-block;
+        //         vertical-align: middle;
+        //         color: #fff;
+
+        //         &:first-child {
+        //             width: 43%;
+        //             margin-right: 2%;
+        //         }
+        //         &:last-child {
+        //             width: 55%;
+        //         }
+        //         img {
+        //             height: 500px;
+        //             object-fit: cover;
+
+        //         }
+        //         h1 {
+        //             font-weight: 700;
+        //             margin-bottom: 1.5rem;
+        //         }
+        //         p {
+        //             font-weight: 500;
+        //             font-size: 1.6rem;
+        //             line-height: 2rem;
+        //         }
+        //     }
+        // }
     }
     &.doc {
         text-align: center;
@@ -460,6 +493,14 @@ section {
         }
         p {
             line-height: 1.6rem;
+        }
+    }
+    .desc {
+        .tit {
+            text-shadow: 1px 1px 1px #000;
+        }
+        p {
+            text-shadow: 1px 1px 1px #000;
         }
     }
 }
@@ -521,30 +562,30 @@ footer {
 @media (max-width: 910px) {
     section {
         &.dark {
-            position: relative;
-            &::before {
-                position: absolute;
-                content: '';
-                right: 0;
-                top: 0;
-                left: 0;
-                bottom: 0;
-                background-image: url('@/assets/img/landingpage/code.png');
-                background-size: 33rem;
-                background-repeat: no-repeat;
-                background-position: right center;
-                opacity: 0.7;
-            }
-            .wrap {
-                .image {
-                    display: none;
-                }
-                .desc {
-                    position: relative;
-                    width: unset !important;
-                    max-width: 500px !important;
-                }
-            }
+            // position: relative;
+            // &::before {
+            //     position: absolute;
+            //     content: '';
+            //     right: 0;
+            //     top: 0;
+            //     left: 0;
+            //     bottom: 0;
+            //     background-image: url('@/assets/img/landingpage/code.png');
+            //     background-size: 33rem;
+            //     background-repeat: no-repeat;
+            //     background-position: right center;
+            //     opacity: 0.7;
+            // }
+            // .wrap {
+            //     .image {
+            //         display: none;
+            //     }
+            //     .desc {
+            //         position: relative;
+            //         width: unset !important;
+            //         max-width: 500px !important;
+            //     }
+            // }
         }
         &.frame {
             text-align: center;
@@ -554,32 +595,9 @@ footer {
             .image {
                 width: 50% !important;
                 margin-bottom: 1rem;
+                min-width: 256px;
             }
         }
-        // &.frame {
-        //     position: relative;
-        //     &::before {
-        //         position: absolute;
-        //         content: '';
-        //         right: 0;
-        //         top: 0;
-        //         left: 0;
-        //         bottom: 0;
-        //         background-image: url('@/assets/img/landingpage/frameworks.png');
-        //         background-size: 22rem;
-        //         background-repeat: no-repeat;
-        //         background-position: right center;
-        //         opacity: 0.7;
-        //     }
-        //     .image {
-        //         display: none;
-        //     }
-        //     .desc {
-        //         position: relative;
-        //         width: unset !important;
-        //         max-width: 500px !important;
-        //     }
-        // }
     }
 }
 
@@ -592,6 +610,16 @@ footer {
 }
 
 @media (max-width: 479px) {
+    section {
+        &.dark {
+            &::before {
+                background-image: url('@/assets/img/landingpage/code_mobile.png');
+                background-size: cover;
+                background-position: left center;
+                opacity: 0.3;
+            }
+        }
+    }
     .explain {
         position: relative;
 
@@ -606,9 +634,10 @@ footer {
             background-size: 13rem;
             background-repeat: no-repeat;
             background-position: right top;
-            opacity: 0.7;
+            opacity: 0.5;
         }
         &.one {
+            padding-top: 6rem;
             &::before {
                 background-image: url('@/assets/img/landingpage/feature1.png');
             }
