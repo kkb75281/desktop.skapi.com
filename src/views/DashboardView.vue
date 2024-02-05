@@ -417,7 +417,7 @@ let getServiceInfo = () => {
             }
 
             skapi.storageInformation(service).then(i => {
-                console.log(i)
+                // console.log(i)
                 // get storage info
                 for (let k in i) {
                     storageInfo.value[service][k] = i[k];
@@ -444,43 +444,11 @@ if (serviceFetching.value) {
     serviceFetching.value.then(() => {
         services.value = skapi.serviceMap.map(sid => skapi.services[sid]).reverse();
         getServiceInfo();
-        // for(let i=0; i<services.value.length; i++) {
-        //     let sd = services.value[i]?.subdomain;
-        //     let host = 0;
-        //     if (sd) {
-        //         launch(services.value[i].subdomain, f => {
-        //             if (f.length) {
-        //                 host = f[0].size;
-        //             }
-        //         }, true);
-        //     }
-        //     skapi.storageInformation(services.value[i].service).then(async(info) => {
-        //         info.host = host
-        //         services.value[i].info = info;
-        //     });
-
-        // }
-        // console.log(services.value)
     })
 }
 else {
     services.value = skapi.serviceMap.map(sid => skapi.services[sid]).reverse();
     getServiceInfo();
-    // for(let i=0; i<services.value.length; i++) {
-    //     let sd = services.value[i]?.subdomain;
-    //         let host = 0;
-    //         if (sd) {
-    //             launch(services.value[i].subdomain, f => {
-    //                 if (f.length) {
-    //                     host = f[0].size;
-    //                 }
-    //             }, true);
-    //         }
-    //     skapi.storageInformation(services.value[i].service).then(info => {
-    //         services.value[i].info = info;
-    //     });
-    // }
-    // console.log(services.value)
 }
 
 let create = ref(false);

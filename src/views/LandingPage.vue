@@ -193,13 +193,13 @@ let showCode = ref("post");
 let isMobile = ref(false);
 
 let showNavBar = (e) => {
-  let navBar = document.getElementById("top");
+    let navBar = document.getElementById("top");
 
-  if (e.deltaY > 0) {
+    if (e.deltaY > 0) {
     navBar.style.top = "-60px";
-  } else {
+    } else {
     navBar.style.top = "0";
-  }
+    }
 };
 
 let windowSize = () => {
@@ -212,32 +212,30 @@ let windowSize = () => {
 
 onMounted(() => {
   window.addEventListener("wheel", showNavBar);
-  window.addEventListener("resize", windowSize);
 });
 onBeforeUnmount(() => {
   window.removeEventListener("wheel", showNavBar);
-  window.removeEventListener("resize", windowSize);
 });
 </script>
 
 <style lang="less" scoped>
 summary::-webkit-details-marker {
-  /* Safari 브라우저용 사용자 정의 스타일 */
-  display: none;
+    /* Safari 브라우저용 사용자 정의 스타일 */
+    display: none;
 }
 summary {
-  position: relative;
-  list-style-type: none; /* 그 외의 브라우저용 사용자 정의 스타일 */
-  cursor: pointer;
-  padding: 20px 0;
-  margin-bottom: 20px;
-  font-size: 1.2rem;
-  font-weight: 500;
+    position: relative;
+    list-style-type: none; /* 그 외의 브라우저용 사용자 정의 스타일 */
+    cursor: pointer;
+    padding: 20px 0;
+    margin-bottom: 20px;
+    font-size: 1.2rem;
+    font-weight: 500;
 
-  ::marker {
+    ::marker {
     content: "";
-  }
-  &::before {
+    }
+    &::before {
     position: absolute;
     content: "";
     left: 0;
@@ -245,8 +243,8 @@ summary {
     width: 100%;
     height: 1px;
     background-color: rgba(0, 0, 0, 0.6);
-  }
-  &:after {
+    }
+    &:after {
     position: absolute;
     content: "";
     background: url("@/assets/img/landingpage/plus.svg") no-repeat;
@@ -254,26 +252,22 @@ summary {
     width: 30px;
     height: 30px;
     background-size: contain;
-  }
+    }
 }
 details[open] summary:after {
-  background: url("@/assets/img/landingpage/minus.svg") no-repeat;
-  width: 30px;
-  height: 30px;
-  background-size: contain;
+    background: url("@/assets/img/landingpage/minus.svg") no-repeat;
+    width: 30px;
+    height: 30px;
+    background-size: contain;
 }
 
 #landing {
-  max-width: 100vw;
-  background-color: #f0f0f0;
+    max-width: 100vw;
+    background-color: #f0f0f0;
 }
 
 .gradback {
-  background: linear-gradient(
-      217deg,
-      rgba(0, 255, 170, 1),
-      rgba(255, 0, 0, 0) 70.71%
-    ),
+  background: linear-gradient(217deg, rgba(0, 255, 170, 1), rgba(255, 0, 0, 0) 70.71%),
     linear-gradient(54deg, rgba(0, 14, 255, 1), rgba(0, 255, 0, 0) 70.71%),
     linear-gradient(148deg, rgba(0, 14, 255, 1), rgba(0, 255, 0, 0) 70.71%),
     linear-gradient(336deg, rgba(252, 208, 75, 1), rgba(0, 0, 255, 1) 70.71%);
@@ -515,97 +509,70 @@ section {
         border-radius: 8px;
         background: #E5E9F3;
     }
-    .image, span {
-        display: inline-block;
-        vertical-align: middle;
-    }
-    .image {
-        position: relative;
-        width: 3.4rem;
-        height: 3.4rem;
-        border-radius: 50%;
-        background: linear-gradient(90deg, #0068FF 0%, #5CA4E4 73%);
-        filter: drop-shadow(0px 6px 2px rgba(0, 0, 0, 0.2));
-        margin-right: 1rem;
+    .icon {
+      position: relative;
+      width: 45px;
+      height: 45px;
+      background-color: #fff;
+      border-radius: 50%;
+      box-shadow: 0px 12px 36px rgba(69, 77, 255, 0.1);
+      margin-right: 18px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
 
-        img {
-            position: absolute;
-            left: 50%;
-            top: 50%;
-            transform: translate(-50%, -50%);
-        }
+      img {
+        width: 45px;
+        scale: 0.9;
+      }
     }
-    span {
-        word-break: wrap;
+    p {
+      max-width: 296px;
+      line-height: 20px;
+      font-size: 16px;
+      color: rgba(0, 0, 0, 0.6);
     }
+  }
 }
 
-footer {
-    background-color: #1f1f1f;
-
-    a {
-        color: #fff;
-        font-size: 0.8rem;
-        font-weight: 500;
-        text-decoration: none;
-    }
-}
-
-@media (max-width: 1072px) {
-    .featureWrap {
-        .feature {
-            width: calc(50% - 1.2rem);
-        }
-    }
-}
-
-@media (max-width: 910px) {
-    section {
-        &.dark {
-            // position: relative;
-            // &::before {
-            //     position: absolute;
-            //     content: '';
-            //     right: 0;
-            //     top: 0;
-            //     left: 0;
-            //     bottom: 0;
-            //     background-image: url('@/assets/img/landingpage/code.png');
-            //     background-size: 33rem;
-            //     background-repeat: no-repeat;
-            //     background-position: right center;
-            //     opacity: 0.7;
-            // }
-            // .wrap {
-            //     .image {
-            //         display: none;
-            //     }
-            //     .desc {
-            //         position: relative;
-            //         width: unset !important;
-            //         max-width: 500px !important;
-            //     }
-            // }
-        }
-        &.frame {
-            text-align: center;
-            div {
-                width: 100% !important;
+@media (max-width: 825px) {
+  section {
+    &.intro {
+      .introBottom {
+        .slider {
+          &:first-child, &:last-child {
+            .codeWindow {
+              bottom: 130px !important;
             }
-            .image {
-                width: 50% !important;
-                margin-bottom: 1rem;
-                min-width: 256px;
+          }
+          .sliderInner {
+            > img {
+              opacity: 0;
             }
+          }
+          .comment, .users {
+            margin-bottom: 0;
+          }
         }
+      }
     }
-}
-
-@media (max-width: 560px) {
-    .featureWrap {
-        .feature {
-            width: calc(100% - 1.2rem);
-        }
+  }
+  .cardWrap {
+    .card {
+      &:nth-child(1),
+      &:nth-child(7) {
+        width: 50% !important;
+      }
+      &:nth-child(2),
+      &:nth-child(8) {
+        width: calc(50% - 20px) !important;
+        margin-right: 0;
+      }
+      &:nth-child(3),
+      &:nth-child(6) {
+        width: 100% !important;
+        margin-right: 0;
+      }
     }
 }
 
@@ -673,3 +640,4 @@ footer {
     
 }
 </style>
+    
