@@ -343,8 +343,6 @@ let showPlanSetting = (e, index) => {
 
     showMore.value = false;
     currentServiceIndex = index;
-    console.log(e.clientY)
-    // clientY = 200 + (60 *(index-1)) + 'px';
     clientY = e.clientY - 140 + 'px'
 
     showMore.value = true;
