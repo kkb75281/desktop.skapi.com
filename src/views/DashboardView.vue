@@ -342,7 +342,7 @@ let showPlanSetting = (e, index) => {
 
     showMore.value = false;
     currentServiceIndex = index;
-    clientY = e.currentTarget.getBoundingClientRect().top - 120 + 'px';
+    clientY = window.scrollY + e.currentTarget.getBoundingClientRect().top - 120 + 'px';
 
     showMore.value = true;
     currentPlanIndex = index;
