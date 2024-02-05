@@ -226,15 +226,22 @@ let keyEditForm = ref(null);
 let clientSecretKey =ref([]);
 let clientSecretState =ref([]);
 
-if(!currentService.value.client_secret) {
-    clientSecretKey.value = []
-} else {
+let updateSecretKey = () => {
+    clientSecretKey.value = [];
     clientSecretKey.value.push(currentService.value.client_secret); 
     let keys = Object.keys(clientSecretKey.value[0]);
     let values = Object.values(clientSecretKey.value[0]);
     for(let i=0; i<keys.length; i++) {
         clientSecretState.value.push({ key: keys[i], value: values[i], keyAdd : false, keyEdit : false});
     }
+    secretKeyEdit.value = false;
+    secretKeyAdd.value = false;
+}
+
+if(!currentService.value.client_secret) {
+    clientSecretKey.value = []
+} else {
+    updateSecretKey();
 }
 
 let addSecretKey = () => {
@@ -260,12 +267,12 @@ let saveSecretKey = (index) => {
 
     let data = clientSecretState.value;
     let keyValue = {};
-    let newVersion = [];
+    // let newVersion = [];
     for(let d of data) {
         keyValue[d.key] = d.value;
-        newVersion.push({ key: d.key, value: d.value, keyAdd : false, keyEdit : false});
+        // newVersion.push({ key: d.key, value: d.value, keyAdd : false, keyEdit : false});
     }
-    clientSecretState.value = newVersion;
+    // clientSecretState.value = newVersion;
 
     skapi.setServiceOption({
         serviceId: currentService.value.service,
@@ -273,26 +280,25 @@ let saveSecretKey = (index) => {
             client_secret: keyValue
         }
     }).then(s=>{
-        promiseRunning.value = false;
         console.log({s});
-        for(let i=0; i<clientSecretState.value.length; i++) {
-            clientSecretState.value[i].keyAdd = false;
-            clientSecretState.value[i].keyEdit = false;
-        }
-        secretKeyEdit.value = false;
-        secretKeyAdd.value = false;
+        updateSecretKey();
+        promiseRunning.value = false;
     });
 }
 let checkKeyInp = (index) => {
-    if(clientSecretKey.value[0] && clientSecretState.value[index].key !== '' && clientSecretState.value[index].value !== '') {
+    if(secretKeyEdit.value && Object.entries(clientSecretKey.value[0]).length) {
         let entries = Object.entries(clientSecretKey.value[0]);
 
-        if (entries[index][0] !== clientSecretState.value[index].key || entries[index][1] !== clientSecretState.value[index].value) {
+        if(entries[index][0] !== clientSecretState.value[index].key || entries[index][1] !== clientSecretState.value[index].value) {
             clientSecretState.value[index].key = entries[index][0];
             clientSecretState.value[index].value = entries[index][1];
         }
-    } else {
+    } else if(secretKeyAdd.value) {
         clientSecretState.value.splice(index, 1);
+        secretKeyEdit.value=false;
+        secretKeyAdd.value=false;
+
+        return;
     }
     clientSecretState.value[index].keyEdit=false;
     clientSecretState.value[index].keyAdd=false;
@@ -317,25 +323,6 @@ let currentSubdomain = computed(() => {
         return 'No subdomain';
     }
 });
-// let clicked = (e) => {
-//     let target = e.currentTarget;
-
-//     target.classList.add('clicked');
-//     setTimeout(() => {
-//         if (target.classList.contains('user')) {
-//             router.push({ path: `/dashboard/${currentService.value.service}/users` });
-//         }
-//         if (target.classList.contains('record')) {
-//             router.push({ path: `/dashboard/${currentService.value.service}/records` });
-//         }
-//         if (target.classList.contains('mail')) {
-//             router.push({ path: `/dashboard/${currentService.value.service}/mail` });
-//         }
-//         if (target.classList.contains('domain')) {
-//             router.push({ path: `/dashboard/${currentService.value.service}/subdomain` });
-//         }
-//     }, 200);
-// }
 let editServiceName = () => {
     if (account.value?.email_verified) {
         inputServiceName = currentService.value.name;
