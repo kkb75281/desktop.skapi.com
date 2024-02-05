@@ -333,7 +333,6 @@ let showServiceInfo = (e, index) => {
 
 let showPlanSetting = (e, index) => {
     if(currentPlanIndex == index && showMore.value) {
-        console.log('dd')
         showMore.value = false;
         currentPlanIndex = null;
 
@@ -410,7 +409,6 @@ document.addEventListener('mouseup', function () {
 
 let getServiceInfo = () => {
     if (services.value) {
-        console.log(services.value)
         for(let i=0; i<services.value.length; i++) {
             let service = services.value[i].service;
     
