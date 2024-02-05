@@ -312,6 +312,7 @@ let showServiceInfo = (e, index) => {
         upArrow.value[index].classList.add('hide');
         trCont.value[index].classList.remove('active');
         currentServiceIndex = null;
+        showMore.value = false;
 
         return;
     } else if(e.target.classList.contains('upArrow')) {
@@ -319,6 +320,7 @@ let showServiceInfo = (e, index) => {
         upArrow.value[index].classList.add('hide');
         trCont.value[index].classList.remove('active');
         currentServiceIndex = null;
+        showMore.value = false;
 
         return;
     }
@@ -327,6 +329,7 @@ let showServiceInfo = (e, index) => {
     downArrow.value[index].classList.add('hide');
     upArrow.value[index].classList.remove('hide');
     trCont.value[index].classList.add('active');
+    showMore.value = false;
 }
 
 let showPlanSetting = (e, index) => {
@@ -340,7 +343,9 @@ let showPlanSetting = (e, index) => {
 
     showMore.value = false;
     currentServiceIndex = index;
-    clientY = 200 + (60 *(index-1)) + 'px';
+    console.log(e.clientY)
+    // clientY = 200 + (60 *(index-1)) + 'px';
+    clientY = e.clientY - 140 + 'px'
 
     showMore.value = true;
     currentPlanIndex = index;
