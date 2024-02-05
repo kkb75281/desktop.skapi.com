@@ -21,6 +21,9 @@ main#dashboard
                     th.th.center(style="width:168px;")
                         | Date Created
                         .resizer(@mousedown="mousedown")
+                    th.th.center(style="width:120px;")
+                        | Plan
+                        .resizer(@mousedown="mousedown")
                     th.th.center(style="width:140px;")
                         | Users
                         .resizer(@mousedown="mousedown")
@@ -46,24 +49,37 @@ main#dashboard
                             .overflow {{ service.cors }}
                         td.center {{ typeof service.timestamp === 'string' ? service.timestamp : new Date(service.timestamp).toDateString() }}
                         td.center
-                            template(v-if="Math.ceil(service.users/10000*100)")
+                            template(v-if="service.group == 1") Trial
+                            template(v-else-if="service.group == 2") Standard
+                            template(v-else-if="service.group == 3") Premium
+                            template(v-else-if="service.group == 50") Unlimited
+                            template(v-else-if="service.group == 51") Free Standard
+                            template(v-else) ...
+                        td.center
+                            template(v-if="service.group == 50")
+                                .percent.purple Unlimited
+                            template(v-else-if="service.group !== 50 && Math.ceil(service.users/10000*100)")
                                 .percent(:class='{"green": 0 <= Math.ceil(service.users/10000*100) && Math.ceil(service.users/10000*100) < 51, "orange": 51 <= Math.ceil(service.users/10000*100) && Math.ceil(service.users/10000*100) < 81, "red": 81 <= Math.ceil(service.users/10000*100) && Math.ceil(service.users/10000*100) < 101}') {{ Math.ceil(service.users/10000*100) + '%' }}
-                            template(v-else) 
+                            template(v-else)
                                 .percent.green 0%
                         td.center
-                            template(v-if="Math.ceil(storageInfo?.[service.service]?.cloud/53687091200*100)")
+                            template(v-if="service.group == 50")
+                                .percent.purple Unlimited
+                            template(v-else-if="service.group !== 50 && Math.ceil(storageInfo?.[service.service]?.cloud/53687091200*100)")
                                 .percent(:class='{"green": 0 <= Math.ceil(storageInfo?.[service.service]?.cloud/53687091200*100) && Math.ceil(storageInfo?.[service.service]?.cloud/53687091200*100) < 51, "orange": 51 <= Math.ceil(storageInfo?.[service.service]?.cloud/53687091200*100) && Math.ceil(storageInfo?.[service.service]?.cloud/53687091200*100) < 81, "red": 81 <= Math.ceil(storageInfo?.[service.service]?.cloud/53687091200*100)}') {{ Math.ceil(storageInfo?.[service.service]?.cloud/53687091200*100) + '%' }}
                             template(v-else)
                                 .percent.green 0%
                         td(style="padding-left:40px;")
-                            template(v-if="Math.ceil(storageInfo?.[service.service]?.database/4294967296*100)")
+                            template(v-if="service.group == 50")
+                                .percent.purple Unlimited
+                            template(v-else-if="service.group !== 50 && Math.ceil(storageInfo?.[service.service]?.database/4294967296*100)")
                                 .percent(:class='{"green": 0 <= Math.ceil(storageInfo?.[service.service]?.database/4294967296*100) && Math.ceil(storageInfo?.[service.service]?.database/4294967296*100) < 51, "orange": 51 <= Math.ceil(storageInfo?.[service.service]?.database/4294967296*100) && Math.ceil(storageInfo?.[service.service]?.database/4294967296*100) < 81, "red": 81 <= Math.ceil(storageInfo?.[service.service]?.database/4294967296*100)}') {{ Math.ceil(storageInfo?.[service.service]?.database/4294967296*100) + '%' }}
                             template(v-else)
                                 .percent.green 0%
                             .menu(@click.stop="(e) => showPlanSetting(e, index)" :class='{"nonClickable": !account.email_verified}')
                                 .material-symbols-outlined.mid.clickable more_vert
                     tr.cont(ref="trCont" :class="{'active' : showInfo}")
-                        td(colspan="8")
+                        td(colspan="9")
                             br
                             .info
                                 h6 Name
@@ -105,17 +121,17 @@ main#dashboard
                                 template(v-else)
                                     span -
                 tr.loadingWrap(v-else-if="serviceFetching")
-                    td(colspan="8" style="text-align:center; padding-top:20px;")
+                    td(colspan="9" style="text-align:center; padding-top:20px;")
                         img.loading(src="@/assets/img/loading.png")
                 tr.noServices(v-else)
-                    td(colspan="8" style="text-align:center; padding-top:20px;")
+                    td(colspan="9" style="text-align:center; padding-top:20px;")
                         h3 No Services
                         br
                         p Get started by creating a new service.
     br
     .plus(style="display:block;text-align:center;padding-bottom:2rem;")
         .material-symbols-outlined.big(@click="createService" style="color:#293FE6;cursor:pointer;") add_circle
-   
+    
     #moreVert.hide(v-if="showMore" @click.stop style="--moreVert-right: 100px;" :style="{top: clientY}")
         .inner
             .more(@click="showMore=false;" style="width:unset;white-space:nowrap;opacity:0.2") Downgrade Plan
@@ -164,20 +180,6 @@ main#dashboard
                             li 
                                 .material-symbols-outlined.sml.li warning
                                 span All the users and data will be deleted every 7 days
-
-                        //- ul
-                        //-     li 
-                        //-         .material-symbols-outlined.sml.li check_circle
-                        //-         span asdaasd asdasdasdaasd asdasdasdaasd
-                        //-     li 
-                        //-         .material-symbols-outlined.sml.li check_circle
-                        //-         span asdaasd asdasdasdaasd asdasdasdaasd
-                        //-     li 
-                        //-         .material-symbols-outlined.sml.li check_circle
-                        //-         span asdaasd asdasdasdaasd asdasdasdaasd
-                        //-     li 
-                        //-         .material-symbols-outlined.sml.li check_circle
-                        //-         span asdaasd asdasdasdaasd asdasdasdaasd
         
             br
 
@@ -215,9 +217,6 @@ main#dashboard
                             li 
                                 .material-symbols-outlined.sml.li check_circle
                                 span Subdomain hosting
-                            //- li 
-                            //-     .material-symbols-outlined.sml.li check_circle
-                            //-     span asdaasd asdasdasdaasd asdasdasdaasd
         
             br
 
@@ -261,7 +260,7 @@ main#dashboard
                 template(v-if="promiseRunning")
                     img.loading(src="@/assets/img/loading.png")
                 template(v-else)
-                    button.noLine(@click="create=false;") Cancel 
+                    button.noLine(type="button" @click="create=false;") Cancel 
                     button.final(type="submit") Create
                     //- button.unFinished(v-else type="submit") Create
             
@@ -312,6 +311,7 @@ let showServiceInfo = (e, index) => {
         upArrow.value[index].classList.add('hide');
         trCont.value[index].classList.remove('active');
         currentServiceIndex = null;
+        showMore.value = false;
 
         return;
     } else if(e.target.classList.contains('upArrow')) {
@@ -319,6 +319,7 @@ let showServiceInfo = (e, index) => {
         upArrow.value[index].classList.add('hide');
         trCont.value[index].classList.remove('active');
         currentServiceIndex = null;
+        showMore.value = false;
 
         return;
     }
@@ -327,6 +328,7 @@ let showServiceInfo = (e, index) => {
     downArrow.value[index].classList.add('hide');
     upArrow.value[index].classList.remove('hide');
     trCont.value[index].classList.add('active');
+    showMore.value = false;
 }
 
 let showPlanSetting = (e, index) => {
@@ -340,11 +342,10 @@ let showPlanSetting = (e, index) => {
 
     showMore.value = false;
     currentServiceIndex = index;
-    clientY = 200 + (60 *(index-1)) + 'px';
+    clientY = window.scrollY + e.currentTarget.getBoundingClientRect().top - 120 + 'px';
 
     showMore.value = true;
     currentPlanIndex = index;
-    console.log(currentPlanIndex == index, showMore.value)
 }
 
 let goServiceDashboard = (e, service) => {
@@ -409,8 +410,9 @@ document.addEventListener('mouseup', function () {
 
 let getServiceInfo = () => {
     if (services.value) {
+        console.log(services.value)
         for(let i=0; i<services.value.length; i++) {
-            let service = services.value[i].service
+            let service = services.value[i].service;
     
             if (!storageInfo.value[service]) {
                 storageInfo.value[service] = {};
@@ -476,8 +478,10 @@ let addService = () => {
     services.value.unshift({
         service: '',
         name: newServiceName,
+        region: '...',
         created_locale: '...',
         timestamp: '...',
+        group: '...',
         cors: '...',
         pending: true,
         active: 0
@@ -956,6 +960,9 @@ skapi.getProfile().then(u => {
                     }
                     &.red {
                         background-color: #F04E4E;
+                    }
+                    &.purple {
+                        background-color: #B881FF;
                     }
                 }
 
