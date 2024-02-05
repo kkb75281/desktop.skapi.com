@@ -211,10 +211,12 @@ let windowSize = () => {
 }
 
 onMounted(() => {
-  window.addEventListener("wheel", showNavBar);
+    window.addEventListener("wheel", showNavBar);
+    window.addEventListener("resize", windowSize);
 });
 onBeforeUnmount(() => {
-  window.removeEventListener("wheel", showNavBar);
+    window.removeEventListener("wheel", showNavBar);
+    window.removeEventListener("resize", windowSize);
 });
 </script>
 
@@ -267,7 +269,11 @@ details[open] summary:after {
 }
 
 .gradback {
-  background: linear-gradient(217deg, rgba(0, 255, 170, 1), rgba(255, 0, 0, 0) 70.71%),
+    background: linear-gradient(
+        217deg,
+        rgba(0, 255, 170, 1),
+        rgba(255, 0, 0, 0) 70.71%
+    ),
     linear-gradient(54deg, rgba(0, 14, 255, 1), rgba(0, 255, 0, 0) 70.71%),
     linear-gradient(148deg, rgba(0, 14, 255, 1), rgba(0, 255, 0, 0) 70.71%),
     linear-gradient(336deg, rgba(252, 208, 75, 1), rgba(0, 0, 255, 1) 70.71%);
@@ -509,70 +515,72 @@ section {
         border-radius: 8px;
         background: #E5E9F3;
     }
-    .icon {
-      position: relative;
-      width: 45px;
-      height: 45px;
-      background-color: #fff;
-      border-radius: 50%;
-      box-shadow: 0px 12px 36px rgba(69, 77, 255, 0.1);
-      margin-right: 18px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
+    .image, span {
+        display: inline-block;
+        vertical-align: middle;
+    }
+    .image {
+        position: relative;
+        width: 3.4rem;
+        height: 3.4rem;
+        border-radius: 50%;
+        background: linear-gradient(90deg, #0068FF 0%, #5CA4E4 73%);
+        filter: drop-shadow(0px 6px 2px rgba(0, 0, 0, 0.2));
+        margin-right: 1rem;
 
-      img {
-        width: 45px;
-        scale: 0.9;
-      }
+        img {
+            position: absolute;
+            left: 50%;
+            top: 50%;
+            transform: translate(-50%, -50%);
+        }
     }
-    p {
-      max-width: 296px;
-      line-height: 20px;
-      font-size: 16px;
-      color: rgba(0, 0, 0, 0.6);
+    span {
+        word-break: wrap;
     }
-  }
 }
 
-@media (max-width: 825px) {
-  section {
-    &.intro {
-      .introBottom {
-        .slider {
-          &:first-child, &:last-child {
-            .codeWindow {
-              bottom: 130px !important;
-            }
-          }
-          .sliderInner {
-            > img {
-              opacity: 0;
-            }
-          }
-          .comment, .users {
-            margin-bottom: 0;
-          }
-        }
-      }
+footer {
+    background-color: #1f1f1f;
+
+    a {
+        color: #fff;
+        font-size: 0.8rem;
+        font-weight: 500;
+        text-decoration: none;
     }
-  }
-  .cardWrap {
-    .card {
-      &:nth-child(1),
-      &:nth-child(7) {
-        width: 50% !important;
-      }
-      &:nth-child(2),
-      &:nth-child(8) {
-        width: calc(50% - 20px) !important;
-        margin-right: 0;
-      }
-      &:nth-child(3),
-      &:nth-child(6) {
-        width: 100% !important;
-        margin-right: 0;
-      }
+}
+
+@media (max-width: 1072px) {
+    .featureWrap {
+        .feature {
+            width: calc(50% - 1.2rem);
+        }
+    }
+}
+
+@media (max-width: 910px) {
+    section {
+        &.frame {
+            text-align: center;
+            div {
+                width: 100% !important;
+            }
+            .image {
+                width: 50% !important;
+                margin-right: 0 !important;
+                margin-bottom: 1rem;
+                min-width: 256px;
+            }
+        }
+    }
+}
+
+@media (max-width: 560px) {
+    .featureWrap {
+        .feature {
+            width: calc(100% - 1.2rem);
+        }
     }
 }
 
