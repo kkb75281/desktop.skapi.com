@@ -90,16 +90,16 @@ main#service
                                     template(v-if="!data.keyEdit && !data.keyAdd")
                                         .key
                                             .inputWrap
-                                                .keyName {{ data.key }}
-                                                .secretKey {{ data.value.substr(0,4) + '******************************' }}
+                                                #keyName {{ data.key }}
+                                                #secretKey {{ data.value.substr(0,4) + '******************************' }}
                                             .buttonWrap
                                                 .material-symbols-outlined.mid.edit(@click="editSecretKey(index)" :class="{'none' : secretKeyAdd || secretKeyEdit}") edit
                                     template(v-else)
                                         .key.edit(ref="keyEditForm")
                                             .inputWrap(:class="{'edit' : data.keyEdit}")
                                                 .material-symbols-outlined.sml.minus(v-if="data.keyEdit" @click="removeKey(index)") do_not_disturb_on
-                                                input.keyName(type="text" v-model="data.key" name='keyName' placeholder="Key name" required)
-                                                input.secretKey(type="text" v-model="data.value" name='secretKey' placeholder="Secret Key" required)
+                                                input#keyName(type="text" v-model="data.key" name='keyName' placeholder="Key name" required)
+                                                input#secretKey(type="text" v-model="data.value" name='secretKey' placeholder="Secret Key" required)
                                             .buttonWrap
                                                 template(v-if="promiseRunning")
                                                     //- div(style='display: inline-flex;align-items: center;width:108px;height: 43px;')
@@ -227,7 +227,9 @@ let clientSecretKey =ref([]);
 let clientSecretState =ref([]);
 let clientCopy = [];
 
-let updateSecretKey = () => {
+if(!currentService.value.client_secret) {
+    clientSecretKey.value = []
+} else {
     clientSecretKey.value = [];
     clientSecretKey.value.push(currentService.value.client_secret); 
     let keys = Object.keys(clientSecretKey.value[0]);
@@ -235,20 +237,15 @@ let updateSecretKey = () => {
     for(let i=0; i<keys.length; i++) {
         clientSecretState.value.push({ key: keys[i], value: values[i], keyAdd : false, keyEdit : false});
     }
-    secretKeyEdit.value = false;
-    secretKeyAdd.value = false;
-}
-
-if(!currentService.value.client_secret) {
-    clientSecretKey.value = []
-} else {
-    updateSecretKey();
 }
 
 let addSecretKey = () => {
     clientSecretState.value.unshift({ key: '', value: '', keyEdit: false, keyAdd: true });
     secretKeyAdd.value = true;
-    clientCopy = JSON.parse(JSON.stringify(clientSecretState.value))
+    clientCopy = JSON.parse(JSON.stringify(clientSecretState.value));
+    nextTick(() => {
+        document.getElementById('keyName').focus();
+    });
 }
 let editSecretKey = (index) => {
     clientSecretState.value[index].keyEdit=true;
@@ -268,12 +265,12 @@ let saveSecretKey = (index) => {
 
     let data = clientSecretState.value;
     let keyValue = {};
-    // let newVersion = [];
+    let newVersion = [];
     for(let d of data) {
         keyValue[d.key] = d.value;
-        // newVersion.push({ key: d.key, value: d.value, keyAdd : false, keyEdit : false});
+        newVersion.push({ key: d.key, value: d.value, keyAdd : false, keyEdit : false});
     }
-    // clientSecretState.value = newVersion;
+    clientSecretState.value = newVersion;
 
     skapi.setServiceOption({
         serviceId: currentService.value.service,
@@ -282,7 +279,12 @@ let saveSecretKey = (index) => {
         }
     }).then(s=>{
         console.log({s});
-        updateSecretKey();
+        for(let i=0; i<clientSecretState.value.length; i++) {
+            clientSecretState.value[i].keyAdd = false;
+            clientSecretState.value[i].keyEdit = false;
+        }
+        secretKeyEdit.value = false;
+        secretKeyAdd.value = false;
         promiseRunning.value = false;
     });
 }
@@ -800,7 +802,7 @@ watch(modifyCors, () => {
                         &.edit {
                             .inputWrap {
                                 &.edit {
-                                    .keyName {
+                                    #keyName {
                                         width: calc(33% - 42px);
                                     }
                                 }
@@ -841,7 +843,7 @@ watch(modifyCors, () => {
                         background-color: unset;
                         color: rgba(0,0,0,0.6);
                     }
-                    .keyName {
+                    #keyName {
                         display: inline-block;
                         vertical-align: middle;
                         width: 30%;
@@ -850,7 +852,7 @@ watch(modifyCors, () => {
                         font-size: 14px;
                         color: rgba(0,0,0,0.6);
                     }
-                    .secretKey {
+                    #secretKey {
                         display: inline-block;
                         vertical-align: middle;
                         width: 66%;
