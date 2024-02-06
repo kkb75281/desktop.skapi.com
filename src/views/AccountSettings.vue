@@ -30,7 +30,7 @@ main#accountSetting(v-if='account')
                         template(v-else) 
                             img(v-if="account.approved.includes('ggl')" src="@/assets/img/icon/google.svg" style="display:inline-block;width:24px;height:24px;vertical-align:middle;margin-right:5px;")
                             span {{ account.email }}
-                    .btn(v-if="!changeEmail && account.approved.includes('ggl')" @click="email=account.email; changeEmail = true;") Change email
+                    .btn(v-if="!changeEmail && !account.approved.includes('ggl')" @click="email=account.email; changeEmail = true;") Change email
                     .btnIcon(v-if="!changeEmail && !account.approved.includes('ggl')" @click="email=account.email; changeEmail = true;")
                         .material-symbols-outlined.mid.clickable edit
                 .row
