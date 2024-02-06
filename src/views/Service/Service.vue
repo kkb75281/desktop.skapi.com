@@ -225,6 +225,7 @@ let secretKeyAdd = ref(false);
 let keyEditForm = ref(null);
 let clientSecretKey =ref([]);
 let clientSecretState =ref([]);
+let clientCopy = [];
 
 let updateSecretKey = () => {
     clientSecretKey.value = [];
@@ -247,17 +248,17 @@ if(!currentService.value.client_secret) {
 let addSecretKey = () => {
     clientSecretState.value.unshift({ key: '', value: '', keyEdit: false, keyAdd: true });
     secretKeyAdd.value = true;
+    clientCopy = JSON.parse(JSON.stringify(clientSecretState.value))
 }
 let editSecretKey = (index) => {
     clientSecretState.value[index].keyEdit=true;
     secretKeyEdit.value=true;
+    clientCopy = JSON.parse(JSON.stringify(clientSecretState.value))
 }
 let saveSecretKey = (index) => {
     promiseRunning.value = true;
     if(clientSecretState.value.length > 1) {
-        let entries = Object.entries(clientSecretKey.value[0]);
-
-        if (secretKeyEdit.value && entries[index][0] == clientSecretState.value[index].key && entries[index][1] == clientSecretState.value[index].value) {
+        if (secretKeyEdit.value && clientCopy[index].key == clientSecretState.value[index].key && clientCopy[index].value == clientSecretState.value[index].value) {
             clientSecretState.value[index].keyEdit=false;
             secretKeyEdit.value=false;
             promiseRunning.value = false;
@@ -287,11 +288,11 @@ let saveSecretKey = (index) => {
 }
 let checkKeyInp = (index) => {
     if(secretKeyEdit.value && Object.entries(clientSecretKey.value[0]).length) {
-        let entries = Object.entries(clientSecretKey.value[0]);
+        console.log(clientCopy[index])
 
-        if(entries[index][0] !== clientSecretState.value[index].key || entries[index][1] !== clientSecretState.value[index].value) {
-            clientSecretState.value[index].key = entries[index][0];
-            clientSecretState.value[index].value = entries[index][1];
+        if(clientCopy[index].key !== clientSecretState.value[index].key || clientCopy[index].value !== clientSecretState.value[index].value) {
+            clientSecretState.value[index].key = clientCopy[index].key;
+            clientSecretState.value[index].value = clientCopy[index].value;
         }
     } else if(secretKeyAdd.value) {
         clientSecretState.value.splice(index, 1);
