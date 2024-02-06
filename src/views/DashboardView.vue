@@ -259,7 +259,7 @@ main#dashboard
                 template(v-if="promiseRunning")
                     img.loading(src="@/assets/img/loading.png")
                 template(v-else)
-                    button.noLine(@click="create=false;") Cancel 
+                    button.noLine(@click="closeCreateService") Cancel 
                     button.final(type="submit") Create
                     //- button.unFinished(v-else type="submit") Create
             
