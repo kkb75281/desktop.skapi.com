@@ -131,20 +131,19 @@ main#dashboard
     br
     .plus(style="display:block;text-align:center;padding-bottom:2rem;")
         .material-symbols-outlined.big(@click="createService" style="color:#293FE6;cursor:pointer;") add_circle
-   
+    
     #moreVert.hide(v-if="showMore" @click.stop style="--moreVert-right: 100px;" :style="{top: clientY}")
         .inner
             .more(@click="showMore=false;" style="width:unset;white-space:nowrap;opacity:0.2") Downgrade Plan
             .more(@click="showMore=false;" style="width:unset;white-space:nowrap;opacity:0.2") Upgrade Plan
-            .more(@click="showMore=false;" style="width:unset;white-space:nowrap;opacity:0.2") Stop Plan
             .more(@click="showMore=false;" style="width:unset;white-space:nowrap;opacity:0.2") Cancel Plan
 
 #createNewService(:class="{'show' : create}")
-    .material-symbols-outlined.mid.close(@click="create=false;") close
-    header
-        h4.title Create New Service
-    main(v-if="create")
-        form(@submit.prevent="addService")
+    .material-symbols-outlined.mid.close(@click="closeCreateService") close
+    form(@submit.prevent="addService")
+        header
+            h4.title Create New Service
+        main(v-if="create")
             .label
                 h6 Name of Service
             input#serviceName(type="text" :class="{'warning' : error}" @input='(e)=>{newServiceName=e.target.value;error="";}' placeholder="Name of Service")
@@ -255,12 +254,12 @@ main#dashboard
                                 span unlimited use with pay-as-you-go when exceeding the limit
 
             br
-        
+        footer
             .buttonWrap(style="display:flex; justify-content:space-between;")
                 template(v-if="promiseRunning")
                     img.loading(src="@/assets/img/loading.png")
                 template(v-else)
-                    button.noLine(type="button" @click="create=false;") Cancel 
+                    button.noLine(@click="create=false;") Cancel 
                     button.final(type="submit") Create
                     //- button.unFinished(v-else type="submit") Create
             
@@ -333,7 +332,6 @@ let showServiceInfo = (e, index) => {
 
 let showPlanSetting = (e, index) => {
     if(currentPlanIndex == index && showMore.value) {
-        console.log('dd')
         showMore.value = false;
         currentPlanIndex = null;
 
@@ -458,12 +456,17 @@ let createService = () => {
     if (account?.value.email_verified) {
         create.value = true;
         error.value = '';
+        document.querySelector('body').classList.add('overflow');
         nextTick(() => {
             document.getElementById('serviceName').focus();
         });
     } else {
         return false;
     }
+}
+let closeCreateService = () => {
+    create.value = false;
+    document.querySelector('body').classList.remove('overflow');
 }
 let newServiceName = '';
 let promiseRunning = ref(false);
@@ -490,8 +493,8 @@ let addService = () => {
         .then(s => {
             skapi.insertService(s);
             services.value[0] = s;
-            create.value = false;
             newServiceName = '';
+            closeCreateService();
         }).catch(err => {
             // alert(err.message);
             console.log(err)
@@ -532,7 +535,6 @@ skapi.getProfile().then(u => {
     top: 0;
     width: 700px;
     height: 100%;
-    overflow: scroll;
     background: #FFF;
     box-shadow: -8px 4px 20px 0px rgba(0, 0, 0, 0.10);
     transform: translateX(110%);
@@ -656,6 +658,7 @@ skapi.getProfile().then(u => {
         }
     }
     header {
+        height: 100px;
         padding: 2rem;
         border-bottom: 1px solid rgba(0, 0, 0, 0.10);
         box-shadow: 0px 1px 3px 0px rgba(0, 0, 0, 0.06);
@@ -664,7 +667,9 @@ skapi.getProfile().then(u => {
         }
     }
     main {
-        padding: 30px 40px;
+        height: calc(100vh - 100px);
+        padding: 30px 40px 80px;
+        overflow: scroll !important;
 
         h6 {
             display: inline-block;
@@ -694,54 +699,15 @@ skapi.getProfile().then(u => {
                 padding: 0 20px;
             }
         }
-        // .planCard {
-        //     border-radius: 8px;
-        //     border: 0.5px solid rgba(0, 0, 0, 0.25);
-        //     background: #FAFAFA;
-
-        //     .header {
-        //         display: flex;
-        //         align-items: center;
-        //         justify-content: space-between;
-        //         padding: 1rem;
-        //         border-bottom: 1px solid rgba(0, 0, 0, 0.10);
-        //         box-shadow: 0px 1px 3px 0px rgba(0, 0, 0, 0.06);
-
-        //         .mode {
-        //             display: inline-block;
-        //             font-weight: 500;
-        //             color: #293FE6;
-        //         }
-        //         .price {
-        //             position: relative;
-        //             display: inline-block;
-        //             padding-right: 60px;
-        //             font-size: 28px;
-        //             font-weight: 700;
-
-        //             &::after {
-        //                 position: absolute;
-        //                 content: '/month';
-        //                 right: 0;
-        //                 top: 50%;
-        //                 transform: translateY(-50%);
-        //                 font-size: 14px;
-        //                 font-weight: 500;
-        //                 color: rgba(0, 0, 0, 0.40);
-        //             }
-        //         }
-        //     }
-        //     .content {
-        //         padding: 1rem;
-                
-        //         ul {
-        //             li {
-        //                 box-sizing: border-box;
-
-        //             }
-        //         }
-        //     }
-        // }
+    }
+    footer {
+        position: absolute;
+        right: 0;
+        bottom: 0;
+        width: 100%;
+        height: 80px;
+        padding: 18px 40px;
+        background-color: rgba(255,255,255,0.8);
     }
 }
 
