@@ -64,6 +64,11 @@ const router = createRouter({
       component: Main,
       children: [
         {
+          path: '/experiment',
+          name: 'experiment',
+          component: () => import('@/views/experiment/experiment.vue')
+        },
+        {
           path: 'accountSettings',
           name: 'accountSettings',
           component: AccountSettings
