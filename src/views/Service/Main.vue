@@ -1,23 +1,23 @@
 <template lang="pug">
 #serviceMain(v-if='currentService')
     .left
-        router-link.back(:to="`/dashboard`")
+        router-link.back(:to="`/myServices`")
             .material-symbols-outlined.mid arrow_back_ios
             p My services
         nav.menuWrap 
-            router-link.menu(:to="`/dashboard/${currentService.service}`" :class="{'active': route.name == 'service'}")
+            router-link.menu(:to="`/myServices/${currentService.service}`" :class="{'active': route.name == 'service'}")
                 .material-symbols-outlined.big home
                 h3 Dashboard
-            router-link.menu(:to="`/dashboard/${currentService.service}/users`" :class="{'active': route.name == 'users'}")
+            router-link.menu(:to="`/myServices/${currentService.service}/users`" :class="{'active': route.name == 'users'}")
                 .material-symbols-outlined.big supervisor_account
                 h3 Users
-            router-link.menu(:to="`/dashboard/${currentService.service}/records`" :class="{'active': route.name == 'records'}")
+            router-link.menu(:to="`/myServices/${currentService.service}/records`" :class="{'active': route.name == 'records'}")
                 .material-symbols-outlined.big database
                 h3 Database
-            router-link.menu(:to="`/dashboard/${currentService.service}/mail`" :class="{'active': route.name == 'mail', 'nonClick' : account.access_group == 1}")
+            router-link.menu(:to="`/myServices/${currentService.service}/mail`" :class="{'active': route.name == 'mail', 'nonClick' : account.access_group == 1}")
                 .material-symbols-outlined.big email
                 h3 Mail
-            router-link.menu(:to="`/dashboard/${currentService.service}/subdomain`" :class="{'active': route.name == 'subdomain', 'nonClick' : account.access_group == 1}")
+            router-link.menu(:to="`/myServices/${currentService.service}/subdomain`" :class="{'active': route.name == 'subdomain', 'nonClick' : account.access_group == 1}")
                 .material-symbols-outlined.big language
                 h3 Hosting
     .right 
@@ -90,7 +90,7 @@ let getCurrentService = () => {
     }
     else {
         if(account.value) {
-            router.replace({ path: '/dashboard' });
+            router.replace({ path: '/myServices' });
         } else {
             router.replace({ path: '/login' });
         }

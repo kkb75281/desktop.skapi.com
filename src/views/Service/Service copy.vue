@@ -73,7 +73,7 @@ main#service
                         h5 {{ currentService.api_key || 'No key' }}
                             .material-symbols-outlined.mid.pen.clickable(:class="{'nonClickable' : !account?.email_verified}" @click="editKey") edit
 
-        router-link.info.hover.user.clicked(:to='`/dashboard/${currentService.service}/users`')
+        router-link.info.hover.user.clicked(:to='`/myServices/${currentService.service}/users`')
             .titleWrap
                 .title 
                     .material-symbols-outlined.big group
@@ -83,7 +83,7 @@ main#service
                     h6 # of Users
                     h5 {{ currentService.users }}
 
-        router-link.info.hover.record.clicked(:to='`/dashboard/${currentService.service}/records`')
+        router-link.info.hover.record.clicked(:to='`/myServices/${currentService.service}/records`')
             .titleWrap
                 .title 
                     .material-symbols-outlined.big database
@@ -95,7 +95,7 @@ main#service
                 .list
                     h6 # of cloud storage Used
                     h5 {{ convertToMb(storageInfo?.[currentService.service]?.cloud) }}
-        router-link.info.hover.mail.clicked(:to='`/dashboard/${currentService.service}/mail`' :class="{'nonClick' : account.access_group == 1}")
+        router-link.info.hover.mail.clicked(:to='`/myServices/${currentService.service}/mail`' :class="{'nonClick' : account.access_group == 1}")
             .titleWrap
                 .title 
                     .material-symbols-outlined.big mail
@@ -111,7 +111,7 @@ main#service
                     .list 
                         h6 # Mail storage used 
                         h5 {{ convertToMb(storageInfo?.[currentService.service]?.email) }}
-        router-link.info.hover.domain.clicked(:to='`/dashboard/${currentService.service}/subdomain`' :class="{'nonClick' : account.access_group == 1}")
+        router-link.info.hover.domain.clicked(:to='`/myServices/${currentService.service}/subdomain`' :class="{'nonClick' : account.access_group == 1}")
             .titleWrap
                 .title 
                     .material-symbols-outlined.big language
@@ -184,16 +184,16 @@ let currentSubdomain = computed(() => {
 //     target.classList.add('clicked');
 //     setTimeout(() => {
 //         if (target.classList.contains('user')) {
-//             router.push({ path: `/dashboard/${currentService.value.service}/users` });
+//             router.push({ path: `/myServices/${currentService.value.service}/users` });
 //         }
 //         if (target.classList.contains('record')) {
-//             router.push({ path: `/dashboard/${currentService.value.service}/records` });
+//             router.push({ path: `/myServices/${currentService.value.service}/records` });
 //         }
 //         if (target.classList.contains('mail')) {
-//             router.push({ path: `/dashboard/${currentService.value.service}/mail` });
+//             router.push({ path: `/myServices/${currentService.value.service}/mail` });
 //         }
 //         if (target.classList.contains('domain')) {
-//             router.push({ path: `/dashboard/${currentService.value.service}/subdomain` });
+//             router.push({ path: `/myServices/${currentService.value.service}/subdomain` });
 //         }
 //     }, 200);
 // }

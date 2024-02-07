@@ -93,7 +93,7 @@ let login = () => {
     }
     skapi.adminLogin(params, options).then(res => {
         account.value = res;
-        router.push({ path: '/dashboard' });
+        router.push({ path: '/myServices' });
     }).catch(err => {
         promiseRunning.value = false;
         if (err.code === "SIGNUP_CONFIRMATION_NEEDED") {

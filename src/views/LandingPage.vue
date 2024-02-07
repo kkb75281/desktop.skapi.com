@@ -160,7 +160,7 @@ NavBar(style='--position: fixed; --background-color:#262626')
             br
             p(style="font-size:1.2rem;") Now we are in a promotion event !
             br
-            a.customButton(v-if='account' href="/dashboard") Start my project
+            a.customButton(v-if='account' href="/myServices") Start my project
             a.customButton(v-else href="/signup") Sign-up
 
     section.intact.updates 

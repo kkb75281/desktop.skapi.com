@@ -1,5 +1,5 @@
 <template lang="pug">
-main#dashboard
+main#myServices
     .titleWrap
         .inner 
             h2 My Services
@@ -27,7 +27,7 @@ main#dashboard
                                 button(type="submit").create Create
 
                 template(v-if='services.length')
-                    router-link.box.card.clicked(v-for="service in services" :to="'/dashboard/' + service.service" :style='{opacity: service?.pending ? ".5" : null}')
+                    router-link.box.card.clicked(v-for="service in services" :to="'/myServices/' + service.service" :style='{opacity: service?.pending ? ".5" : null}')
                         .inner
                             .title 
                                 h4 {{ service.name }}
@@ -127,7 +127,7 @@ skapi.getProfile().then(u => {
 </script>
 
 <style lang="less" scoped>
-#dashboard {
+#myServices {
     position: relative;
     margin-top: 3.4rem;
 
@@ -277,7 +277,7 @@ skapi.getProfile().then(u => {
 }
 
 @media (max-width: 1023px) {
-    #dashboard {
+    #myServices {
         .wrapper {
             .boxWrap {
                 .box {
@@ -303,7 +303,7 @@ skapi.getProfile().then(u => {
 }
 
 @media (max-width: 767px) {
-    #dashboard {
+    #myServices {
         .wrapper {
             .boxWrap {
                 .box {

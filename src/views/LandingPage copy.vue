@@ -507,7 +507,7 @@ NavBar(style='--position: fixed; --background-color:#262626')
 
         br
 
-        a.customButton(v-if='account' href="/dashboard" style="background-color:#293FE6;color:white;") Start
+        a.customButton(v-if='account' href="/myServices" style="background-color:#293FE6;color:white;") Start
         a.customButton(v-else href="/signup" style="background-color:#293FE6;color:white;") Sign up
 
     br

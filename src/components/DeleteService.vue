@@ -55,7 +55,7 @@ let deleteService = async () => {
             services.value.splice(idx, 1);
             // remove from currentService
             currentService.value = null;
-            router.replace({ path: '/dashboard' });
+            router.replace({ path: '/myServices' });
         });
     }
 

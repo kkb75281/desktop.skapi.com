@@ -1,5 +1,5 @@
 <template lang="pug">
-main#dashboard
+main#myServices
     .createButton(@click="createService" :class="{'nonClickable' : !account?.email_verified}")
         .material-symbols-outlined.mid add
         span Create new service
@@ -350,7 +350,7 @@ let goServiceDashboard = (e, service) => {
     e.currentTarget.classList.add('active');
 
     setTimeout(() => {
-        router.push('/dashboard/' + service.service);
+        router.push('/myServices/' + service.service);
     }, 500);
 }
 
@@ -522,7 +522,7 @@ skapi.getProfile().then(u => {
 </script>
 
 <style lang="less" scoped>
-#dashboard {
+#myServices {
     position: relative;
     height: calc(100vh - 60px - 3.4rem);
     margin-top: 3.4rem;

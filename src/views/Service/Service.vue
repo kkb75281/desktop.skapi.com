@@ -130,7 +130,7 @@ main#service
                     .logoTitle
                         .material-symbols-outlined.big group
                         h4 Users
-                    router-link.material-symbols-outlined.arrowIcon.mid(:to='`/dashboard/${currentService.service}/users`') arrow_forward_ios
+                    router-link.material-symbols-outlined.arrowIcon.mid(:to='`/myServices/${currentService.service}/users`') arrow_forward_ios
                 .contWrap.noWrap
                     .cont 
                         h6 # of Users
@@ -149,7 +149,7 @@ main#service
                     .logoTitle
                         .material-symbols-outlined.big database
                         h4 Database
-                    router-link.material-symbols-outlined.arrowIcon.mid(:to='`/dashboard/${currentService.service}/records`') arrow_forward_ios
+                    router-link.material-symbols-outlined.arrowIcon.mid(:to='`/myServices/${currentService.service}/records`') arrow_forward_ios
                 .contWrap.noWrap
                     .cont 
                         h6 # of database storage Used
@@ -164,7 +164,7 @@ main#service
                     .logoTitle
                         .material-symbols-outlined.big mail
                         h4 Mail
-                    router-link.material-symbols-outlined.arrowIcon.mid(:to='`/dashboard/${currentService.service}/mail`' :class="{'nonClick' : account.access_group == 1}") arrow_forward_ios
+                    router-link.material-symbols-outlined.arrowIcon.mid(:to='`/myServices/${currentService.service}/mail`' :class="{'nonClick' : account.access_group == 1}") arrow_forward_ios
                 .contWrap.noWrap
                     template(v-if="account.access_group == 1")
                         .cont(style="width:100%; padding:0;")
@@ -183,7 +183,7 @@ main#service
                     .logoTitle
                         .material-symbols-outlined.big language
                         h4 Hosting
-                    router-link.material-symbols-outlined.arrowIcon.mid(:to='`/dashboard/${currentService.service}/subdomain`' :class="{'nonClick' : account.access_group == 1}") arrow_forward_ios
+                    router-link.material-symbols-outlined.arrowIcon.mid(:to='`/myServices/${currentService.service}/subdomain`' :class="{'nonClick' : account.access_group == 1}") arrow_forward_ios
                 .contWrap.noWrap
                     template(v-if="account.access_group == 1")
                         .cont(style="width:100%; padding:0;")
@@ -616,13 +616,14 @@ watch(modifyCors, () => {
                     span {
                         color: rgba(0, 0, 0, 0.40);
                         font-size: 0.8rem;
-                        font-weight: 500;
+                        font-weight: 400;
                         margin-right: 10px;
                     }
 
                     h6 {
                         display: inline-block;
                         color: rgba(0, 0, 0, 0.60);
+                        font-weight: 400;
                     }
                 }
 
@@ -649,7 +650,7 @@ watch(modifyCors, () => {
                     span {
                         color: rgba(0, 0, 0, 0.40);
                         font-size: 0.8rem;
-                        font-weight: 500;
+                        font-weight: 400;
                     }
 
                     .toggleBg {

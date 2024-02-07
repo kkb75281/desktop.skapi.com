@@ -167,7 +167,7 @@ let checkExist = ()=>{
     promiseRunning.value = true;
     skapi.login({email: form.email, password: form.password}).then(res => {
         account.value = res;
-        router.push({ path: '/dashboard' });
+        router.push({ path: '/myServices' });
     }).catch(err => {
         if(err.code === 'NOT_EXISTS') {
             step.value++;
