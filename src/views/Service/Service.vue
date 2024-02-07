@@ -289,7 +289,7 @@ let saveSecretKey = (index) => {
     });
 }
 let checkKeyInp = (index) => {
-    if(secretKeyEdit.value && Object.entries(clientSecretKey.value[0]).length) {
+    if(secretKeyEdit.value) {
         console.log(clientCopy[index])
 
         if(clientCopy[index].key !== clientSecretState.value[index].key || clientCopy[index].value !== clientSecretState.value[index].value) {
