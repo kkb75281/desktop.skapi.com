@@ -17,7 +17,7 @@ main(style='padding: 1em;')
     h2 2. Stripe create/get customer
     p Prepare for customer object
     hr
-    
+
     button(@click="getCustomer") Get customer
     pre {{ customer }}
 
@@ -226,12 +226,23 @@ let updateSubscription = async (ticket_id) => {
             proration_behavior: 'create_prorations'
         }
     });
+
     console.log(response);
 
     if (response.error) {
         alert(response.error.message);
         return;
     }
+
+    let SUBSCRIPTION_ID = response.subscription;
+    let cons = await skapi.consumeTicket(
+        { ticket_id, consume_id: service_id.value },
+        {
+            SUBSCRIPTION_ID,
+            SERVICE_ID: service_id.value
+        });
+
+    console.log(cons);
 }
 
 let createSubscription = async (ticket_id) => {
