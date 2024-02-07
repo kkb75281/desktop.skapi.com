@@ -408,7 +408,6 @@ document.addEventListener('mouseup', function () {
 
 let getServiceInfo = () => {
     if (services.value) {
-        console.log(services.value)
         for(let i=0; i<services.value.length; i++) {
             let service = services.value[i].service;
     
