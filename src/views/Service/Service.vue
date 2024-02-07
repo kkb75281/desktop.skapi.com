@@ -111,6 +111,19 @@ main#service
                         template(v-else)
                             .empty No data
 
+        .info 
+            .title 
+                h4 Subsription Plan
+            .listWrap
+                .list(style="width:33.33%")
+                    h6 Current Plan
+                    h5 {{ currentService.group == 2 ? 'Standard' : currentService.group == 3 ? 'Premium' : currentService.group == 50 ? 'Unlimited' : currentService.group == 51 ? 'Free Standard' : 'Trial' }}
+                .list(style="width:33.33%")
+                    h6 Renew Date
+                    h5 2024.02.12
+                .list(style="width:33.33%;text-align:right") 
+                    button.final Change Plan
+
         .info.card(:class="{'nonClickable' : !account?.email_verified || currentService.active == 0}") 
             .inner
                 .title 
@@ -521,7 +534,8 @@ watch(modifyCors, () => {
         filter: drop-shadow(0px 2px 4px rgba(0, 0, 0, 0.10));
 
         &:first-child,
-        &:nth-child(2) {
+        &:nth-child(2),
+        &:nth-child(3) {
             width: 100%;
             margin-right: 0;
         }
@@ -535,8 +549,8 @@ watch(modifyCors, () => {
             }
         }
 
-        &:nth-child(4),
-        &:nth-child(6) {
+        &:nth-child(5),
+        &:nth-child(7) {
             margin-right: 0;
         }
 
@@ -744,7 +758,7 @@ watch(modifyCors, () => {
                 margin-top: 28px;
 
                 h6 {
-                    font-weight: 500;
+                    font-weight: 400;
                     color: rgba(0, 0, 0, 0.4);
 
                     &.active {
@@ -757,7 +771,7 @@ watch(modifyCors, () => {
                     position: relative;
                     display: inline-block;
                     font-size: 16px;
-                    font-weight: 700;
+                    font-weight: 400;
                     color: rgba(0, 0, 0, 0.6);
                     margin-top: 8px;
 

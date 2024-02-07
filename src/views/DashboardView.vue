@@ -605,14 +605,14 @@ skapi.getProfile().then(u => {
                 .price {
                     position: relative;
                     display: inline-block;
-                    padding-right: 60px;
+                    padding-right: 35px;
                     padding-left: 10px;
                     font-size: 28px;
                     font-weight: 700;
 
                     &::before {
                         position: absolute;
-                        content: '/month';
+                        content: '/mo';
                         right: 0;
                         top: 50%;
                         transform: translateY(-50%);
@@ -627,9 +627,9 @@ skapi.getProfile().then(u => {
                         &::after {
                             position: absolute;
                             content: '';
-                            width: 50%;
+                            width: 62%;
                             height: 2px;
-                            left: 5px;
+                            left: 6px;
                             top: 50%;
                             transform: translateY(-50%);
                             background-color: #A7A8AD;
