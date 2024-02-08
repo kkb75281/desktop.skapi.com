@@ -66,10 +66,7 @@ let customer = ref(null);
 let service_id = ref(null);
 let service_info = ref(null);
 
-let product = {
-    standard: 'price_1OUCt6HfHjKTnB39IwJasJEy',
-    premium: 'price_1OeZSqHfHjKTnB395Ai9fY4m'
-}
+let product = JSON.parse(import.meta.env.VITE_PRODUCT)
 
 function openCustomerPortal() {
     // code to open customer portal

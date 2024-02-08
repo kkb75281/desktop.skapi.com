@@ -59,8 +59,10 @@ main#service
                     template(v-else)
                         h5 {{ currentService.cors || '*' }}
                             .material-symbols-outlined.mid.pen.clickable(:class="{'nonClickable' : !account?.email_verified}" @click="editCors") edit
+                    
+                    br
+                    br
 
-                .list
                     h6(:class="{ active: modifyKey }") Secret Key
                     template(v-if="modifyKey")
                         form.modifyInputForm(style="margin-top: 8px" @submit.prevent="setSecretKey")
@@ -76,13 +78,59 @@ main#service
                         h5 {{ currentService.api_key || 'No key' }}
                             .material-symbols-outlined.mid.pen.clickable(:class="{'nonClickable' : !account?.email_verified}" @click="editKey") edit
 
+                .list 
+                    h6 Client Secret Key
+                    .addBtn(@click="addSecretKey" :class="{'nonClickable' : secretKeyEdit || secretKeyAdd || promiseRunning}")
+                        .material-symbols-outlined.sml add 
+                        span Add Secret Key
+                    .keyWrap(:class="{'nonClickable' : promiseRunning}")
+                        template(v-if="clientSecretState.length")
+                            template(v-for="(data, index) in clientSecretState" :key="index")
+                                form(@submit.prevent="saveSecretKey(index)")
+                                    template(v-if="!data.keyEdit && !data.keyAdd")
+                                        .key
+                                            .inputWrap
+                                                #keyName {{ data.key }}
+                                                #secretKey {{ data.value.substr(0,4) + '******************************' }}
+                                            .buttonWrap
+                                                .material-symbols-outlined.mid.edit(@click="editSecretKey(index)" :class="{'none' : secretKeyAdd || secretKeyEdit}") edit
+                                    template(v-else)
+                                        .key.edit(ref="keyEditForm")
+                                            .inputWrap(:class="{'edit' : data.keyEdit}")
+                                                .material-symbols-outlined.sml.minus(v-if="data.keyEdit" @click="removeKey(index)") do_not_disturb_on
+                                                input#keyName(type="text" v-model="data.key" name='keyName' placeholder="Key name" required)
+                                                input#secretKey(type="text" v-model="data.value" name='secretKey' placeholder="Secret Key" required)
+                                            .buttonWrap
+                                                template(v-if="promiseRunning")
+                                                    //- div(style='display: inline-flex;align-items: center;width:108px;height: 43px;')
+                                                    img.loading(style='padding:0;width:18px;height:18px;' src="@/assets/img/loading.png")
+                                                template(v-else)
+                                                    input#submitInp(type="submit" hidden)
+                                                    label.material-symbols-outlined.mid.save(for='submitInp') check
+                                                    .material-symbols-outlined.mid.cancel(@click="checkKeyInp(index)") close
+                        template(v-else)
+                            .empty No data
+
+        .info 
+            .title 
+                h4 Subsription Plan
+            .listWrap
+                .list(style="width:33.33%")
+                    h6 Current Plan
+                    h5 {{ currentService.group == 2 ? 'Standard' : currentService.group == 3 ? 'Premium' : currentService.group == 50 ? 'Unlimited' : currentService.group == 51 ? 'Free Standard' : 'Trial' }}
+                .list(style="width:33.33%")
+                    h6 Renew Date
+                    h5 2024.02.12
+                .list(style="width:33.33%;text-align:right") 
+                    button.final Change Plan
+
         .info.card(:class="{'nonClickable' : !account?.email_verified || currentService.active == 0}") 
             .inner
                 .title 
                     .logoTitle
                         .material-symbols-outlined.big group
                         h4 Users
-                    router-link.material-symbols-outlined.arrowIcon.mid(:to='`/dashboard/${currentService.service}/users`') arrow_forward_ios
+                    router-link.material-symbols-outlined.arrowIcon.mid(:to='`/myServices/${currentService.service}/users`') arrow_forward_ios
                 .contWrap.noWrap
                     .cont 
                         h6 # of Users
@@ -101,7 +149,7 @@ main#service
                     .logoTitle
                         .material-symbols-outlined.big database
                         h4 Database
-                    router-link.material-symbols-outlined.arrowIcon.mid(:to='`/dashboard/${currentService.service}/records`') arrow_forward_ios
+                    router-link.material-symbols-outlined.arrowIcon.mid(:to='`/myServices/${currentService.service}/records`') arrow_forward_ios
                 .contWrap.noWrap
                     .cont 
                         h6 # of database storage Used
@@ -116,7 +164,7 @@ main#service
                     .logoTitle
                         .material-symbols-outlined.big mail
                         h4 Mail
-                    router-link.material-symbols-outlined.arrowIcon.mid(:to='`/dashboard/${currentService.service}/mail`' :class="{'nonClick' : account.access_group == 1}") arrow_forward_ios
+                    router-link.material-symbols-outlined.arrowIcon.mid(:to='`/myServices/${currentService.service}/mail`' :class="{'nonClick' : account.access_group == 1}") arrow_forward_ios
                 .contWrap.noWrap
                     template(v-if="account.access_group == 1")
                         .cont(style="width:100%; padding:0;")
@@ -135,7 +183,7 @@ main#service
                     .logoTitle
                         .material-symbols-outlined.big language
                         h4 Hosting
-                    router-link.material-symbols-outlined.arrowIcon.mid(:to='`/dashboard/${currentService.service}/subdomain`' :class="{'nonClick' : account.access_group == 1}") arrow_forward_ios
+                    router-link.material-symbols-outlined.arrowIcon.mid(:to='`/myServices/${currentService.service}/subdomain`' :class="{'nonClick' : account.access_group == 1}") arrow_forward_ios
                 .contWrap.noWrap
                     template(v-if="account.access_group == 1")
                         .cont(style="width:100%; padding:0;")
@@ -185,6 +233,100 @@ let enableDisablePromise = ref(false);
 let promiseRunningCors = ref(false);
 let promiseRunningSecKey = ref(false);
 let promiseRunning = ref(false);
+let secretKeyEdit = ref(false);
+let secretKeyAdd = ref(false);
+let keyEditForm = ref(null);
+let clientSecretKey =ref([]);
+let clientSecretState =ref([]);
+let clientCopy = [];
+
+if(!currentService.value.client_secret) {
+    clientSecretKey.value = []
+} else {
+    clientSecretKey.value = [];
+    clientSecretKey.value.push(currentService.value.client_secret); 
+    let keys = Object.keys(clientSecretKey.value[0]);
+    let values = Object.values(clientSecretKey.value[0]);
+    for(let i=0; i<keys.length; i++) {
+        clientSecretState.value.push({ key: keys[i], value: values[i], keyAdd : false, keyEdit : false});
+    }
+}
+
+let addSecretKey = () => {
+    clientSecretState.value.unshift({ key: '', value: '', keyEdit: false, keyAdd: true });
+    secretKeyAdd.value = true;
+    clientCopy = JSON.parse(JSON.stringify(clientSecretState.value));
+    nextTick(() => {
+        document.getElementById('keyName').focus();
+    });
+}
+let editSecretKey = (index) => {
+    clientSecretState.value[index].keyEdit=true;
+    secretKeyEdit.value=true;
+    clientCopy = JSON.parse(JSON.stringify(clientSecretState.value))
+}
+let saveSecretKey = (index) => {
+    promiseRunning.value = true;
+    if(clientSecretState.value.length > 1) {
+        if (secretKeyEdit.value && clientCopy[index].key == clientSecretState.value[index].key && clientCopy[index].value == clientSecretState.value[index].value) {
+            clientSecretState.value[index].keyEdit=false;
+            secretKeyEdit.value=false;
+            promiseRunning.value = false;
+            return;
+        }
+    }
+
+    let data = clientSecretState.value;
+    let keyValue = {};
+    let newVersion = [];
+    for(let d of data) {
+        keyValue[d.key] = d.value;
+        newVersion.push({ key: d.key, value: d.value, keyAdd : false, keyEdit : false});
+    }
+    clientSecretState.value = newVersion;
+
+    skapi.setServiceOption({
+        serviceId: currentService.value.service,
+        option: {
+            client_secret: keyValue
+        }
+    }).then(s=>{
+        console.log({s});
+        for(let i=0; i<clientSecretState.value.length; i++) {
+            clientSecretState.value[i].keyAdd = false;
+            clientSecretState.value[i].keyEdit = false;
+        }
+        secretKeyEdit.value = false;
+        secretKeyAdd.value = false;
+        promiseRunning.value = false;
+    });
+}
+let checkKeyInp = (index) => {
+    if(secretKeyEdit.value) {
+        console.log(clientCopy[index])
+
+        if(clientCopy[index].key !== clientSecretState.value[index].key || clientCopy[index].value !== clientSecretState.value[index].value) {
+            clientSecretState.value[index].key = clientCopy[index].key;
+            clientSecretState.value[index].value = clientCopy[index].value;
+        }
+    } else if(secretKeyAdd.value) {
+        clientSecretState.value.splice(index, 1);
+        secretKeyEdit.value=false;
+        secretKeyAdd.value=false;
+
+        return;
+    }
+    clientSecretState.value[index].keyEdit=false;
+    clientSecretState.value[index].keyAdd=false;
+    secretKeyEdit.value=false;
+    secretKeyAdd.value=false;
+}
+let removeKey = (index) => {
+    let data = clientSecretState.value[index];
+    clientSecretState.value.splice(index, 1);
+    secretKeyEdit.value = false;
+    saveSecretKey();
+}
 let currentSubdomain = computed(() => {
     if (currentService.value.subdomain) {
         if (currentService.value.subdomain[0] === '*' || currentService.value.subdomain[0] === '+') {
@@ -197,25 +339,6 @@ let currentSubdomain = computed(() => {
         return 'No subdomain';
     }
 });
-// let clicked = (e) => {
-//     let target = e.currentTarget;
-
-//     target.classList.add('clicked');
-//     setTimeout(() => {
-//         if (target.classList.contains('user')) {
-//             router.push({ path: `/dashboard/${currentService.value.service}/users` });
-//         }
-//         if (target.classList.contains('record')) {
-//             router.push({ path: `/dashboard/${currentService.value.service}/records` });
-//         }
-//         if (target.classList.contains('mail')) {
-//             router.push({ path: `/dashboard/${currentService.value.service}/mail` });
-//         }
-//         if (target.classList.contains('domain')) {
-//             router.push({ path: `/dashboard/${currentService.value.service}/subdomain` });
-//         }
-//     }, 200);
-// }
 let editServiceName = () => {
     if (account.value?.email_verified) {
         inputServiceName = currentService.value.name;
@@ -411,7 +534,8 @@ watch(modifyCors, () => {
         filter: drop-shadow(0px 2px 4px rgba(0, 0, 0, 0.10));
 
         &:first-child,
-        &:nth-child(2) {
+        &:nth-child(2),
+        &:nth-child(3) {
             width: 100%;
             margin-right: 0;
         }
@@ -425,8 +549,8 @@ watch(modifyCors, () => {
             }
         }
 
-        &:nth-child(4),
-        &:nth-child(6) {
+        &:nth-child(5),
+        &:nth-child(7) {
             margin-right: 0;
         }
 
@@ -492,13 +616,14 @@ watch(modifyCors, () => {
                     span {
                         color: rgba(0, 0, 0, 0.40);
                         font-size: 0.8rem;
-                        font-weight: 500;
+                        font-weight: 400;
                         margin-right: 10px;
                     }
 
                     h6 {
                         display: inline-block;
                         color: rgba(0, 0, 0, 0.60);
+                        font-weight: 400;
                     }
                 }
 
@@ -525,7 +650,7 @@ watch(modifyCors, () => {
                     span {
                         color: rgba(0, 0, 0, 0.40);
                         font-size: 0.8rem;
-                        font-weight: 500;
+                        font-weight: 400;
                     }
 
                     .toggleBg {
@@ -629,11 +754,12 @@ watch(modifyCors, () => {
             }
 
             .list {
+                position: relative;
                 width: 48%;
                 margin-top: 28px;
 
                 h6 {
-                    font-weight: 500;
+                    font-weight: 400;
                     color: rgba(0, 0, 0, 0.4);
 
                     &.active {
@@ -646,7 +772,7 @@ watch(modifyCors, () => {
                     position: relative;
                     display: inline-block;
                     font-size: 16px;
-                    font-weight: 700;
+                    font-weight: 400;
                     color: rgba(0, 0, 0, 0.6);
                     margin-top: 8px;
 
@@ -657,7 +783,102 @@ watch(modifyCors, () => {
                         transform: translateY(-50%);
                     }
                 }
+                .addBtn {
+                    position: absolute;
+                    top: 0;
+                    right: 0;
+                    cursor: pointer;
 
+                    * {
+                        font-size: 14px;
+                        color: #293FE6;
+                    }
+                }
+                .keyWrap {
+                    height: 128px;
+                    border-radius: 8px;
+                    border: 1px solid rgba(0, 0, 0, 0.10);
+                    margin-top: 12px;
+                    overflow-y: auto;
+                    padding: 8px 16px;
+
+                    .empty {
+                        line-height: 110px;
+                        color: rgba(0, 0, 0, 0.4);
+                        font-size: 0.8rem;
+                        font-weight: 500;
+                        text-align: center;
+                    }
+                    .key {
+                        margin-bottom: 12px;
+                        &:last-child {
+                            margin-bottom: 0;
+                        }
+                        &.edit {
+                            .inputWrap {
+                                &.edit {
+                                    #keyName {
+                                        width: calc(33% - 42px);
+                                    }
+                                }
+                            }
+                        }
+                    }
+                    .material-symbols-outlined {
+                        cursor: pointer;
+                    }
+                    .minus {
+                        margin-right: 8px;
+                        color: rgba(0,0,0,0.6);
+                    }
+                    .inputWrap {
+                        display: inline-block;
+                        width: calc(100% - 62px);
+                    }
+                    .buttonWrap {
+                        display: inline-block;
+                        width: 62px;
+                        text-align: right;
+                        vertical-align: middle;
+                        .save {
+                            margin: 0 5px 0 9px;
+                            color: #293FE6;
+                        }
+                        .edit {
+                            color: rgba(0,0,0,0.6);
+
+                            &.none {
+                                display: none;
+                            }
+                        }
+                    }
+                    input {
+                        border: 0;
+                        border-bottom: 1px solid rgba(0, 0, 0, 0.80);
+                        background-color: unset;
+                        color: rgba(0,0,0,0.6);
+                    }
+                    #keyName {
+                        display: inline-block;
+                        vertical-align: middle;
+                        width: 30%;
+                        height: 20px;
+                        margin-right: 4%;
+                        font-size: 14px;
+                        color: rgba(0,0,0,0.6);
+                    }
+                    #secretKey {
+                        display: inline-block;
+                        vertical-align: middle;
+                        width: 66%;
+                        height: 20px;
+                        font-size: 14px;
+                        color: rgba(0,0,0,0.6);
+                        white-space: nowrap;
+                        overflow: hidden;
+                        text-overflow: ellipsis;
+                    }
+                }
             }
         }
 

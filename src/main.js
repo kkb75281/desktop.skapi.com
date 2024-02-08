@@ -61,7 +61,7 @@ if (url.hash) {
             window.localStorage.setItem('remember', 'true');
             // logged in!
             account.value = res;
-            router.push({ path: '/dashboard' });
+            router.push({ path: '/myServices' });
         });
     }
 }

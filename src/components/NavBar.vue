@@ -6,14 +6,14 @@ header#navBar(style='--position: relative;')
                 template(v-if="route.name == 'home'")
                     img.full(src="@/assets/img/logo/logo-white.svg")
                     img.symbol(src="@/assets/img/logo/symbol-logo-white.png" style="image-orientation: none;")
-                template(v-else-if="route.name == 'dashboard' || route.name == 'accountSettings'")
+                template(v-else-if="route.name == 'myServices' || route.name == 'accountSettings'")
                     img.full(src="@/assets/img/logo/logo.png")
                     img.symbol(src="@/assets/img/logo/symbol-logo.png" style="image-orientation: none;")
-                //- img(v-else-if="route.name == 'dashboard' || route.name == 'accountSettings'" src="@/assets/img/logo/logo.png")
+                //- img(v-else-if="route.name == 'myServices' || route.name == 'accountSettings'" src="@/assets/img/logo/logo.png")
                 img.small(v-else src="@/assets/img/logo/symbol-logo.png")
         .right(:class="{'flex' : route.params.service && currentService}")
             .topRoute(v-if="route.params.service && currentService" ref="topRoute") 
-                router-link.service(:to="`/dashboard/${currentService.service}`") 
+                router-link.service(:to="`/myServices/${currentService.service}`") 
                     h5 {{ currentService.name }}
             .topMenu(:class="{'white' : route.name == 'home'}")
                 template(v-if="account")
@@ -22,13 +22,13 @@ header#navBar(style='--position: relative;')
                             a(href="https://twitter.com/skapijs" target="_blank")
                                 img(src="@/assets/img/icon/twitter.svg")
                         li
-                            a(href="https://discord.gg/P9aGAcBj" target="_blank")
+                            a(href="https://discord.com/invite/thqvysPnQt" target="_blank")
                                 img(src="@/assets/img/icon/discord.svg")
                     ul
                         li.doc
                             a(href="https://docs.skapi.com" target="_blank") Documentation
                         li.dash
-                            router-link(to="/dashboard") My Services
+                            router-link(to="/myServices") My Services
                         li.account(@click.stop="accountInfo = !accountInfo") {{ account.email.charAt(0).toUpperCase() }}
                 template(v-else)
                     ul

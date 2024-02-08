@@ -160,7 +160,7 @@ NavBar(style='--position: fixed; --background-color:#262626')
             br
             p(style="font-size:1.2rem;") Now we are in a promotion event !
             br
-            a.customButton(v-if='account' href="/dashboard") Start my project
+            a.customButton(v-if='account' href="/myServices") Start my project
             a.customButton(v-else href="/signup") Sign-up
 
     section.intact.updates 
@@ -561,32 +561,6 @@ footer {
 
 @media (max-width: 910px) {
     section {
-        &.dark {
-            // position: relative;
-            // &::before {
-            //     position: absolute;
-            //     content: '';
-            //     right: 0;
-            //     top: 0;
-            //     left: 0;
-            //     bottom: 0;
-            //     background-image: url('@/assets/img/landingpage/code.png');
-            //     background-size: 33rem;
-            //     background-repeat: no-repeat;
-            //     background-position: right center;
-            //     opacity: 0.7;
-            // }
-            // .wrap {
-            //     .image {
-            //         display: none;
-            //     }
-            //     .desc {
-            //         position: relative;
-            //         width: unset !important;
-            //         max-width: 500px !important;
-            //     }
-            // }
-        }
         &.frame {
             text-align: center;
             div {
@@ -594,6 +568,7 @@ footer {
             }
             .image {
                 width: 50% !important;
+                margin-right: 0 !important;
                 margin-bottom: 1rem;
                 min-width: 256px;
             }

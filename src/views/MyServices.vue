@@ -1,5 +1,5 @@
 <template lang="pug">
-main#dashboard
+main#myServices
     .createButton(@click="createService" :class="{'nonClickable' : !account?.email_verified}")
         .material-symbols-outlined.mid add
         span Create new service
@@ -20,6 +20,9 @@ main#dashboard
                         .resizer(@mousedown="mousedown")
                     th.th.center(style="width:168px;")
                         | Date Created
+                        .resizer(@mousedown="mousedown")
+                    th.th.center(style="width:120px;")
+                        | Plan
                         .resizer(@mousedown="mousedown")
                     th.th.center(style="width:140px;")
                         | Users
@@ -46,24 +49,37 @@ main#dashboard
                             .overflow {{ service.cors }}
                         td.center {{ typeof service.timestamp === 'string' ? service.timestamp : new Date(service.timestamp).toDateString() }}
                         td.center
-                            template(v-if="Math.ceil(service.users/10000*100)")
+                            template(v-if="service.group == 1") Trial
+                            template(v-else-if="service.group == 2") Standard
+                            template(v-else-if="service.group == 3") Premium
+                            template(v-else-if="service.group == 50") Unlimited
+                            template(v-else-if="service.group == 51") Free Standard
+                            template(v-else) ...
+                        td.center
+                            template(v-if="service.group == 50")
+                                .percent.purple Unlimited
+                            template(v-else-if="service.group !== 50 && Math.ceil(service.users/10000*100)")
                                 .percent(:class='{"green": 0 <= Math.ceil(service.users/10000*100) && Math.ceil(service.users/10000*100) < 51, "orange": 51 <= Math.ceil(service.users/10000*100) && Math.ceil(service.users/10000*100) < 81, "red": 81 <= Math.ceil(service.users/10000*100) && Math.ceil(service.users/10000*100) < 101}') {{ Math.ceil(service.users/10000*100) + '%' }}
-                            template(v-else) 
+                            template(v-else)
                                 .percent.green 0%
                         td.center
-                            template(v-if="Math.ceil(storageInfo?.[service.service]?.cloud/53687091200*100)")
+                            template(v-if="service.group == 50")
+                                .percent.purple Unlimited
+                            template(v-else-if="service.group !== 50 && Math.ceil(storageInfo?.[service.service]?.cloud/53687091200*100)")
                                 .percent(:class='{"green": 0 <= Math.ceil(storageInfo?.[service.service]?.cloud/53687091200*100) && Math.ceil(storageInfo?.[service.service]?.cloud/53687091200*100) < 51, "orange": 51 <= Math.ceil(storageInfo?.[service.service]?.cloud/53687091200*100) && Math.ceil(storageInfo?.[service.service]?.cloud/53687091200*100) < 81, "red": 81 <= Math.ceil(storageInfo?.[service.service]?.cloud/53687091200*100)}') {{ Math.ceil(storageInfo?.[service.service]?.cloud/53687091200*100) + '%' }}
                             template(v-else)
                                 .percent.green 0%
                         td(style="padding-left:40px;")
-                            template(v-if="Math.ceil(storageInfo?.[service.service]?.database/4294967296*100)")
+                            template(v-if="service.group == 50")
+                                .percent.purple Unlimited
+                            template(v-else-if="service.group !== 50 && Math.ceil(storageInfo?.[service.service]?.database/4294967296*100)")
                                 .percent(:class='{"green": 0 <= Math.ceil(storageInfo?.[service.service]?.database/4294967296*100) && Math.ceil(storageInfo?.[service.service]?.database/4294967296*100) < 51, "orange": 51 <= Math.ceil(storageInfo?.[service.service]?.database/4294967296*100) && Math.ceil(storageInfo?.[service.service]?.database/4294967296*100) < 81, "red": 81 <= Math.ceil(storageInfo?.[service.service]?.database/4294967296*100)}') {{ Math.ceil(storageInfo?.[service.service]?.database/4294967296*100) + '%' }}
                             template(v-else)
                                 .percent.green 0%
                             .menu(@click.stop="(e) => showPlanSetting(e, index)" :class='{"nonClickable": !account.email_verified}')
                                 .material-symbols-outlined.mid.clickable more_vert
                     tr.cont(ref="trCont" :class="{'active' : showInfo}")
-                        td(colspan="8")
+                        td(colspan="9")
                             br
                             .info
                                 h6 Name
@@ -105,30 +121,29 @@ main#dashboard
                                 template(v-else)
                                     span -
                 tr.loadingWrap(v-else-if="serviceFetching")
-                    td(colspan="8" style="text-align:center; padding-top:20px;")
+                    td(colspan="9" style="text-align:center; padding-top:20px;")
                         img.loading(src="@/assets/img/loading.png")
                 tr.noServices(v-else)
-                    td(colspan="8" style="text-align:center; padding-top:20px;")
+                    td(colspan="9" style="text-align:center; padding-top:20px;")
                         h3 No Services
                         br
                         p Get started by creating a new service.
     br
     .plus(style="display:block;text-align:center;padding-bottom:2rem;")
         .material-symbols-outlined.big(@click="createService" style="color:#293FE6;cursor:pointer;") add_circle
-   
+    
     #moreVert.hide(v-if="showMore" @click.stop style="--moreVert-right: 100px;" :style="{top: clientY}")
         .inner
             .more(@click="showMore=false;" style="width:unset;white-space:nowrap;opacity:0.2") Downgrade Plan
             .more(@click="showMore=false;" style="width:unset;white-space:nowrap;opacity:0.2") Upgrade Plan
-            .more(@click="showMore=false;" style="width:unset;white-space:nowrap;opacity:0.2") Stop Plan
             .more(@click="showMore=false;" style="width:unset;white-space:nowrap;opacity:0.2") Cancel Plan
 
 #createNewService(:class="{'show' : create}")
-    .material-symbols-outlined.mid.close(@click="create=false;") close
-    header
-        h4.title Create New Service
-    main(v-if="create")
-        form(@submit.prevent="addService")
+    .material-symbols-outlined.mid.close(@click="closeCreateService") close
+    form(@submit.prevent="addService")
+        header
+            h4.title Create New Service
+        main(v-if="create")
             .label
                 h6 Name of Service
             input#serviceName(type="text" :class="{'warning' : error}" @input='(e)=>{newServiceName=e.target.value;error="";}' placeholder="Name of Service")
@@ -164,20 +179,6 @@ main#dashboard
                             li 
                                 .material-symbols-outlined.sml.li warning
                                 span All the users and data will be deleted every 7 days
-
-                        //- ul
-                        //-     li 
-                        //-         .material-symbols-outlined.sml.li check_circle
-                        //-         span asdaasd asdasdasdaasd asdasdasdaasd
-                        //-     li 
-                        //-         .material-symbols-outlined.sml.li check_circle
-                        //-         span asdaasd asdasdasdaasd asdasdasdaasd
-                        //-     li 
-                        //-         .material-symbols-outlined.sml.li check_circle
-                        //-         span asdaasd asdasdasdaasd asdasdasdaasd
-                        //-     li 
-                        //-         .material-symbols-outlined.sml.li check_circle
-                        //-         span asdaasd asdasdasdaasd asdasdasdaasd
         
             br
 
@@ -215,9 +216,6 @@ main#dashboard
                             li 
                                 .material-symbols-outlined.sml.li check_circle
                                 span Subdomain hosting
-                            //- li 
-                            //-     .material-symbols-outlined.sml.li check_circle
-                            //-     span asdaasd asdasdasdaasd asdasdasdaasd
         
             br
 
@@ -256,12 +254,12 @@ main#dashboard
                                 span unlimited use with pay-as-you-go when exceeding the limit
 
             br
-        
+        footer
             .buttonWrap(style="display:flex; justify-content:space-between;")
                 template(v-if="promiseRunning")
                     img.loading(src="@/assets/img/loading.png")
                 template(v-else)
-                    button.noLine(@click="create=false;") Cancel 
+                    button.noLine(@click="closeCreateService") Cancel 
                     button.final(type="submit") Create
                     //- button.unFinished(v-else type="submit") Create
             
@@ -312,6 +310,7 @@ let showServiceInfo = (e, index) => {
         upArrow.value[index].classList.add('hide');
         trCont.value[index].classList.remove('active');
         currentServiceIndex = null;
+        showMore.value = false;
 
         return;
     } else if(e.target.classList.contains('upArrow')) {
@@ -319,6 +318,7 @@ let showServiceInfo = (e, index) => {
         upArrow.value[index].classList.add('hide');
         trCont.value[index].classList.remove('active');
         currentServiceIndex = null;
+        showMore.value = false;
 
         return;
     }
@@ -327,11 +327,11 @@ let showServiceInfo = (e, index) => {
     downArrow.value[index].classList.add('hide');
     upArrow.value[index].classList.remove('hide');
     trCont.value[index].classList.add('active');
+    showMore.value = false;
 }
 
 let showPlanSetting = (e, index) => {
     if(currentPlanIndex == index && showMore.value) {
-        console.log('dd')
         showMore.value = false;
         currentPlanIndex = null;
 
@@ -340,18 +340,17 @@ let showPlanSetting = (e, index) => {
 
     showMore.value = false;
     currentServiceIndex = index;
-    clientY = 200 + (60 *(index-1)) + 'px';
+    clientY = window.scrollY + e.currentTarget.getBoundingClientRect().top - 120 + 'px';
 
     showMore.value = true;
     currentPlanIndex = index;
-    console.log(currentPlanIndex == index, showMore.value)
 }
 
 let goServiceDashboard = (e, service) => {
     e.currentTarget.classList.add('active');
 
     setTimeout(() => {
-        router.push('/dashboard/' + service.service);
+        router.push('/myServices/' + service.service);
     }, 500);
 }
 
@@ -410,7 +409,7 @@ document.addEventListener('mouseup', function () {
 let getServiceInfo = () => {
     if (services.value) {
         for(let i=0; i<services.value.length; i++) {
-            let service = services.value[i].service
+            let service = services.value[i].service;
     
             if (!storageInfo.value[service]) {
                 storageInfo.value[service] = {};
@@ -456,12 +455,17 @@ let createService = () => {
     if (account?.value.email_verified) {
         create.value = true;
         error.value = '';
+        document.querySelector('body').classList.add('overflow');
         nextTick(() => {
             document.getElementById('serviceName').focus();
         });
     } else {
         return false;
     }
+}
+let closeCreateService = () => {
+    create.value = false;
+    document.querySelector('body').classList.remove('overflow');
 }
 let newServiceName = '';
 let promiseRunning = ref(false);
@@ -476,8 +480,10 @@ let addService = () => {
     services.value.unshift({
         service: '',
         name: newServiceName,
+        region: '...',
         created_locale: '...',
         timestamp: '...',
+        group: '...',
         cors: '...',
         pending: true,
         active: 0
@@ -486,8 +492,8 @@ let addService = () => {
         .then(s => {
             skapi.insertService(s);
             services.value[0] = s;
-            create.value = false;
             newServiceName = '';
+            closeCreateService();
         }).catch(err => {
             // alert(err.message);
             console.log(err)
@@ -515,7 +521,7 @@ skapi.getProfile().then(u => {
 </script>
 
 <style lang="less" scoped>
-#dashboard {
+#myServices {
     position: relative;
     height: calc(100vh - 60px - 3.4rem);
     margin-top: 3.4rem;
@@ -528,7 +534,6 @@ skapi.getProfile().then(u => {
     top: 0;
     width: 700px;
     height: 100%;
-    overflow: scroll;
     background: #FFF;
     box-shadow: -8px 4px 20px 0px rgba(0, 0, 0, 0.10);
     transform: translateX(110%);
@@ -599,14 +604,14 @@ skapi.getProfile().then(u => {
                 .price {
                     position: relative;
                     display: inline-block;
-                    padding-right: 60px;
+                    padding-right: 35px;
                     padding-left: 10px;
                     font-size: 28px;
                     font-weight: 700;
 
                     &::before {
                         position: absolute;
-                        content: '/month';
+                        content: '/mo';
                         right: 0;
                         top: 50%;
                         transform: translateY(-50%);
@@ -621,9 +626,9 @@ skapi.getProfile().then(u => {
                         &::after {
                             position: absolute;
                             content: '';
-                            width: 50%;
+                            width: 62%;
                             height: 2px;
-                            left: 5px;
+                            left: 6px;
                             top: 50%;
                             transform: translateY(-50%);
                             background-color: #A7A8AD;
@@ -652,6 +657,7 @@ skapi.getProfile().then(u => {
         }
     }
     header {
+        height: 100px;
         padding: 2rem;
         border-bottom: 1px solid rgba(0, 0, 0, 0.10);
         box-shadow: 0px 1px 3px 0px rgba(0, 0, 0, 0.06);
@@ -660,7 +666,9 @@ skapi.getProfile().then(u => {
         }
     }
     main {
-        padding: 30px 40px;
+        height: calc(100vh - 100px);
+        padding: 30px 40px 80px;
+        overflow: scroll !important;
 
         h6 {
             display: inline-block;
@@ -690,54 +698,15 @@ skapi.getProfile().then(u => {
                 padding: 0 20px;
             }
         }
-        // .planCard {
-        //     border-radius: 8px;
-        //     border: 0.5px solid rgba(0, 0, 0, 0.25);
-        //     background: #FAFAFA;
-
-        //     .header {
-        //         display: flex;
-        //         align-items: center;
-        //         justify-content: space-between;
-        //         padding: 1rem;
-        //         border-bottom: 1px solid rgba(0, 0, 0, 0.10);
-        //         box-shadow: 0px 1px 3px 0px rgba(0, 0, 0, 0.06);
-
-        //         .mode {
-        //             display: inline-block;
-        //             font-weight: 500;
-        //             color: #293FE6;
-        //         }
-        //         .price {
-        //             position: relative;
-        //             display: inline-block;
-        //             padding-right: 60px;
-        //             font-size: 28px;
-        //             font-weight: 700;
-
-        //             &::after {
-        //                 position: absolute;
-        //                 content: '/month';
-        //                 right: 0;
-        //                 top: 50%;
-        //                 transform: translateY(-50%);
-        //                 font-size: 14px;
-        //                 font-weight: 500;
-        //                 color: rgba(0, 0, 0, 0.40);
-        //             }
-        //         }
-        //     }
-        //     .content {
-        //         padding: 1rem;
-                
-        //         ul {
-        //             li {
-        //                 box-sizing: border-box;
-
-        //             }
-        //         }
-        //     }
-        // }
+    }
+    footer {
+        position: absolute;
+        right: 0;
+        bottom: 0;
+        width: 100%;
+        height: 80px;
+        padding: 18px 40px;
+        background-color: rgba(255,255,255,0.8);
     }
 }
 
@@ -956,6 +925,9 @@ skapi.getProfile().then(u => {
                     }
                     &.red {
                         background-color: #F04E4E;
+                    }
+                    &.purple {
+                        background-color: #B881FF;
                     }
                 }
 
