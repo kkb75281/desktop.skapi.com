@@ -122,7 +122,7 @@ main#service
                     h6 Renew Date
                     h5 2024.02.12
                 .list(style="width:33.33%;text-align:right") 
-                    button.final Change Plan
+                    button.final Manage Subscription
 
         .info.card(:class="{'nonClickable' : !account?.email_verified || currentService.active == 0}") 
             .inner
@@ -196,7 +196,7 @@ main#service
                             h6 Host storage used
                             p {{ convertToMb(storageInfo?.[currentService.service]?.host) }}
 
-    .deleteWrap(:class="{'nonClickable' : !account?.email_verified || currentService.active == 0}")
+    //- .deleteWrap(:class="{'nonClickable' : !account?.email_verified || currentService.active == 0}")
         .deleteInner(@click="!account?.email_verified ? false : openDeleteService = true;")
             .material-symbols-outlined.mid delete
             span Delete Service
@@ -702,7 +702,6 @@ watch(modifyCors, () => {
 
             .question {
                 margin: 0;
-                margin-left: 32px;
                 cursor: pointer;
 
                 .material-symbols-outlined {
@@ -729,7 +728,7 @@ watch(modifyCors, () => {
 
             &.help {
                 position: absolute;
-                left: 9rem;
+                left: 10rem;
                 top: 50%;
                 transform: translateY(-50%);
                 color: rgba(0, 0, 0, 0.40);
@@ -1003,9 +1002,14 @@ watch(modifyCors, () => {
             .listWrap {
                 display: block;
                 .list {
-                    width: unset;
+                    width: unset !important;
+                    text-align: left !important;
                     .customInput {
                         max-width: unset;
+                    }
+                    .addBtn {
+                        position: relative;
+                        text-align: right;
                     }
                 }
             }
