@@ -43,11 +43,19 @@ main(style='padding: 1em;')
 
     br
 
-    h2 5. Remove subscription 
+    h2 5. Cancel subscription 
     hr
-    p You can remove subscription immediately. The service will be destroyed.
+    p You can cancel subscription. The service will be active until the end of period. after the period, the service will be suspended. when the service is suspended, user can delete the service.
 
-    button(@click="deleteSubscription()") Remove subscription
+    button(@click="cancelSubscription()") Cancel subscription
+
+    br
+
+    h2 5. Get subscription info
+    hr
+    p You can get service subscription info. See console for response.
+
+    button(@click="getSubscription()") Get subscription
 
     br
 
@@ -95,31 +103,10 @@ function openCustomerPortal() {
 if (window.location.search.includes('checkout_id')) {
     // when payment is successful, user must wait at this page.
     let urlParams = new URLSearchParams(window.location.search);
-    let checkout_id = urlParams.get('checkout_id');
-    let SERVICE_ID = urlParams.get('service_id');
-    let ticket_id = urlParams.get('ticket_id');
+    let service_id = urlParams.get('service_id');
+    let ticket_id = urlParams.get('ticket_id'); // standard | premium
 
-    skapi.clientSecretRequest({
-        clientSecretName: 'stripe_test',
-        url: `https://api.stripe.com/v1/checkout/sessions/${checkout_id}`,
-        method: 'GET',
-        headers: {
-            Authorization: 'Bearer $CLIENT_SECRET'
-        }
-    }).then(response => {
-        console.log(response);
-        let SUBSCRIPTION_ID = response.subscription;
-        skapi.consumeTicket(
-            { ticket_id, consume_id: SERVICE_ID },
-            {
-                SUBSCRIPTION_ID,
-                SERVICE_ID
-            }).then(cons => {
-                console.log(cons);
-                // remove the get params from url
-                window.history.replaceState({}, document.title, window.location.pathname);
-            });
-    });
+    // manually set service group number
 }
 
 let getCustomer = async () => {
@@ -168,7 +155,12 @@ let getCustomer = async () => {
     }
 };
 
-let deleteSubscription = async () => {
+let getSubscription = async () => {
+    if (!customer.value) {
+        alert('Please get customer first');
+        return;
+    }
+
     if (!service_info.value) {
         alert('Please get service first');
         return;
@@ -176,14 +168,80 @@ let deleteSubscription = async () => {
 
     let subs_id = service_info.value.subs_id.split('#');
 
-    skapi.consumeTicket(
-        { ticket_id: 'delete', consume_id: service_id.value },
-        {
-            SUBSCRIPTION_ID: subs_id[0],
-            SERVICE_ID: service_id.value
-        }).then(cons => {
-            console.log(cons);
-        });
+    if (!service_info.value.subs_id) {
+        alert('Service does not have a subscription');
+        return;
+    }
+
+    if (subs_id.length < 2) {
+        alert('Service does not have a subscription');
+        return;
+    }
+
+    let SUBSCRIPTION_ID = subs_id[0];
+
+    let response = await skapi.clientSecretRequest({
+        clientSecretName: 'stripe_test',
+        url: `https://api.stripe.com/v1/subscriptions/${SUBSCRIPTION_ID}`,
+        method: 'GET',
+        headers: {
+            Authorization: 'Bearer $CLIENT_SECRET',
+            'Content-Type': 'application/x-www-form-urlencoded'
+        },
+    });
+
+    console.log(response);
+
+    if (response.error) {
+        alert(response.error.message);
+        return;
+    }
+}
+
+let cancelSubscription = async () => {
+    if (!customer.value) {
+        alert('Please get customer first');
+        return;
+    }
+
+    if (!service_info.value) {
+        alert('Please get service first');
+        return;
+    }
+
+    let subs_id = service_info.value.subs_id.split('#');
+
+    if (!service_info.value.subs_id) {
+        alert('Service does not have a subscription');
+        return;
+    }
+
+    if (subs_id.length < 2) {
+        alert('Service does not have a subscription');
+        return;
+    }
+
+    let SUBSCRIPTION_ID = subs_id[0];
+
+    let response = await skapi.clientSecretRequest({
+        clientSecretName: 'stripe_test',
+        url: `https://api.stripe.com/v1/subscriptions/${SUBSCRIPTION_ID}`,
+        method: 'POST',
+        headers: {
+            Authorization: 'Bearer $CLIENT_SECRET',
+            'Content-Type': 'application/x-www-form-urlencoded'
+        },
+        data: {
+            'cancel_at_period_end': true
+        }
+    });
+
+    console.log(response);
+
+    if (response.error) {
+        alert(response.error.message);
+        return;
+    }
 }
 
 let updateSubscription = async (ticket_id) => {
@@ -209,16 +267,19 @@ let updateSubscription = async (ticket_id) => {
         return;
     }
 
+    let SUBSCRIPTION_ID = subs_id[0];
+    let SUBSCRIPTION_ITEM_ID = subs_id[1];
+
     let response = await skapi.clientSecretRequest({
         clientSecretName: 'stripe_test',
-        url: `https://api.stripe.com/v1/subscriptions/${subs_id[0]}`,
+        url: `https://api.stripe.com/v1/subscriptions/${SUBSCRIPTION_ID}`,
         method: 'POST',
         headers: {
             Authorization: 'Bearer $CLIENT_SECRET',
             'Content-Type': 'application/x-www-form-urlencoded'
         },
         data: {
-            'items[0][id]': subs_id[1],
+            'items[0][id]': SUBSCRIPTION_ITEM_ID,
             'items[0][price]': product[ticket_id],
             proration_behavior: 'create_prorations'
         }
@@ -230,16 +291,6 @@ let updateSubscription = async (ticket_id) => {
         alert(response.error.message);
         return;
     }
-
-    let SUBSCRIPTION_ID = response.subscription;
-    let cons = await skapi.consumeTicket(
-        { ticket_id, consume_id: service_id.value },
-        {
-            SUBSCRIPTION_ID,
-            SERVICE_ID: service_id.value
-        });
-
-    console.log(cons);
 }
 
 let createSubscription = async (ticket_id) => {
@@ -270,6 +321,7 @@ let createSubscription = async (ticket_id) => {
             'customer_update[name]': 'auto',
             'customer_update[address]': 'auto',
             'subscription_data[metadata][service]': service_id.value,
+            'subscription_data[metadata][owner]': user.user_id,
             'mode': 'subscription',
             'subscription_data[description]': 'Subscription Plan of service ID: ' + service_id.value,
             cancel_url: currentUrl.origin + '/experiment',
