@@ -205,7 +205,7 @@ skapi.getProfile().then(u => {
                     justify-content: center;
                     font-size: 1rem;
                     font-weight: 700;
-                    color: #293FE6;
+                    color: var(--main-color);
                     cursor: pointer;
 
                     .material-symbols-outlined {
@@ -219,7 +219,7 @@ skapi.getProfile().then(u => {
 
                     form {
                         h5 {
-                            color: #293FE6;
+                            color: var(--main-color);
                             font-weight: 500;
                             // margin-bottom: 20px;
                         }
@@ -252,11 +252,11 @@ skapi.getProfile().then(u => {
                                 &.cancel {
                                     padding-left: 10px;
                                     background-color: unset;
-                                    color: #293FE6;
+                                    color: var(--main-color);
                                 }
 
                                 &.create {
-                                    background-color: #293FE6;
+                                    background-color: var(--main-color);
                                     color: #fff;
                                 }
                             }

@@ -210,7 +210,7 @@ dialog {
             }
             button {
                 background-color: unset;
-                color: #293FE6;
+                color: var(--main-color);
                 font-size: 16px;
                 font-weight: 700;
                 cursor: pointer;
@@ -223,7 +223,7 @@ dialog {
                     padding: 0 28px;
                     height: 44px;
                     border-radius: 8px;
-                    border: 2px solid #293FE6;
+                    border: 2px solid var(--main-color);
                 }
                 &.cancel {
                     border: 0;
@@ -232,7 +232,7 @@ dialog {
                     padding: 0 28px;
                     height: 44px;
                     border-radius: 8px;
-                    border: 2px solid #293FE6;
+                    border: 2px solid var(--main-color);
                 }
             }
         }
@@ -249,7 +249,7 @@ dialog {
                 margin-right: 12px;
         
                 &.active {        
-                    background-color:#293FE6;
+                    background-color:var(--main-color);
                 }
         
                 &:last-child {

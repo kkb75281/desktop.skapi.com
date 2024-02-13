@@ -224,7 +224,7 @@ let validateNewPassword = () => {
 
             .click {
                 display: inline-block;
-                color: #293FE6;
+                color: var(--main-color);
                 font-weight: 700;
                 font-size: 16px;
                 cursor: pointer;
@@ -267,29 +267,10 @@ let validateNewPassword = () => {
 
             a {
                 text-decoration: none;
-                color: #293FE6;
+                color: var(--main-color);
                 font-weight: 700;
                 font-size: 16px;
             }
-
-            // button {
-            //     border-radius: 8px;
-            //     background: #293FE6;
-            //     box-shadow: 0px -1px 1px 0px rgba(0, 0, 0, 0.15) inset;
-            //     border: 0;
-            //     padding: 12px 28px;
-            //     color: #fff;
-            //     font-size: 16px;
-            //     font-weight: 700;
-            //     cursor: pointer;
-
-            //     &.back {
-            //         background-color: unset;
-            //         color: #293FE6;
-            //         padding: 0;
-            //         box-shadow: unset;
-            //     }
-            // }
         }
     }
 
@@ -307,7 +288,7 @@ let validateNewPassword = () => {
             margin-right: 12px;
 
             &.active {
-                background-color: #293FE6;
+                background-color: var(--main-color);
             }
 
             &:last-child {

@@ -911,7 +911,7 @@ document.addEventListener('mouseup', function () {
                     vertical-align: middle;
 
                     &.refresh {
-                        color: #293FE6;
+                        color: var(--main-color);
                     }
 
                     &.delete {
@@ -938,17 +938,16 @@ document.addEventListener('mouseup', function () {
             label {
                 display: block;
                 width: 105px;
-                // border: 2px solid #293FE6;
                 border-radius: 8px;
                 text-align: center;
-                color: #293FE6;
+                color: var(--main-color);
                 cursor: pointer;
 
                 span {
                     margin-left: 8px;
                     font-size: 0.8rem;
                     font-weight: 700;
-                    color: #293FE6;
+                    color: var(--main-color);
                 }
             }
 
@@ -1062,14 +1061,13 @@ document.addEventListener('mouseup', function () {
                     span {
                         font-size: 0.8rem;
                         font-weight: 500;
-                        color: rgba(0,0,0,0.6);
+                        color: var(--secondary-text);
                         margin-left: 8px;
                     }
                 }
 
                 .refresh {
-                    color: rgba(0,0,0,0.6);
-                    // color: #293FE6;
+                    color: var(--secondary-text);
                 }
             }
         }
@@ -1213,11 +1211,11 @@ document.addEventListener('mouseup', function () {
             position: relative;
 
             p {
-                color: rgba(0,0,0,0.6);
+                color: var(--secondary-text);
                 font-size: 0.8rem;
 
                 a {
-                    color: #293FE6;
+                    color: var(--main-color);
                     font-weight: 700;
                 }
             }
@@ -1227,7 +1225,7 @@ document.addEventListener('mouseup', function () {
                     width: 100%;
                     font-size: 0.8rem;
                     font-weight: 700;     
-                    color: rgba(0,0,0,0.6);
+                    color: var(--secondary-text);
                     margin-bottom: 0.5rem;
                 }
                 .input {
@@ -1280,7 +1278,7 @@ document.addEventListener('mouseup', function () {
                         color: #FFF;
                         font-size: 0.8rem;
                         font-weight: 700;
-                        background: #293FE6;
+                        background: var(--main-color);
                         box-shadow: 0px -1px 1px 0px rgba(0, 0, 0, 0.15) inset;
                     }
                     .loading {
@@ -1412,7 +1410,7 @@ document.addEventListener('mouseup', function () {
                     // height: 40px;
                     // line-height: 40px;
                     padding: 8px 20px;
-                    color: rgba(0,0,0,0.6);
+                    color: var(--secondary-text);
 
                     &::after {
                         position: absolute;

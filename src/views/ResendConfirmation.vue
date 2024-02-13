@@ -89,7 +89,7 @@ let resend = () => {
         font-weight: 400;
 
         span {
-            color: #293FE6;
+            color: var(--main-color);
         }
     }
     .resend {
@@ -99,7 +99,7 @@ let resend = () => {
         }
         .click {
             display: inline-block;
-            color: #293FE6;
+            color: var(--main-color);
             font-weight: 700;
             font-size: 16px;
             cursor: pointer;

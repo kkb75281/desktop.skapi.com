@@ -119,7 +119,7 @@ else {
             display: block;
             margin: 0 16px;
             padding: 12px 20px;
-            color: #293FE6;
+            color: var(--main-color);
             text-decoration: none;
             margin-bottom: 4px;
 
@@ -141,7 +141,7 @@ else {
                 position: relative;
                 display: block;
                 padding: 12px;
-                color: #293FE6;
+                color: var(--main-color);
                 text-decoration: none;
                 border-radius: 8px;
                 margin-bottom: 4px;

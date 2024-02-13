@@ -204,7 +204,7 @@ onBeforeUnmount(() => {
     
                     &.active {
                         a {
-                            color: #293FE6;
+                            color: var(--main-color);
                         }
                     }
     
@@ -216,7 +216,7 @@ onBeforeUnmount(() => {
             .service {
                 // display: none;
                 text-decoration: none;
-                color: #293FE6;
+                color: var(--main-color);
             }
         }
 
@@ -290,7 +290,7 @@ onBeforeUnmount(() => {
                     }
                     
                     a {
-                        color: rgba(0,0,0,0.6);
+                        color: var(--secondary-text);
                         text-decoration: none;
                         font-size: 1rem;
                         font-weight: 700;
@@ -314,7 +314,7 @@ onBeforeUnmount(() => {
                             border-radius: 8px;
                             font-size: 0.8rem;
                             font-weight: 700;
-                            background: #293FE6;
+                            background: var(--main-color);
                         }
     
                         img {
@@ -336,7 +336,7 @@ onBeforeUnmount(() => {
                         width: 2rem;
                         height: 2rem;
                         border-radius: 50%;
-                        background-color: #293FE6;
+                        background-color: var(--main-color);
                         color: #fff;
                         font-size: 1rem;
                         // display: flex;
@@ -388,7 +388,7 @@ onBeforeUnmount(() => {
                 cursor: pointer;
                 font-size: 0.8rem;
                 font-weight: 500;
-                color: #293FE6;
+                color: var(--main-color);
 
                 &:last-child {
                     margin-bottom: 0;
@@ -396,7 +396,7 @@ onBeforeUnmount(() => {
 
                 span {
                     &:first-child {
-                        fill: #293FE6;
+                        fill: var(--main-color);
                         margin-right: 10px;
                     }
                 }

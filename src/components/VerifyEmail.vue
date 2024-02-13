@@ -97,7 +97,7 @@ let verifyEmail = (e) => {
 
     .click {
         display: inline-block;
-        color: #293FE6;
+        color: var(--main-color);
         font-weight: 700;
         font-size: 0.8rem;
         cursor: pointer;

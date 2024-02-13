@@ -234,7 +234,7 @@ let copy = (e) => {
             font-weight: 400;
             line-height: 1.5;
             a {
-                color: #293FE6;
+                color: var(--main-color);
                 font-size: 0.8rem;
                 font-weight: 700;
             }
@@ -254,7 +254,7 @@ let copy = (e) => {
                 text-decoration: none;
                 font-size: 16px;
                 font-weight: 500;
-                color: #293FE6;
+                color: var(--main-color);
             }
         }
         .email {
@@ -264,7 +264,7 @@ let copy = (e) => {
             border-radius: 8px;
 
             h5 {
-                color: rgba(0,0,0,0.6);
+                color: var(--secondary-text);
                 margin-bottom: 16px;
             }
 

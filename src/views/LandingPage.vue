@@ -100,7 +100,7 @@ NavBar(style='--position: fixed; --background-color:#262626')
             p(style="font-size:1.6rem;line-height:2rem") Skapi is built to be compatible with any frontend framework, including vanilla HTML.
 
     section.intact.features(style="text-align: center;") 
-        h2(style="color:#293FE6;font-weight:700;") Skapi Features
+        h2(style="color:var(--main-color);font-weight:700;") Skapi Features
         br
         br
         .featureWrap(style="margin:0 auto;")
@@ -167,8 +167,8 @@ NavBar(style='--position: fixed; --background-color:#262626')
         h2 Updates
         .update 
             .title(style="line-height:1.8")
-                span.date(style="color:rgba(0,0,0,0.6);margin-right:20px;") 2024. 02. 02
-                h5(style="display:inline-block;color:#293FE6;") Skapi 1.1.0 version will be open soon
+                span.date(style="color:var(--secondary-text);margin-right:20px;") 2024. 02. 02
+                h5(style="display:inline-block;color:var(--main-color);") Skapi 1.1.0 version will be open soon
             br
             p We will soon reach the stable release (1.1.0) of Skapi! For early adopters who have created a service before the stable release, we will continue to provide your service free for an unlimited time.
 
@@ -307,7 +307,7 @@ details[open] summary:after {
     border-radius: 8px;
     display: inline-block;
     background-color: #fff;
-    color: #293FE6;
+    color: var(--main-color);
 } 
 
 .intact {
@@ -464,7 +464,7 @@ section {
         }
         a {
             font-weight: 700;
-            color: #293FE6;
+            color: var(--main-color);
         }
     }
     &.updates {

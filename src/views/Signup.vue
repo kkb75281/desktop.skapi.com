@@ -237,7 +237,7 @@ let signup = () => {
             flex-wrap: nowrap;
 
             a {
-                color: #293FE6;
+                color: var(--main-color);
                 font-size: 16px;
                 font-weight: 400;
                 text-decoration: none;
@@ -261,7 +261,7 @@ let signup = () => {
 
                 a {
                     text-decoration: none;
-                    color: #293FE6;
+                    color: var(--main-color);
                     font-weight: 700;
                 }
             }
@@ -269,7 +269,7 @@ let signup = () => {
             .create,
             .submit {
                 border-radius: 8px;
-                background: #293FE6;
+                background: var(--main-color);
                 box-shadow: 0px -1px 1px 0px rgba(0, 0, 0, 0.15) inset;
                 border: 0;
                 height: 44px;
@@ -283,7 +283,7 @@ let signup = () => {
             .skip {
                 border: 0;
                 background-color: unset;
-                color: #293FE6;
+                color: var(--main-color);
                 font-size: 16px;
                 font-weight: 700;
                 cursor: pointer;

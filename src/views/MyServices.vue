@@ -80,10 +80,12 @@ main#myServices
                                 .material-symbols-outlined.mid.clickable more_vert
                     tr.cont(ref="trCont" :class="{'active' : showInfo}")
                         td(colspan="9")
-                            br
                             .info
                                 h6 Name
-                                span {{ service.name }}
+                                span(style="color:var(--primary-text);font-weight:700") {{ service.name }}
+                            .info 
+                                h6 Service ID 
+                                span {{ service.service }}
                             .info 
                                 h6 CORS 
                                 span {{ service.cors }}
@@ -96,7 +98,13 @@ main#myServices
                                 span {{ convertToMb(storageInfo?.[service.service]?.database) + '/4000MB' }}
                             .info.inline 
                                 h6 Subscription Plan
-                                span Standard
+                                router-link(:to="`/subscription/${service.service}`" style="color:var(--main-color);font-weight:700;")
+                                    template(v-if="service.group == 1") Trial
+                                    template(v-else-if="service.group == 2") Standard
+                                    template(v-else-if="service.group == 3") Premium
+                                    template(v-else-if="service.group == 50") Unlimited
+                                    template(v-else-if="service.group == 51") Free Standard
+                                    template(v-else) ...
                             .info.inline 
                                 h6 Hosting Strorage
                                 template(v-if="service?.subdomain")
@@ -130,7 +138,7 @@ main#myServices
                         p Get started by creating a new service.
     br
     .plus(style="display:block;text-align:center;padding-bottom:2rem;")
-        .material-symbols-outlined.big(@click="createService" style="color:#293FE6;cursor:pointer;") add_circle
+        .material-symbols-outlined.big(@click="createService" style="color:var(--main-color);cursor:pointer;") add_circle
     
     #moreVert.hide(v-if="showMore" @click.stop style="--moreVert-right: 100px;" :style="{top: clientY}")
         .inner
@@ -560,7 +568,7 @@ skapi.getProfile().then(u => {
                     ul {
                         li {
                             .li {
-                                color: #293FE6;
+                                color: var(--main-color);
                             }
                         }
                     }
@@ -574,7 +582,7 @@ skapi.getProfile().then(u => {
                         ul {
                             li {
                                 .li {
-                                    color: #293FE6;
+                                    color: var(--main-color);
                                 }
                             }
                         }
@@ -585,17 +593,17 @@ skapi.getProfile().then(u => {
         .inner {
             .title {
                 font-weight: 500;
-                color: #293FE6;
+                color: var(--main-color);
 
                 .free {
                     position: relative;
                     display: inline-block;
-                    color: #293FE6;
+                    color: var(--main-color);
                     font-size: 1.2rem;
                     font-weight: 700;
 
                     span {
-                        color: rgba(0,0,0,0.6);
+                        color: var(--secondary-text);
                         font-size: 0.7rem;
                         font-weight: 400;
                     }
@@ -662,7 +670,7 @@ skapi.getProfile().then(u => {
         border-bottom: 1px solid rgba(0, 0, 0, 0.10);
         box-shadow: 0px 1px 3px 0px rgba(0, 0, 0, 0.06);
         .title {
-            color: #293FE6;
+            color: var(--main-color);
         }
     }
     main {
@@ -724,7 +732,7 @@ skapi.getProfile().then(u => {
     padding: 6px 28px 8px;
     border-radius: 8px;
     border: 1px solid #D9D9D9;
-    color: #293FE6;
+    color: var(--main-color);
     cursor: pointer;
     
     * {
@@ -842,7 +850,7 @@ skapi.getProfile().then(u => {
                     background-color: rgba(41, 63, 230, 0.10);
                 }
                 &.cont {
-                    height: 250px;
+                    height: 305px;
                     background-color: rgba(0, 0, 0, 0.02);
                     display: none;
 
@@ -924,7 +932,7 @@ skapi.getProfile().then(u => {
                         background-color: #FCA642;
                     }
                     &.red {
-                        background-color: #F04E4E;
+                        background-color: var(--caution-color);
                     }
                     &.purple {
                         background-color: #B881FF;

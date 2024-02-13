@@ -121,7 +121,7 @@ main#service
                 .list(style="width:33.33%")
                     h6 Renew Date
                     h5 2024.02.12
-                .list(style="width:33.33%;text-align:right") 
+                router-link.list(:to='`/subscription/${currentService.service}`' style="width:33.33%;text-align:right") 
                     button.final Manage Subscription
 
         .info.card(:class="{'nonClickable' : !account?.email_verified || currentService.active == 0}") 
@@ -138,10 +138,10 @@ main#service
                     .cont(style="width:unset;")
                         h6 Creating User
                         .customSelect
-                            select(:value="currentService.prevent_signup ? 'admin' : 'anyone'" @change="(e) => changeCreateUserMode(e)" style="color:#293FE6")
+                            select(:value="currentService.prevent_signup ? 'admin' : 'anyone'" @change="(e) => changeCreateUserMode(e)" style="color:var(--main-color);")
                                 option(value="admin") Only Admin allowed 
                                 option(value="anyone") Anyone allowed
-                            .material-symbols-outlined.mid.search.selectArrowDown(style="right:-30px;top:66%;color:#293FE6") arrow_drop_down
+                            .material-symbols-outlined.mid.search.selectArrowDown(style="right:-30px;top:66%;color:var(--main-color);") arrow_drop_down
 
         .info.card(:class="{'nonClickable' : !account?.email_verified || currentService.active == 0}") 
             .inner
@@ -638,7 +638,7 @@ watch(modifyCors, () => {
 
                     &.active {
                         .toggleBg {
-                            background-color: #293FE6;
+                            background-color: var(--main-color);
 
                             .toggleBtn {
                                 transform: translate(31px, -50%);
@@ -722,7 +722,7 @@ watch(modifyCors, () => {
 
         .question {
             text-decoration: none;
-            color: #293FE6;
+            color: var(--main-color);
             font-size: 0.8rem;
             font-weight: 500;
 
@@ -790,7 +790,7 @@ watch(modifyCors, () => {
 
                     * {
                         font-size: 14px;
-                        color: #293FE6;
+                        color: var(--main-color);
                     }
                 }
                 .keyWrap {
@@ -828,7 +828,7 @@ watch(modifyCors, () => {
                     }
                     .minus {
                         margin-right: 8px;
-                        color: rgba(0,0,0,0.6);
+                        color: var(--secondary-text);
                     }
                     .inputWrap {
                         display: inline-block;
@@ -841,10 +841,10 @@ watch(modifyCors, () => {
                         vertical-align: middle;
                         .save {
                             margin: 0 5px 0 9px;
-                            color: #293FE6;
+                            color: var(--main-color);
                         }
                         .edit {
-                            color: rgba(0,0,0,0.6);
+                            color: var(--secondary-text);
 
                             &.none {
                                 display: none;
@@ -855,7 +855,7 @@ watch(modifyCors, () => {
                         border: 0;
                         border-bottom: 1px solid rgba(0, 0, 0, 0.80);
                         background-color: unset;
-                        color: rgba(0,0,0,0.6);
+                        color: var(--secondary-text);
                     }
                     #keyName {
                         display: inline-block;
@@ -864,7 +864,7 @@ watch(modifyCors, () => {
                         height: 20px;
                         margin-right: 4%;
                         font-size: 14px;
-                        color: rgba(0,0,0,0.6);
+                        color: var(--secondary-text);
                     }
                     #secretKey {
                         display: inline-block;
@@ -872,7 +872,7 @@ watch(modifyCors, () => {
                         width: 66%;
                         height: 20px;
                         font-size: 14px;
-                        color: rgba(0,0,0,0.6);
+                        color: var(--secondary-text);
                         white-space: nowrap;
                         overflow: hidden;
                         text-overflow: ellipsis;
@@ -954,7 +954,7 @@ watch(modifyCors, () => {
     display: flex;
     flex-wrap: nowrap;
     justify-content: flex-end;
-    color: #F04E4E;
+    color: var(--caution-color);
     margin-top: 20px;
 
     .deleteInner {

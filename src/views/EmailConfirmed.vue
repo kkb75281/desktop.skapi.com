@@ -37,7 +37,7 @@
         display: none;
     }
     h5 {
-        color: #293FE6;
+        color: var(--main-color);
         font-size: 20px;
         font-weight: 700;
         margin-top: 32px;
@@ -62,11 +62,11 @@
         align-items: center;
         justify-content: center;
         border-radius: 8px;
-        border: 2px solid #293FE6;
+        border: 2px solid var(--main-color);
         text-align: center;
         font-size: 16px;
         font-weight: 700;
-        color: #293FE6;
+        color: var(--main-color);
         text-decoration: none;
         cursor: pointer;
     }

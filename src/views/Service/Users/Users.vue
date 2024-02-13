@@ -720,7 +720,7 @@ onMounted(() => {
 
             .create {
                 margin-right: 1rem;
-                color: #293FE6;
+                color: var(--main-color);
             }
 
             .menu {
@@ -924,9 +924,9 @@ button.msgButton {
     padding: 0 28px;
     height: 44px;
     border-radius: 8px;
-    border: 2px solid #293FE6;
+    border: 2px solid var(--main-color);
     background-color: unset;
-    color: #293FE6;
+    color: var(--main-color);
     font-size: 16px;
     font-weight: 700;
     cursor: pointer;
