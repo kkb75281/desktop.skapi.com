@@ -50,6 +50,9 @@ header#navBar(style='--position: relative;')
                 //- img(v-if="account.approved.includes('ggl')" src="@/assets/img/icon/google.svg" style="display:inline-block;width:20px;height:20px;vertical-align:middle;margin-right:10px;")
                 span {{ account.email }}
             .settings 
+                a.setting(href="/" target="_blank")
+                    span.material-symbols-outlined.sml credit_card
+                    span Billing
                 .setting(@click="navigateToPage")
                     span.material-symbols-outlined.sml settings
                     span Account Settings
@@ -381,6 +384,9 @@ onBeforeUnmount(() => {
             padding: 20px;
             border-bottom: 1px solid rgba(0, 0, 0, 0.15);
 
+            a {
+                text-decoration: none;
+            }
             .setting {
                 display: flex;
                 align-items: center;

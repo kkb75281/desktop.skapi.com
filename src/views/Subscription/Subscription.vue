@@ -6,7 +6,8 @@
         span Back
     main#subscription
         .inner
-            img(src="@/assets/img/logo/logo.png" style="width:193px;")
+            RouterLink(to="/")
+                img(src="@/assets/img/logo/logo.png" style="width:193px;")
             
             br
             br
@@ -63,9 +64,11 @@
                     tr
                         td(:class="{'currentMode' : currentService.group == 1}")
                         td(:class="{'currentMode' : currentService.group == 2}")
-                            button.disabled Current Plan
+                            button.final(v-if="currentService.group == 3" @click="showDowngradePlan = true;") Downgrade
+                            button.disabled(v-else-if="currentService.group == 2") Current Plan
                         td(:class="{'currentMode' : currentService.group == 3}")
-                            button.final Upgrade
+                            button.final(v-if="currentService.group == 2" @click="showUpgradePlan = true;") Upgrade
+                            button.disabled(v-else-if="currentService.group == 3") Current Plan
                     tr.title
                         td
                             h4 Compare Features
@@ -127,7 +130,7 @@
 
             br
 
-            section.cancelPlan(v-if="currentService.active > 0")
+            section(v-if="currentService.active > 0")
                 h4 Cancel Plan
 
                 br
@@ -139,9 +142,9 @@
                 br
 
                 .btn(style="display:block;text-align:right;")
-                    button.unFinished.warning Cancel Plan
+                    button.unFinished.warning(@click="showCancelPlan = true;") Cancel Plan
 
-            section.resumePlan(v-else)
+            section(v-else)
                 h4 Resume Plan
 
                 br
@@ -155,19 +158,29 @@
                 .btn(style="display:block;text-align:right;")
                     button.final Resume Plan
 
-        
+CancelPlanOverlay(v-if="showCancelPlan" @close="showCancelPlan = false;")
+UpgradePlanOverlay(v-if="showUpgradePlan" @close="showUpgradePlan = false;")
+DowngradePlanOverlay(v-if="showDowngradePlan" @close="showDowngradePlan = false;")
 </template>
 
 <script setup>
 import { useRoute, useRouter } from 'vue-router';
-import { nextTick } from 'vue';
+import { nextTick, ref } from 'vue';
 import { currentService, serviceFetching } from '@/data.js';
 import { skapi, account } from '@/main.js';
+import CancelPlanOverlay from '@/views/Subscription/CancelPlanOverlay.vue';
+import UpgradePlanOverlay from '@/views/Subscription/UpgradePlanOverlay.vue';
+import DowngradePlanOverlay from '@/views/Subscription/DowngradePlanOverlay.vue';
 
 currentService.value = null;
 
+// let x: string | number = 1;
+
 let router = useRouter();
 let route = useRoute();
+let showCancelPlan = ref(false);
+let showUpgradePlan = ref(false);
+let showDowngradePlan = ref(false);
 
 let getCurrentService = () => {
     let srvcId = route.path.split('/')[2];
