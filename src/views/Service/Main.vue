@@ -62,31 +62,15 @@ let getCurrentService = () => {
             });
         }
 
-        // if (!storageInfo.value[currentService.value.service]) {
-        //     storageInfo.value[currentService.value.service] = {};
-        // }
-        // let sd = currentService.value.subdomain;
-        // if (sd && (sd[0] !== '*' || sd[0] !== '+')) {
-        //     // get subdomain storage info (404 file info)
-        //     skapi.getSubdomainInfo(currentService.value.service, {
-        //         subdomain: sd,
-        //     }).then(s =>
-        //         subdomainInfo.value[sd] = s
-        //     ).catch(err=>err);
-
-        //     launch(currentService.value.subdomain, f => {
-        //         if (f.length) {
-        //             storageInfo.value[currentService.value.service].host = f[0].size;
-        //         }
-        //     }, true);
-        // }
-
-        // skapi.storageInformation(currentService.value.service).then(i => {
-        //     // get storage info
-        //     for (let k in i) {
-        //         storageInfo.value[currentService.value.service][k] = i[k];
-        //     }
-        // });
+        let sd = currentService.value.subdomain;
+        if (sd && (sd[0] !== '*' || sd[0] !== '+')) {
+            // get subdomain storage info (404 file info)
+            skapi.getSubdomainInfo(currentService.value.service, {
+                subdomain: sd,
+            }).then(s =>
+                subdomainInfo.value[sd] = s
+            ).catch(err=>err);
+        }
     }
     else {
         if(account.value) {
