@@ -168,7 +168,7 @@ main#myServices
 
             br
 
-            .card.clicked.nonClickable(:class="{'checked' : serviceMode == 'trial'}" @click="serviceMode='trial'" style="border-radius:8px;cursor:pointer;")
+            .card.clicked(:class="{'checked' : serviceMode == 'trial'}" @click="serviceMode='trial'" style="border-radius:8px;cursor:pointer;")
                 .inner
                     .title 
                         h4 Trial Mode
@@ -227,7 +227,7 @@ main#myServices
         
             br
 
-            .card.clicked.nonClickable(:class="{'checked' : serviceMode == 'premium'}" @click="serviceMode='premium'" style="border-radius:8px;cursor:pointer;")
+            .card.clicked(:class="{'checked' : serviceMode == 'premium'}" @click="serviceMode='premium'" style="border-radius:8px;cursor:pointer;")
                 .inner
                     .title 
                         h4 Premium Mode
@@ -264,19 +264,25 @@ main#myServices
             br
         footer
             .buttonWrap(style="display:flex; justify-content:space-between;")
-                template(v-if="promiseRunning")
-                    img.loading(src="@/assets/img/loading.png")
-                template(v-else)
-                    button.noLine(@click="closeCreateService") Cancel 
-                    button.final(type="submit") Create
+                //- template(v-if="promiseRunning")
+                //-     img.loading(src="@/assets/img/loading.png")
+                //- template(v-else)
+                button.noLine(@click="closeCreateService") Cancel 
+                button.final(type="submit") Create
                     //- button.unFinished(v-else type="submit") Create
-            
+
+#proceeding(v-if="promiseRunning")   
+    .inner    
+        img.loading(src="@/assets/img/loading_white.png")
+        br
+        br
+        h5 Proceeding...
 </template>
 
 <script setup>
 import { computed, nextTick, onBeforeUnmount, onMounted, ref } from 'vue';
 import { useRouter } from 'vue-router';
-import { skapi, account, bodyClick } from '@/main.js';
+import { skapi, account, bodyClick, customer } from '@/main.js';
 import { services, serviceFetching, storageInfo } from '@/data.js';
 import { launch, subdomainInfo } from '@/views/Service/Subdomain/SubdomainFetch.js';
 
@@ -500,15 +506,62 @@ let addService = () => {
         .then(s => {
             skapi.insertService(s);
             services.value[0] = s;
-            newServiceName = '';
-            closeCreateService();
+            if(serviceMode.value == 'trial') {
+                newServiceName = '';
+                closeCreateService();
+                promiseRunning.value = false;
+            } else {
+                let service_info = s;
+                let ticket_id = serviceMode.value;
+                createSubscription(ticket_id, service_info);
+            }
         }).catch(err => {
             // alert(err.message);
             console.log(err)
             services.value.shift();
         })
-        .finally(_ => promiseRunning.value = false)
 }
+
+let createSubscription = async (ticket_id, service_info) => {
+    let resolvedCustomer = await customer;
+    let product = JSON.parse(import.meta.env.VITE_PRODUCT);
+    let customer_id = resolvedCustomer.id;
+    let currentUrl = window.location;
+
+    let response = await skapi.clientSecretRequest({
+        clientSecretName: 'stripe_test',
+        url: 'https://api.stripe.com/v1/checkout/sessions',
+        method: 'POST',
+        headers: {
+            Authorization: 'Bearer $CLIENT_SECRET',
+            'Content-Type': 'application/x-www-form-urlencoded'
+        },
+        data: {
+            client_reference_id: account.value.user_id,
+            customer: customer_id,
+            'customer_update[name]': 'auto',
+            'customer_update[address]': 'auto',
+            'subscription_data[metadata][service]': service_info.service,
+            'subscription_data[metadata][owner]': account.value.user_id,
+            'mode': 'subscription',
+            'subscription_data[description]': 'Subscription Plan of service ID: ' + service_info.service,
+            cancel_url: currentUrl.origin + '/myServices',
+            "line_items[0][quantity]": 1,
+            'line_items[0][price]': product[ticket_id],
+            "success_url": currentUrl.origin + '/myServices?checkout_id={CHECKOUT_SESSION_ID}&service_id=' + service_info.service + '&ticket_id=' + ticket_id,
+            'tax_id_collection[enabled]': true,
+        }
+    });
+    if (response.error) {
+        alert(response.error.message);
+        return;
+    }
+
+    window.location = response.url;
+    newServiceName = '';
+    closeCreateService();
+    promiseRunning.value = false;
+};
 
 const regions = {
     'us-west-2': 'US',
@@ -723,6 +776,29 @@ skapi.getProfile().then(u => {
         .more {
             font-size: 0.8rem;
         }
+    }
+}
+
+#proceeding {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background-color: rgba(0,0,0,0.25);
+    z-index: 9999999;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+
+    .loading {
+        width: 2rem;
+        height: 2rem;
+    }
+    h5 {
+        color: #fff;
     }
 }
 

@@ -6,8 +6,7 @@
         span Back
     main#subscription
         .inner
-            RouterLink(to="/")
-                img(src="@/assets/img/logo/logo.png" style="width:193px;")
+            img(src="@/assets/img/logo/logo.png" style="width:193px;")
             
             br
             br
@@ -63,11 +62,13 @@
                                 p(style="font-size:0.8rem") Billed monthly
                     tr
                         td(:class="{'currentMode' : currentService.group == 1}")
+                            button.disabled(v-if="currentService.group == 1") Current Plan
                         td(:class="{'currentMode' : currentService.group == 2}")
                             button.final(v-if="currentService.group == 3" @click="showDowngradePlan = true;") Downgrade
+                            button.final(v-if="currentService.group == 1" @click="showUpgradePlan = true;") Upgrade
                             button.disabled(v-else-if="currentService.group == 2") Current Plan
                         td(:class="{'currentMode' : currentService.group == 3}")
-                            button.final(v-if="currentService.group == 2" @click="showUpgradePlan = true;") Upgrade
+                            button.final(v-if="currentService.group == 1 || currentService.group == 2" @click="showUpgradePlan = true;") Upgrade
                             button.disabled(v-else-if="currentService.group == 3") Current Plan
                     tr.title
                         td
