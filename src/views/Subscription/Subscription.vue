@@ -26,7 +26,7 @@
                     h5 Service Plan
                     template(v-if="currentService.group == 1") 
                         span Trial
-                    template(v-else-if="currentService.group == 2") 
+                    template(v-else-if="currentService.group == 2 || currentService.group == 51") 
                         span Standard
                     template(v-else-if="currentService.group == 3") 
                         span Premium
@@ -50,7 +50,7 @@
                                 span.fee $0
                                 p(style="font-size:0.8rem;") Billed monthly
 
-                        td(:class="{'currentMode' : currentService.group == 2}" style="padding-top: 1rem;") 
+                        td(:class="{'currentMode' : currentService.group == 2 || currentService.group == 51}" style="padding-top: 1rem;") 
                             .mode
                                 p Standard Mode
                                 span.fee $19
@@ -63,45 +63,45 @@
                     tr
                         td(:class="{'currentMode' : currentService.group == 1}")
                             button.disabled(v-if="currentService.group == 1") Current Plan
-                        td(:class="{'currentMode' : currentService.group == 2}")
-                            button.final(v-if="currentService.group == 3" @click="showDowngradePlan = true;") Downgrade
-                            button.final(v-if="currentService.group == 1" @click="showUpgradePlan = true;") Upgrade
-                            button.disabled(v-else-if="currentService.group == 2") Current Plan
+                        td(:class="{'currentMode' : currentService.group == 2 || currentService.group == 51}")
+                            button.final(v-if="currentService.group == 3" @click="showDowngradePlan = true;changeMode = 'standard'") Downgrade
+                            button.final(v-if="currentService.group == 1" @click="showUpgradePlan = true;changeMode = 'standard'") Upgrade
+                            button.disabled(v-else-if="currentService.group == 2 || currentService.group == 51") Current Plan
                         td(:class="{'currentMode' : currentService.group == 3}")
-                            button.final(v-if="currentService.group == 1 || currentService.group == 2" @click="showUpgradePlan = true;") Upgrade
+                            button.final(v-if="currentService.group == 1 || currentService.group == 2 || currentService.group == 51" @click="showUpgradePlan = true;changeMode = 'premium'") Upgrade
                             button.disabled(v-else-if="currentService.group == 3") Current Plan
                     tr.title
                         td
                             h4 Compare Features
                         td(:class="{'currentMode' : currentService.group == 1}")
-                        td(:class="{'currentMode' : currentService.group == 2}")
+                        td(:class="{'currentMode' : currentService.group == 2 || currentService.group == 51}")
                         td(:class="{'currentMode' : currentService.group == 3}")
                     tr.feature
                         td(style="padding-top: 1.4rem;") #of User Account
                         td(:class="{'currentMode' : currentService.group == 1}" style="padding-top: 1rem;") 10 k
-                        td(:class="{'currentMode' : currentService.group == 2}" style="padding-top: 1rem;") 10 k
+                        td(:class="{'currentMode' : currentService.group == 2 || currentService.group == 51}" style="padding-top: 1rem;") 10 k
                         td(:class="{'currentMode' : currentService.group == 3}" style="padding-top: 1rem;") 100 k
                     tr.feature
                         td Database
                         td(:class="{'currentMode' : currentService.group == 1}") 4 G
-                        td(:class="{'currentMode' : currentService.group == 2}") 4 G
+                        td(:class="{'currentMode' : currentService.group == 2 || currentService.group == 51}") 4 G
                         td(:class="{'currentMode' : currentService.group == 3}") 100 G
                     tr.feature
                         td.feature File Storage
                         td(:class="{'currentMode' : currentService.group == 1}") 50 GB
-                        td(:class="{'currentMode' : currentService.group == 2}") 50 GB
+                        td(:class="{'currentMode' : currentService.group == 2 || currentService.group == 51}") 50 GB
                         td(:class="{'currentMode' : currentService.group == 3}") 1 TB
                     tr.feature
                         td Hosting Storage
                         td(:class="{'currentMode' : currentService.group == 1}") 
                             .material-symbols-outlined.mid.gray cancel
-                        td(:class="{'currentMode' : currentService.group == 2}") 50 GB
+                        td(:class="{'currentMode' : currentService.group == 2 || currentService.group == 51}") 50 GB
                         td(:class="{'currentMode' : currentService.group == 3}") 1 TB
                     tr.feature
                         td Automated Email
                         td(:class="{'currentMode' : currentService.group == 1}") 
                             .material-symbols-outlined.mid.gray cancel
-                        td(:class="{'currentMode' : currentService.group == 2}")
+                        td(:class="{'currentMode' : currentService.group == 2 || currentService.group == 51}")
                             .material-symbols-outlined.mid.green check_circle
                         td(:class="{'currentMode' : currentService.group == 3}")
                             .material-symbols-outlined.mid.green check_circle
@@ -109,13 +109,13 @@
                         td Email Storage
                         td(:class="{'currentMode' : currentService.group == 1}") 
                             .material-symbols-outlined.mid.gray cancel
-                        td(:class="{'currentMode' : currentService.group == 2}") 1 GB
+                        td(:class="{'currentMode' : currentService.group == 2 || currentService.group == 51}") 1 GB
                         td(:class="{'currentMode' : currentService.group == 3}") 10 GB
                     tr.feature
                         td Subdomain Hosting
                         td(:class="{'currentMode' : currentService.group == 1}") 
                             .material-symbols-outlined.mid.gray cancel
-                        td(:class="{'currentMode' : currentService.group == 2}") 
+                        td(:class="{'currentMode' : currentService.group == 2 || currentService.group == 51}") 
                             .material-symbols-outlined.mid.green check_circle
                         td(:class="{'currentMode' : currentService.group == 3}") 
                             .material-symbols-outlined.mid.green check_circle
@@ -124,7 +124,7 @@
                         td.red(:class="{'currentMode' : currentService.group == 1}")
                             ul 
                                 li All the users and data will be deleted every 7 days
-                        td(:class="{'currentMode' : currentService.group == 2}") 
+                        td(:class="{'currentMode' : currentService.group == 2 || currentService.group == 51}") 
                         td.blue(:class="{'currentMode' : currentService.group == 3}")
                             ul 
                                 li Unlimited use with pay-as-you-go when exceeding the limit
@@ -160,8 +160,8 @@
                     button.final Resume Plan
 
 CancelPlanOverlay(v-if="showCancelPlan" @close="showCancelPlan = false;")
-UpgradePlanOverlay(v-if="showUpgradePlan" @close="showUpgradePlan = false;")
-DowngradePlanOverlay(v-if="showDowngradePlan" @close="showDowngradePlan = false;")
+UpgradePlanOverlay(v-if="showUpgradePlan" @close="showUpgradePlan = false;" :changeMode="changeMode")
+DowngradePlanOverlay(v-if="showDowngradePlan" @close="showDowngradePlan = false;" :changeMode="changeMode")
 </template>
 
 <script setup>
@@ -179,6 +179,7 @@ currentService.value = null;
 
 let router = useRouter();
 let route = useRoute();
+let changeMode = '';
 let showCancelPlan = ref(false);
 let showUpgradePlan = ref(false);
 let showDowngradePlan = ref(false);
@@ -204,7 +205,6 @@ if (serviceFetching.value instanceof Promise) {
 else {
     getCurrentService()
 }
-
 
 </script>
 

@@ -16,4 +16,6 @@
 
 <script setup>
 let emits = defineEmits(['close']);
+let props = defineProps(['changeMode']);
+
 </script>
