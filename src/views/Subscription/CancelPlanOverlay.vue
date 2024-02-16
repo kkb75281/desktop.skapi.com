@@ -66,6 +66,46 @@ let cancelSubscription = async () => {
     }
 
     promiseRunning.value = false;
-    emits('close', response);
+    emits('close');
+}
+let resumeSubscription = async () => {
+    promiseRunning.value = true;
+
+    let subs_id = currentService.value.subs_id.split('#');
+
+    if (!currentService.value.subs_id) {
+        alert('Service does not have a subscription');
+        return;
+    }
+
+    if (subs_id.length < 2) {
+        alert('Service does not have a subscription');
+        return;
+    }
+
+    let SUBSCRIPTION_ID = subs_id[0];
+
+    let response = await skapi.clientSecretRequest({
+        clientSecretName: 'stripe_test',
+        url: `https://api.stripe.com/v1/subscriptions/${SUBSCRIPTION_ID}`,
+        method: 'POST',
+        headers: {
+            Authorization: 'Bearer $CLIENT_SECRET',
+            'Content-Type': 'application/x-www-form-urlencoded'
+        },
+        data: {
+            'cancel_at_period_end': false
+        }
+    });
+
+    console.log(response);
+
+    if (response.error) {
+        alert(response.error.message);
+        return;
+    }
+
+    promiseRunning.value = false;
+    emits('close');
 }
 </script>

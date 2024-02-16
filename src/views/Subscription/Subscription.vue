@@ -134,33 +134,34 @@
             br
             br
 
-            section(v-if="currentService.cancelInfo")
-                h4 Resume Plan
+            template(v-if="getSubs")
+                section(v-if="getSubs?.cancel_at_period_end")
+                    h4 Resume Plan
 
-                br
+                    br
 
-                ul.desc 
-                    li Your current service plan has been canceled and deactivated. To reactivate the service, please resume the plan. 
-                        em(style="color:var(--caution-color);font-style: normal;") Your service will be completely deleted on 0000-00-00.
-                
-                br
+                    ul.desc 
+                        li Your current service plan has been canceled and deactivated. To reactivate the service, please resume the plan. 
+                            em(style="color:var(--caution-color);font-style: normal;") Your service will be completely deleted on 0000-00-00.
+                    
+                    br
 
-                .btn(style="display:block;text-align:right;")
-                    button.final Resume Plan
+                    .btn(style="display:block;text-align:right;")
+                        button.final Resume Plan
 
-            section(v-else)
-                h4 Cancel Plan
+                section(v-else)
+                    h4 Cancel Plan
 
-                br
+                    br
 
-                ul.desc
-                    li If you cancel the service plan, you will not be billed for the subscription for three months (from the last payment date). The service will be deactivated during the plan cancellation period. 
-                        span However, after three months, all data and users will be deleted, and if you do not want this to happen, you must resume the plan before that.
+                    ul.desc
+                        li If you cancel the service plan, you will not be billed for the subscription for three months (from the last payment date). The service will be deactivated during the plan cancellation period. 
+                            span However, after three months, all data and users will be deleted, and if you do not want this to happen, you must resume the plan before that.
 
-                br
+                    br
 
-                .btn(style="display:block;text-align:right;")
-                    button.unFinished.warning(@click="showCancelPlan = true;") Cancel Plan
+                    .btn(style="display:block;text-align:right;")
+                        button.unFinished.warning(@click="showCancelPlan = true;") Cancel Plan
 
 #proceeding(v-if="serviceFetching")   
     .inner    
@@ -190,37 +191,48 @@ currentService.value = null;
 let router = useRouter();
 let route = useRoute();
 let changeMode = '';
+let getSubs = ref(null);
 let showCancelPlan = ref(false);
 let showUpgradePlan = ref(false);
 let showDowngradePlan = ref(false);
+let cancelState = ref(false);
 
-let getCurrentService = () => {
-    let srvcId = route.path.split('/')[2];
-    currentService.value = skapi.services[srvcId];
-
-    if (!currentService.value) {
-        if(account.value) {
-            router.replace({ path: '/myServices' });
-        } else {
-            router.replace({ path: '/login' });
-        }
-    }
+async function getSubscription() {
+    let subs_id = currentService.value.subs_id.split('#');
 
     console.log(currentService.value)
+
+    if (!currentService.value.subs_id) {
+        alert('Service does not have a subscription');
+        return;
+    }
+
+    if (subs_id.length < 2) {
+        alert('Service does not have a subscription');
+        return;
+    }
+
+    let SUBSCRIPTION_ID = subs_id[0];
+
+    let response = await skapi.clientSecretRequest({
+        clientSecretName: 'stripe_test',
+        url: `https://api.stripe.com/v1/subscriptions/${SUBSCRIPTION_ID}`,
+        method: 'GET',
+        headers: {
+            Authorization: 'Bearer $CLIENT_SECRET',
+            'Content-Type': 'application/x-www-form-urlencoded'
+        },
+    });
+
+    if (response.error) {
+        alert(response.error.message);
+        return;
+    }
+
+    return response;
 }
 
-if (serviceFetching.value instanceof Promise) {
-    serviceFetching.value.then(getCurrentService);
-}
-else {
-    getCurrentService()
-}
-
-let closeOverlay = (res) => {
-    // if(res) {
-    //     console.log(res)
-    // }
-
+let closeOverlay = async () => {
     showUpgradePlan.value = false;
     showDowngradePlan.value = false;
     showCancelPlan.value = false;
@@ -232,6 +244,32 @@ let closeOverlay = (res) => {
     }).finally(() => {
         serviceFetching.value = false;
     });
+}
+
+let getCurrentService = async () => {
+    let srvcId = route.path.split('/')[2];
+    currentService.value = skapi.services[srvcId];
+
+    if (!currentService.value) {
+        if(account.value) {
+            router.replace({ path: '/myServices' });
+        } else {
+            router.replace({ path: '/login' });
+        }
+    } else {
+        if (currentService.value?.subs_id) {
+            getSubs.value = await getSubscription();
+        }
+    }
+
+    console.log(currentService.value)
+}
+
+if (serviceFetching.value instanceof Promise) {
+    serviceFetching.value.then(getCurrentService);
+}
+else {
+    getCurrentService()
 }
 
 </script>

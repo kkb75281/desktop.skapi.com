@@ -147,9 +147,12 @@ main#service
                     h5 {{ currentService.group == 2 ? 'Standard' : currentService.group == 3 ? 'Premium' : currentService.group == 50 ? 'Unlimited' : currentService.group == 51 ? 'Free Standard' : 'Trial' }}
                 .list(style="width:25%")
                     h6 State 
-                    h5 Running
-                    //- h5 Canceled
-                    //- h5 Suspended
+                    //- template(v-if="getSubs?.cancel_at_period_end")
+                    //-     h5 Canceled
+                    //- template(v-else-if="new Date().getTime() > getSubs?.canceled_at")
+                    //-     h5 Suspended
+                    //- template(v-else)
+                    //-     h5 Running
                 .list(style="width:25%")
                     h6 Renew Date
                     template(v-if="currentService.group == 1")
@@ -233,7 +236,7 @@ main#service
 
     br
 
-    section.deleteWrap(v-if="currentService.active < 0" :class="{'nonClickable' : !account?.email_verified || currentService.active == 0}")
+    section.deleteWrap(v-if="currentService.active < 0 || currentService.group == 1" :class="{'nonClickable' : !account?.email_verified || currentService.active == 0}")
         h4 Delete Service
         
         br
