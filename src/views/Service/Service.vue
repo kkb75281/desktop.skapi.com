@@ -2,7 +2,33 @@
 main#service
     .infoWrap
         .info
-            .title 
+            .toggleWrap(:class="{'active': currentService.active >= 1}")
+                span Disable/Enable
+                .toggleBg(:class="{'nonClickable' : !account?.email_verified}")
+                    .toggleBtn(@click="enableDisableToggle")
+            .row
+                h6 Service Name
+                template(v-if="modifyServiceName")
+                    form.modifyInputForm(@submit.prevent="changeServiceName" style="display:inline-block; width:unset")
+                        .customInput
+                            input#modifyServiceName(type="text" placeholder="Service name" :value='inputServiceName' @input="(e) => inputServiceName = e.target.value" required)
+                        template(v-if="promiseRunning")
+                            img.loading(src="@/assets/img/loading.png")
+                        template(v-else)
+                            input#submitInp(type="submit" hidden)
+                            label.material-symbols-outlined.big.save(for='submitInp') done
+                            .material-symbols-outlined.sml.cancel(@click="modifyServiceName = false;") close
+                template(v-else)
+                    h5.blue {{ currentService.name }}
+                    .material-symbols-outlined.mid.modify.clickable(:class="{'nonClickable' : !account?.email_verified || currentService.active == 0}" @click="editServiceName" style="margin-left:10px") edit
+            .row
+                h6 Service ID 
+                h5 {{ currentService.service }}
+            .row 
+                h6 Date Created
+                h5 {{ dateFormat(currentService.timestamp) }}
+
+            //- .title 
                 .name(style="height: 44px;")
                     template(v-if="modifyServiceName")
                         form.modifyInputForm(@submit.prevent="changeServiceName")
@@ -26,11 +52,12 @@ main#service
                         .toggleBg(:class="{'nonClickable' : !account?.email_verified}")
                             .toggleBtn(@click="enableDisableToggle")
             .codeWrap
+                //- #[span(style="color:#33adff") &lt;script] #[span(style="color:#58dfff") src]=#[span(style="color:#FFED91") "https://cdn.jsdelivr.net/npm/skapi-js@latest/dist/skapi.js"]#[span(style="color:#33adff") &gt;]#[span(style="color:#33adff") &lt;/script&gt;]
+                //- #[span(style="color:#33adff") &lt;script&gt;]
+                //- #[span(style="color:#33adff") &nbsp;&nbsp;&nbsp;&nbsp;const] skapi = #[span(style="color:#33adff") new] Skapi(#[span(style="color:#FFED91") "{{ currentService.service }}"], #[span(style="color:#FFED91") "{{ currentService.owner }}"]);
+                //- #[span(style="color:#33adff") &lt;/script&gt;]
                 pre.codeInner.
-                    #[span(style="color:#33adff") &lt;script] #[span(style="color:#58dfff") src]=#[span(style="color:#FFED91") "https://cdn.jsdelivr.net/npm/skapi-js@latest/dist/skapi.js"]#[span(style="color:#33adff") &gt;]#[span(style="color:#33adff") &lt;/script&gt;]
-                    #[span(style="color:#33adff") &lt;script&gt;]
                     #[span(style="color:#33adff") &nbsp;&nbsp;&nbsp;&nbsp;const] skapi = #[span(style="color:#33adff") new] Skapi(#[span(style="color:#FFED91") "{{ currentService.service }}"], #[span(style="color:#FFED91") "{{ currentService.owner }}"]);
-                    #[span(style="color:#33adff") &lt;/script&gt;]
                 .copy.clickable(@click="copy")
                     .material-symbols-outlined.mid file_copy
             a.question(href="https://docs.skapi.com/introduction/getting-started.html" target="_blank")
@@ -115,13 +142,24 @@ main#service
             .title 
                 h4 Subsription Plan
             .listWrap
-                .list(style="width:33.33%")
+                .list(style="width:25%")
                     h6 Current Plan
                     h5 {{ currentService.group == 2 ? 'Standard' : currentService.group == 3 ? 'Premium' : currentService.group == 50 ? 'Unlimited' : currentService.group == 51 ? 'Free Standard' : 'Trial' }}
-                .list(style="width:33.33%")
+                .list(style="width:25%")
+                    h6 State 
+                    //- template(v-if="getSubs?.cancel_at_period_end")
+                    //-     h5 Canceled
+                    //- template(v-else-if="new Date().getTime() > getSubs?.canceled_at")
+                    //-     h5 Suspended
+                    //- template(v-else)
+                    //-     h5 Running
+                .list(style="width:25%")
                     h6 Renew Date
-                    h5 2024.02.12
-                router-link.list(:to='`/subscription/${currentService.service}`' style="width:33.33%;text-align:right") 
+                    template(v-if="currentService.group == 1")
+                        h5(style="color:var(--caution-color)") All Data will be deleted by {{ dateFormat(currentService.timestamp, 'trial') }}
+                    template(v-else)
+                        h5 {{ dateFormat(currentService.timestamp, 'month') }}
+                router-link.list(:to='`/subscription/${currentService.service}`' style="width:25%;text-align:right") 
                     button.final Manage Subscription
 
         .info.card(:class="{'nonClickable' : !account?.email_verified || currentService.active == 0}") 
@@ -196,10 +234,21 @@ main#service
                             h6 Host storage used
                             p {{ convertToMb(storageInfo?.[currentService.service]?.host) }}
 
-    //- .deleteWrap(:class="{'nonClickable' : !account?.email_verified || currentService.active == 0}")
-        .deleteInner(@click="!account?.email_verified ? false : openDeleteService = true;")
-            .material-symbols-outlined.mid delete
-            span Delete Service
+    br
+
+    section.deleteWrap(v-if="currentService.active < 0 || currentService.group == 1" :class="{'nonClickable' : !account?.email_verified || currentService.active == 0}")
+        h4 Delete Service
+        
+        br
+
+        ul.desc
+            li Deleting the service will permanently erase all data. Recovery is not possible. The service plan will also be immediately canceled, and the remaining days will be prorated and refunded.
+
+        br
+
+        .btn(@click="!account?.email_verified ? false : openDeleteService = true;" style="display:block;text-align:right;")
+            button.unFinished.warning Delete Service
+
 DisableServiceOverlay(v-if="openDisableService" @close="disableService")
 DeleteService(v-if="openDeleteService" @close="openDeleteService = false;")
 </template>
@@ -220,6 +269,22 @@ let convertToMb = (size) => {
     else {
         return '-'
     }
+}
+let dateFormat = (timestamp, plan) => {
+    let currentDate = new Date(timestamp);
+    let month = currentDate.getMonth() + 1;
+    let day = currentDate.getDate();
+
+    if(plan == 'trial') {
+        day = day + 7;
+    } else if(plan == 'month') {
+        month = month + 1;
+    }
+
+    month = month >= 10 ? month : '0' + month;
+    day = day >= 10 ? day : '0' + day;
+
+    return currentDate.getFullYear() + '.' + month + '.' + day;
 }
 let modifyServiceName = ref(false);
 let modifyCors = ref(false);
@@ -251,7 +316,7 @@ if(!currentService.value.client_secret) {
         clientSecretState.value.push({ key: keys[i], value: values[i], keyAdd : false, keyEdit : false});
     }
 }
-
+console.log(currentService.value)
 let addSecretKey = () => {
     clientSecretState.value.unshift({ key: '', value: '', keyEdit: false, keyAdd: true });
     secretKeyAdd.value = true;
@@ -525,6 +590,7 @@ watch(modifyCors, () => {
     flex-wrap: wrap;
 
     .info {
+        position: relative;
         width: 49%;
         padding: 2rem;
         background-color: #fafafa !important;
@@ -583,6 +649,89 @@ watch(modifyCors, () => {
             border: 0;
         }
 
+        .row {
+            height: 44px;
+            line-height: 44px;
+
+            h5, h6 {
+                display: inline-block;
+                vertical-align: middle;
+            }
+            h5 {
+                color: var(--secondary-text);
+                font-weight: 400;
+                &.blue {
+                    color: var(--main-color);
+                    font-weight: 700;
+                }
+            }
+            h6 {
+                width: 120px;
+                color: rgba(0,0,0,0.4);
+                font-weight: 400;
+            }
+        }
+
+        .toggleWrap {
+            position: absolute;
+            top: 2rem;
+            right: 2rem;
+            display: inline-block;
+            opacity: 1;
+
+            &.locked {
+                opacity: 0.4;
+            }
+
+            &.active {
+                .toggleBg {
+                    background-color: var(--main-color);
+
+                    .toggleBtn {
+                        transform: translate(31px, -50%);
+                        transition: all 0.3s;
+                    }
+                }
+            }
+
+            span {
+                color: rgba(0, 0, 0, 0.40);
+                font-size: 0.8rem;
+                font-weight: 400;
+            }
+
+            .toggleBg {
+                position: relative;
+                display: inline-block;
+                vertical-align: middle;
+                width: 63px;
+                height: 32px;
+                margin-left: 1rem;
+                border-radius: 16px;
+                background-color: rgba(0, 0, 0, 0.6);
+                transition: all 0.3s;
+
+                &.nonClickable {
+                    .toggleBtn {
+                        cursor: default;
+                    }
+                }
+                .toggleBtn {
+                    position: absolute;
+                    width: 26px;
+                    height: 26px;
+                    right: unset;
+                    left: 3px;
+                    top: 50%;
+                    transform: translateY(-50%);
+                    border-radius: 50%;
+                    background-color: #eee;
+                    transition: all 0.3s;
+                    cursor: pointer;
+                }
+            }
+        }
+
         .title {
             position: relative;
             width: 100%;
@@ -624,64 +773,6 @@ watch(modifyCors, () => {
                         display: inline-block;
                         color: rgba(0, 0, 0, 0.60);
                         font-weight: 400;
-                    }
-                }
-
-                .toggleWrap {
-                    display: inline-block;
-                    margin-left: 30px;
-                    opacity: 1;
-
-                    &.locked {
-                        opacity: 0.4;
-                    }
-
-                    &.active {
-                        .toggleBg {
-                            background-color: var(--main-color);
-
-                            .toggleBtn {
-                                transform: translate(31px, -50%);
-                                transition: all 0.3s;
-                            }
-                        }
-                    }
-
-                    span {
-                        color: rgba(0, 0, 0, 0.40);
-                        font-size: 0.8rem;
-                        font-weight: 400;
-                    }
-
-                    .toggleBg {
-                        position: relative;
-                        display: inline-block;
-                        vertical-align: middle;
-                        width: 63px;
-                        height: 32px;
-                        margin-left: 1rem;
-                        border-radius: 16px;
-                        background-color: rgba(0, 0, 0, 0.6);
-                        transition: all 0.3s;
-
-                        &.nonClickable {
-                            .toggleBtn {
-                                cursor: default;
-                            }
-                        }
-                        .toggleBtn {
-                            position: absolute;
-                            width: 26px;
-                            height: 26px;
-                            right: unset;
-                            left: 3px;
-                            top: 50%;
-                            transform: translateY(-50%);
-                            border-radius: 50%;
-                            background-color: #eee;
-                            transition: all 0.3s;
-                            cursor: pointer;
-                        }
                     }
                 }
             }
@@ -950,25 +1041,18 @@ watch(modifyCors, () => {
     }
 }
 
-.deleteWrap {
-    display: flex;
-    flex-wrap: nowrap;
-    justify-content: flex-end;
-    color: var(--caution-color);
-    margin-top: 20px;
+.desc {
+    li {
+        color: var(--secondary-text);
+        line-height: 1.4rem;
+        margin-left: 1rem;
 
-    .deleteInner {
-        width: 150px;
-        display: flex;
-        flex-wrap: nowrap;
-        align-items: center;
-        cursor: pointer;
-
+        &::marker {
+            color: var(--primary-text);
+        }
         span {
-            margin-left: 14px;
-            font-size: 16px;
+            color: var(--primary-text);
             font-weight: 700;
-            line-height: 24px;
         }
     }
 }
@@ -985,6 +1069,9 @@ watch(modifyCors, () => {
 @media (max-width:767px) {
     .infoWrap {
         .info {
+            .toggleWrap {
+                position: relative;
+            }
             >.title {
                 display: block;
 

@@ -12,6 +12,7 @@
             br
             br
             br
+            br
 
             section.serviceInfo 
                 .row
@@ -26,7 +27,7 @@
                     h5 Service Plan
                     template(v-if="currentService.group == 1") 
                         span Trial
-                    template(v-else-if="currentService.group == 2") 
+                    template(v-else-if="currentService.group == 2 || currentService.group == 51") 
                         span Standard
                     template(v-else-if="currentService.group == 3") 
                         span Premium
@@ -36,6 +37,7 @@
                         span Free Standard
 
             br
+            br
 
             table
                 tbody
@@ -44,60 +46,64 @@
                             h4 Service Plan
                     tr
                         td(rowspan="2") 
-                        td(:class="{'currentMode' : currentService.group == 1}" style="padding-top: 1rem;")
+                        td(:class="{'currentMode' : currentService.group == 1}" style="padding-top: 1.8rem;")
                             .mode
                                 p Trial Mode
                                 span.fee $0
                                 p(style="font-size:0.8rem;") Billed monthly
 
-                        td(:class="{'currentMode' : currentService.group == 2}" style="padding-top: 1rem;") 
+                        td(:class="{'currentMode' : currentService.group == 2 || currentService.group == 51}" style="padding-top: 1.8rem;") 
                             .mode
                                 p Standard Mode
                                 span.fee $19
                                 p(style="font-size:0.8rem") Billed monthly
-                        td(:class="{'currentMode' : currentService.group == 3}" style="padding-top: 1rem;")
+                        td(:class="{'currentMode' : currentService.group == 3}" style="padding-top: 1.8rem;")
                             .mode
                                 p Premium Mode
                                 span.fee $129
                                 p(style="font-size:0.8rem") Billed monthly
                     tr
                         td(:class="{'currentMode' : currentService.group == 1}")
-                        td(:class="{'currentMode' : currentService.group == 2}")
-                            button.disabled Current Plan
+                            button.disabled(v-if="currentService.group == 1") Current Plan
+                        td(:class="{'currentMode' : currentService.group == 2 || currentService.group == 51}")
+                            button.final(v-if="currentService.group == 3" @click="showDowngradePlan = true;changeMode = 'standard'") Downgrade
+                            button.final(v-if="currentService.group == 1" @click="showUpgradePlan = true;changeMode = 'standard'") Upgrade
+                            button.disabled(v-else-if="currentService.group == 2 || currentService.group == 51") Current Plan
                         td(:class="{'currentMode' : currentService.group == 3}")
-                            button.final Upgrade
+                            button.final(v-if="currentService.group == 1 || currentService.group == 2 || currentService.group == 51" @click="showUpgradePlan = true;changeMode = 'premium'") Upgrade
+                            button.disabled(v-else-if="currentService.group == 3") Current Plan
                     tr.title
-                        td
+                        td(style="padding-top:1.9rem")
                             h4 Compare Features
                         td(:class="{'currentMode' : currentService.group == 1}")
-                        td(:class="{'currentMode' : currentService.group == 2}")
+                        td(:class="{'currentMode' : currentService.group == 2 || currentService.group == 51}")
                         td(:class="{'currentMode' : currentService.group == 3}")
                     tr.feature
-                        td(style="padding-top: 1.4rem;") #of User Account
-                        td(:class="{'currentMode' : currentService.group == 1}" style="padding-top: 1rem;") 10 k
-                        td(:class="{'currentMode' : currentService.group == 2}" style="padding-top: 1rem;") 10 k
-                        td(:class="{'currentMode' : currentService.group == 3}" style="padding-top: 1rem;") 100 k
+                        td #of User Account
+                        td(:class="{'currentMode' : currentService.group == 1}") 10 k
+                        td(:class="{'currentMode' : currentService.group == 2 || currentService.group == 51}") 10 k
+                        td(:class="{'currentMode' : currentService.group == 3}") 100 k
                     tr.feature
                         td Database
                         td(:class="{'currentMode' : currentService.group == 1}") 4 G
-                        td(:class="{'currentMode' : currentService.group == 2}") 4 G
+                        td(:class="{'currentMode' : currentService.group == 2 || currentService.group == 51}") 4 G
                         td(:class="{'currentMode' : currentService.group == 3}") 100 G
                     tr.feature
                         td.feature File Storage
                         td(:class="{'currentMode' : currentService.group == 1}") 50 GB
-                        td(:class="{'currentMode' : currentService.group == 2}") 50 GB
+                        td(:class="{'currentMode' : currentService.group == 2 || currentService.group == 51}") 50 GB
                         td(:class="{'currentMode' : currentService.group == 3}") 1 TB
                     tr.feature
                         td Hosting Storage
                         td(:class="{'currentMode' : currentService.group == 1}") 
                             .material-symbols-outlined.mid.gray cancel
-                        td(:class="{'currentMode' : currentService.group == 2}") 50 GB
+                        td(:class="{'currentMode' : currentService.group == 2 || currentService.group == 51}") 50 GB
                         td(:class="{'currentMode' : currentService.group == 3}") 1 TB
                     tr.feature
                         td Automated Email
                         td(:class="{'currentMode' : currentService.group == 1}") 
                             .material-symbols-outlined.mid.gray cancel
-                        td(:class="{'currentMode' : currentService.group == 2}")
+                        td(:class="{'currentMode' : currentService.group == 2 || currentService.group == 51}")
                             .material-symbols-outlined.mid.green check_circle
                         td(:class="{'currentMode' : currentService.group == 3}")
                             .material-symbols-outlined.mid.green check_circle
@@ -105,13 +111,13 @@
                         td Email Storage
                         td(:class="{'currentMode' : currentService.group == 1}") 
                             .material-symbols-outlined.mid.gray cancel
-                        td(:class="{'currentMode' : currentService.group == 2}") 1 GB
+                        td(:class="{'currentMode' : currentService.group == 2 || currentService.group == 51}") 1 GB
                         td(:class="{'currentMode' : currentService.group == 3}") 10 GB
                     tr.feature
                         td Subdomain Hosting
                         td(:class="{'currentMode' : currentService.group == 1}") 
                             .material-symbols-outlined.mid.gray cancel
-                        td(:class="{'currentMode' : currentService.group == 2}") 
+                        td(:class="{'currentMode' : currentService.group == 2 || currentService.group == 51}") 
                             .material-symbols-outlined.mid.green check_circle
                         td(:class="{'currentMode' : currentService.group == 3}") 
                             .material-symbols-outlined.mid.green check_circle
@@ -120,56 +126,127 @@
                         td.red(:class="{'currentMode' : currentService.group == 1}")
                             ul 
                                 li All the users and data will be deleted every 7 days
-                        td(:class="{'currentMode' : currentService.group == 2}") 
+                        td(:class="{'currentMode' : currentService.group == 2 || currentService.group == 51}") 
                         td.blue(:class="{'currentMode' : currentService.group == 3}")
                             ul 
                                 li Unlimited use with pay-as-you-go when exceeding the limit
 
             br
+            br
 
-            section.cancelPlan(v-if="currentService.active > 0")
-                h4 Cancel Plan
+            template(v-if="getSubs")
+                section(v-if="getSubs?.cancel_at_period_end")
+                    h4 Resume Plan
 
-                br
+                    br
 
-                ul.desc
-                    li If you cancel the service plan, you will not be billed for the subscription for three months (from the last payment date). The service will be deactivated during the plan cancellation period. 
-                        span However, after three months, all data and users will be deleted, and if you do not want this to happen, you must resume the plan before that.
+                    ul.desc 
+                        li Your current service plan has been canceled and deactivated. To reactivate the service, please resume the plan. 
+                            em(style="color:var(--caution-color);font-style: normal;") Your service will be completely deleted on 0000-00-00.
+                    
+                    br
 
-                br
+                    .btn(style="display:block;text-align:right;")
+                        button.final Resume Plan
 
-                .btn(style="display:block;text-align:right;")
-                    button.unFinished.warning Cancel Plan
+                section(v-else)
+                    h4 Cancel Plan
 
-            section.resumePlan(v-else)
-                h4 Resume Plan
+                    br
 
-                br
+                    ul.desc
+                        li If you cancel the service plan, you will not be billed for the subscription for three months (from the last payment date). The service will be deactivated during the plan cancellation period. 
+                            span However, after three months, all data and users will be deleted, and if you do not want this to happen, you must resume the plan before that.
 
-                ul.desc 
-                    li Your current service plan has been canceled and deactivated. To reactivate the service, please resume the plan. 
-                        em(style="color:var(--caution-color);font-style: normal;") Your service will be completely deleted on 0000-00-00.
-                
-                br
+                    br
 
-                .btn(style="display:block;text-align:right;")
-                    button.final Resume Plan
+                    .btn(style="display:block;text-align:right;")
+                        button.unFinished.warning(@click="showCancelPlan = true;") Cancel Plan
 
-        
+#proceeding(v-if="serviceFetching")   
+    .inner    
+        img.loading(src="@/assets/img/loading_white.png")
+        br
+        br
+        h5 Proceeding...
+
+CancelPlanOverlay(v-if="showCancelPlan" @close="closeOverlay")
+UpgradePlanOverlay(v-if="showUpgradePlan" @close="closeOverlay" :changeMode="changeMode")
+DowngradePlanOverlay(v-if="showDowngradePlan" @close="closeOverlay" :changeMode="changeMode")
 </template>
 
 <script setup>
 import { useRoute, useRouter } from 'vue-router';
-import { nextTick } from 'vue';
+import { nextTick, ref } from 'vue';
 import { currentService, serviceFetching } from '@/data.js';
 import { skapi, account } from '@/main.js';
+import CancelPlanOverlay from '@/views/Subscription/CancelPlanOverlay.vue';
+import UpgradePlanOverlay from '@/views/Subscription/UpgradePlanOverlay.vue';
+import DowngradePlanOverlay from '@/views/Subscription/DowngradePlanOverlay.vue';
 
 currentService.value = null;
 
+// let x: string | number = 1;
+
 let router = useRouter();
 let route = useRoute();
+let changeMode = '';
+let getSubs = ref(null);
+let showCancelPlan = ref(false);
+let showUpgradePlan = ref(false);
+let showDowngradePlan = ref(false);
+let cancelState = ref(false);
 
-let getCurrentService = () => {
+async function getSubscription() {
+    let subs_id = currentService.value.subs_id.split('#');
+
+    console.log(currentService.value)
+
+    if (!currentService.value.subs_id) {
+        alert('Service does not have a subscription');
+        return;
+    }
+
+    if (subs_id.length < 2) {
+        alert('Service does not have a subscription');
+        return;
+    }
+
+    let SUBSCRIPTION_ID = subs_id[0];
+
+    let response = await skapi.clientSecretRequest({
+        clientSecretName: 'stripe_test',
+        url: `https://api.stripe.com/v1/subscriptions/${SUBSCRIPTION_ID}`,
+        method: 'GET',
+        headers: {
+            Authorization: 'Bearer $CLIENT_SECRET',
+            'Content-Type': 'application/x-www-form-urlencoded'
+        },
+    });
+
+    if (response.error) {
+        alert(response.error.message);
+        return;
+    }
+
+    return response;
+}
+
+let closeOverlay = async () => {
+    showUpgradePlan.value = false;
+    showDowngradePlan.value = false;
+    showCancelPlan.value = false;
+
+    serviceFetching.value = skapi.getServices(null, true).then(() => {
+        nextTick(() => {
+            getCurrentService();
+        })
+    }).finally(() => {
+        serviceFetching.value = false;
+    });
+}
+
+let getCurrentService = async () => {
     let srvcId = route.path.split('/')[2];
     currentService.value = skapi.services[srvcId];
 
@@ -178,6 +255,10 @@ let getCurrentService = () => {
             router.replace({ path: '/myServices' });
         } else {
             router.replace({ path: '/login' });
+        }
+    } else {
+        if (currentService.value?.subs_id) {
+            getSubs.value = await getSubscription();
         }
     }
 
@@ -191,10 +272,32 @@ else {
     getCurrentService()
 }
 
-
 </script>
 
 <style lang="less">
+#proceeding {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background-color: rgba(0,0,0,0.25);
+    z-index: 9999999;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+
+    .loading {
+        width: 2rem;
+        height: 2rem;
+    }
+    h5 {
+        color: #fff;
+    }
+}
+
 .subsWrap {
     padding: 0 1rem;
     padding-bottom: 5rem;
@@ -203,20 +306,24 @@ else {
     flex-wrap: nowrap;
 }
 .back {
-    width: 12rem;
+    min-width: 240px;
+    margin: 0 16px;
 
     span {
         display: inline-block;
         vertical-align: middle;
         color: var(--main-color);
+        font-weight: 700;
+        cursor: pointer;
 
         &:first-child {
-            padding-right: 1rem;
+            padding-right: 13px;
         }
     }
 }
 #subscription {
-    width: calc(100vw - 12rem);
+    width: calc(100vw - 250px);
+    min-width: 650px;
     color: var(--primary-text);
 
     .inner {
@@ -246,14 +353,15 @@ else {
             &.title {
                 td {
                     white-space: nowrap;
-                    padding: 1rem 0;
+                    padding-bottom: 1.2rem;
                     border-bottom: 1px solid rgba(0,0,0,0.1);
                     text-align: left;
                 }
             }
             &.feature {
                 td {
-                    padding: 0.7rem 0;
+                    // padding: 0.7rem 0;
+                    padding-top: 1.8rem;
                     text-align: center;
 
                     &:first-child {
@@ -264,7 +372,7 @@ else {
             }
             &.caution {
                 td {
-                    padding: 0.5rem 1.2rem 2rem 1.2rem;
+                    padding: 1.8rem 1.2rem 3rem 1.2rem;
                     border-bottom: 1px solid rgba(0,0,0,0.1);
                     font-size: 0.8rem;
                     line-height: 1.2rem;
@@ -300,7 +408,7 @@ else {
                 display: inline-block;
                 font-size: 1.6rem;
                 font-weight: 500;
-                padding: 0.5rem 0;
+                padding: 1rem 0;
 
                 &::before {
                     position: absolute;
@@ -314,7 +422,7 @@ else {
                 }
             }
             button {
-                margin-top: 1rem;
+                margin-top: 1.4rem;
             }
         }
     }

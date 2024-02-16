@@ -168,6 +168,8 @@ let getSubscription = async () => {
 
     let subs_id = service_info.value.subs_id.split('#');
 
+    console.log(service_info.value)
+
     if (!service_info.value.subs_id) {
         alert('Service does not have a subscription');
         return;

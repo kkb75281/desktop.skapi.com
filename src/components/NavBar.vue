@@ -50,6 +50,9 @@ header#navBar(style='--position: relative;')
                 //- img(v-if="account.approved.includes('ggl')" src="@/assets/img/icon/google.svg" style="display:inline-block;width:20px;height:20px;vertical-align:middle;margin-right:10px;")
                 span {{ account.email }}
             .settings 
+                .setting(@click="openCustomerPortal")
+                    span.material-symbols-outlined.sml credit_card
+                    span Billing
                 .setting(@click="navigateToPage")
                     span.material-symbols-outlined.sml settings
                     span Account Settings
@@ -58,12 +61,19 @@ header#navBar(style='--position: relative;')
                     span Logout
             a.policy
                 router-link(to="/privacy" target="_blank") terms of service ● privacy policy
+
+#proceeding(v-if="running")   
+    .inner    
+        img.loading(src="@/assets/img/loading_white.png")
+        br
+        br
+        h5 Page Loading
 </template>
 
 <script setup>
 import { onBeforeUnmount, onMounted, ref } from 'vue'
 import { useRouter, useRoute } from 'vue-router';
-import { skapi, account, bodyClick } from '@/main';
+import { skapi, account, bodyClick, customer } from '@/main';
 import { services, currentService, storageInfo, serviceUsers } from '@/data';
 import { serviceRecords } from '@/views/Service/Records/RecordFetch';
 
@@ -71,6 +81,7 @@ let route = useRoute();
 let router = useRouter();
 let topRoute = ref(null);
 let accountInfo = ref(false);
+let running = ref(false);
 
 bodyClick.nav = ()=>{
     accountInfo.value = false;
@@ -100,6 +111,29 @@ let logout = async () => {
     router.push({ path: '/' });
 }
 
+let openCustomerPortal = async () => {
+    running.value = true;
+
+    let resolvedCustomer = await customer;
+
+    skapi.clientSecretRequest({
+        clientSecretName: 'stripe_test',
+        url: `https://api.stripe.com/v1/billing_portal/sessions`,
+        method: 'POST',
+        headers: {
+            Authorization: 'Bearer $CLIENT_SECRET',
+            'Content-Type': 'application/x-www-form-urlencoded'
+        },
+        data: {
+            customer: resolvedCustomer.id,
+            return_url: window.location.origin + '/experiment'
+        }
+    }).then(response => {
+        window.location = response.url;
+        running.value = false;
+    });
+}
+
 let resize = () => {
     if(topRoute.value) {
         if (window.innerWidth < 1024) {
@@ -119,6 +153,29 @@ onBeforeUnmount(() => {
 </script>
 
 <style lang="less" scoped>
+#proceeding {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background-color: rgba(0,0,0,0.25);
+    z-index: 9999999;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+
+    .loading {
+        width: 2rem;
+        height: 2rem;
+    }
+    h5 {
+        color: #fff;
+    }
+}
+
 #top {
     position: var(--position);
     left: 0;
@@ -381,6 +438,9 @@ onBeforeUnmount(() => {
             padding: 20px;
             border-bottom: 1px solid rgba(0, 0, 0, 0.15);
 
+            a {
+                text-decoration: none;
+            }
             .setting {
                 display: flex;
                 align-items: center;
