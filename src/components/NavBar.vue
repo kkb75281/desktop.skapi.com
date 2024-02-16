@@ -61,6 +61,13 @@ header#navBar(style='--position: relative;')
                     span Logout
             a.policy
                 router-link(to="/privacy" target="_blank") terms of service ● privacy policy
+
+#proceeding(v-if="running")   
+    .inner    
+        img.loading(src="@/assets/img/loading_white.png")
+        br
+        br
+        h5 Page Loading
 </template>
 
 <script setup>
@@ -74,6 +81,7 @@ let route = useRoute();
 let router = useRouter();
 let topRoute = ref(null);
 let accountInfo = ref(false);
+let running = ref(false);
 
 bodyClick.nav = ()=>{
     accountInfo.value = false;
@@ -104,6 +112,8 @@ let logout = async () => {
 }
 
 let openCustomerPortal = async () => {
+    running.value = true;
+
     let resolvedCustomer = await customer;
 
     skapi.clientSecretRequest({
@@ -120,6 +130,7 @@ let openCustomerPortal = async () => {
         }
     }).then(response => {
         window.location = response.url;
+        running.value = false;
     });
 }
 
@@ -142,6 +153,29 @@ onBeforeUnmount(() => {
 </script>
 
 <style lang="less" scoped>
+#proceeding {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background-color: rgba(0,0,0,0.25);
+    z-index: 9999999;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+
+    .loading {
+        width: 2rem;
+        height: 2rem;
+    }
+    h5 {
+        color: #fff;
+    }
+}
+
 #top {
     position: var(--position);
     left: 0;

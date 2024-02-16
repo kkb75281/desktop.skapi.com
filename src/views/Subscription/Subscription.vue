@@ -12,6 +12,7 @@
             br
             br
             br
+            br
 
             section.serviceInfo 
                 .row
@@ -36,6 +37,7 @@
                         span Free Standard
 
             br
+            br
 
             table
                 tbody
@@ -44,18 +46,18 @@
                             h4 Service Plan
                     tr
                         td(rowspan="2") 
-                        td(:class="{'currentMode' : currentService.group == 1}" style="padding-top: 1rem;")
+                        td(:class="{'currentMode' : currentService.group == 1}" style="padding-top: 1.8rem;")
                             .mode
                                 p Trial Mode
                                 span.fee $0
                                 p(style="font-size:0.8rem;") Billed monthly
 
-                        td(:class="{'currentMode' : currentService.group == 2 || currentService.group == 51}" style="padding-top: 1rem;") 
+                        td(:class="{'currentMode' : currentService.group == 2 || currentService.group == 51}" style="padding-top: 1.8rem;") 
                             .mode
                                 p Standard Mode
                                 span.fee $19
                                 p(style="font-size:0.8rem") Billed monthly
-                        td(:class="{'currentMode' : currentService.group == 3}" style="padding-top: 1rem;")
+                        td(:class="{'currentMode' : currentService.group == 3}" style="padding-top: 1.8rem;")
                             .mode
                                 p Premium Mode
                                 span.fee $129
@@ -71,16 +73,16 @@
                             button.final(v-if="currentService.group == 1 || currentService.group == 2 || currentService.group == 51" @click="showUpgradePlan = true;changeMode = 'premium'") Upgrade
                             button.disabled(v-else-if="currentService.group == 3") Current Plan
                     tr.title
-                        td
+                        td(style="padding-top:1.9rem")
                             h4 Compare Features
                         td(:class="{'currentMode' : currentService.group == 1}")
                         td(:class="{'currentMode' : currentService.group == 2 || currentService.group == 51}")
                         td(:class="{'currentMode' : currentService.group == 3}")
                     tr.feature
-                        td(style="padding-top: 1.4rem;") #of User Account
-                        td(:class="{'currentMode' : currentService.group == 1}" style="padding-top: 1rem;") 10 k
-                        td(:class="{'currentMode' : currentService.group == 2 || currentService.group == 51}" style="padding-top: 1rem;") 10 k
-                        td(:class="{'currentMode' : currentService.group == 3}" style="padding-top: 1rem;") 100 k
+                        td #of User Account
+                        td(:class="{'currentMode' : currentService.group == 1}") 10 k
+                        td(:class="{'currentMode' : currentService.group == 2 || currentService.group == 51}") 10 k
+                        td(:class="{'currentMode' : currentService.group == 3}") 100 k
                     tr.feature
                         td Database
                         td(:class="{'currentMode' : currentService.group == 1}") 4 G
@@ -130,22 +132,9 @@
                                 li Unlimited use with pay-as-you-go when exceeding the limit
 
             br
+            br
 
-            section(v-if="currentService.active > 0")
-                h4 Cancel Plan
-
-                br
-
-                ul.desc
-                    li If you cancel the service plan, you will not be billed for the subscription for three months (from the last payment date). The service will be deactivated during the plan cancellation period. 
-                        span However, after three months, all data and users will be deleted, and if you do not want this to happen, you must resume the plan before that.
-
-                br
-
-                .btn(style="display:block;text-align:right;")
-                    button.unFinished.warning(@click="showCancelPlan = true;") Cancel Plan
-
-            section(v-else)
+            section(v-if="currentService.cancelInfo")
                 h4 Resume Plan
 
                 br
@@ -159,9 +148,30 @@
                 .btn(style="display:block;text-align:right;")
                     button.final Resume Plan
 
-CancelPlanOverlay(v-if="showCancelPlan" @close="showCancelPlan = false;")
-UpgradePlanOverlay(v-if="showUpgradePlan" @close="showUpgradePlan = false;" :changeMode="changeMode")
-DowngradePlanOverlay(v-if="showDowngradePlan" @close="showDowngradePlan = false;" :changeMode="changeMode")
+            section(v-else)
+                h4 Cancel Plan
+
+                br
+
+                ul.desc
+                    li If you cancel the service plan, you will not be billed for the subscription for three months (from the last payment date). The service will be deactivated during the plan cancellation period. 
+                        span However, after three months, all data and users will be deleted, and if you do not want this to happen, you must resume the plan before that.
+
+                br
+
+                .btn(style="display:block;text-align:right;")
+                    button.unFinished.warning(@click="showCancelPlan = true;") Cancel Plan
+
+#proceeding(v-if="serviceFetching")   
+    .inner    
+        img.loading(src="@/assets/img/loading_white.png")
+        br
+        br
+        h5 Proceeding...
+
+CancelPlanOverlay(v-if="showCancelPlan" @close="closeOverlay")
+UpgradePlanOverlay(v-if="showUpgradePlan" @close="closeOverlay" :changeMode="changeMode")
+DowngradePlanOverlay(v-if="showDowngradePlan" @close="closeOverlay" :changeMode="changeMode")
 </template>
 
 <script setup>
@@ -206,9 +216,50 @@ else {
     getCurrentService()
 }
 
+let closeOverlay = (res) => {
+    // if(res) {
+    //     console.log(res)
+    // }
+
+    showUpgradePlan.value = false;
+    showDowngradePlan.value = false;
+    showCancelPlan.value = false;
+
+    serviceFetching.value = skapi.getServices(null, true).then(() => {
+        nextTick(() => {
+            getCurrentService();
+        })
+    }).finally(() => {
+        serviceFetching.value = false;
+    });
+}
+
 </script>
 
 <style lang="less">
+#proceeding {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background-color: rgba(0,0,0,0.25);
+    z-index: 9999999;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+
+    .loading {
+        width: 2rem;
+        height: 2rem;
+    }
+    h5 {
+        color: #fff;
+    }
+}
+
 .subsWrap {
     padding: 0 1rem;
     padding-bottom: 5rem;
@@ -217,20 +268,24 @@ else {
     flex-wrap: nowrap;
 }
 .back {
-    width: 12rem;
+    min-width: 240px;
+    margin: 0 16px;
 
     span {
         display: inline-block;
         vertical-align: middle;
         color: var(--main-color);
+        font-weight: 700;
+        cursor: pointer;
 
         &:first-child {
-            padding-right: 1rem;
+            padding-right: 13px;
         }
     }
 }
 #subscription {
-    width: calc(100vw - 12rem);
+    width: calc(100vw - 250px);
+    min-width: 650px;
     color: var(--primary-text);
 
     .inner {
@@ -260,14 +315,15 @@ else {
             &.title {
                 td {
                     white-space: nowrap;
-                    padding: 1rem 0;
+                    padding-bottom: 1.2rem;
                     border-bottom: 1px solid rgba(0,0,0,0.1);
                     text-align: left;
                 }
             }
             &.feature {
                 td {
-                    padding: 0.7rem 0;
+                    // padding: 0.7rem 0;
+                    padding-top: 1.8rem;
                     text-align: center;
 
                     &:first-child {
@@ -278,7 +334,7 @@ else {
             }
             &.caution {
                 td {
-                    padding: 0.5rem 1.2rem 2rem 1.2rem;
+                    padding: 1.8rem 1.2rem 3rem 1.2rem;
                     border-bottom: 1px solid rgba(0,0,0,0.1);
                     font-size: 0.8rem;
                     line-height: 1.2rem;
@@ -314,7 +370,7 @@ else {
                 display: inline-block;
                 font-size: 1.6rem;
                 font-weight: 500;
-                padding: 0.5rem 0;
+                padding: 1rem 0;
 
                 &::before {
                     position: absolute;
@@ -328,7 +384,7 @@ else {
                 }
             }
             button {
-                margin-top: 1rem;
+                margin-top: 1.4rem;
             }
         }
     }

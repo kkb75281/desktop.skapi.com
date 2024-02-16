@@ -6,20 +6,74 @@
                 h5 Upgrade Plan
         main
             .content
-                p Do you truly wish to upgrade your plan? Plan changes are only possible once per day.
+                p Do you truly wish to upgrade your plan?
                 br
                 br
                 .buttonWrap 
-                    button.noLine(@click="emits('close')") Cancel
-                    button.final(@click="updateSubscription(props.changeMode)") Upgrade
+                    template(v-if="promiseRunning")
+                        img.loading(src="@/assets/img/loading.png")
+                    template(v-else)
+                        button.noLine(@click="emits('close')") Cancel
+                        button.final(@click="upgrade") Upgrade
 </template>
 
 <script setup>
-import { skapi, customer } from '@/main.js';
+import { skapi, account, customer } from '@/main.js';
 import { currentService } from '@/data.js';
+import { ref } from 'vue';
 
 let emits = defineEmits(['close']);
 let props = defineProps(['changeMode']);
+let promiseRunning = ref(false);
+
+let upgrade = () => {
+    promiseRunning.value = true;
+
+    if(currentService.value.group == 1) {
+        createSubscription(props.changeMode, currentService.value);
+    } else {
+        updateSubscription(props.changeMode);
+    }
+}
+
+let createSubscription = async (ticket_id, service_info) => {
+    let resolvedCustomer = await customer;
+    let product = JSON.parse(import.meta.env.VITE_PRODUCT);
+    let customer_id = resolvedCustomer.id;
+    let currentUrl = window.location;
+
+    let response = await skapi.clientSecretRequest({
+        clientSecretName: 'stripe_test',
+        url: 'https://api.stripe.com/v1/checkout/sessions',
+        method: 'POST',
+        headers: {
+            Authorization: 'Bearer $CLIENT_SECRET',
+            'Content-Type': 'application/x-www-form-urlencoded'
+        },
+        data: {
+            client_reference_id: account.value.user_id,
+            customer: customer_id,
+            'customer_update[name]': 'auto',
+            'customer_update[address]': 'auto',
+            'subscription_data[metadata][service]': service_info.service,
+            'subscription_data[metadata][owner]': account.value.user_id,
+            'mode': 'subscription',
+            'subscription_data[description]': 'Subscription Plan of service ID: ' + service_info.service,
+            cancel_url: currentUrl.origin + '/myServices',
+            "line_items[0][quantity]": 1,
+            'line_items[0][price]': product[ticket_id],
+            "success_url": currentUrl.origin + '/myServices?checkout_id={CHECKOUT_SESSION_ID}&service_id=' + service_info.service + '&ticket_id=' + ticket_id,
+            'tax_id_collection[enabled]': true,
+        }
+    });
+    if (response.error) {
+        alert(response.error.message);
+        return;
+    }
+
+    window.location = response.url;
+    promiseRunning.value = false;
+}
 
 let updateSubscription = async (ticket_id) => {
     let resolvedCustomer = await customer;
@@ -61,6 +115,7 @@ let updateSubscription = async (ticket_id) => {
         return;
     }
 
+    promiseRunning.value = false;
     emits('close');
 }
 </script>

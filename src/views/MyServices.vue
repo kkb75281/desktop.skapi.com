@@ -76,8 +76,8 @@ main#myServices
                                 .percent(:class='{"green": 0 <= Math.ceil(storageInfo?.[service.service]?.database/4294967296*100) && Math.ceil(storageInfo?.[service.service]?.database/4294967296*100) < 51, "orange": 51 <= Math.ceil(storageInfo?.[service.service]?.database/4294967296*100) && Math.ceil(storageInfo?.[service.service]?.database/4294967296*100) < 81, "red": 81 <= Math.ceil(storageInfo?.[service.service]?.database/4294967296*100)}') {{ Math.ceil(storageInfo?.[service.service]?.database/4294967296*100) + '%' }}
                             template(v-else)
                                 .percent.green 0%
-                            .menu(@click.stop="(e) => showPlanSetting(e, index)" :class='{"nonClickable": !account.email_verified}')
-                                .material-symbols-outlined.mid.clickable more_vert
+                            //- .menu(@click.stop="(e) => showPlanSetting(e, index)" :class='{"nonClickable": !account.email_verified}')
+                            //-     .material-symbols-outlined.mid.clickable more_vert
                     tr.cont(ref="trCont" :class="{'active' : showInfo}")
                         td(colspan="9")
                             .info
@@ -140,7 +140,7 @@ main#myServices
     .plus(style="display:block;text-align:center;padding-bottom:2rem;")
         .material-symbols-outlined.big(@click="createService" style="color:var(--main-color);cursor:pointer;") add_circle
     
-    #moreVert.hide(v-if="showMore" @click.stop style="--moreVert-right: 100px;" :style="{top: clientY}")
+    //- #moreVert.hide(v-if="showMore" @click.stop style="--moreVert-right: 100px;" :style="{top: clientY}")
         .inner
             .more(@click="showMore=false;" style="width:unset;white-space:nowrap;opacity:0.2") Downgrade Plan
             .more(@click="showMore=false;" style="width:unset;white-space:nowrap;opacity:0.2") Upgrade Plan

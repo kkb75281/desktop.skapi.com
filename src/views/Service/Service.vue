@@ -313,7 +313,7 @@ if(!currentService.value.client_secret) {
         clientSecretState.value.push({ key: keys[i], value: values[i], keyAdd : false, keyEdit : false});
     }
 }
-
+console.log(currentService.value)
 let addSecretKey = () => {
     clientSecretState.value.unshift({ key: '', value: '', keyEdit: false, keyAdd: true });
     secretKeyAdd.value = true;
