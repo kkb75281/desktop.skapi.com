@@ -1,4 +1,5 @@
 <template lang="pug">
+PlanCaution(v-if="subsInfo?.[currentService.service]?.cancel_at_period_end && showPlanCaution" @close="showPlanCaution.value = false;")
 main#service
     .infoWrap
         .info
@@ -64,7 +65,7 @@ main#service
                 .material-symbols-outlined.empty.sml help 
                 span Where do I put this code?
 
-        .info(:class="{'nonClickable' : !account?.email_verified || currentService.active == 0 || new Date().getTime() < getSubs?.canceled_at}") 
+        .info(:class="{'nonClickable' : !account?.email_verified || currentService.active == 0 || new Date().getTime() < subsInfo?.[currentService.service]?.canceled_at}") 
             .title 
                 h4 Security Setting
                 a.question.help(href='https://docs.skapi.com/security/security-settings.html' target="_blank")
@@ -144,8 +145,8 @@ main#service
                     h5 {{ currentService.group == 2 ? 'Standard' : currentService.group == 3 ? 'Premium' : currentService.group == 50 ? 'Unlimited' : currentService.group == 51 ? 'Free Standard' : 'Trial' }}
                 .list(style="width:23.5%;margin-right:2%")
                     h6 State 
-                    h5(v-if="getSubs?.cancel_at_period_end" style="color:var(--caution-color)") Canceled
-                    h5(v-else-if="new Date().getTime() < getSubs?.canceled_at" style="color:var(--caution-color)") Suspended
+                    h5(v-if="subsInfo?.[currentService.service]?.cancel_at_period_end" style="color:var(--caution-color)") Canceled
+                    h5(v-else-if="new Date().getTime() < subsInfo?.[currentService.service]?.canceled_at" style="color:var(--caution-color)") Suspended
                     h5(v-else-if="getSubsRunning") ...
                     h5(v-else) Running
                 .list(style="width:23.5%;margin-right:2%")
@@ -154,12 +155,12 @@ main#service
                         h5(style="color:var(--caution-color)") All Data will be deleted by {{ dateFormat(currentService.timestamp + 604800000) }}
                     template(v-else)
                         h5(v-if="getSubsRunning") ...
-                        h5(v-else) {{ dateFormat(getSubs?.current_period_end * 1000) }}
+                        h5(v-else) {{ dateFormat(subsInfo?.[currentService.service]?.current_period_end * 1000) }}
                 router-link.list(:to='`/subscription/${currentService.service}`' style="width:23.5%;text-align:right") 
-                    button.final(v-if="new Date().getTime() < getSubs?.canceled_at") Resume Plan
+                    button.final(v-if="new Date().getTime() < subsInfo?.[currentService.service]?.canceled_at") Resume Plan
                     button.final(v-else) Manage Subscription
 
-        .info.card(:class="{'nonClickable' : !account?.email_verified || currentService.active == 0 || new Date().getTime() < getSubs?.canceled_at}") 
+        .info.card(:class="{'nonClickable' : !account?.email_verified || currentService.active == 0 || new Date().getTime() < subsInfo?.[currentService.service]?.canceled_at}") 
             .inner
                 .title 
                     .logoTitle
@@ -178,7 +179,7 @@ main#service
                                 option(value="anyone") Anyone allowed
                             .material-symbols-outlined.mid.search.selectArrowDown(style="right:-30px;top:66%;color:var(--main-color);") arrow_drop_down
 
-        .info.card(:class="{'nonClickable' : !account?.email_verified || currentService.active == 0 || new Date().getTime() < getSubs?.canceled_at}") 
+        .info.card(:class="{'nonClickable' : !account?.email_verified || currentService.active == 0 || new Date().getTime() < subsInfo?.[currentService.service]?.canceled_at}") 
             .inner
                 .title 
                     .logoTitle
@@ -193,7 +194,7 @@ main#service
                         h6 # of cloud storage Used
                         p {{ convertToMb(storageInfo?.[currentService.service]?.cloud) }}
 
-        .info.card(:class="{'nonClickable' : !account?.email_verified || currentService.active == 0 || new Date().getTime() < getSubs?.canceled_at}") 
+        .info.card(:class="{'nonClickable' : !account?.email_verified || currentService.active == 0 || new Date().getTime() < subsInfo?.[currentService.service]?.canceled_at}") 
             .inner
                 .title 
                     .logoTitle
@@ -212,7 +213,7 @@ main#service
                             h6 # Mail storage used 
                             p {{ convertToMb(storageInfo?.[currentService.service]?.email) }}
 
-        .info.card(:class="{'nonClickable' : !account?.email_verified || currentService.active == 0 || new Date().getTime() < getSubs?.canceled_at}") 
+        .info.card(:class="{'nonClickable' : !account?.email_verified || currentService.active == 0 || new Date().getTime() < subsInfo?.[currentService.service]?.canceled_at}") 
             .inner
                 .title 
                     .logoTitle
@@ -253,56 +254,14 @@ DeleteService(v-if="openDeleteService" @close="openDeleteService = false;")
 <script setup>
 import { computed, nextTick, ref, watch, onMounted } from 'vue';
 import { useRouter } from 'vue-router';
-import { currentService, storageInfo } from '@/data.js';
+import { currentService, storageInfo, subsInfo, getSubsRunning } from '@/data.js';
 import { skapi, account, domain } from '@/main.js';
 import DisableServiceOverlay from '@/views/Service/DisableServiceOverlay.vue';
 import DeleteService from '@/components/DeleteService.vue';
+import PlanCaution from '@/components/PlanCaution.vue';
 
 const router = useRouter();
 
-async function getSubscription() {
-    let subs_id = currentService.value.subs_id.split('#');
-
-    console.log(currentService.value)
-
-    if (!currentService.value.subs_id) {
-        alert('Service does not have a subscription');
-        return;
-    }
-
-    if (subs_id.length < 2) {
-        alert('Service does not have a subscription');
-        return;
-    }
-
-    let SUBSCRIPTION_ID = subs_id[0];
-
-    let response = await skapi.clientSecretRequest({
-        clientSecretName: 'stripe_test',
-        url: `https://api.stripe.com/v1/subscriptions/${SUBSCRIPTION_ID}`,
-        method: 'GET',
-        headers: {
-            Authorization: 'Bearer $CLIENT_SECRET',
-            'Content-Type': 'application/x-www-form-urlencoded'
-        },
-    });
-
-    if (response.error) {
-        alert(response.error.message);
-        return;
-    }
-
-    return response;
-}
-let getSubs = ref(null);
-let getSubsRunning = ref(false);
-onMounted(async () => {
-    if(currentService.value?.subs_id) {
-        getSubsRunning.value = true;
-        getSubs.value = await getSubscription();
-        getSubsRunning.value = false;
-    }
-});
 let convertToMb = (size) => {
     if (size) {
         return (size / (1024 * 1024)).toFixed(2) + ' MB'
@@ -322,6 +281,7 @@ let dateFormat = (timestamp) => {
     return currentDate.getFullYear() + '.' + month + '.' + day;
 }
 
+let showPlanCaution = ref(false);
 let modifyServiceName = ref(false);
 let modifyCors = ref(false);
 let modifyKey = ref(false);
@@ -593,6 +553,22 @@ let disableService = (e) => {
     openDisableService.value = false;
 }
 
+watch(() => subsInfo.value?.[currentService.value.service]?.cancel_at_period_end, (newValue) => {
+    console.log(newValue)
+    if (newValue) {
+        showPlanCaution.value = true;
+    }
+    else {
+        showPlanCaution.value = false;
+    }
+}, { immediate: true, deep: true });
+// watch(subsInfo, () => {
+//     if (subsInfo?.value[currentService.service]?.cancel_at_period_end) {
+//         
+//     } else {
+//         showPlanCaution.value = false;
+//     }
+// })
 watch(modifyServiceName, () => {
     if (modifyServiceName.value) {
         nextTick(() => {
