@@ -1,5 +1,6 @@
 <template lang="pug">
-NavBar(style='--position: fixed; --background-color:#262626')
+//- NavBar(style='--position:fixed; --background-color:#262626')
+NavBar(:style="navBarStyle")
 #landing
     section.intro.gradback
         img(src="@/assets/img/logo/logo.svg" style="width:19rem;")
@@ -191,6 +192,15 @@ import { account } from "@/main";
 
 let showCode = ref("post");
 let isMobile = ref(false);
+
+let props = defineProps({
+    navBarStyle: Object
+});
+
+let navBarStyle = {
+    '--position' : 'fixed',
+    '--background-color' :'#262626'
+};
 
 let showNavBar = (e) => {
     let navBar = document.getElementById("top");
