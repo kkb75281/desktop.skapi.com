@@ -74,7 +74,7 @@ main#service
                 .list
                     h6(:class="{ active: modifyCors }") Cors
                     template(v-if="modifyCors")
-                        form.modifyInputForm(style="margin-top: 8px" @submit.prevent="changeCors")
+                        form.modifyInputForm(style="margin: 8px 0 1rem" @submit.prevent="changeCors")
                             .customInput
                                 input#modifyCors(:disabled="promiseRunningCors || null" type="text" placeholder='https://your.domain.com' :value='inputCors' @input="(e) => {e.target.setCustomValidity(''); inputCors = e.target.value;}")
                             template(v-if="promiseRunningCors")
@@ -84,15 +84,12 @@ main#service
                                 label.material-symbols-outlined.big.save(for='submitInp') done
                                 .material-symbols-outlined.sml.cancel(@click="modifyCors = false;") close
                     template(v-else)
-                        h5 {{ currentService.cors || '*' }}
-                            .material-symbols-outlined.mid.pen.clickable(:class="{'nonClickable' : !account?.email_verified}" @click="editCors") edit
-                    
-                    br
-                    br
+                        h5.ellipsis(style="width:calc(100% - 30px);margin-bottom:1rem") {{ currentService.cors || '*' }}
+                        .material-symbols-outlined.mid.pen.clickable(:class="{'nonClickable' : !account?.email_verified}" @click="editCors") edit
 
                     h6(:class="{ active: modifyKey }") Secret Key
                     template(v-if="modifyKey")
-                        form.modifyInputForm(style="margin-top: 8px" @submit.prevent="setSecretKey")
+                        form.modifyInputForm(style="margin: 8px 0 1rem" @submit.prevent="setSecretKey")
                             .customInput
                                 input#modifyKey(:disabled="promiseRunningSecKey || null" type="text" placeholder="Secret key for external request" :value='inputKey' @input="(e) => inputKey = e.target.value")
                             template(v-if="promiseRunningSecKey")
@@ -102,8 +99,8 @@ main#service
                                 label.material-symbols-outlined.big.save(for='submitInp') done
                                 .material-symbols-outlined.sml.cancel(@click="modifyKey = false;") close
                     template(v-else)
-                        h5 {{ currentService.api_key || 'No key' }}
-                            .material-symbols-outlined.mid.pen.clickable(:class="{'nonClickable' : !account?.email_verified}" @click="editKey") edit
+                        h5.ellipsis(style="width:calc(100% - 30px);margin-bottom:1rem") {{ currentService.api_key || 'No key' }}
+                        .material-symbols-outlined.mid.pen.clickable(:class="{'nonClickable' : !account?.email_verified}" @click="editKey") edit
 
                 .list 
                     h6 Client Secret Key
@@ -142,10 +139,10 @@ main#service
             .title 
                 h4 Subsription Plan
             .listWrap
-                .list(style="width:25%")
+                .list(style="width:23.5%;margin-right:2%")
                     h6 Current Plan
                     h5 {{ currentService.group == 2 ? 'Standard' : currentService.group == 3 ? 'Premium' : currentService.group == 50 ? 'Unlimited' : currentService.group == 51 ? 'Free Standard' : 'Trial' }}
-                .list(style="width:25%")
+                .list(style="width:23.5%;margin-right:2%")
                     h6 State 
                     //- template(v-if="getSubs?.cancel_at_period_end")
                     //-     h5 Canceled
@@ -153,13 +150,13 @@ main#service
                     //-     h5 Suspended
                     //- template(v-else)
                     //-     h5 Running
-                .list(style="width:25%")
+                .list(style="width:23.5%;margin-right:2%")
                     h6 Renew Date
                     template(v-if="currentService.group == 1")
                         h5(style="color:var(--caution-color)") All Data will be deleted by {{ dateFormat(currentService.timestamp, 'trial') }}
                     template(v-else)
                         h5 {{ dateFormat(currentService.timestamp, 'month') }}
-                router-link.list(:to='`/subscription/${currentService.service}`' style="width:25%;text-align:right") 
+                router-link.list(:to='`/subscription/${currentService.service}`' style="width:23.5%;text-align:right") 
                     button.final Manage Subscription
 
         .info.card(:class="{'nonClickable' : !account?.email_verified || currentService.active == 0}") 
@@ -861,17 +858,15 @@ watch(modifyCors, () => {
                 h5 {
                     position: relative;
                     display: inline-block;
+                    vertical-align: middle;
                     font-size: 16px;
                     font-weight: 400;
                     color: rgba(0, 0, 0, 0.6);
                     margin-top: 8px;
 
-                    .pen {
-                        position: absolute;
-                        right: -50px;
-                        top: 50%;
-                        transform: translateY(-50%);
-                    }
+                }
+                .pen {
+                    margin-left: 5px;
                 }
                 .addBtn {
                     position: absolute;
@@ -1071,6 +1066,21 @@ watch(modifyCors, () => {
         .info {
             .toggleWrap {
                 position: relative;
+                top: unset;
+                right: unset;
+
+                .toggleBg {
+                    margin-left: 2rem;
+                }
+            }
+            &:nth-child(3) {
+                .listWrap {
+                    .list {
+                        &:nth-child(3) {
+                            margin-bottom: 28px;
+                        }
+                    }
+                }
             }
             >.title {
                 display: block;
