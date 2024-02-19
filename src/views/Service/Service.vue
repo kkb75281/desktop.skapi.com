@@ -260,6 +260,40 @@ import DeleteService from '@/components/DeleteService.vue';
 
 const router = useRouter();
 
+async function getSubscription() {
+    let subs_id = currentService.value.subs_id.split('#');
+
+    console.log(currentService.value)
+
+    if (!currentService.value.subs_id) {
+        alert('Service does not have a subscription');
+        return;
+    }
+
+    if (subs_id.length < 2) {
+        alert('Service does not have a subscription');
+        return;
+    }
+
+    let SUBSCRIPTION_ID = subs_id[0];
+
+    let response = await skapi.clientSecretRequest({
+        clientSecretName: 'stripe_test',
+        url: `https://api.stripe.com/v1/subscriptions/${SUBSCRIPTION_ID}`,
+        method: 'GET',
+        headers: {
+            Authorization: 'Bearer $CLIENT_SECRET',
+            'Content-Type': 'application/x-www-form-urlencoded'
+        },
+    });
+
+    if (response.error) {
+        alert(response.error.message);
+        return;
+    }
+
+    return response;
+}
 let getSubs = ref(null);
 let getSubsRunning = ref(false);
 onMounted(async () => {

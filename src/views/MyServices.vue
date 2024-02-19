@@ -12,9 +12,9 @@ main#myServices
                     th.th.center(style="width:128px;")
                         | Name of Service
                         .resizer(@mousedown="mousedown")
-                    th.th.center(style="width:140px;")
-                        | Locale
-                        .resizer(@mousedown="mousedown")
+                    //- th.th.center(style="width:140px;")
+                    //-     | Locale
+                    //-     .resizer(@mousedown="mousedown")
                     th.th.center(style="width:160px;")
                         | Cors
                         .resizer(@mousedown="mousedown")
@@ -23,6 +23,9 @@ main#myServices
                         .resizer(@mousedown="mousedown")
                     th.th.center(style="width:120px;")
                         | Plan
+                        .resizer(@mousedown="mousedown")
+                    th.th.center(style="width:120px;")
+                        | State
                         .resizer(@mousedown="mousedown")
                     th.th.center(style="width:140px;")
                         | Users
@@ -43,8 +46,8 @@ main#myServices
                                 .material-symbols-outlined.sml.power power_settings_new
                         td
                             .overflow {{ service.name }}
-                        td
-                            .overflow {{ regions?.[service.region] || service.region }}
+                        //- td
+                        //-     .overflow {{ regions?.[service.region] || service.region }}
                         td
                             .overflow {{ service.cors }}
                         td.center {{ typeof service.timestamp === 'string' ? service.timestamp : new Date(service.timestamp).toDateString() }}
@@ -55,6 +58,7 @@ main#myServices
                             template(v-else-if="service.group == 50") Unlimited
                             template(v-else-if="service.group == 51") Free Standard
                             template(v-else) ...
+                        td.center //
                         td.center
                             template(v-if="service.group == 50")
                                 .percent.purple Unlimited
