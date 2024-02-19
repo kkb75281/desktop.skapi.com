@@ -1,5 +1,5 @@
 <template lang="pug">
-header#navBar(style='--position: relative;')
+header#navBar(style='--position: relative; --background-color:unset;' :style="style")
     nav#top
         .left
             router-link.logo(to="/")
@@ -82,6 +82,10 @@ let router = useRouter();
 let topRoute = ref(null);
 let accountInfo = ref(false);
 let running = ref(false);
+
+let props = defineProps({
+  style: Object
+});
 
 bodyClick.nav = ()=>{
     accountInfo.value = false;

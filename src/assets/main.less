@@ -531,7 +531,6 @@ button {
     cursor: pointer;
     color: rgba(0, 0, 0, 0.6);
 }
-
 .nonClickable {
     cursor: default !important;
     /* color: rgba(0, 0, 0, 0.3) !important; */
@@ -539,7 +538,14 @@ button {
     pointer-events: none !important;
 }
 
-// hoverWrap
+// ellipsis
+.ellipsis{
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+} 
+
+// hover
 .hoverWrap {
     position: relative;
 
@@ -554,7 +560,6 @@ button {
         display: block;
     }
 }
-
 .hoverPreview {
     /* height: 44px; */
     background-color: #fafafa;

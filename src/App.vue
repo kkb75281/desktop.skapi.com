@@ -25,6 +25,7 @@ watch(account, (a, oa) => {
         // redirect
         switch (route.path.split('/')[1]) {
             case 'myServices':
+            case 'subscription':
             // myServices 아래 있는 모든 페이지
             // 더 있다면 추가하시오
             case 'accountSettings':
