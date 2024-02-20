@@ -59,13 +59,11 @@ main#myServices
                             template(v-else-if="service.group == 51") Free Standard
                             template(v-else) ...
                         td.center
-                            template(v-if="subsInfo?.[service.service]") 
-                                template(v-if="subsInfo?.[service.service]?.cancel_at_period_end") 
+                            template(v-if="service?.subsInfo") 
+                                template(v-if="service?.subsInfo?.cancel_at_period_end") 
                                     .state(style="color:var(--caution-color)") Canceled
-                                template(v-else-if="new Date().getTime() < subsInfo?.[service.service]?.canceled_at") 
+                                template(v-else-if="new Date().getTime() < service?.subsInfo?.canceled_at") 
                                     .state(style="color:#FCA642") Suspended
-                                template(v-else-if="getSubsRunning") 
-                                    .state ...
                                 template(v-else style="color:#52D687") 
                                     .state(style="color:#52D687") Running
                             template(v-else)
@@ -298,7 +296,7 @@ main#myServices
 import { computed, nextTick, onBeforeUnmount, onMounted, ref } from 'vue';
 import { useRouter } from 'vue-router';
 import { skapi, account, bodyClick, customer } from '@/main.js';
-import { services, serviceFetching, storageInfo, subsInfo, getSubsRunning } from '@/data.js';
+import { services, serviceFetching, storageInfo } from '@/data.js';
 import { launch, subdomainInfo } from '@/views/Service/Subdomain/SubdomainFetch.js';
 
 onMounted(() => {
@@ -439,38 +437,6 @@ let getServiceInfo = () => {
     if (services.value) {
         for(let i=0; i<services.value.length; i++) {
             let service = services.value[i].service;
-
-            if(subsInfo.value[service]) {
-                continue;
-            }
-
-            if(services.value[i].subs_id) {
-                getSubsRunning.value = true;
-                let subs_id = services.value[i].subs_id.split('#');
-
-                if (subs_id.length < 2) {
-                    alert('Service does not have a subscription');
-                    return;
-                }
-
-                let SUBSCRIPTION_ID = subs_id[0];
-
-                skapi.clientSecretRequest({
-                    clientSecretName: 'stripe_test',
-                    url: `https://api.stripe.com/v1/subscriptions/${SUBSCRIPTION_ID}`,
-                    method: 'GET',
-                    headers: {
-                        Authorization: 'Bearer $CLIENT_SECRET',
-                        'Content-Type': 'application/x-www-form-urlencoded'
-                    },
-                }).then(res => {
-                    getSubsRunning.value = false;
-                    subsInfo.value[service] = res;
-                }).catch(err => {
-                    getSubsRunning.value = false;
-                    console.log(err.message);
-                });
-            }
     
             if (!storageInfo.value[service]) {
                 storageInfo.value[service] = {};
@@ -502,12 +468,12 @@ let getServiceInfo = () => {
 // update services
 if (serviceFetching.value) {
     serviceFetching.value.then(() => {
-        services.value = skapi.serviceMap.map(sid => skapi.services[sid]).reverse();
+        // services.value = skapi.serviceMap.map(sid => skapi.services[sid]).reverse();
         getServiceInfo();
     })
 }
 else {
-    services.value = skapi.serviceMap.map(sid => skapi.services[sid]).reverse();
+    // services.value = skapi.serviceMap.map(sid => skapi.services[sid]).reverse();
     getServiceInfo();
 }
 
