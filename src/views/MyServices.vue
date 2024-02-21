@@ -141,14 +141,13 @@ main#myServices
                                     span {{ service.subdomain }}
                                 template(v-else)
                                     span -
-                tr.loadingWrap(v-else-if="serviceFetching")
-                    td(colspan="9" style="text-align:center; padding-top:20px;")
-                        img.loading(src="@/assets/img/loading.png")
                 tr.noServices(v-else)
                     td(colspan="9" style="text-align:center; padding-top:20px;")
                         h3 No Services
                         br
                         p Get started by creating a new service.
+    .loadingWrap(v-if="serviceFetching" style="text-align:center; padding-top:20px;")
+        img.loading(src="@/assets/img/loading.png")
     br
     .plus(style="display:block;text-align:center;padding-bottom:2rem;")
         .material-symbols-outlined.big(@click="createService" style="color:var(--main-color);cursor:pointer;") add_circle
@@ -931,7 +930,7 @@ skapi.getProfile().then(u => {
             font-weight: 400;
 
             tr {
-                &:not(.cont, .active, .loadingWrap, .noServices):hover {
+                &:not(.cont, .active, .noServices):hover {
                     background-color: rgba(41,63,230,0.05);
                     cursor: pointer;
                 }
@@ -975,7 +974,7 @@ skapi.getProfile().then(u => {
                         }
                     }
                 }
-                &.loadingWrap, &.noServices {
+                &.noServices {
                     td {
                         &::after {
                             display: none !important;
