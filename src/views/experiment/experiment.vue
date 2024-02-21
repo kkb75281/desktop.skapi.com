@@ -70,11 +70,15 @@ import { ref } from 'vue';
 import { skapi, account } from '@/main.js';
 import Service from '@/class/service.ts';
 
-async function main(){
-    let service = await Service.load('ap214F8MWzOUtCZxCmGr');
-    console.log(service)
-}
-main();
+// async function main(){
+//     let service = await Service.load('ap214PE6Dr9QMnBACmGr');
+//     console.log(service)
+//     let sub  = await service.getSubscription();
+//     console.log({sub});
+// }
+// main();
+
+
 
 let user = account.value;
 let customer = ref(null);

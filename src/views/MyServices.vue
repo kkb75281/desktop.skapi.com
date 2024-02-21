@@ -45,34 +45,34 @@ main#myServices
                             .serviceActive(:class="{'active': service.active == 1 }")
                                 .material-symbols-outlined.sml.power power_settings_new
                         td
-                            .overflow {{ service.name }}
+                            .overflow {{ service.service.name }}
                         //- td
                         //-     .overflow {{ regions?.[service.region] || service.region }}
                         td
-                            .overflow {{ service.cors }}
-                        td.center {{ typeof service.timestamp === 'string' ? service.timestamp : new Date(service.timestamp).toDateString() }}
+                            .overflow {{ service.service.cors }}
+                        td.center {{ typeof service.service.timestamp === 'string' ? service.service.timestamp : new Date(service.service.timestamp).toDateString() }}
                         td.center
-                            template(v-if="service.group == 1") Trial
-                            template(v-else-if="service.group == 2") Standard
-                            template(v-else-if="service.group == 3") Premium
-                            template(v-else-if="service.group == 50") Unlimited
-                            template(v-else-if="service.group == 51") Free Standard
+                            template(v-if="service.service.group == 1") Trial
+                            template(v-else-if="service.service.group == 2") Standard
+                            template(v-else-if="service.service.group == 3") Premium
+                            template(v-else-if="service.service.group == 50") Unlimited
+                            template(v-else-if="service.service.group == 51") Free Standard
                             template(v-else) ...
                         td.center
-                            template(v-if="service?.subsInfo") 
-                                template(v-if="service?.subsInfo?.cancel_at_period_end") 
+                            template(v-if="service?.subscription") 
+                                template(v-if="service?.subscription?.cancel_at_period_end") 
                                     .state(style="color:var(--caution-color)") Canceled
-                                template(v-else-if="new Date().getTime() < service?.subsInfo?.canceled_at") 
+                                template(v-else-if="new Date().getTime() < service?.subscription?.canceled_at") 
                                     .state(style="color:#FCA642") Suspended
                                 template(v-else style="color:#52D687") 
                                     .state(style="color:#52D687") Running
                             template(v-else)
                                 .state(style="color:#52D687") Running
                         td.center
-                            template(v-if="service.group == 50")
+                            template(v-if="service.service.group == 50")
                                 .percent.purple Unlimited
-                            template(v-else-if="service.group !== 50 && Math.ceil(service.users/10000*100)")
-                                .percent(:class='{"green": 0 <= Math.ceil(service.users/10000*100) && Math.ceil(service.users/10000*100) < 51, "orange": 51 <= Math.ceil(service.users/10000*100) && Math.ceil(service.users/10000*100) < 81, "red": 81 <= Math.ceil(service.users/10000*100) && Math.ceil(service.users/10000*100) < 101}') {{ Math.ceil(service.users/10000*100) + '%' }}
+                            template(v-else-if="service.service.group !== 50 && Math.ceil(service.service.users/10000*100)")
+                                .percent(:class='{"green": 0 <= Math.ceil(service.service.users/10000*100) && Math.ceil(service.service.users/10000*100) < 51, "orange": 51 <= Math.ceil(service.service.users/10000*100) && Math.ceil(service.service.users/10000*100) < 81, "red": 81 <= Math.ceil(service.service.users/10000*100) && Math.ceil(service.service.users/10000*100) < 101}') {{ Math.ceil(service.service.users/10000*100) + '%' }}
                             template(v-else)
                                 .percent.green 0%
                         td.center
