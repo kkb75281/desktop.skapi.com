@@ -60,7 +60,7 @@ header#navBar(style='--position: relative; --background-color:unset;' :style="st
                     span.material-symbols-outlined.sml logout
                     span Logout
             a.policy
-                router-link(to="/privacy" target="_blank") terms of service ● privacy policy
+                router-link(to="public/pp.html" target="_blank") terms of service ● privacy policy
 
 #proceeding(v-if="running")   
     .inner    
