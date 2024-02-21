@@ -19,7 +19,10 @@
     "vue-router": "^4.2.4"
   },
   "devDependencies": {
+    "@types/node": "^20.11.19",
     "@vitejs/plugin-vue": "^4.2.3",
+    "ts-node": "^10.9.2",
+    "typescript": "^5.3.3",
     "vite": "^4.4.6"
   }
 }
