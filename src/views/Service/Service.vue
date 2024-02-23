@@ -193,7 +193,7 @@ main#service
                         h6 # of cloud storage Used
                         p {{ convertToMb(storageInfo?.[currentService.service]?.cloud) }}
 
-        .info.card(:class="{'nonClickable' : !account?.email_verified || currentService.active == 0 || new Date().getTime() < currentService?.subsInfo?.canceled_at}") 
+        .info.card(:class="{'nonClickable' : !account?.email_verified || currentService.active == 0 || currentService.group == 1 || new Date().getTime() < currentService?.subsInfo?.canceled_at}") 
             .inner
                 .title 
                     .logoTitle
@@ -212,7 +212,7 @@ main#service
                             h6 # Mail storage used 
                             p {{ convertToMb(storageInfo?.[currentService.service]?.email) }}
 
-        .info.card(:class="{'nonClickable' : !account?.email_verified || currentService.active == 0 || new Date().getTime() < currentService?.subsInfo?.canceled_at}") 
+        .info.card(:class="{'nonClickable' : !account?.email_verified || currentService.active == 0 || currentService.group == 1 || new Date().getTime() < currentService?.subsInfo?.canceled_at}") 
             .inner
                 .title 
                     .logoTitle
