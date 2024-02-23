@@ -70,6 +70,11 @@ const router = createRouter({
           component: () => import('@/views/experiment/experiment.vue')
         },
         {
+          path: '/ts',
+          name: 'ts',
+          component: () => import('@/class/ts.vue')
+        },
+        {
           path: 'accountSettings',
           name: 'accountSettings',
           component: AccountSettings

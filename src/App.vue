@@ -4,6 +4,7 @@ template(v-if="account !== 'pending'")
 </template>
 
 <script setup>
+import Service from '@/class/service.ts';
 import { useRoute, useRouter } from 'vue-router';
 import { account, skapi } from '@/main.js';
 import { watch } from 'vue';
@@ -34,53 +35,75 @@ watch(account, (a, oa) => {
         }
     }
     else {
+        console.log(a)
         if (oa?.user_id !== a?.user_id) {
             // init
             dataInit();
             recordFetchInit();
             subdomainInit();
         }
-
-        serviceFetching.value = skapi.getServices(null, true)
-        .then(() => {
-            services.value = skapi.serviceMap.map(sid => skapi.services[sid]).reverse();
-            for(let i=0; i<services.value.length; i++) {
-                let service = services.value[i].service;
-
-                if(services.value[i].subsInfo) {
-                    continue;
-                }
-
-                if(services.value[i].subs_id) {
-                    let subs_id = services.value[i].subs_id.split('#');
-
-                    if (subs_id.length < 2) {
-                        alert('Service does not have a subscription');
-                        return;
-                    }
-
-                    let SUBSCRIPTION_ID = subs_id[0];
-
-                    skapi.clientSecretRequest({
-                        clientSecretName: 'stripe_test',
-                        url: `https://api.stripe.com/v1/subscriptions/${SUBSCRIPTION_ID}`,
-                        method: 'GET',
-                        headers: {
-                            Authorization: 'Bearer $CLIENT_SECRET',
-                            'Content-Type': 'application/x-www-form-urlencoded'
-                        },
-                    }).then(res => {
-                        // console.log(res)
-                        services.value[i].subsInfo = res;
-                    }).catch(err => {
-                        console.log(err.message);
-                    });
-                }
+        skapi.getUsers({service: import.meta.env.VITE_ADMIN, searchFor: 'user_id', value: a.user_id})
+        .then(u=>{
+            let serviceId = u.list[0].services;
+            for(let sid of serviceId) {
+                Service.load(sid).then(s => {
+                    services.value[sid] = s;
+                });    
             }
+            console.log(services.value)
         })
-        .finally(() => {
-            serviceFetching.value = false;
-        });
+        // serviceFetching.value = skapi.getServices(null, true)
+        // .then(async(r) => {
+        //     let serviceId = Object.keys(r);
+        //     let serviceList = []
+        //     for(let sid of serviceId) {
+        //         Service.load(sid).then(s => {
+        //             services.value[sid] = s;
+        //         });    
+        //     }
+        //     console.log(services.value);
+            // services.value = skapi.serviceMap.map(sid => skapi.services[sid]).reverse();
+            // for(let i=0; i<services.value.length; i++) {
+            //     let service = await Service.load(services.value[i].service);
+            //     console.log(service)
+
+
+            //     let service = services.value[i].service;
+
+            //     if(services.value[i].subsInfo) {
+            //         continue;
+            //     }
+
+            //     if(services.value[i].subs_id) {
+            //         let subs_id = services.value[i].subs_id.split('#');
+
+            //         if (subs_id.length < 2) {
+            //             alert('Service does not have a subscription');
+            //             return;
+            //         }
+
+            //         let SUBSCRIPTION_ID = subs_id[0];
+
+            //         skapi.clientSecretRequest({
+            //             clientSecretName: 'stripe_test',
+            //             url: `https://api.stripe.com/v1/subscriptions/${SUBSCRIPTION_ID}`,
+            //             method: 'GET',
+            //             headers: {
+            //                 Authorization: 'Bearer $CLIENT_SECRET',
+            //                 'Content-Type': 'application/x-www-form-urlencoded'
+            //             },
+            //         }).then(res => {
+            //             console.log(res)
+            //             services.value[i].subsInfo = res;
+            //         }).catch(err => {
+            //             console.log(err.message);
+            //         });
+            //     }
+            // }
+        // })
+        // .finally(() => {
+        //     serviceFetching.value = false;
+        // });
     }
 })
 </script>
