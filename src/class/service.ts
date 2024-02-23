@@ -1,4 +1,4 @@
-import { skapi } from '@/main.js';
+import { skapi } from './admin';
 
 type ServiceObj = {
     active: number; // 0 = disabled / -1 = suspended
@@ -102,6 +102,7 @@ type SubscriptionObj = {
 export default class Service {
     id: string;
     admin_private_endpoint: string;
+    record_private_endpoint: string;
     service: ServiceObj;
     getServiceUrl: string;
     dateCreated: string;
@@ -114,14 +115,28 @@ export default class Service {
         51: 'Free Standard'
     };
     subscription?: SubscriptionObj | null;
+    storageInfo: {
+        cloud: number,
+        database: number,
+        email: number,
+        service: string
+    } = {
+        cloud: null,
+        database: null,
+        email: null,
+        service: ''
+    }
 
-    constructor(id: string, service: ServiceObj, admin_private_endpoint: string) {
+    constructor(id: string, service: ServiceObj, endpoints: string[]) {
         this.id = id;
-        this.admin_private_endpoint = admin_private_endpoint;
+        this.storageInfo.service = id;
+        this.admin_private_endpoint = endpoints[0];
+        this.record_private_endpoint = endpoints[1];
         this.service = service;
         this.dateCreated = typeof service.timestamp === 'string' ? service.timestamp : new Date(service.timestamp).toDateString();
         this.plan = this.planCode[this.service.group];
         this.getSubscription();
+        this.getStorageInfo();
     }
 
     async getSubscription(refresh = false): Promise<SubscriptionObj> {
@@ -135,7 +150,6 @@ export default class Service {
             let subs_id = this.service?.subs_id.split('#');
 
             if (subs_id.length < 2) {
-                alert('Service does not have a subscription');
                 return;
             }
 
@@ -159,14 +173,33 @@ export default class Service {
         return null;
     }
 
+    async setServiceOption(opt: {
+        'prevent_signup': boolean;
+        'client_secret': Record<string, any>;
+    }): Promise<Service> {
+        let updated = await skapi.request(this.admin_private_endpoint + 'service-opt', { service: this.id, opt }, { auth: true });
+        Object.assign(this.service, updated);
+        return updated;
+    }
+
+    async getStorageInfo(): Promise<{
+        cloud: number; // cloud storage used
+        database: number; // database size
+        email: number; // email storage used
+        service: string;
+    }> {
+        this.storageInfo = await skapi.request(this.record_private_endpoint + 'storage-info', { service: this.id }, { auth: true });
+        return this.storageInfo;
+    }
+
     //////////////////////////////////////////////////////////////////////////////
     static async load(id: string) {
-        let endpoint = await skapi.admin_endpoint;
-        let admin_private_endpoint = endpoint.admin_private; // https://.../
-
+        let endpoints = await Promise.all([skapi.admin_endpoint, skapi.record_endpoint]);
+        let admin_private_endpoint = endpoints[0].admin_private; // https://.../
+        let record_private_endpoint = endpoints[1].record_private; // https://.../
         let service = await skapi.request(admin_private_endpoint + 'get-services', { service_id: id }, { auth: true })
         for (let k in service) {
-            return new Service(id, service[k][0], admin_private_endpoint);
+            return new Service(id, service[k][0], [admin_private_endpoint, record_private_endpoint]);
         }
     }
 }

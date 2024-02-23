@@ -48,7 +48,7 @@ main#subdomain
                                 span Upload
                             input#file404(hidden type="file" @change="set404" accept='text/html')
 
-        template(v-else-if="account.access_group == 1")
+        template(v-else-if="currentService.group == 1")
             div(style="text-align:center; background-color:rgba(0,0,0,0.05); padding: 2rem 0; border-radius: 8px;")
                 p(style="color: rgba(0, 0, 0, 0.6); font-size: 0.8rem; font-weight: 500; line-height: 1.5;") Trial service does not provide hosting.
 
