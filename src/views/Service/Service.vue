@@ -205,7 +205,7 @@ main#service
 
     br
 
-    section.deleteWrap(v-if="currentService.active < 0 || currentService.group == 1" :class="{'nonClickable' : !account?.email_verified || currentService.active == 0}")
+    section.deleteWrap(v-if="currentService.active < 0 || currentService.group == 1 || currentService.group == 51" :class="{'nonClickable' : !account?.email_verified || currentService.active == 0}")
         h4 Delete Service
         
         br
