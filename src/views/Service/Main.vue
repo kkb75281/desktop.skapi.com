@@ -35,7 +35,7 @@ import NavBar from '@/components/NavBar.vue';
 import EmailCaution from '@/components/EmailCaution.vue';
 
 currentService.value = null;
-console.log(account.value)
+
 const route = useRoute();
 const router = useRouter();
 

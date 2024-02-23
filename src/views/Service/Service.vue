@@ -29,35 +29,7 @@ main#service
             .row 
                 h6 Date Created
                 h5 {{ dateFormat(currentService.timestamp) }}
-
-            //- .title 
-                .name(style="height: 44px;")
-                    template(v-if="modifyServiceName")
-                        form.modifyInputForm(@submit.prevent="changeServiceName")
-                            .customInput
-                                input#modifyServiceName(type="text" placeholder="Service name" :value='inputServiceName' @input="(e) => inputServiceName = e.target.value" required)
-                            template(v-if="promiseRunning")
-                                img.loading(src="@/assets/img/loading.png")
-                            template(v-else)
-                                input#submitInp(type="submit" hidden)
-                                label.material-symbols-outlined.big.save(for='submitInp') done
-                                .material-symbols-outlined.sml.cancel(@click="modifyServiceName = false;") close
-                    template(v-else)
-                        h4 {{ currentService.name }}
-                        .material-symbols-outlined.mid.modify.clickable(:class="{'nonClickable' : !account?.email_verified || currentService.active == 0}" @click="editServiceName") edit
-                .right
-                    .date 
-                        span Date Created
-                        h6 {{ new Date(currentService.timestamp).toDateString() }}
-                    .toggleWrap(:class="{'active': currentService.active >= 1}")
-                        span Disable/Enable
-                        .toggleBg(:class="{'nonClickable' : !account?.email_verified}")
-                            .toggleBtn(@click="enableDisableToggle")
             .codeWrap
-                //- #[span(style="color:#33adff") &lt;script] #[span(style="color:#58dfff") src]=#[span(style="color:#FFED91") "https://cdn.jsdelivr.net/npm/skapi-js@latest/dist/skapi.js"]#[span(style="color:#33adff") &gt;]#[span(style="color:#33adff") &lt;/script&gt;]
-                //- #[span(style="color:#33adff") &lt;script&gt;]
-                //- #[span(style="color:#33adff") &nbsp;&nbsp;&nbsp;&nbsp;const] skapi = #[span(style="color:#33adff") new] Skapi(#[span(style="color:#FFED91") "{{ currentService.service }}"], #[span(style="color:#FFED91") "{{ currentService.owner }}"]);
-                //- #[span(style="color:#33adff") &lt;/script&gt;]
                 pre.codeInner.
                     #[span(style="color:#33adff") &nbsp;&nbsp;&nbsp;&nbsp;const] skapi = #[span(style="color:#33adff") new] Skapi(#[span(style="color:#FFED91") "{{ currentService.service }}"], #[span(style="color:#FFED91") "{{ currentService.owner }}"]);
                 .copy.clickable(@click="copy")
@@ -311,7 +283,7 @@ if(!currentService.value.client_secret) {
         clientSecretState.value.push({ key: keys[i], value: values[i], keyAdd : false, keyEdit : false});
     }
 }
-console.log(currentService.value)
+
 let addSecretKey = () => {
     clientSecretState.value.unshift({ key: '', value: '', keyEdit: false, keyAdd: true });
     secretKeyAdd.value = true;
