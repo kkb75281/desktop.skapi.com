@@ -179,7 +179,7 @@ NavBar(:style="navBarStyle")
         br
         h6(style="font-weight:500;") broadway Inc. BROADWAYINC PTE. LTD. Singapore.
         br
-        router-link(to="/privacy" target="_blank") [Privacy & Policy]
+        router-link(to="public/pp.html" target="_blank") [Privacy & Policy]
 </template>
 
 <script setup>

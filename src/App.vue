@@ -7,7 +7,7 @@ template(v-if="account !== 'pending'")
 import { useRoute, useRouter } from 'vue-router';
 import { account, skapi } from '@/main.js';
 import { watch } from 'vue';
-import { dataInit, serviceFetching, } from '@/data.js';
+import { dataInit, serviceFetching, services } from '@/data.js';
 import { recordFetchInit } from './views/Service/Records/RecordFetch';
 import { subdomainInit } from './views/Service/Subdomain/SubdomainFetch';
 
@@ -41,7 +41,44 @@ watch(account, (a, oa) => {
             subdomainInit();
         }
 
-        serviceFetching.value = skapi.getServices(null, true).finally(() => {
+        serviceFetching.value = skapi.getServices(null, true)
+        .then(() => {
+            services.value = skapi.serviceMap.map(sid => skapi.services[sid]).reverse();
+            for(let i=0; i<services.value.length; i++) {
+                let service = services.value[i].service;
+
+                if(services.value[i].subsInfo) {
+                    continue;
+                }
+
+                if(services.value[i].subs_id) {
+                    let subs_id = services.value[i].subs_id.split('#');
+
+                    if (subs_id.length < 2) {
+                        alert('Service does not have a subscription');
+                        return;
+                    }
+
+                    let SUBSCRIPTION_ID = subs_id[0];
+
+                    skapi.clientSecretRequest({
+                        clientSecretName: 'stripe_test',
+                        url: `https://api.stripe.com/v1/subscriptions/${SUBSCRIPTION_ID}`,
+                        method: 'GET',
+                        headers: {
+                            Authorization: 'Bearer $CLIENT_SECRET',
+                            'Content-Type': 'application/x-www-form-urlencoded'
+                        },
+                    }).then(res => {
+                        // console.log(res)
+                        services.value[i].subsInfo = res;
+                    }).catch(err => {
+                        console.log(err.message);
+                    });
+                }
+            }
+        })
+        .finally(() => {
             serviceFetching.value = false;
         });
     }

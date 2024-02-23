@@ -15,7 +15,7 @@ main#mail
 
         br
 
-        template(v-if="account.access_group == 1")
+        template(v-if="currentService.group == 1")
             .email(style="text-align:center;")
                 p(style="margin-bottom:1rem;") Trial service does not provide automated emails.
         template(v-else)
@@ -127,7 +127,7 @@ main#mail
         br
         br
 
-        template(v-if="account.access_group == 1")
+        template(v-if="currentService.group == 1")
             .email(style="text-align:center;")
                 p(style="margin-bottom:1rem;") Trial service does not provide newsletters.
         template(v-else)
