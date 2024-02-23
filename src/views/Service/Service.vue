@@ -14,7 +14,7 @@ main#service
                     form.modifyInputForm(@submit.prevent="changeServiceName" style="display:inline-block; width:unset")
                         .customInput
                             input#modifyServiceName(type="text" placeholder="Service name" :value='inputServiceName' @input="(e) => inputServiceName = e.target.value" required)
-                        template(v-if="promiseRunning")
+                        template(v-if="serviceFetching")
                             img.loading(src="@/assets/img/loading.png")
                         template(v-else)
                             input#submitInp(type="submit" hidden)
@@ -253,7 +253,7 @@ DeleteService(v-if="openDeleteService" @close="openDeleteService = false;")
 <script setup>
 import { computed, nextTick, ref, watch, onMounted } from 'vue';
 import { useRouter } from 'vue-router';
-import { currentService, storageInfo } from '@/data.js';
+import { currentService, storageInfo, serviceFetching } from '@/data.js';
 import { skapi, account, domain } from '@/main.js';
 import DisableServiceOverlay from '@/views/Service/DisableServiceOverlay.vue';
 import DeleteService from '@/components/DeleteService.vue';
@@ -446,16 +446,19 @@ let changeServiceName = () => {
     if (currentService.value.name !== inputServiceName) {
         let previous = currentService.value.name;
 
-        promiseRunning.value = true;
+        // promiseRunning.value = true;
+        serviceFetching.value = true;
 
         skapi.updateService(currentService.value.service, {
             name: inputServiceName
         }).then(() => {
-            promiseRunning.value = false;
+            // promiseRunning.value = false;
+            serviceFetching.value = false;
             currentService.value.name = inputServiceName;
             modifyServiceName.value = false;
         }).catch(err => {
-            promiseRunning.value = false;
+            // promiseRunning.value = false;
+            serviceFetching.value = false;
             currentService.value.name = previous;
             throw err;
         });

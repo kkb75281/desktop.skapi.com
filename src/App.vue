@@ -70,7 +70,7 @@ watch(account, (a, oa) => {
                             'Content-Type': 'application/x-www-form-urlencoded'
                         },
                     }).then(res => {
-                        console.log(res)
+                        // console.log(res)
                         services.value[i].subsInfo = res;
                     }).catch(err => {
                         console.log(err.message);

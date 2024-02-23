@@ -14,7 +14,8 @@ header#navBar(style='--position: relative; --background-color:unset;' :style="st
         .right(:class="{'flex' : route.params.service && currentService}")
             .topRoute(v-if="route.params.service && currentService" ref="topRoute") 
                 router-link.service(:to="`/myServices/${currentService.service}`") 
-                    h5 {{ currentService.name }}
+                    h5(v-if="serviceFetching") ...
+                    h5(v-else) {{ currentService.name }}
             .topMenu(:class="{'white' : route.name == 'home'}")
                 template(v-if="account")
                     ul
@@ -74,7 +75,7 @@ header#navBar(style='--position: relative; --background-color:unset;' :style="st
 import { onBeforeUnmount, onMounted, ref } from 'vue'
 import { useRouter, useRoute } from 'vue-router';
 import { skapi, account, bodyClick, customer } from '@/main';
-import { services, currentService, storageInfo, serviceUsers } from '@/data';
+import { services, currentService, storageInfo, serviceUsers, serviceFetching } from '@/data';
 import { serviceRecords } from '@/views/Service/Records/RecordFetch';
 
 let route = useRoute();
