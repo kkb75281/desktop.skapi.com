@@ -126,7 +126,9 @@ main#service
                     template(v-if="currentService.group == 1")
                         h5(style="color:var(--caution-color)") All Data will be deleted by {{ dateFormat(currentService.timestamp + 604800000) }}
                     template(v-else)
-                        h5 {{ dateFormat(currentService?.subsInfo?.current_period_end * 1000) }}
+                        //- pre {{ currentService }}
+                        h5 {{ currentService?.subsInfo?.current_period_end ? dateFormat(currentService?.subsInfo?.current_period_end * 1000) : '...' }}
+                        //- | {{ currentService?.subsInfo?.current_period_end || 'nodata' }}
                 router-link.list(:to='`/subscription/${currentService.service}`' style="width:23.5%;text-align:right") 
                     button.final(v-if="new Date().getTime() < currentService?.subsInfo?.canceled_at") Resume Plan
                     button.final(v-else) Manage Subscription
@@ -242,15 +244,14 @@ let convertToMb = (size) => {
 }
 let dateFormat = (timestamp) => {
     let currentDate = new Date(timestamp);
-    let month = currentDate.getMonth() + 1;
-    let day = currentDate.getDate();
+    let year = currentDate.getFullYear();
+    let month = ('0' + (currentDate.getMonth() + 1)).slice(-2);
+    let day = ('0' + currentDate.getDate()).slice(-2);
+    let dateStr = `${year}-${month}-${day}`;
 
-    month = month >= 10 ? month : '0' + month;
-    day = day >= 10 ? day : '0' + day;
-
-    return currentDate.getFullYear() + '.' + month + '.' + day;
+    return dateStr;
 }
-
+console.log(currentService.value)
 let showPlanCaution = ref(false);
 let modifyServiceName = ref(false);
 let modifyCors = ref(false);

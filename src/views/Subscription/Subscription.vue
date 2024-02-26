@@ -25,7 +25,8 @@
 
                 .row 
                     h5 Service Plan
-                    template(v-if="currentService.group == 1") 
+                    span(v-if="serviceFetching") ...
+                    template(v-else-if="currentService.group == 1") 
                         span Trial
                     template(v-else-if="currentService.group == 2 || currentService.group == 51") 
                         span Standard
@@ -134,15 +135,15 @@
             br
             br
 
-            template(v-if="getSubs")
-                section(v-if="getSubs?.cancel_at_period_end")
+            template(v-if="skapi.services[currentService.service]?.subsInfo")
+                section(v-if="skapi.services[currentService.service]?.subsInfo?.cancel_at_period_end")
                     h4 Resume Plan
 
                     br
 
                     ul.desc 
                         li Your current service plan has been canceled and deactivated. To reactivate the service, please resume the plan. 
-                            em(style="color:var(--caution-color);font-style: normal;") Your service will be completely deleted on 0000-00-00.
+                            em(style="color:var(--caution-color);font-style: normal;") Your service will be completely deleted on {{ dateFormat(currentService?.subsInfo?.canceled_at * 1000 + 7776000000) }}.
                     
                     br
 
@@ -170,15 +171,15 @@
         br
         h5 Proceeding...
 
-CancelPlanOverlay(v-if="showCancelPlan" @close="closeOverlay")
-UpgradePlanOverlay(v-if="showUpgradePlan" @close="closeOverlay" :changeMode="changeMode")
-DowngradePlanOverlay(v-if="showDowngradePlan" @close="closeOverlay" :changeMode="changeMode")
+CancelPlanOverlay(v-if="showCancelPlan" @close="()=>closeOverlay('close')")
+UpgradePlanOverlay(v-if="showUpgradePlan" @close="()=>closeOverlay(changeMode)" :changeMode="changeMode")
+DowngradePlanOverlay(v-if="showDowngradePlan" @close="()=>closeOverlay(changeMode)" :changeMode="changeMode")
 </template>
 
 <script setup>
 import { useRoute, useRouter } from 'vue-router';
 import { nextTick, ref } from 'vue';
-import { currentService, serviceFetching } from '@/data.js';
+import { services, currentService, serviceFetching } from '@/data.js';
 import { skapi, account, customer } from '@/main.js';
 import CancelPlanOverlay from '@/views/Subscription/CancelPlanOverlay.vue';
 import UpgradePlanOverlay from '@/views/Subscription/UpgradePlanOverlay.vue';
@@ -190,18 +191,33 @@ currentService.value = null;
 
 let router = useRouter();
 let route = useRoute();
+let dateFormat = (timestamp) => {
+    let currentDate = new Date(timestamp);
+    let year = currentDate.getFullYear();
+    let month = ('0' + (currentDate.getMonth() + 1)).slice(-2);
+    let day = ('0' + currentDate.getDate()).slice(-2);
+    let dateStr = `${year}-${month}-${day}`;
+
+    return dateStr;
+}
 let changeMode = '';
-let getSubs = ref(null);
+let deleteDate = ref('');
 let showCancelPlan = ref(false);
 let showUpgradePlan = ref(false);
 let showDowngradePlan = ref(false);
 let cancelState = ref(false);
 let product = JSON.parse(import.meta.env.VITE_PRODUCT);
 
-async function getSubscription() {
-    let subs_id = currentService.value.subs_id.split('#');
+async function getSubscription(planType) {
+    if(planType === 'standard') {
+        skapi.services[currentService.value.service].group = 2;
+    } else if(planType === 'premium') {
+        skapi.services[currentService.value.service].group = 3;
+    }
 
-    console.log(currentService.value)
+    currentService.value.group = skapi.services[currentService.value.service].group;
+
+    let subs_id = currentService.value.subs_id.split('#');
 
     if (!currentService.value.subs_id) {
         alert('Service does not have a subscription');
@@ -215,7 +231,7 @@ async function getSubscription() {
 
     let SUBSCRIPTION_ID = subs_id[0];
 
-    let response = await skapi.clientSecretRequest({
+    await skapi.clientSecretRequest({
         clientSecretName: 'stripe_test',
         url: `https://api.stripe.com/v1/subscriptions/${SUBSCRIPTION_ID}`,
         method: 'GET',
@@ -223,29 +239,27 @@ async function getSubscription() {
             Authorization: 'Bearer $CLIENT_SECRET',
             'Content-Type': 'application/x-www-form-urlencoded'
         },
-    });
-
-    if (response.error) {
+    }).then((res) => {
+        // currentService.value.subsInfo = res;
+        skapi.services[currentService.value.service].subsInfo = res;
+    }).catch((err) => {
         alert(response.error.message);
         return;
-    }
-
-    console.log(response)
-    return response;
+    });
 }
 
-let closeOverlay = async () => {
+let closeOverlay = async (planType) => {
     showUpgradePlan.value = false;
     showDowngradePlan.value = false;
     showCancelPlan.value = false;
 
     serviceFetching.value = skapi.getServices(null, true).then(async() => {
         if (currentService.value?.subs_id) {
-            getSubs.value = await getSubscription();
+            await getSubscription(planType);
         }
-        // nextTick(() => {
-        //     getCurrentService();
-        // })
+        nextTick(() => {
+            getCurrentService();
+        })
     }).finally(() => {
         serviceFetching.value = false;
     });
@@ -263,7 +277,7 @@ let getCurrentService = async () => {
         }
     } else {
         if (currentService.value?.subs_id) {
-            getSubs.value = await getSubscription();
+            await getSubscription();
         }
     }
 
@@ -272,7 +286,7 @@ let getCurrentService = async () => {
 
 let checkDate = () => {
     let currentDate =+ new Date();
-    let cancelDate = getSubs.value.cancel_at * 1000;
+    let cancelDate = currentService.value.subsInfo.cancel_at * 1000;
     console.log(currentDate, cancelDate)
 
     if(currentDate > cancelDate) {

@@ -50,7 +50,8 @@ main#myServices
                         //-     .overflow {{ regions?.[service.region] || service.region }}
                         td
                             .overflow {{ service.cors }}
-                        td.center {{ typeof service.timestamp === 'string' ? service.timestamp : new Date(service.timestamp).toDateString() }}
+                        //- td.center {{ typeof service.timestamp === 'string' ? service.timestamp : new Date(service.timestamp).toDateString() }}
+                        td.center {{ dateFormat(service.timestamp) }}
                         td.center
                             template(v-if="service.group == 1") Trial
                             template(v-else-if="service.group == 2") Standard
@@ -112,11 +113,11 @@ main#myServices
                             .info.inline 
                                 h6 Subscription Plan
                                 router-link(:to="`/subscription/${service.service}`" style="color:var(--main-color);font-weight:700;")
-                                    template(v-if="service.group == 1") Trial
-                                    template(v-else-if="service.group == 2") Standard
-                                    template(v-else-if="service.group == 3") Premium
-                                    template(v-else-if="service.group == 50") Unlimited
-                                    template(v-else-if="service.group == 51") Free Standard
+                                    template(v-if="skapi.services[service.service].group == 1") Trial
+                                    template(v-else-if="skapi.services[service.service].group == 2") Standard
+                                    template(v-else-if="skapi.services[service.service].group == 3") Premium
+                                    template(v-else-if="skapi.services[service.service].group == 50") Unlimited
+                                    template(v-else-if="skapi.services[service.service].group == 51") Free Standard
                                     template(v-else) ...
                             .info.inline 
                                 h6 Hosting Strorage
@@ -322,6 +323,16 @@ let clientY = 0;
 // let inputError = ref(false);
 let error = ref('');
 
+let dateFormat = (timestamp) => {
+    let currentDate = new Date(timestamp);
+    let year = currentDate.getFullYear();
+    let month = ('0' + (currentDate.getMonth() + 1)).slice(-2);
+    let day = ('0' + currentDate.getDate()).slice(-2);
+    let dateStr = `${year}.${month}.${day}`;
+
+    return dateStr;
+}
+
 let convertToMb = (size) => {
     if (size) {
         return (size / (1024 * 1024)).toFixed(2) + ' MB'
@@ -433,6 +444,33 @@ document.addEventListener('mouseup', function () {
     document.removeEventListener('mousemove', mouseMoveHandler);
 });
 
+let getSubscription = async(service_info) => {
+    if(service_info?.subs_id) {
+        let subs_id = service_info.subs_id.split('#');
+    
+        if (subs_id.length < 2) {
+            alert('Service does not have a subscription');
+            return;
+        }
+    
+        let SUBSCRIPTION_ID = subs_id[0];
+    
+        skapi.clientSecretRequest({
+            clientSecretName: 'stripe_test',
+            url: `https://api.stripe.com/v1/subscriptions/${SUBSCRIPTION_ID}`,
+            method: 'GET',
+            headers: {
+                Authorization: 'Bearer $CLIENT_SECRET',
+                'Content-Type': 'application/x-www-form-urlencoded'
+            },
+        }).then(res => {
+            service_info.subsInfo = res;
+        }).catch(err => {
+            console.log(err.message);
+        });
+    }
+}
+
 let getServiceInfo = () => {
     if (services.value) {
         for(let i=0; i<services.value.length; i++) {
@@ -461,6 +499,7 @@ let getServiceInfo = () => {
                     storageInfo.value[service].host = u.size;
                 });
             }
+            getSubscription(services.value[i]);
         }
     }
 }
@@ -516,7 +555,7 @@ let addService = () => {
         active: 0
     });
     skapi.createService({ name: newServiceName })
-        .then(s => {
+        .then(async(s) => {
             skapi.insertService(s);
             services.value[0] = s;
             if(serviceMode.value == 'trial') {
@@ -526,7 +565,11 @@ let addService = () => {
             } else {
                 let service_info = s;
                 let ticket_id = serviceMode.value;
-                createSubscription(ticket_id, service_info);
+                await createSubscription(ticket_id, service_info);
+                await getSubscription(service_info);
+                newServiceName = '';
+                closeCreateService();
+                promiseRunning.value = false;
             }
         }).catch(err => {
             // alert(err.message);
@@ -571,9 +614,6 @@ let createSubscription = async (ticket_id, service_info) => {
     }
 
     window.location = response.url;
-    newServiceName = '';
-    closeCreateService();
-    promiseRunning.value = false;
 };
 
 const regions = {
