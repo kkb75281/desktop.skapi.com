@@ -32,7 +32,11 @@ let upgrade = () => {
     if(currentService.value.group == 1) {
         createSubscription(props.changeMode, currentService.value);
     } else {
-        updateSubscription(props.changeMode);
+        if(currentService.value.active == -1) {
+            createSubscription(props.changeMode, currentService.value);
+        } else {
+            updateSubscription(props.changeMode);
+        }
     }
 }
 
@@ -59,10 +63,10 @@ let createSubscription = async (ticket_id, service_info) => {
             'subscription_data[metadata][owner]': account.value.user_id,
             'mode': 'subscription',
             'subscription_data[description]': 'Subscription Plan of service ID: ' + service_info.service,
-            cancel_url: currentUrl.origin + '/myServices',
+            cancel_url: currentUrl.origin + '/subscription/' + service_info.service,
             "line_items[0][quantity]": 1,
             'line_items[0][price]': product[ticket_id],
-            "success_url": currentUrl.origin + '/myServices?checkout_id={CHECKOUT_SESSION_ID}&service_id=' + service_info.service + '&ticket_id=' + ticket_id,
+            "success_url": currentUrl.origin + '/subscription/' + service_info.service + '?checkout_id={CHECKOUT_SESSION_ID}&service_id=' + service_info.service + '&ticket_id=' + ticket_id,
             'tax_id_collection[enabled]': true,
         }
     });
@@ -92,6 +96,22 @@ let updateSubscription = async (ticket_id) => {
     let SUBSCRIPTION_ID = subs_id[0];
     let SUBSCRIPTION_ITEM_ID = subs_id[1];
     let product = JSON.parse(import.meta.env.VITE_PRODUCT);
+    let dataObj = {};
+
+    if(currentService.value?.subsInfo?.cancel_at_period_end) {
+        dataObj = {
+            'items[0][id]': SUBSCRIPTION_ITEM_ID,
+            'items[0][price]': product[ticket_id],
+            proration_behavior: 'create_prorations',
+            'cancel_at_period_end': false
+        }
+    } else {
+        dataObj = {
+            'items[0][id]': SUBSCRIPTION_ITEM_ID,
+            'items[0][price]': product[ticket_id],
+            proration_behavior: 'create_prorations'
+        }
+    }
 
     let response = await skapi.clientSecretRequest({
         clientSecretName: 'stripe_test',
@@ -101,11 +121,7 @@ let updateSubscription = async (ticket_id) => {
             Authorization: 'Bearer $CLIENT_SECRET',
             'Content-Type': 'application/x-www-form-urlencoded'
         },
-        data: {
-            'items[0][id]': SUBSCRIPTION_ITEM_ID,
-            'items[0][price]': product[ticket_id],
-            proration_behavior: 'create_prorations'
-        }
+        data: dataObj
     });
 
     console.log(response);

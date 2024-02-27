@@ -53,11 +53,11 @@ main#myServices
                         //- td.center {{ typeof service.timestamp === 'string' ? service.timestamp : new Date(service.timestamp).toDateString() }}
                         td.center {{ dateFormat(service.timestamp) }}
                         td.center
-                            template(v-if="service.group == 1") Trial
-                            template(v-else-if="service.group == 2") Standard
-                            template(v-else-if="service.group == 3") Premium
-                            template(v-else-if="service.group == 50") Unlimited
-                            template(v-else-if="service.group == 51") Free Standard
+                            template(v-if="skapi.services[service.service].group == 1") Trial
+                            template(v-else-if="skapi.services[service.service].group == 2") Standard
+                            template(v-else-if="skapi.services[service.service].group == 3") Premium
+                            template(v-else-if="skapi.services[service.service].group == 50") Unlimited
+                            template(v-else-if="skapi.services[service.service].group == 51") Free Standard
                             template(v-else) ...
                         td.center
                             template(v-if="service?.subsInfo") 
@@ -70,23 +70,23 @@ main#myServices
                             template(v-else)
                                 .state(style="color:#52D687") Running
                         td.center
-                            template(v-if="service.group == 50")
+                            template(v-if="skapi.services[service.service].group == 50")
                                 .percent.purple Unlimited
-                            template(v-else-if="service.group !== 50 && Math.ceil(service.users/10000*100)")
+                            template(v-else-if="skapi.services[service.service].group !== 50 && Math.ceil(service.users/10000*100)")
                                 .percent(:class='{"green": 0 <= Math.ceil(service.users/10000*100) && Math.ceil(service.users/10000*100) < 51, "orange": 51 <= Math.ceil(service.users/10000*100) && Math.ceil(service.users/10000*100) < 81, "red": 81 <= Math.ceil(service.users/10000*100) && Math.ceil(service.users/10000*100) < 101}') {{ Math.ceil(service.users/10000*100) + '%' }}
                             template(v-else)
                                 .percent.green 0%
                         td.center
-                            template(v-if="service.group == 50")
+                            template(v-if="skapi.services[service.service].group == 50")
                                 .percent.purple Unlimited
-                            template(v-else-if="service.group !== 50 && Math.ceil(storageInfo?.[service.service]?.cloud/53687091200*100)")
+                            template(v-else-if="skapi.services[service.service].group !== 50 && Math.ceil(storageInfo?.[service.service]?.cloud/53687091200*100)")
                                 .percent(:class='{"green": 0 <= Math.ceil(storageInfo?.[service.service]?.cloud/53687091200*100) && Math.ceil(storageInfo?.[service.service]?.cloud/53687091200*100) < 51, "orange": 51 <= Math.ceil(storageInfo?.[service.service]?.cloud/53687091200*100) && Math.ceil(storageInfo?.[service.service]?.cloud/53687091200*100) < 81, "red": 81 <= Math.ceil(storageInfo?.[service.service]?.cloud/53687091200*100)}') {{ Math.ceil(storageInfo?.[service.service]?.cloud/53687091200*100) + '%' }}
                             template(v-else)
                                 .percent.green 0%
                         td(style="padding-left:40px;")
-                            template(v-if="service.group == 50")
+                            template(v-if="skapi.services[service.service].group == 50")
                                 .percent.purple Unlimited
-                            template(v-else-if="service.group !== 50 && Math.ceil(storageInfo?.[service.service]?.database/4294967296*100)")
+                            template(v-else-if="skapi.services[service.service].group !== 50 && Math.ceil(storageInfo?.[service.service]?.database/4294967296*100)")
                                 .percent(:class='{"green": 0 <= Math.ceil(storageInfo?.[service.service]?.database/4294967296*100) && Math.ceil(storageInfo?.[service.service]?.database/4294967296*100) < 51, "orange": 51 <= Math.ceil(storageInfo?.[service.service]?.database/4294967296*100) && Math.ceil(storageInfo?.[service.service]?.database/4294967296*100) < 81, "red": 81 <= Math.ceil(storageInfo?.[service.service]?.database/4294967296*100)}') {{ Math.ceil(storageInfo?.[service.service]?.database/4294967296*100) + '%' }}
                             template(v-else)
                                 .percent.green 0%

@@ -174,6 +174,7 @@
 CancelPlanOverlay(v-if="showCancelPlan" @close="()=>closeOverlay('close')")
 UpgradePlanOverlay(v-if="showUpgradePlan" @close="()=>closeOverlay(changeMode)" :changeMode="changeMode")
 DowngradePlanOverlay(v-if="showDowngradePlan" @close="()=>closeOverlay(changeMode)" :changeMode="changeMode")
+button(@click="heeeeee")
 </template>
 
 <script setup>
@@ -186,6 +187,9 @@ import UpgradePlanOverlay from '@/views/Subscription/UpgradePlanOverlay.vue';
 import DowngradePlanOverlay from '@/views/Subscription/DowngradePlanOverlay.vue';
 
 currentService.value = null;
+let heeeeee = () => {
+    console.log(currentService.value)
+}
 
 // let x: string | number = 1;
 
