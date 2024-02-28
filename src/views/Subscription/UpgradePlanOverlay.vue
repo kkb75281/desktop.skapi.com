@@ -29,7 +29,7 @@ let promiseRunning = ref(false);
 let upgrade = () => {
     promiseRunning.value = true;
 
-    if(currentService.value.group == 1) {
+    if(currentService.value.group == 1 || currentService.value.group == 50 || currentService.value.group == 51) {
         createSubscription(props.changeMode, currentService.value);
     } else {
         if(currentService.value.active == -1) {

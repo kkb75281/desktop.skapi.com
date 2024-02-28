@@ -347,7 +347,7 @@ main#database
                             span Add data
 
                 // right panel top right menu
-                .menu(:class='{"nonClickable": !account.email_verified || currentService.active == 0}' v-if="!recordInfoEdit" @click.stop="showEdit = !showEdit") 
+                .menu(:class='{"nonClickable": !account.email_verified || currentService.active <= 0}' v-if="!recordInfoEdit" @click.stop="showEdit = !showEdit") 
                     // drop down menu (no edit)
                     .material-symbols-outlined.mid.clickable more_vert
                     #moreVert(v-if="showEdit" @click.stop style="--moreVert-right: 0")
@@ -448,8 +448,8 @@ main#database
         .tableHeader 
             .actions 
                 .material-symbols-outlined.mid.refresh.clickable(@click='()=>{selectedRecord=null; refresh(fetchParams);}' :class='{"rotate_animation": fetching }') cached
-                .material-symbols-outlined.mid.create.clickable(:class="{'nonClickable' : !account.email_verified || currentService.active == 0}" @click="()=>{ !account.email_verified ? false : selectedRecord = JSON.parse(JSON.stringify(createRecordTemplate)); recordInfoEdit=true; }") note_stack_add
-                .menu(:class='{"nonClickable": !checkedRecords.length || !account.email_verified || currentService.active == 0}' @click.stop="!account.email_verified ? false : showRecordSetting = !showRecordSetting") 
+                .material-symbols-outlined.mid.create.clickable(:class="{'nonClickable' : !account.email_verified || currentService.active <= 0}" @click="()=>{ !account.email_verified ? false : selectedRecord = JSON.parse(JSON.stringify(createRecordTemplate)); recordInfoEdit=true; }") note_stack_add
+                .menu(:class='{"nonClickable": !checkedRecords.length || !account.email_verified || currentService.active <= 0}' @click.stop="!account.email_verified ? false : showRecordSetting = !showRecordSetting") 
                     .material-symbols-outlined.mid.clickable more_vert
                     #moreVert(v-if="showRecordSetting" @click.stop style="--moreVert-left: 0")
                         .inner

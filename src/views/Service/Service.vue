@@ -6,7 +6,7 @@ main#service
         .info
             .toggleWrap(:class="{'active': currentService.active >= 1}")
                 span Disable/Enable
-                .toggleBg(:class="{'nonClickable' : !account?.email_verified}")
+                .toggleBg(:class="{'nonClickable' : !account?.email_verified || currentService.active == -1}")
                     .toggleBtn(@click="enableDisableToggle")
             .row
                 h6 Service Name
@@ -22,7 +22,7 @@ main#service
                             .material-symbols-outlined.sml.cancel(@click="modifyServiceName = false;") close
                 template(v-else)
                     h5.blue {{ currentService.name }}
-                    .material-symbols-outlined.mid.modify.clickable(:class="{'nonClickable' : !account?.email_verified || currentService.active == 0}" @click="editServiceName" style="margin-left:10px") edit
+                    .material-symbols-outlined.mid.modify.clickable(:class="{'nonClickable' : !account?.email_verified || currentService.active <= 0}" @click="editServiceName" style="margin-left:10px") edit
             .row
                 h6 Service ID 
                 h5 {{ currentService.service }}
@@ -38,7 +38,7 @@ main#service
                 .material-symbols-outlined.empty.sml help 
                 span Where do I put this code?
 
-        .info(:class="{'nonClickable' : !account?.email_verified || currentService.active == 0 || new Date().getTime() < currentService?.subsInfo?.canceled_at}") 
+        .info(:class="{'nonClickable' : !account?.email_verified || currentService.active == 0 || currentService.active == -1}") 
             .title 
                 h4 Security Setting
                 a.question.help(href='https://docs.skapi.com/security/security-settings.html' target="_blank")
@@ -119,21 +119,21 @@ main#service
                 .list(style="width:23.5%;margin-right:2%")
                     h6 State 
                     h5(v-if="currentService?.subsInfo?.cancel_at_period_end" style="color:var(--caution-color)") Canceled
-                    h5(v-else-if="currentService?.subsInfo?.cancel_at_period_end && new Date().getTime() < currentService?.subsInfo?.canceled_at" style="color:var(--caution-color)") Suspended
+                    h5(v-else-if="currentService.active == -1 && currentService?.subsInfo?.status == 'canceled'" style="color:var(--caution-color)") Suspended
                     h5(v-else) Running
                 .list(style="width:23.5%;margin-right:2%")
                     h6 Renew Date
                     template(v-if="currentService.group == 1")
                         h5(style="color:var(--caution-color)") All Data will be deleted by {{ dateFormat(currentService.timestamp + 604800000) }}
-                    template(v-else)
-                        //- pre {{ currentService }}
-                        h5 {{ currentService?.subsInfo?.current_period_end ? dateFormat(currentService?.subsInfo?.current_period_end * 1000) : '...' }}
-                        //- | {{ currentService?.subsInfo?.current_period_end || 'nodata' }}
+                    template(v-else-if="currentService.active >= 0")
+                        h5 {{ currentService?.subsInfo?.current_period_end ? dateFormat(currentService?.subsInfo?.current_period_end * 1000) : '-' }}
+                    template(v-else) 
+                        h5 -
                 router-link.list(:to='`/subscription/${currentService.service}`' style="width:23.5%;text-align:right") 
                     button.final(v-if="new Date().getTime() < currentService?.subsInfo?.canceled_at") Resume Plan
                     button.final(v-else) Manage Subscription
 
-        .info.card(:class="{'nonClickable' : !account?.email_verified || currentService.active == 0 || new Date().getTime() < currentService?.subsInfo?.canceled_at}") 
+        .info.card(:class="{'nonClickable' : !account?.email_verified || currentService.active == 0 || currentService.active == -1}") 
             .inner
                 .title 
                     .logoTitle
@@ -152,7 +152,7 @@ main#service
                                 option(value="anyone") Anyone allowed
                             .material-symbols-outlined.mid.search.selectArrowDown(style="right:-30px;top:66%;color:var(--main-color);") arrow_drop_down
 
-        .info.card(:class="{'nonClickable' : !account?.email_verified || currentService.active == 0 || new Date().getTime() < currentService?.subsInfo?.canceled_at}") 
+        .info.card(:class="{'nonClickable' : !account?.email_verified || currentService.active == 0 || currentService.active == -1}") 
             .inner
                 .title 
                     .logoTitle
@@ -167,7 +167,7 @@ main#service
                         h6 # of cloud storage Used
                         p {{ convertToMb(storageInfo?.[currentService.service]?.cloud) }}
 
-        .info.card(:class="{'nonClickable' : !account?.email_verified || currentService.active == 0 || currentService.group == 1 || new Date().getTime() < currentService?.subsInfo?.canceled_at}") 
+        .info.card(:class="{'nonClickable' : !account?.email_verified || currentService.active == 0 || currentService.group == 1 || currentService.active == -1}") 
             .inner
                 .title 
                     .logoTitle
@@ -186,7 +186,7 @@ main#service
                             h6 # Mail storage used 
                             p {{ convertToMb(storageInfo?.[currentService.service]?.email) }}
 
-        .info.card(:class="{'nonClickable' : !account?.email_verified || currentService.active == 0 || currentService.group == 1 || new Date().getTime() < currentService?.subsInfo?.canceled_at}") 
+        .info.card(:class="{'nonClickable' : !account?.email_verified || currentService.active == 0 || currentService.group == 1 || currentService.active == -1}") 
             .inner
                 .title 
                     .logoTitle

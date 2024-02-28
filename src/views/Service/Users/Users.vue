@@ -106,9 +106,9 @@ main#users
                                         .material-symbols-outlined.mid.check check
                                         span Date Created
                 .material-symbols-outlined.mid.refresh(@click='refresh' :class='{"rotate_animation": fetching }') cached
-                .material-symbols-outlined.mid.create(:class="{'nonClickable' : !account.email_verified || currentService.active == 0}" @click="!account.email_verified ? false : inviteUserShow=true") mail
-                .material-symbols-outlined.mid.create(:class="{'nonClickable' : !account.email_verified || currentService.active == 0}" @click="!account.email_verified ? false : createUserShow=true") person_add
-                .menu(:class='{"nonClickable": !checkedUsers.length || !account.email_verified || currentService.active == 0}' @click.stop="!account.email_verified ? false : showUserSetting = !showUserSetting")
+                .material-symbols-outlined.mid.create(:class="{'nonClickable' : !account.email_verified || currentService.active <= 0 }" @click="!account.email_verified ? false : inviteUserShow=true") mail
+                .material-symbols-outlined.mid.create(:class="{'nonClickable' : !account.email_verified || currentService.active <= 0 }" @click="!account.email_verified ? false : createUserShow=true") person_add
+                .menu(:class='{"nonClickable": !checkedUsers.length || !account.email_verified || currentService.active <= 0}' @click.stop="!account.email_verified ? false : showUserSetting = !showUserSetting")
                     .material-symbols-outlined.mid.clickable more_vert
                     #moreVert(v-if="showUserSetting" @click.stop style="--moreVert-left: 0")
                         .inner

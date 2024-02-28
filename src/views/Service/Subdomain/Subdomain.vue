@@ -7,7 +7,7 @@ main#subdomain
                 .refresh.clickable(:class="{'nonClickable' : !account.email_verified || subdomainState || refreshCDNRun}" @click='refreshCdn()')
                     .material-symbols-outlined.mid(:class="{'rotate_animation': refreshCDNRun}") cached
                     span Refresh CDN
-                .delete.clickable(:class="{'nonClickable' : !account.email_verified || subdomainState || currentService.active == 0}" @click='showDeleteSubdomain = true;')
+                .delete.clickable(:class="{'nonClickable' : !account.email_verified || subdomainState || currentService.active <= 0}" @click='showDeleteSubdomain = true;')
                     .material-symbols-outlined.mid delete
                     span Delete
         br
@@ -31,12 +31,12 @@ main#subdomain
                         p {{ computedSubdomain }}
                             a.link(:href="'http://' + computedSubdomain + '.' + domain" target="_blank")
                                 .material-symbols-outlined.sml link
-                        .material-symbols-outlined.mid.clickable(@click="modifySudomain=true;" :class="{'nonClickable' : !account.email_verified || currentService.active == 0}") edit
+                        .material-symbols-outlined.mid.clickable(@click="modifySudomain=true;" :class="{'nonClickable' : !account.email_verified || currentService.active <= 0}") edit
             .setting
                 h6.tit HTML file for 404 page
                 .cont.line
                     p {{ subdomainInfo?.[computedSubdomain]?.['404'] || "Upload a file"}}
-                    .customFile(:class="{'nonClickable' : !account.email_verified || currentService.active == 0}")
+                    .customFile(:class="{'nonClickable' : !account.email_verified || currentService.active <= 0}")
                         template(v-if="set404PromiseRunning")
                             img.loading(style='position: absolute;right: 1em;top: 8px;' src="@/assets/img/loading.png")
                         template(v-else)
@@ -62,7 +62,7 @@ main#subdomain
                 .label Register Subdomain
                 .input
                     input#modifySudomain(@input='e=>e.target.setCustomValidity("")' :disabled="subdomainPromiseRunning || null" type="text" placeholder="Name of Subdomain" required minlength='5' pattern='[a-z0-9]+' title='Subdomain should be lowercase alphanumeric.')
-                .btn(:class="{'nonClickable': !account.email_verified || currentService.active == 0}" style='cursor:pointer')
+                .btn(:class="{'nonClickable': !account.email_verified || currentService.active <= 0}" style='cursor:pointer')
                     template(v-if="subdomainPromiseRunning")
                         img.loading(src="@/assets/img/loading.png")
                     template(v-else)
@@ -80,7 +80,7 @@ main#subdomain
 
             .filesButtonWrap
                 // file menu
-                .menu(@click.stop="showEdit = !showEdit" :class='{"nonClickable": !checkedFiles.length || !account.email_verified || currentService.active == 0}')
+                .menu(@click.stop="showEdit = !showEdit" :class='{"nonClickable": !checkedFiles.length || !account.email_verified || currentService.active <= 0}')
                     .material-symbols-outlined.mid.clickable(title="menu") more_vert
                     #moreVert(v-if="showEdit" @click.stop style="--moreVert-right: 0;")
                         .inner
@@ -91,10 +91,10 @@ main#subdomain
                                 .material-symbols-outlined.mid delete
                                 span delete
                 .menu.material-symbols-outlined.mid.refresh.clickable(title="refresh" :class='{"rotate_animation": fetching }' @click='refresh(searchDir)') cached
-                .menu(:class='{"nonClickable": !account.email_verified || currentService.active == 0}' @click="showRemoveAllFiles = true;")
+                .menu(:class='{"nonClickable": !account.email_verified || currentService.active <= 0}' @click="showRemoveAllFiles = true;")
                     .material-symbols-outlined.mid.clickable delete
                     span(style="font-weight:700") Empty storage
-                .customFile(:class="{'nonClickable': !account.email_verified || Object.keys(fileList).length || currentService.active == 0}")
+                .customFile(:class="{'nonClickable': !account.email_verified || Object.keys(fileList).length || currentService.active <= 0}")
                     label.uploadBtn(for="files")
                         .material-symbols-outlined.mid(title="upload") upload
                         span Upload

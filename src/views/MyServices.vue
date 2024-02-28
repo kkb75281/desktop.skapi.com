@@ -63,7 +63,7 @@ main#myServices
                             template(v-if="service?.subsInfo") 
                                 template(v-if="service?.subsInfo?.cancel_at_period_end") 
                                     .state(style="color:var(--caution-color)") Canceled
-                                template(v-else-if="new Date().getTime() < service?.subsInfo?.canceled_at") 
+                                template(v-else-if="service.active == -1") 
                                     .state(style="color:#FCA642") Suspended
                                 template(v-else style="color:#52D687") 
                                     .state(style="color:#52D687") Running
@@ -312,6 +312,7 @@ let serviceMode = ref('standard');
 let searchFor = ref('service');
 let searchText = ref('');
 let showInfo = ref(false);
+let promiseRunning = ref(false);
 let tr = ref(null);
 let downArrow = ref(null);
 let upArrow = ref(null);
@@ -465,6 +466,7 @@ let getSubscription = async(service_info) => {
             },
         }).then(res => {
             service_info.subsInfo = res;
+            skapi.services[service_info.service].subsInfo = res;
         }).catch(err => {
             console.log(err.message);
         });
@@ -534,7 +536,6 @@ let closeCreateService = () => {
     document.querySelector('body').classList.remove('overflow');
 }
 let newServiceName = '';
-let promiseRunning = ref(false);
 let addService = () => {
     promiseRunning.value = true;
     if(newServiceName == '') {
@@ -543,21 +544,23 @@ let addService = () => {
 
         return;
     }
-    services.value.unshift({
-        service: '',
-        name: newServiceName,
-        region: '...',
-        created_locale: '...',
-        timestamp: '...',
-        group: '...',
-        cors: '...',
-        pending: true,
-        active: 0
-    });
+    // services.value.unshift({
+    //     service: '',
+    //     name: newServiceName,
+    //     region: '...',
+    //     created_locale: '...',
+    //     timestamp: '...',
+    //     group: '...',
+    //     cors: '...',
+    //     pending: true,
+    //     active: 0
+    // });
     skapi.createService({ name: newServiceName })
         .then(async(s) => {
+            console.log({s});
             skapi.insertService(s);
-            services.value[0] = s;
+            // services.value[0] = s;
+            services.value.unshift(s);
             if(serviceMode.value == 'trial') {
                 newServiceName = '';
                 closeCreateService();
@@ -572,6 +575,7 @@ let addService = () => {
                 promiseRunning.value = false;
             }
         }).catch(err => {
+            promiseRunning.value = false;
             // alert(err.message);
             console.log(err)
             services.value.shift();

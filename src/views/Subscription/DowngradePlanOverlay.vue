@@ -57,10 +57,10 @@ let createSubscription = async (ticket_id, service_info) => {
             'subscription_data[metadata][owner]': account.value.user_id,
             'mode': 'subscription',
             'subscription_data[description]': 'Subscription Plan of service ID: ' + service_info.service,
-            cancel_url: currentUrl.origin + '/myServices',
+            cancel_url: currentUrl.origin + '/subscription/' + service_info.service,
             "line_items[0][quantity]": 1,
             'line_items[0][price]': product[ticket_id],
-            "success_url": currentUrl.origin + '/myServices?checkout_id={CHECKOUT_SESSION_ID}&service_id=' + service_info.service + '&ticket_id=' + ticket_id,
+            "success_url": currentUrl.origin + '/subscription/' + service_info.service + '?checkout_id={CHECKOUT_SESSION_ID}&service_id=' + service_info.service + '&ticket_id=' + ticket_id,
             'tax_id_collection[enabled]': true,
         }
     });

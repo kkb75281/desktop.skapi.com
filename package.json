@@ -3,6 +3,7 @@
   "version": "0.0.0",
   "private": true,
   "scripts": {
+    "prod": "vite --host --force --mode production",
     "dev": "vite --host --force",
     "build": "node script.js ; cross-env NODE_ENV=production vite build",
     "build_dev": "cross-env NODE_ENV=development vite build --mode development",

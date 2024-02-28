@@ -131,7 +131,7 @@ let openCustomerPortal = async () => {
         },
         data: {
             customer: resolvedCustomer.id,
-            return_url: window.location.origin + '/experiment'
+            return_url: window.location.origin + route.path
         }
     }).then(response => {
         window.location = response.url;
