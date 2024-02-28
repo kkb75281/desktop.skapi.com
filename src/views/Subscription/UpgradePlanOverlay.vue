@@ -124,7 +124,7 @@ let updateSubscription = async (ticket_id) => {
         data: dataObj
     });
 
-    console.log(response);
+    // console.log(response);
 
     if (response.error) {
         alert(response.error.message);

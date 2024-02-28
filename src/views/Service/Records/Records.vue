@@ -936,7 +936,7 @@ let saveRecordData = async () => {
 
         let hasNoData = true;
         for (let d of rec_data) {
-            console.log(d.context)
+            // console.log(d.context)
             if (d.type === 'string') {
                 hasNoData = false;
                 // add to form
@@ -968,7 +968,7 @@ let saveRecordData = async () => {
     }
 
     let progress = e => {
-        console.log(e);
+        // console.log(e);
     }
 
     record_params.progress = progress;

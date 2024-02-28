@@ -278,13 +278,13 @@ let getCurrentService = async () => {
         }
     }
 
-    console.log(currentService.value)
+    // console.log(currentService.value)
 }
 
 let checkDate = () => {
     let currentDate =+ new Date();
     let cancelDate = currentService.value.subsInfo.cancel_at * 1000;
-    console.log(currentDate, cancelDate)
+    // console.log(currentDate, cancelDate)
 
     if(currentDate > cancelDate || currentService.value.active == -1) {
         createPlan();
@@ -379,7 +379,7 @@ let updatePlan = async (ticket_id) => {
         }
     });
 
-    console.log(response);
+    // console.log(response);
     getCurrentService();
     serviceFetching.value = false;
 
