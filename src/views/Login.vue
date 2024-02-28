@@ -93,7 +93,7 @@ let login = () => {
     }
     skapi.adminLogin(params, options).then(res => {
         account.value = res;
-        router.push({ path: '/dashboard' });
+        router.push({ path: '/myServices' });
     }).catch(err => {
         promiseRunning.value = false;
         if (err.code === "SIGNUP_CONFIRMATION_NEEDED") {
@@ -177,7 +177,7 @@ let login = () => {
             flex-wrap: nowrap;
 
             a {
-                color: #293FE6;
+                color: var(--main-color);
                 font-size: 16px;
                 font-weight: 400;
                 text-decoration: none;
@@ -206,7 +206,7 @@ let login = () => {
 
                 a {
                     text-decoration: none;
-                    color: #293FE6;
+                    color: var(--main-color);
                     font-weight: 700;
                 }
             }
@@ -236,7 +236,7 @@ let login = () => {
     span {
         font-size: 16px;
         font-weight: 700;
-        color: #293FE6;
+        color: var(--main-color);
     }
 }
 
@@ -281,7 +281,7 @@ let login = () => {
                     display: block;
                     margin-bottom: 28px;
                     text-decoration: none;
-                    color: #293FE6;
+                    color: var(--main-color);
                 }
 
                 .googleLogin {

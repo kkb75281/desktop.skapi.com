@@ -282,11 +282,11 @@ let verifyEmail = () => {
                 }
 
                 &.active {
-                    color: #293FE6;
+                    color: var(--main-color);
                 }
 
                 &.red {
-                    color: #F04E4E;
+                    color: var(--caution-color);
                 }
             }
         }
@@ -366,7 +366,7 @@ let verifyEmail = () => {
                 }
 
                 .btn {
-                    color: #293FE6;
+                    color: var(--main-color);
                 }
 
                 .btnIcon {

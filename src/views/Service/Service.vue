@@ -1,43 +1,44 @@
 <template lang="pug">
+PlanCaution(v-if="(currentService?.subsInfo?.cancel_at_period_end || currentService?.subsInfo?.status == 'unpaid' || currentService?.subsInfo?.status == 'canceled') && showPlanCaution" @close="showPlanCaution = false;")
+
 main#service
     .infoWrap
         .info
-            .title 
-                .name(style="height: 44px;")
-                    template(v-if="modifyServiceName")
-                        form.modifyInputForm(@submit.prevent="changeServiceName")
-                            .customInput
-                                input#modifyServiceName(type="text" placeholder="Service name" :value='inputServiceName' @input="(e) => inputServiceName = e.target.value" required)
-                            template(v-if="promiseRunning")
-                                img.loading(src="@/assets/img/loading.png")
-                            template(v-else)
-                                input#submitInp(type="submit" hidden)
-                                label.material-symbols-outlined.big.save(for='submitInp') done
-                                .material-symbols-outlined.sml.cancel(@click="modifyServiceName = false;") close
-                    template(v-else)
-                        h4 {{ currentService.name }}
-                        .material-symbols-outlined.mid.modify.clickable(:class="{'nonClickable' : !account?.email_verified || currentService.active == 0}" @click="editServiceName") edit
-                .right
-                    .date 
-                        span Date Created
-                        h6 {{ new Date(currentService.timestamp).toDateString() }}
-                    .toggleWrap(:class="{'active': currentService.active >= 1}")
-                        span Disable/Enable
-                        .toggleBg(:class="{'nonClickable' : !account?.email_verified}")
-                            .toggleBtn(@click="enableDisableToggle")
+            .toggleWrap(:class="{'active': currentService.active >= 1}")
+                span Disable/Enable
+                .toggleBg(:class="{'nonClickable' : !account?.email_verified || currentService.active == -1}")
+                    .toggleBtn(@click="enableDisableToggle")
+            .row
+                h6 Service Name
+                template(v-if="modifyServiceName")
+                    form.modifyInputForm(@submit.prevent="changeServiceName" style="display:inline-block; width:unset")
+                        .customInput
+                            input#modifyServiceName(type="text" placeholder="Service name" :value='inputServiceName' @input="(e) => inputServiceName = e.target.value" required)
+                        template(v-if="serviceFetching")
+                            img.loading(src="@/assets/img/loading.png")
+                        template(v-else)
+                            input#submitInp(type="submit" hidden)
+                            label.material-symbols-outlined.big.save(for='submitInp') done
+                            .material-symbols-outlined.sml.cancel(@click="modifyServiceName = false;") close
+                template(v-else)
+                    h5.blue {{ currentService.name }}
+                    .material-symbols-outlined.mid.modify.clickable(:class="{'nonClickable' : !account?.email_verified || currentService.active <= 0}" @click="editServiceName" style="margin-left:10px") edit
+            .row
+                h6 Service ID 
+                h5 {{ currentService.service }}
+            .row 
+                h6 Date Created
+                h5 {{ dateFormat(currentService.timestamp) }}
             .codeWrap
                 pre.codeInner.
-                    #[span(style="color:#33adff") &lt;script] #[span(style="color:#58dfff") src]=#[span(style="color:#FFED91") "https://cdn.jsdelivr.net/npm/skapi-js@latest/dist/skapi.js"]#[span(style="color:#33adff") &gt;]#[span(style="color:#33adff") &lt;/script&gt;]
-                    #[span(style="color:#33adff") &lt;script&gt;]
                     #[span(style="color:#33adff") &nbsp;&nbsp;&nbsp;&nbsp;const] skapi = #[span(style="color:#33adff") new] Skapi(#[span(style="color:#FFED91") "{{ currentService.service }}"], #[span(style="color:#FFED91") "{{ currentService.owner }}"]);
-                    #[span(style="color:#33adff") &lt;/script&gt;]
                 .copy.clickable(@click="copy")
                     .material-symbols-outlined.mid file_copy
             a.question(href="https://docs.skapi.com/introduction/getting-started.html" target="_blank")
                 .material-symbols-outlined.empty.sml help 
                 span Where do I put this code?
 
-        .info(:class="{'nonClickable' : !account?.email_verified || currentService.active == 0}") 
+        .info(:class="{'nonClickable' : !account?.email_verified || currentService.active == 0 || currentService.active == -1}") 
             .title 
                 h4 Security Setting
                 a.question.help(href='https://docs.skapi.com/security/security-settings.html' target="_blank")
@@ -57,11 +58,10 @@ main#service
                                 label.material-symbols-outlined.big.save(for='submitInp') done
                                 .material-symbols-outlined.sml.cancel(@click="modifyCors = false;") close
                     template(v-else)
-                        h5 {{ currentService.cors || '*' }}
-                            .material-symbols-outlined.mid.pen.clickable(:class="{'nonClickable' : !account?.email_verified}" @click="editCors") edit
+                        h5.ellipsis(style="width:calc(100% - 30px)") {{ currentService.cors || '*' }}
+                        .material-symbols-outlined.mid.pen.clickable(:class="{'nonClickable' : !account?.email_verified}" @click="editCors") edit
 
-                .list
-                    h6(:class="{ active: modifyKey }") Secret Key
+                    h6(:class="{ active: modifyKey }" style="margin-top:1rem") Secret Key
                     template(v-if="modifyKey")
                         form.modifyInputForm(style="margin-top: 8px" @submit.prevent="setSecretKey")
                             .customInput
@@ -73,16 +73,73 @@ main#service
                                 label.material-symbols-outlined.big.save(for='submitInp') done
                                 .material-symbols-outlined.sml.cancel(@click="modifyKey = false;") close
                     template(v-else)
-                        h5 {{ currentService.api_key || 'No key' }}
-                            .material-symbols-outlined.mid.pen.clickable(:class="{'nonClickable' : !account?.email_verified}" @click="editKey") edit
+                        h5.ellipsis(style="width:calc(100% - 30px);") {{ currentService.api_key || 'No key' }}
+                        .material-symbols-outlined.mid.pen.clickable(:class="{'nonClickable' : !account?.email_verified}" @click="editKey") edit
 
-        .info.card(:class="{'nonClickable' : !account?.email_verified || currentService.active == 0}") 
+                .list 
+                    h6 Client Secret Key
+                    .addBtn(@click="addSecretKey" :class="{'nonClickable' : secretKeyEdit || secretKeyAdd || promiseRunning}")
+                        .material-symbols-outlined.sml add 
+                        span Add Secret Key
+                    .keyWrap(:class="{'nonClickable' : promiseRunning}")
+                        template(v-if="clientSecretState.length")
+                            template(v-for="(data, index) in clientSecretState" :key="index")
+                                form(@submit.prevent="saveSecretKey(index)")
+                                    template(v-if="!data.keyEdit && !data.keyAdd")
+                                        .key
+                                            .inputWrap
+                                                #keyName {{ data.key }}
+                                                #secretKey {{ data.value.substr(0,4) + '******************************' }}
+                                            .buttonWrap
+                                                .material-symbols-outlined.mid.edit(@click="editSecretKey(index)" :class="{'none' : secretKeyAdd || secretKeyEdit}") edit
+                                    template(v-else)
+                                        .key.edit(ref="keyEditForm")
+                                            .inputWrap(:class="{'edit' : data.keyEdit}")
+                                                .material-symbols-outlined.sml.minus(v-if="data.keyEdit" @click="removeKey(index)") do_not_disturb_on
+                                                input#keyName(type="text" v-model="data.key" name='keyName' placeholder="Key name" required)
+                                                input#secretKey(type="text" v-model="data.value" name='secretKey' placeholder="Secret Key" required)
+                                            .buttonWrap
+                                                template(v-if="promiseRunning")
+                                                    //- div(style='display: inline-flex;align-items: center;width:108px;height: 43px;')
+                                                    img.loading(style='padding:0;width:18px;height:18px;' src="@/assets/img/loading.png")
+                                                template(v-else)
+                                                    input#submitInp(type="submit" hidden)
+                                                    label.material-symbols-outlined.mid.save(for='submitInp') check
+                                                    .material-symbols-outlined.mid.cancel(@click="checkKeyInp(index)") close
+                        template(v-else)
+                            .empty No data
+
+        .info 
+            .title 
+                h4 Subsription Plan
+            .listWrap
+                .list(style="width:23.5%;margin-right:2%")
+                    h6 Current Plan
+                    h5 {{ currentService.group == 2 ? 'Standard' : currentService.group == 3 ? 'Premium' : currentService.group == 50 ? 'Unlimited' : currentService.group == 51 ? 'Free Standard' : 'Trial' }}
+                .list(style="width:23.5%;margin-right:2%")
+                    h6 State 
+                    h5(v-if="currentService?.subsInfo?.cancel_at_period_end" style="color:var(--caution-color)") Canceled
+                    h5(v-else-if="currentService.active == -1 && currentService?.subsInfo?.status == 'canceled'" style="color:var(--caution-color)") Suspended
+                    h5(v-else) Running
+                .list(style="width:23.5%;margin-right:2%")
+                    h6 Renew Date
+                    template(v-if="currentService.group == 1")
+                        h5(style="color:var(--caution-color)") All Data will be deleted by {{ dateFormat(currentService.timestamp + 604800000) }}
+                    template(v-else-if="currentService.active >= 0")
+                        h5 {{ currentService?.subsInfo?.current_period_end ? dateFormat(currentService?.subsInfo?.current_period_end * 1000) : '-' }}
+                    template(v-else) 
+                        h5 -
+                router-link.list(:to='`/subscription/${currentService.service}`' style="width:23.5%;text-align:right") 
+                    button.final(v-if="new Date().getTime() < currentService?.subsInfo?.canceled_at") Resume Plan
+                    button.final(v-else) Manage Subscription
+
+        .info.card(:class="{'nonClickable' : !account?.email_verified || currentService.active == 0 || currentService.active == -1}") 
             .inner
                 .title 
                     .logoTitle
                         .material-symbols-outlined.big group
                         h4 Users
-                    router-link.material-symbols-outlined.arrowIcon.mid(:to='`/dashboard/${currentService.service}/users`') arrow_forward_ios
+                    router-link.material-symbols-outlined.arrowIcon.mid(:to='`/myServices/${currentService.service}/users`') arrow_forward_ios
                 .contWrap.noWrap
                     .cont 
                         h6 # of Users
@@ -90,18 +147,18 @@ main#service
                     .cont(style="width:unset;")
                         h6 Creating User
                         .customSelect
-                            select(:value="currentService.prevent_signup ? 'admin' : 'anyone'" @change="(e) => changeCreateUserMode(e)" style="color:#293FE6")
+                            select(:value="currentService.prevent_signup ? 'admin' : 'anyone'" @change="(e) => changeCreateUserMode(e)" style="color:var(--main-color);")
                                 option(value="admin") Only Admin allowed 
                                 option(value="anyone") Anyone allowed
-                            .material-symbols-outlined.mid.search.selectArrowDown(style="right:-30px;top:66%;color:#293FE6") arrow_drop_down
+                            .material-symbols-outlined.mid.search.selectArrowDown(style="right:-30px;top:66%;color:var(--main-color);") arrow_drop_down
 
-        .info.card(:class="{'nonClickable' : !account?.email_verified || currentService.active == 0}") 
+        .info.card(:class="{'nonClickable' : !account?.email_verified || currentService.active == 0 || currentService.active == -1}") 
             .inner
                 .title 
                     .logoTitle
                         .material-symbols-outlined.big database
                         h4 Database
-                    router-link.material-symbols-outlined.arrowIcon.mid(:to='`/dashboard/${currentService.service}/records`') arrow_forward_ios
+                    router-link.material-symbols-outlined.arrowIcon.mid(:to='`/myServices/${currentService.service}/records`') arrow_forward_ios
                 .contWrap.noWrap
                     .cont 
                         h6 # of database storage Used
@@ -110,13 +167,13 @@ main#service
                         h6 # of cloud storage Used
                         p {{ convertToMb(storageInfo?.[currentService.service]?.cloud) }}
 
-        .info.card(:class="{'nonClickable' : !account?.email_verified || currentService.active == 0}") 
+        .info.card(:class="{'nonClickable' : !account?.email_verified || currentService.active == 0 || currentService.group == 1 || currentService.active == -1}") 
             .inner
                 .title 
                     .logoTitle
                         .material-symbols-outlined.big mail
                         h4 Mail
-                    router-link.material-symbols-outlined.arrowIcon.mid(:to='`/dashboard/${currentService.service}/mail`' :class="{'nonClick' : account.access_group == 1}") arrow_forward_ios
+                    router-link.material-symbols-outlined.arrowIcon.mid(:to='`/myServices/${currentService.service}/mail`' :class="{'nonClick' : account.access_group == 1}") arrow_forward_ios
                 .contWrap.noWrap
                     template(v-if="account.access_group == 1")
                         .cont(style="width:100%; padding:0;")
@@ -129,13 +186,13 @@ main#service
                             h6 # Mail storage used 
                             p {{ convertToMb(storageInfo?.[currentService.service]?.email) }}
 
-        .info.card(:class="{'nonClickable' : !account?.email_verified || currentService.active == 0}") 
+        .info.card(:class="{'nonClickable' : !account?.email_verified || currentService.active == 0 || currentService.group == 1 || currentService.active == -1}") 
             .inner
                 .title 
                     .logoTitle
                         .material-symbols-outlined.big language
                         h4 Hosting
-                    router-link.material-symbols-outlined.arrowIcon.mid(:to='`/dashboard/${currentService.service}/subdomain`' :class="{'nonClick' : account.access_group == 1}") arrow_forward_ios
+                    router-link.material-symbols-outlined.arrowIcon.mid(:to='`/myServices/${currentService.service}/subdomain`' :class="{'nonClick' : account.access_group == 1}") arrow_forward_ios
                 .contWrap.noWrap
                     template(v-if="account.access_group == 1")
                         .cont(style="width:100%; padding:0;")
@@ -148,21 +205,33 @@ main#service
                             h6 Host storage used
                             p {{ convertToMb(storageInfo?.[currentService.service]?.host) }}
 
-    .deleteWrap(:class="{'nonClickable' : !account?.email_verified || currentService.active == 0}")
-        .deleteInner(@click="!account?.email_verified ? false : openDeleteService = true;")
-            .material-symbols-outlined.mid delete
-            span Delete Service
+    br
+
+    section.deleteWrap(v-if="currentService.active < 0 || currentService.group == 1 || currentService.group == 51" :class="{'nonClickable' : !account?.email_verified || currentService.active == 0}")
+        h4 Delete Service
+        
+        br
+
+        ul.desc
+            li Deleting the service will permanently erase all data. Recovery is not possible. The service plan will also be immediately canceled, and the remaining days will be prorated and refunded.
+
+        br
+
+        .btn(@click="!account?.email_verified ? false : openDeleteService = true;" style="display:block;text-align:right;")
+            button.unFinished.warning Delete Service
+
 DisableServiceOverlay(v-if="openDisableService" @close="disableService")
 DeleteService(v-if="openDeleteService" @close="openDeleteService = false;")
 </template>
 
 <script setup>
-import { computed, nextTick, ref, watch } from 'vue';
+import { computed, nextTick, ref, watch, onMounted } from 'vue';
 import { useRouter } from 'vue-router';
-import { currentService, storageInfo } from '@/data.js';
+import { currentService, storageInfo, serviceFetching } from '@/data.js';
 import { skapi, account, domain } from '@/main.js';
 import DisableServiceOverlay from '@/views/Service/DisableServiceOverlay.vue';
 import DeleteService from '@/components/DeleteService.vue';
+import PlanCaution from '@/components/PlanCaution.vue';
 
 const router = useRouter();
 let convertToMb = (size) => {
@@ -173,6 +242,17 @@ let convertToMb = (size) => {
         return '-'
     }
 }
+let dateFormat = (timestamp) => {
+    let currentDate = new Date(timestamp);
+    let year = currentDate.getFullYear();
+    let month = ('0' + (currentDate.getMonth() + 1)).slice(-2);
+    let day = ('0' + currentDate.getDate()).slice(-2);
+    let dateStr = `${year}-${month}-${day}`;
+
+    return dateStr;
+}
+console.log(currentService.value)
+let showPlanCaution = ref(false);
 let modifyServiceName = ref(false);
 let modifyCors = ref(false);
 let modifyKey = ref(false);
@@ -185,6 +265,100 @@ let enableDisablePromise = ref(false);
 let promiseRunningCors = ref(false);
 let promiseRunningSecKey = ref(false);
 let promiseRunning = ref(false);
+let secretKeyEdit = ref(false);
+let secretKeyAdd = ref(false);
+let keyEditForm = ref(null);
+let clientSecretKey =ref([]);
+let clientSecretState =ref([]);
+let clientCopy = [];
+
+if(!currentService.value.client_secret) {
+    clientSecretKey.value = []
+} else {
+    clientSecretKey.value = [];
+    clientSecretKey.value.push(currentService.value.client_secret); 
+    let keys = Object.keys(clientSecretKey.value[0]);
+    let values = Object.values(clientSecretKey.value[0]);
+    for(let i=0; i<keys.length; i++) {
+        clientSecretState.value.push({ key: keys[i], value: values[i], keyAdd : false, keyEdit : false});
+    }
+}
+
+let addSecretKey = () => {
+    clientSecretState.value.unshift({ key: '', value: '', keyEdit: false, keyAdd: true });
+    secretKeyAdd.value = true;
+    clientCopy = JSON.parse(JSON.stringify(clientSecretState.value));
+    nextTick(() => {
+        document.getElementById('keyName').focus();
+    });
+}
+let editSecretKey = (index) => {
+    clientSecretState.value[index].keyEdit=true;
+    secretKeyEdit.value=true;
+    clientCopy = JSON.parse(JSON.stringify(clientSecretState.value))
+}
+let saveSecretKey = (index) => {
+    promiseRunning.value = true;
+    if(clientSecretState.value.length > 1) {
+        if (secretKeyEdit.value && clientCopy[index].key == clientSecretState.value[index].key && clientCopy[index].value == clientSecretState.value[index].value) {
+            clientSecretState.value[index].keyEdit=false;
+            secretKeyEdit.value=false;
+            promiseRunning.value = false;
+            return;
+        }
+    }
+
+    let data = clientSecretState.value;
+    let keyValue = {};
+    let newVersion = [];
+    for(let d of data) {
+        keyValue[d.key] = d.value;
+        newVersion.push({ key: d.key, value: d.value, keyAdd : false, keyEdit : false});
+    }
+    clientSecretState.value = newVersion;
+
+    skapi.setServiceOption({
+        serviceId: currentService.value.service,
+        option: {
+            client_secret: keyValue
+        }
+    }).then(s=>{
+        console.log({s});
+        for(let i=0; i<clientSecretState.value.length; i++) {
+            clientSecretState.value[i].keyAdd = false;
+            clientSecretState.value[i].keyEdit = false;
+        }
+        secretKeyEdit.value = false;
+        secretKeyAdd.value = false;
+        promiseRunning.value = false;
+    });
+}
+let checkKeyInp = (index) => {
+    if(secretKeyEdit.value) {
+        console.log(clientCopy[index])
+
+        if(clientCopy[index].key !== clientSecretState.value[index].key || clientCopy[index].value !== clientSecretState.value[index].value) {
+            clientSecretState.value[index].key = clientCopy[index].key;
+            clientSecretState.value[index].value = clientCopy[index].value;
+        }
+    } else if(secretKeyAdd.value) {
+        clientSecretState.value.splice(index, 1);
+        secretKeyEdit.value=false;
+        secretKeyAdd.value=false;
+
+        return;
+    }
+    clientSecretState.value[index].keyEdit=false;
+    clientSecretState.value[index].keyAdd=false;
+    secretKeyEdit.value=false;
+    secretKeyAdd.value=false;
+}
+let removeKey = (index) => {
+    let data = clientSecretState.value[index];
+    clientSecretState.value.splice(index, 1);
+    secretKeyEdit.value = false;
+    saveSecretKey();
+}
 let currentSubdomain = computed(() => {
     if (currentService.value.subdomain) {
         if (currentService.value.subdomain[0] === '*' || currentService.value.subdomain[0] === '+') {
@@ -197,25 +371,6 @@ let currentSubdomain = computed(() => {
         return 'No subdomain';
     }
 });
-// let clicked = (e) => {
-//     let target = e.currentTarget;
-
-//     target.classList.add('clicked');
-//     setTimeout(() => {
-//         if (target.classList.contains('user')) {
-//             router.push({ path: `/dashboard/${currentService.value.service}/users` });
-//         }
-//         if (target.classList.contains('record')) {
-//             router.push({ path: `/dashboard/${currentService.value.service}/records` });
-//         }
-//         if (target.classList.contains('mail')) {
-//             router.push({ path: `/dashboard/${currentService.value.service}/mail` });
-//         }
-//         if (target.classList.contains('domain')) {
-//             router.push({ path: `/dashboard/${currentService.value.service}/subdomain` });
-//         }
-//     }, 200);
-// }
 let editServiceName = () => {
     if (account.value?.email_verified) {
         inputServiceName = currentService.value.name;
@@ -263,16 +418,19 @@ let changeServiceName = () => {
     if (currentService.value.name !== inputServiceName) {
         let previous = currentService.value.name;
 
-        promiseRunning.value = true;
+        // promiseRunning.value = true;
+        serviceFetching.value = true;
 
         skapi.updateService(currentService.value.service, {
             name: inputServiceName
         }).then(() => {
-            promiseRunning.value = false;
+            // promiseRunning.value = false;
+            serviceFetching.value = false;
             currentService.value.name = inputServiceName;
             modifyServiceName.value = false;
         }).catch(err => {
-            promiseRunning.value = false;
+            // promiseRunning.value = false;
+            serviceFetching.value = false;
             currentService.value.name = previous;
             throw err;
         });
@@ -369,6 +527,14 @@ let disableService = (e) => {
     openDisableService.value = false;
 }
 
+watch(() => currentService.value?.subsInfo?.cancel_at_period_end, (newValue) => {
+    if (newValue) {
+        showPlanCaution.value = true;
+    }
+    else {
+        showPlanCaution.value = false;
+    }
+}, { immediate: true, deep: true });
 watch(modifyServiceName, () => {
     if (modifyServiceName.value) {
         nextTick(() => {
@@ -402,6 +568,7 @@ watch(modifyCors, () => {
     flex-wrap: wrap;
 
     .info {
+        position: relative;
         width: 49%;
         padding: 2rem;
         background-color: #fafafa !important;
@@ -411,7 +578,8 @@ watch(modifyCors, () => {
         filter: drop-shadow(0px 2px 4px rgba(0, 0, 0, 0.10));
 
         &:first-child,
-        &:nth-child(2) {
+        &:nth-child(2),
+        &:nth-child(3) {
             width: 100%;
             margin-right: 0;
         }
@@ -425,8 +593,8 @@ watch(modifyCors, () => {
             }
         }
 
-        &:nth-child(4),
-        &:nth-child(6) {
+        &:nth-child(5),
+        &:nth-child(7) {
             margin-right: 0;
         }
 
@@ -457,6 +625,89 @@ watch(modifyCors, () => {
         &.card {
             padding-top: 1.4rem;
             border: 0;
+        }
+
+        .row {
+            height: 44px;
+            line-height: 44px;
+
+            h5, h6 {
+                display: inline-block;
+                vertical-align: middle;
+            }
+            h5 {
+                color: var(--secondary-text);
+                font-weight: 400;
+                &.blue {
+                    color: var(--main-color);
+                    font-weight: 700;
+                }
+            }
+            h6 {
+                width: 120px;
+                color: rgba(0,0,0,0.4);
+                font-weight: 400;
+            }
+        }
+
+        .toggleWrap {
+            position: absolute;
+            top: 2rem;
+            right: 2rem;
+            display: inline-block;
+            opacity: 1;
+
+            &.locked {
+                opacity: 0.4;
+            }
+
+            &.active {
+                .toggleBg {
+                    background-color: var(--main-color);
+
+                    .toggleBtn {
+                        transform: translate(31px, -50%);
+                        transition: all 0.3s;
+                    }
+                }
+            }
+
+            span {
+                color: rgba(0, 0, 0, 0.40);
+                font-size: 0.8rem;
+                font-weight: 400;
+            }
+
+            .toggleBg {
+                position: relative;
+                display: inline-block;
+                vertical-align: middle;
+                width: 63px;
+                height: 32px;
+                margin-left: 1rem;
+                border-radius: 16px;
+                background-color: rgba(0, 0, 0, 0.6);
+                transition: all 0.3s;
+
+                &.nonClickable {
+                    .toggleBtn {
+                        cursor: default;
+                    }
+                }
+                .toggleBtn {
+                    position: absolute;
+                    width: 26px;
+                    height: 26px;
+                    right: unset;
+                    left: 3px;
+                    top: 50%;
+                    transform: translateY(-50%);
+                    border-radius: 50%;
+                    background-color: #eee;
+                    transition: all 0.3s;
+                    cursor: pointer;
+                }
+            }
         }
 
         .title {
@@ -492,71 +743,14 @@ watch(modifyCors, () => {
                     span {
                         color: rgba(0, 0, 0, 0.40);
                         font-size: 0.8rem;
-                        font-weight: 500;
+                        font-weight: 400;
                         margin-right: 10px;
                     }
 
                     h6 {
                         display: inline-block;
                         color: rgba(0, 0, 0, 0.60);
-                    }
-                }
-
-                .toggleWrap {
-                    display: inline-block;
-                    margin-left: 30px;
-                    opacity: 1;
-
-                    &.locked {
-                        opacity: 0.4;
-                    }
-
-                    &.active {
-                        .toggleBg {
-                            background-color: #293FE6;
-
-                            .toggleBtn {
-                                transform: translate(31px, -50%);
-                                transition: all 0.3s;
-                            }
-                        }
-                    }
-
-                    span {
-                        color: rgba(0, 0, 0, 0.40);
-                        font-size: 0.8rem;
-                        font-weight: 500;
-                    }
-
-                    .toggleBg {
-                        position: relative;
-                        display: inline-block;
-                        vertical-align: middle;
-                        width: 63px;
-                        height: 32px;
-                        margin-left: 1rem;
-                        border-radius: 16px;
-                        background-color: rgba(0, 0, 0, 0.6);
-                        transition: all 0.3s;
-
-                        &.nonClickable {
-                            .toggleBtn {
-                                cursor: default;
-                            }
-                        }
-                        .toggleBtn {
-                            position: absolute;
-                            width: 26px;
-                            height: 26px;
-                            right: unset;
-                            left: 3px;
-                            top: 50%;
-                            transform: translateY(-50%);
-                            border-radius: 50%;
-                            background-color: #eee;
-                            transition: all 0.3s;
-                            cursor: pointer;
-                        }
+                        font-weight: 400;
                     }
                 }
             }
@@ -577,7 +771,6 @@ watch(modifyCors, () => {
 
             .question {
                 margin: 0;
-                margin-left: 32px;
                 cursor: pointer;
 
                 .material-symbols-outlined {
@@ -598,13 +791,13 @@ watch(modifyCors, () => {
 
         .question {
             text-decoration: none;
-            color: #293FE6;
+            color: var(--main-color);
             font-size: 0.8rem;
             font-weight: 500;
 
             &.help {
                 position: absolute;
-                left: 9rem;
+                left: 10rem;
                 top: 50%;
                 transform: translateY(-50%);
                 color: rgba(0, 0, 0, 0.40);
@@ -629,11 +822,12 @@ watch(modifyCors, () => {
             }
 
             .list {
+                position: relative;
                 width: 48%;
                 margin-top: 28px;
 
                 h6 {
-                    font-weight: 500;
+                    font-weight: 400;
                     color: rgba(0, 0, 0, 0.4);
 
                     &.active {
@@ -645,19 +839,112 @@ watch(modifyCors, () => {
                 h5 {
                     position: relative;
                     display: inline-block;
+                    vertical-align: middle;
                     font-size: 16px;
-                    font-weight: 700;
+                    font-weight: 400;
                     color: rgba(0, 0, 0, 0.6);
                     margin-top: 8px;
 
-                    .pen {
-                        position: absolute;
-                        right: -50px;
-                        top: 50%;
-                        transform: translateY(-50%);
+                }
+                .pen {
+                    margin-left: 5px;
+                }
+                .addBtn {
+                    position: absolute;
+                    top: 0;
+                    right: 0;
+                    cursor: pointer;
+
+                    * {
+                        font-size: 14px;
+                        color: var(--main-color);
                     }
                 }
+                .keyWrap {
+                    height: 128px;
+                    border-radius: 8px;
+                    border: 1px solid rgba(0, 0, 0, 0.10);
+                    margin-top: 12px;
+                    overflow-y: auto;
+                    padding: 8px 16px;
 
+                    .empty {
+                        line-height: 110px;
+                        color: rgba(0, 0, 0, 0.4);
+                        font-size: 0.8rem;
+                        font-weight: 500;
+                        text-align: center;
+                    }
+                    .key {
+                        margin-bottom: 12px;
+                        &:last-child {
+                            margin-bottom: 0;
+                        }
+                        &.edit {
+                            .inputWrap {
+                                &.edit {
+                                    #keyName {
+                                        width: calc(33% - 42px);
+                                    }
+                                }
+                            }
+                        }
+                    }
+                    .material-symbols-outlined {
+                        cursor: pointer;
+                    }
+                    .minus {
+                        margin-right: 8px;
+                        color: var(--secondary-text);
+                    }
+                    .inputWrap {
+                        display: inline-block;
+                        width: calc(100% - 62px);
+                    }
+                    .buttonWrap {
+                        display: inline-block;
+                        width: 62px;
+                        text-align: right;
+                        vertical-align: middle;
+                        .save {
+                            margin: 0 5px 0 9px;
+                            color: var(--main-color);
+                        }
+                        .edit {
+                            color: var(--secondary-text);
+
+                            &.none {
+                                display: none;
+                            }
+                        }
+                    }
+                    input {
+                        border: 0;
+                        border-bottom: 1px solid rgba(0, 0, 0, 0.80);
+                        background-color: unset;
+                        color: var(--secondary-text);
+                    }
+                    #keyName {
+                        display: inline-block;
+                        vertical-align: middle;
+                        width: 30%;
+                        height: 20px;
+                        margin-right: 4%;
+                        font-size: 14px;
+                        color: var(--secondary-text);
+                    }
+                    #secretKey {
+                        display: inline-block;
+                        vertical-align: middle;
+                        width: 66%;
+                        height: 20px;
+                        font-size: 14px;
+                        color: var(--secondary-text);
+                        white-space: nowrap;
+                        overflow: hidden;
+                        text-overflow: ellipsis;
+                    }
+                }
             }
         }
 
@@ -730,25 +1017,18 @@ watch(modifyCors, () => {
     }
 }
 
-.deleteWrap {
-    display: flex;
-    flex-wrap: nowrap;
-    justify-content: flex-end;
-    color: #F04E4E;
-    margin-top: 20px;
+.desc {
+    li {
+        color: var(--secondary-text);
+        line-height: 1.4rem;
+        margin-left: 1rem;
 
-    .deleteInner {
-        width: 150px;
-        display: flex;
-        flex-wrap: nowrap;
-        align-items: center;
-        cursor: pointer;
-
+        &::marker {
+            color: var(--primary-text);
+        }
         span {
-            margin-left: 14px;
-            font-size: 16px;
+            color: var(--primary-text);
             font-weight: 700;
-            line-height: 24px;
         }
     }
 }
@@ -765,6 +1045,24 @@ watch(modifyCors, () => {
 @media (max-width:767px) {
     .infoWrap {
         .info {
+            .toggleWrap {
+                position: relative;
+                top: unset;
+                right: unset;
+
+                .toggleBg {
+                    margin-left: 2rem;
+                }
+            }
+            &:nth-child(3) {
+                .listWrap {
+                    .list {
+                        &:nth-child(3) {
+                            margin-bottom: 28px;
+                        }
+                    }
+                }
+            }
             >.title {
                 display: block;
 
@@ -782,9 +1080,14 @@ watch(modifyCors, () => {
             .listWrap {
                 display: block;
                 .list {
-                    width: unset;
+                    width: unset !important;
+                    text-align: left !important;
                     .customInput {
                         max-width: unset;
+                    }
+                    .addBtn {
+                        position: relative;
+                        text-align: right;
                     }
                 }
             }

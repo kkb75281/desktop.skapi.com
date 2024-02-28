@@ -2,7 +2,8 @@ import { createRouter, createWebHistory, useRoute } from 'vue-router'
 import Main from '@/views/Main.vue'
 import Signup from '@/views/Signup.vue'
 import Login from '@/views/Login.vue'
-import Dashboard from '@/views/DashboardView.vue'
+import MyServices from '@/views/MyServices.vue'
+import Subscription from '@/views/Subscription/Subscription.vue'
 import LandingPage from '@/views/LandingPage.vue'
 import AccountSettings from '@/views/AccountSettings.vue'
 import ServiceMain from '@/views/Service/Main.vue'
@@ -35,6 +36,11 @@ const router = createRouter({
       component: Signup
     },
     {
+        path: '/subscription/:service',
+        name: 'subscription',
+        component: Subscription
+    },
+    {
       path: '/confirmation',
       name: 'confirmation',
       component: () => import('@/views/ResendConfirmation.vue')
@@ -50,11 +56,6 @@ const router = createRouter({
       component: () => import('@/views/EmailConfirmed.vue')
     },
     {
-      path: '/privacy',
-      name: 'privacy',
-      component: () => import('@/views/Privacy.vue')
-    },
-    {
       path: '/bye',
       name: 'bye',
       component: () => import('@/views/Byebye.vue')
@@ -64,17 +65,22 @@ const router = createRouter({
       component: Main,
       children: [
         {
+          path: '/experiment',
+          name: 'experiment',
+          component: () => import('@/views/experiment/experiment.vue')
+        },
+        {
           path: 'accountSettings',
           name: 'accountSettings',
           component: AccountSettings
         },
         {
-          path: 'dashboard',
-          name: 'dashboard',
-          component: Dashboard
+          path: 'myServices',
+          name: 'myServices',
+          component: MyServices
         },
         {
-          path: '/dashboard/:service',
+          path: '/myServices/:service',
           component: ServiceMain,
           children: [
             {

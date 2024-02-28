@@ -7,8 +7,8 @@ main#subdomain
                 .refresh.clickable(:class="{'nonClickable' : !account.email_verified || subdomainState || refreshCDNRun}" @click='refreshCdn()')
                     .material-symbols-outlined.mid(:class="{'rotate_animation': refreshCDNRun}" title="refresh") cached
                     span Refresh CDN
-                .delete.clickable(:class="{'nonClickable' : !account.email_verified || subdomainState || currentService.active == 0}" @click='showDeleteSubdomain = true;')
-                    .material-symbols-outlined.mid(title="delete") delete
+                .delete.clickable(:class="{'nonClickable' : !account.email_verified || subdomainState || currentService.active <= 0}" @click='showDeleteSubdomain = true;')
+                    .material-symbols-outlined.mid delete
                     span Delete
         br
 
@@ -31,12 +31,12 @@ main#subdomain
                         p {{ computedSubdomain }}
                             a.link(:href="'http://' + computedSubdomain + '.' + domain" target="_blank" title="link")
                                 .material-symbols-outlined.sml link
-                        .material-symbols-outlined.mid.clickable(@click="modifySudomain=true;" :class="{'nonClickable' : !account.email_verified || currentService.active == 0}" title="edit") edit
+                        .material-symbols-outlined.mid.clickable(@click="modifySudomain=true;" :class="{'nonClickable' : !account.email_verified || currentService.active <= 0}") edit
             .setting
                 h6.tit HTML file for 404 page
                 .cont.line
                     p {{ subdomainInfo?.[computedSubdomain]?.['404'] || "Upload a file"}}
-                    .customFile(:class="{'nonClickable' : !account.email_verified || currentService.active == 0}")
+                    .customFile(:class="{'nonClickable' : !account.email_verified || currentService.active <= 0}")
                         template(v-if="set404PromiseRunning")
                             img.loading(style='position: absolute;right: 1em;top: 8px;' src="@/assets/img/loading.png")
                         template(v-else)
@@ -48,7 +48,7 @@ main#subdomain
                                 span Upload
                             input#file404(hidden type="file" @change="set404" accept='text/html')
 
-        template(v-else-if="account.access_group == 1")
+        template(v-else-if="currentService.group == 1")
             div(style="text-align:center; background-color:rgba(0,0,0,0.05); padding: 2rem 0; border-radius: 8px;")
                 p(style="color: rgba(0, 0, 0, 0.6); font-size: 0.8rem; font-weight: 500; line-height: 1.5;") Trial service does not provide hosting.
 
@@ -62,7 +62,7 @@ main#subdomain
                 .label Register Subdomain
                 .input
                     input#modifySudomain(@input='e=>e.target.setCustomValidity("")' :disabled="subdomainPromiseRunning || null" type="text" placeholder="Name of Subdomain" required minlength='5' pattern='[a-z0-9]+' title='Subdomain should be lowercase alphanumeric.')
-                .btn(:class="{'nonClickable': !account.email_verified || currentService.active == 0}" style='cursor:pointer')
+                .btn(:class="{'nonClickable': !account.email_verified || currentService.active <= 0}" style='cursor:pointer')
                     template(v-if="subdomainPromiseRunning")
                         img.loading(src="@/assets/img/loading.png")
                     template(v-else)
@@ -80,7 +80,7 @@ main#subdomain
 
             .filesButtonWrap
                 // file menu
-                .menu(@click.stop="showEdit = !showEdit" :class='{"nonClickable": !checkedFiles.length || !account.email_verified || currentService.active == 0}' title="menu")
+                .menu(@click.stop="showEdit = !showEdit" :class='{"nonClickable": !checkedFiles.length || !account.email_verified || currentService.active <= 0}')
                     .material-symbols-outlined.mid.clickable(title="menu") more_vert
                     #moreVert(v-if="showEdit" @click.stop style="--moreVert-right: 0;")
                         .inner
@@ -91,10 +91,10 @@ main#subdomain
                                 .material-symbols-outlined.mid delete
                                 span delete
                 .menu.material-symbols-outlined.mid.refresh.clickable(title="refresh" :class='{"rotate_animation": fetching }' @click='refresh(searchDir)') cached
-                .menu(:class='{"nonClickable": !account.email_verified || currentService.active == 0}' @click="showRemoveAllFiles = true;")
-                    .material-symbols-outlined.mid.clickable(title="delete") delete
+                .menu(:class='{"nonClickable": !account.email_verified || currentService.active <= 0}' @click="showRemoveAllFiles = true;")
+                    .material-symbols-outlined.mid.clickable delete
                     span(style="font-weight:700") Empty storage
-                .customFile(:class="{'nonClickable': !account.email_verified || Object.keys(fileList).length || currentService.active == 0}")
+                .customFile(:class="{'nonClickable': !account.email_verified || Object.keys(fileList).length || currentService.active <= 0}")
                     label.uploadBtn(for="files")
                         .material-symbols-outlined.mid(title="upload") upload
                         span Upload
@@ -911,7 +911,7 @@ document.addEventListener('mouseup', function () {
                     vertical-align: middle;
 
                     &.refresh {
-                        color: #293FE6;
+                        color: var(--main-color);
                     }
 
                     &.delete {
@@ -938,17 +938,16 @@ document.addEventListener('mouseup', function () {
             label {
                 display: block;
                 width: 105px;
-                // border: 2px solid #293FE6;
                 border-radius: 8px;
                 text-align: center;
-                color: #293FE6;
+                color: var(--main-color);
                 cursor: pointer;
 
                 span {
                     margin-left: 8px;
                     font-size: 0.8rem;
                     font-weight: 700;
-                    color: #293FE6;
+                    color: var(--main-color);
                 }
             }
 
@@ -1062,14 +1061,13 @@ document.addEventListener('mouseup', function () {
                     span {
                         font-size: 0.8rem;
                         font-weight: 500;
-                        color: rgba(0,0,0,0.6);
+                        color: var(--secondary-text);
                         margin-left: 8px;
                     }
                 }
 
                 .refresh {
-                    color: rgba(0,0,0,0.6);
-                    // color: #293FE6;
+                    color: var(--secondary-text);
                 }
             }
         }
@@ -1213,11 +1211,11 @@ document.addEventListener('mouseup', function () {
             position: relative;
 
             p {
-                color: rgba(0,0,0,0.6);
+                color: var(--secondary-text);
                 font-size: 0.8rem;
 
                 a {
-                    color: #293FE6;
+                    color: var(--main-color);
                     font-weight: 700;
                 }
             }
@@ -1227,7 +1225,7 @@ document.addEventListener('mouseup', function () {
                     width: 100%;
                     font-size: 0.8rem;
                     font-weight: 700;     
-                    color: rgba(0,0,0,0.6);
+                    color: var(--secondary-text);
                     margin-bottom: 0.5rem;
                 }
                 .input {
@@ -1280,7 +1278,7 @@ document.addEventListener('mouseup', function () {
                         color: #FFF;
                         font-size: 0.8rem;
                         font-weight: 700;
-                        background: #293FE6;
+                        background: var(--main-color);
                         box-shadow: 0px -1px 1px 0px rgba(0, 0, 0, 0.15) inset;
                     }
                     .loading {
@@ -1412,7 +1410,7 @@ document.addEventListener('mouseup', function () {
                     // height: 40px;
                     // line-height: 40px;
                     padding: 8px 20px;
-                    color: rgba(0,0,0,0.6);
+                    color: var(--secondary-text);
 
                     &::after {
                         position: absolute;

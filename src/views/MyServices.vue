@@ -1,5 +1,5 @@
 <template lang="pug">
-main#dashboard
+main#myServices
     .createButton(@click="createService" :class="{'nonClickable' : !account?.email_verified}")
         .material-symbols-outlined.mid add
         span Create new service
@@ -12,9 +12,9 @@ main#dashboard
                     th.th.center(style="width:128px;")
                         | Name of Service
                         .resizer(@mousedown="mousedown")
-                    th.th.center(style="width:140px;")
-                        | Locale
-                        .resizer(@mousedown="mousedown")
+                    //- th.th.center(style="width:140px;")
+                    //-     | Locale
+                    //-     .resizer(@mousedown="mousedown")
                     th.th.center(style="width:160px;")
                         | Cors
                         .resizer(@mousedown="mousedown")
@@ -23,6 +23,9 @@ main#dashboard
                         .resizer(@mousedown="mousedown")
                     th.th.center(style="width:120px;")
                         | Plan
+                        .resizer(@mousedown="mousedown")
+                    th.th.center(style="width:120px;")
+                        | State
                         .resizer(@mousedown="mousedown")
                     th.th.center(style="width:140px;")
                         | Users
@@ -43,47 +46,60 @@ main#dashboard
                                 .material-symbols-outlined.sml.power power_settings_new
                         td
                             .overflow {{ service.name }}
-                        td
-                            .overflow {{ regions?.[service.region] || service.region }}
+                        //- td
+                        //-     .overflow {{ regions?.[service.region] || service.region }}
                         td
                             .overflow {{ service.cors }}
-                        td.center {{ typeof service.timestamp === 'string' ? service.timestamp : new Date(service.timestamp).toDateString() }}
+                        //- td.center {{ typeof service.timestamp === 'string' ? service.timestamp : new Date(service.timestamp).toDateString() }}
+                        td.center {{ dateFormat(service.timestamp) }}
                         td.center
-                            template(v-if="service.group == 1") Trial
-                            template(v-else-if="service.group == 2") Standard
-                            template(v-else-if="service.group == 3") Premium
-                            template(v-else-if="service.group == 50") Unlimited
-                            template(v-else-if="service.group == 51") Free Standard
+                            template(v-if="skapi.services[service.service].group == 1") Trial
+                            template(v-else-if="skapi.services[service.service].group == 2") Standard
+                            template(v-else-if="skapi.services[service.service].group == 3") Premium
+                            template(v-else-if="skapi.services[service.service].group == 50") Unlimited
+                            template(v-else-if="skapi.services[service.service].group == 51") Free Standard
                             template(v-else) ...
                         td.center
-                            template(v-if="service.group == 50")
+                            template(v-if="service?.subsInfo") 
+                                template(v-if="service?.subsInfo?.cancel_at_period_end") 
+                                    .state(style="color:var(--caution-color)") Canceled
+                                template(v-else-if="service.active == -1") 
+                                    .state(style="color:#FCA642") Suspended
+                                template(v-else style="color:#52D687") 
+                                    .state(style="color:#52D687") Running
+                            template(v-else)
+                                .state(style="color:#52D687") Running
+                        td.center
+                            template(v-if="skapi.services[service.service].group == 50")
                                 .percent.purple Unlimited
-                            template(v-else-if="service.group !== 50 && Math.ceil(service.users/10000*100)")
+                            template(v-else-if="skapi.services[service.service].group !== 50 && Math.ceil(service.users/10000*100)")
                                 .percent(:class='{"green": 0 <= Math.ceil(service.users/10000*100) && Math.ceil(service.users/10000*100) < 51, "orange": 51 <= Math.ceil(service.users/10000*100) && Math.ceil(service.users/10000*100) < 81, "red": 81 <= Math.ceil(service.users/10000*100) && Math.ceil(service.users/10000*100) < 101}') {{ Math.ceil(service.users/10000*100) + '%' }}
                             template(v-else)
                                 .percent.green 0%
                         td.center
-                            template(v-if="service.group == 50")
+                            template(v-if="skapi.services[service.service].group == 50")
                                 .percent.purple Unlimited
-                            template(v-else-if="service.group !== 50 && Math.ceil(storageInfo?.[service.service]?.cloud/53687091200*100)")
+                            template(v-else-if="skapi.services[service.service].group !== 50 && Math.ceil(storageInfo?.[service.service]?.cloud/53687091200*100)")
                                 .percent(:class='{"green": 0 <= Math.ceil(storageInfo?.[service.service]?.cloud/53687091200*100) && Math.ceil(storageInfo?.[service.service]?.cloud/53687091200*100) < 51, "orange": 51 <= Math.ceil(storageInfo?.[service.service]?.cloud/53687091200*100) && Math.ceil(storageInfo?.[service.service]?.cloud/53687091200*100) < 81, "red": 81 <= Math.ceil(storageInfo?.[service.service]?.cloud/53687091200*100)}') {{ Math.ceil(storageInfo?.[service.service]?.cloud/53687091200*100) + '%' }}
                             template(v-else)
                                 .percent.green 0%
                         td(style="padding-left:40px;")
-                            template(v-if="service.group == 50")
+                            template(v-if="skapi.services[service.service].group == 50")
                                 .percent.purple Unlimited
-                            template(v-else-if="service.group !== 50 && Math.ceil(storageInfo?.[service.service]?.database/4294967296*100)")
+                            template(v-else-if="skapi.services[service.service].group !== 50 && Math.ceil(storageInfo?.[service.service]?.database/4294967296*100)")
                                 .percent(:class='{"green": 0 <= Math.ceil(storageInfo?.[service.service]?.database/4294967296*100) && Math.ceil(storageInfo?.[service.service]?.database/4294967296*100) < 51, "orange": 51 <= Math.ceil(storageInfo?.[service.service]?.database/4294967296*100) && Math.ceil(storageInfo?.[service.service]?.database/4294967296*100) < 81, "red": 81 <= Math.ceil(storageInfo?.[service.service]?.database/4294967296*100)}') {{ Math.ceil(storageInfo?.[service.service]?.database/4294967296*100) + '%' }}
                             template(v-else)
                                 .percent.green 0%
-                            .menu(@click.stop="(e) => showPlanSetting(e, index)" :class='{"nonClickable": !account.email_verified}')
-                                .material-symbols-outlined.mid.clickable more_vert
+                            //- .menu(@click.stop="(e) => showPlanSetting(e, index)" :class='{"nonClickable": !account.email_verified}')
+                            //-     .material-symbols-outlined.mid.clickable more_vert
                     tr.cont(ref="trCont" :class="{'active' : showInfo}")
                         td(colspan="9")
-                            br
                             .info
                                 h6 Name
-                                span {{ service.name }}
+                                span(style="color:var(--primary-text);font-weight:700") {{ service.name }}
+                            .info 
+                                h6 Service ID 
+                                span {{ service.service }}
                             .info 
                                 h6 CORS 
                                 span {{ service.cors }}
@@ -96,7 +112,13 @@ main#dashboard
                                 span {{ convertToMb(storageInfo?.[service.service]?.database) + '/4000MB' }}
                             .info.inline 
                                 h6 Subscription Plan
-                                span Standard
+                                router-link(:to="`/subscription/${service.service}`" style="color:var(--main-color);font-weight:700;")
+                                    template(v-if="skapi.services[service.service].group == 1") Trial
+                                    template(v-else-if="skapi.services[service.service].group == 2") Standard
+                                    template(v-else-if="skapi.services[service.service].group == 3") Premium
+                                    template(v-else-if="skapi.services[service.service].group == 50") Unlimited
+                                    template(v-else-if="skapi.services[service.service].group == 51") Free Standard
+                                    template(v-else) ...
                             .info.inline 
                                 h6 Hosting Strorage
                                 template(v-if="service?.subdomain")
@@ -120,19 +142,18 @@ main#dashboard
                                     span {{ service.subdomain }}
                                 template(v-else)
                                     span -
-                tr.loadingWrap(v-else-if="serviceFetching")
-                    td(colspan="9" style="text-align:center; padding-top:20px;")
-                        img.loading(src="@/assets/img/loading.png")
                 tr.noServices(v-else)
                     td(colspan="9" style="text-align:center; padding-top:20px;")
                         h3 No Services
                         br
                         p Get started by creating a new service.
+    .loadingWrap(v-if="serviceFetching" style="text-align:center; padding-top:20px;")
+        img.loading(src="@/assets/img/loading.png")
     br
     .plus(style="display:block;text-align:center;padding-bottom:2rem;")
-        .material-symbols-outlined.big(@click="createService" style="color:#293FE6;cursor:pointer;") add_circle
+        .material-symbols-outlined.big(@click="createService" style="color:var(--main-color);cursor:pointer;") add_circle
     
-    #moreVert.hide(v-if="showMore" @click.stop style="--moreVert-right: 100px;" :style="{top: clientY}")
+    //- #moreVert.hide(v-if="showMore" @click.stop style="--moreVert-right: 100px;" :style="{top: clientY}")
         .inner
             .more(@click="showMore=false;" style="width:unset;white-space:nowrap;opacity:0.2") Downgrade Plan
             .more(@click="showMore=false;" style="width:unset;white-space:nowrap;opacity:0.2") Upgrade Plan
@@ -160,7 +181,7 @@ main#dashboard
 
             br
 
-            .card.clicked.nonClickable(:class="{'checked' : serviceMode == 'trial'}" @click="serviceMode='trial'" style="border-radius:8px;cursor:pointer;")
+            .card.clicked(:class="{'checked' : serviceMode == 'trial'}" @click="serviceMode='trial'" style="border-radius:8px;cursor:pointer;")
                 .inner
                     .title 
                         h4 Trial Mode
@@ -187,10 +208,11 @@ main#dashboard
                     .title 
                         h4(style="display:inline-block;") Standard Mode
                         .right(style="display:inline-block; text-align:right;")
-                            .free 
-                                span (Only for promotion period)
-                                p(style="display:inline-block; margin-left:10px") Free
-                            .price.discount $19
+                            //- .free 
+                            //-     span (Only for promotion period)
+                            //-     p(style="display:inline-block; margin-left:10px") Free
+                            //- .price.discount $19
+                            .price $19
                     .contWrap(style="justify-content:space-between;")
                         ul
                             li 
@@ -219,7 +241,7 @@ main#dashboard
         
             br
 
-            .card.clicked.nonClickable(:class="{'checked' : serviceMode == 'premium'}" @click="serviceMode='premium'" style="border-radius:8px;cursor:pointer;")
+            .card.clicked(:class="{'checked' : serviceMode == 'premium'}" @click="serviceMode='premium'" style="border-radius:8px;cursor:pointer;")
                 .inner
                     .title 
                         h4 Premium Mode
@@ -256,19 +278,25 @@ main#dashboard
             br
         footer
             .buttonWrap(style="display:flex; justify-content:space-between;")
-                template(v-if="promiseRunning")
-                    img.loading(src="@/assets/img/loading.png")
-                template(v-else)
-                    button.noLine(type="button" @click="closeCreateService") Cancel 
-                    button.final(type="submit") Create
+                //- template(v-if="promiseRunning")
+                //-     img.loading(src="@/assets/img/loading.png")
+                //- template(v-else)
+                button.noLine(@click="closeCreateService") Cancel 
+                button.final(type="submit") Create
                     //- button.unFinished(v-else type="submit") Create
-            
+
+#proceeding(v-if="promiseRunning")   
+    .inner    
+        img.loading(src="@/assets/img/loading_white.png")
+        br
+        br
+        h5 Proceeding...
 </template>
 
 <script setup>
 import { computed, nextTick, onBeforeUnmount, onMounted, ref } from 'vue';
 import { useRouter } from 'vue-router';
-import { skapi, account, bodyClick } from '@/main.js';
+import { skapi, account, bodyClick, customer } from '@/main.js';
 import { services, serviceFetching, storageInfo } from '@/data.js';
 import { launch, subdomainInfo } from '@/views/Service/Subdomain/SubdomainFetch.js';
 
@@ -284,6 +312,7 @@ let serviceMode = ref('standard');
 let searchFor = ref('service');
 let searchText = ref('');
 let showInfo = ref(false);
+let promiseRunning = ref(false);
 let tr = ref(null);
 let downArrow = ref(null);
 let upArrow = ref(null);
@@ -294,6 +323,16 @@ let showMore = ref(false);
 let clientY = 0;
 // let inputError = ref(false);
 let error = ref('');
+
+let dateFormat = (timestamp) => {
+    let currentDate = new Date(timestamp);
+    let year = currentDate.getFullYear();
+    let month = ('0' + (currentDate.getMonth() + 1)).slice(-2);
+    let day = ('0' + currentDate.getDate()).slice(-2);
+    let dateStr = `${year}.${month}.${day}`;
+
+    return dateStr;
+}
 
 let convertToMb = (size) => {
     if (size) {
@@ -350,7 +389,7 @@ let goServiceDashboard = (e, service) => {
     e.currentTarget.classList.add('active');
 
     setTimeout(() => {
-        router.push('/dashboard/' + service.service);
+        router.push('/myServices/' + service.service);
     }, 500);
 }
 
@@ -406,6 +445,34 @@ document.addEventListener('mouseup', function () {
     document.removeEventListener('mousemove', mouseMoveHandler);
 });
 
+let getSubscription = async(service_info) => {
+    if(service_info?.subs_id) {
+        let subs_id = service_info.subs_id.split('#');
+    
+        if (subs_id.length < 2) {
+            alert('Service does not have a subscription');
+            return;
+        }
+    
+        let SUBSCRIPTION_ID = subs_id[0];
+    
+        skapi.clientSecretRequest({
+            clientSecretName: 'stripe_test',
+            url: `https://api.stripe.com/v1/subscriptions/${SUBSCRIPTION_ID}`,
+            method: 'GET',
+            headers: {
+                Authorization: 'Bearer $CLIENT_SECRET',
+                'Content-Type': 'application/x-www-form-urlencoded'
+            },
+        }).then(res => {
+            service_info.subsInfo = res;
+            skapi.services[service_info.service].subsInfo = res;
+        }).catch(err => {
+            console.log(err.message);
+        });
+    }
+}
+
 let getServiceInfo = () => {
     if (services.value) {
         for(let i=0; i<services.value.length; i++) {
@@ -434,6 +501,7 @@ let getServiceInfo = () => {
                     storageInfo.value[service].host = u.size;
                 });
             }
+            getSubscription(services.value[i]);
         }
     }
 }
@@ -441,12 +509,12 @@ let getServiceInfo = () => {
 // update services
 if (serviceFetching.value) {
     serviceFetching.value.then(() => {
-        services.value = skapi.serviceMap.map(sid => skapi.services[sid]).reverse();
+        // services.value = skapi.serviceMap.map(sid => skapi.services[sid]).reverse();
         getServiceInfo();
     })
 }
 else {
-    services.value = skapi.serviceMap.map(sid => skapi.services[sid]).reverse();
+    // services.value = skapi.serviceMap.map(sid => skapi.services[sid]).reverse();
     getServiceInfo();
 }
 
@@ -468,7 +536,6 @@ let closeCreateService = () => {
     document.querySelector('body').classList.remove('overflow');
 }
 let newServiceName = '';
-let promiseRunning = ref(false);
 let addService = () => {
     promiseRunning.value = true;
     if(newServiceName == '') {
@@ -477,30 +544,81 @@ let addService = () => {
 
         return;
     }
-    services.value.unshift({
-        service: '',
-        name: newServiceName,
-        region: '...',
-        created_locale: '...',
-        timestamp: '...',
-        group: '...',
-        cors: '...',
-        pending: true,
-        active: 0
-    });
+    // services.value.unshift({
+    //     service: '',
+    //     name: newServiceName,
+    //     region: '...',
+    //     created_locale: '...',
+    //     timestamp: '...',
+    //     group: '...',
+    //     cors: '...',
+    //     pending: true,
+    //     active: 0
+    // });
     skapi.createService({ name: newServiceName })
-        .then(s => {
+        .then(async(s) => {
+            console.log({s});
             skapi.insertService(s);
-            services.value[0] = s;
-            newServiceName = '';
-            closeCreateService();
+            // services.value[0] = s;
+            services.value.unshift(s);
+            if(serviceMode.value == 'trial') {
+                newServiceName = '';
+                closeCreateService();
+                promiseRunning.value = false;
+            } else {
+                let service_info = s;
+                let ticket_id = serviceMode.value;
+                await createSubscription(ticket_id, service_info);
+                await getSubscription(service_info);
+                newServiceName = '';
+                closeCreateService();
+                promiseRunning.value = false;
+            }
         }).catch(err => {
+            promiseRunning.value = false;
             // alert(err.message);
             console.log(err)
             services.value.shift();
         })
-        .finally(_ => promiseRunning.value = false)
 }
+
+let createSubscription = async (ticket_id, service_info) => {
+    let resolvedCustomer = await customer;
+    let product = JSON.parse(import.meta.env.VITE_PRODUCT);
+    let customer_id = resolvedCustomer.id;
+    let currentUrl = window.location;
+
+    let response = await skapi.clientSecretRequest({
+        clientSecretName: 'stripe_test',
+        url: 'https://api.stripe.com/v1/checkout/sessions',
+        method: 'POST',
+        headers: {
+            Authorization: 'Bearer $CLIENT_SECRET',
+            'Content-Type': 'application/x-www-form-urlencoded'
+        },
+        data: {
+            client_reference_id: account.value.user_id,
+            customer: customer_id,
+            'customer_update[name]': 'auto',
+            'customer_update[address]': 'auto',
+            'subscription_data[metadata][service]': service_info.service,
+            'subscription_data[metadata][owner]': account.value.user_id,
+            'mode': 'subscription',
+            'subscription_data[description]': 'Subscription Plan of service ID: ' + service_info.service,
+            cancel_url: currentUrl.origin + '/myServices',
+            "line_items[0][quantity]": 1,
+            'line_items[0][price]': product[ticket_id],
+            "success_url": currentUrl.origin + '/myServices?checkout_id={CHECKOUT_SESSION_ID}&service_id=' + service_info.service + '&ticket_id=' + ticket_id,
+            'tax_id_collection[enabled]': true,
+        }
+    });
+    if (response.error) {
+        alert(response.error.message);
+        return;
+    }
+
+    window.location = response.url;
+};
 
 const regions = {
     'us-west-2': 'US',
@@ -521,7 +639,7 @@ skapi.getProfile().then(u => {
 </script>
 
 <style lang="less" scoped>
-#dashboard {
+#myServices {
     position: relative;
     height: calc(100vh - 60px - 3.4rem);
     margin-top: 3.4rem;
@@ -560,7 +678,7 @@ skapi.getProfile().then(u => {
                     ul {
                         li {
                             .li {
-                                color: #293FE6;
+                                color: var(--main-color);
                             }
                         }
                     }
@@ -574,7 +692,7 @@ skapi.getProfile().then(u => {
                         ul {
                             li {
                                 .li {
-                                    color: #293FE6;
+                                    color: var(--main-color);
                                 }
                             }
                         }
@@ -585,17 +703,17 @@ skapi.getProfile().then(u => {
         .inner {
             .title {
                 font-weight: 500;
-                color: #293FE6;
+                color: var(--main-color);
 
                 .free {
                     position: relative;
                     display: inline-block;
-                    color: #293FE6;
+                    color: var(--main-color);
                     font-size: 1.2rem;
                     font-weight: 700;
 
                     span {
-                        color: rgba(0,0,0,0.6);
+                        color: var(--secondary-text);
                         font-size: 0.7rem;
                         font-weight: 400;
                     }
@@ -604,14 +722,14 @@ skapi.getProfile().then(u => {
                 .price {
                     position: relative;
                     display: inline-block;
-                    padding-right: 60px;
+                    padding-right: 35px;
                     padding-left: 10px;
                     font-size: 28px;
                     font-weight: 700;
 
                     &::before {
                         position: absolute;
-                        content: '/month';
+                        content: '/mo';
                         right: 0;
                         top: 50%;
                         transform: translateY(-50%);
@@ -626,9 +744,9 @@ skapi.getProfile().then(u => {
                         &::after {
                             position: absolute;
                             content: '';
-                            width: 50%;
+                            width: 62%;
                             height: 2px;
-                            left: 5px;
+                            left: 6px;
                             top: 50%;
                             transform: translateY(-50%);
                             background-color: #A7A8AD;
@@ -662,7 +780,7 @@ skapi.getProfile().then(u => {
         border-bottom: 1px solid rgba(0, 0, 0, 0.10);
         box-shadow: 0px 1px 3px 0px rgba(0, 0, 0, 0.06);
         .title {
-            color: #293FE6;
+            color: var(--main-color);
         }
     }
     main {
@@ -718,13 +836,36 @@ skapi.getProfile().then(u => {
     }
 }
 
+#proceeding {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background-color: rgba(0,0,0,0.25);
+    z-index: 9999999;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+
+    .loading {
+        width: 2rem;
+        height: 2rem;
+    }
+    h5 {
+        color: #fff;
+    }
+}
+
 .createButton {
     display: inline-block;
     // height: 40px;
     padding: 6px 28px 8px;
     border-radius: 8px;
     border: 1px solid #D9D9D9;
-    color: #293FE6;
+    color: var(--main-color);
     cursor: pointer;
     
     * {
@@ -834,7 +975,7 @@ skapi.getProfile().then(u => {
             font-weight: 400;
 
             tr {
-                &:not(.cont, .active, .loadingWrap, .noServices):hover {
+                &:not(.cont, .active, .noServices):hover {
                     background-color: rgba(41,63,230,0.05);
                     cursor: pointer;
                 }
@@ -842,7 +983,7 @@ skapi.getProfile().then(u => {
                     background-color: rgba(41, 63, 230, 0.10);
                 }
                 &.cont {
-                    height: 250px;
+                    height: 305px;
                     background-color: rgba(0, 0, 0, 0.02);
                     display: none;
 
@@ -878,7 +1019,7 @@ skapi.getProfile().then(u => {
                         }
                     }
                 }
-                &.loadingWrap, &.noServices {
+                &.noServices {
                     td {
                         &::after {
                             display: none !important;
@@ -924,7 +1065,7 @@ skapi.getProfile().then(u => {
                         background-color: #FCA642;
                     }
                     &.red {
-                        background-color: #F04E4E;
+                        background-color: var(--caution-color);
                     }
                     &.purple {
                         background-color: #B881FF;

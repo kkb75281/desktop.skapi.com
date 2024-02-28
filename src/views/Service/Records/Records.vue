@@ -103,7 +103,7 @@ main#database
                         div(style='display: inline-flex;align-items: center;width:108px;height: 43px;')
                             img.loading(style='padding:0' src="@/assets/img/loading.png")
                     template(v-else)
-                        input.clear(type="reset" value="Clear filter" @click="clearSearchFilter" style="border:0;background-color:unset;color: #293FE6 !important;font-size: 0.8rem;font-weight: 700; cursor:pointer;font-family:'Radio Canada';")
+                        input.clear(type="reset" value="Clear filter" @click="clearSearchFilter" style="border:0;background-color:unset;color:var(--main-color) !important;font-size: 0.8rem;font-weight: 700; cursor:pointer;font-family:'Radio Canada';")
                         button.final(type="submit" style="margin-left:2rem;font-family:'Radio Canada'") Search
 
     section#section 
@@ -347,7 +347,7 @@ main#database
                             span Add data
 
                 // right panel top right menu
-                .menu(:class='{"nonClickable": !account.email_verified || currentService.active == 0}' v-if="!recordInfoEdit" @click.stop="showEdit = !showEdit") 
+                .menu(:class='{"nonClickable": !account.email_verified || currentService.active <= 0}' v-if="!recordInfoEdit" @click.stop="showEdit = !showEdit") 
                     // drop down menu (no edit)
                     .material-symbols-outlined.mid.clickable more_vert
                     #moreVert(v-if="showEdit" @click.stop style="--moreVert-right: 0")
@@ -447,9 +447,9 @@ main#database
         // top menu of record list
         .tableHeader 
             .actions 
-                .material-symbols-outlined.mid.refresh.clickable(@click='()=>{selectedRecord=null; refresh(fetchParams);}' :class='{"rotate_animation": fetching }' title="refresh") cached
-                .material-symbols-outlined.mid.create.clickable(:class="{'nonClickable' : !account.email_verified || currentService.active == 0}" @click="()=>{ !account.email_verified ? false : selectedRecord = JSON.parse(JSON.stringify(createRecordTemplate)); recordInfoEdit=true; }" title="add record") note_stack_add
-                .menu(:class='{"nonClickable": !checkedRecords.length || !account.email_verified || currentService.active == 0}' @click.stop="!account.email_verified ? false : showRecordSetting = !showRecordSetting" title="menu") 
+                .material-symbols-outlined.mid.refresh.clickable(@click='()=>{selectedRecord=null; refresh(fetchParams);}' :class='{"rotate_animation": fetching }') cached
+                .material-symbols-outlined.mid.create.clickable(:class="{'nonClickable' : !account.email_verified || currentService.active <= 0}" @click="()=>{ !account.email_verified ? false : selectedRecord = JSON.parse(JSON.stringify(createRecordTemplate)); recordInfoEdit=true; }") note_stack_add
+                .menu(:class='{"nonClickable": !checkedRecords.length || !account.email_verified || currentService.active <= 0}' @click.stop="!account.email_verified ? false : showRecordSetting = !showRecordSetting") 
                     .material-symbols-outlined.mid.clickable more_vert
                     #moreVert(v-if="showRecordSetting" @click.stop style="--moreVert-left: 0")
                         .inner
@@ -1157,10 +1157,10 @@ watch(() => selectedRecord.value, () => {
                 font-size: 0.8rem;
                 padding: 0 1rem;
                 font-weight: 500;
-                color: rgba(0,0,0,0.6);
+                color: var(--secondary-text);
             }
             .selectArrowDown {
-                color: rgba(0,0,0,0.6);
+                color: var(--secondary-text);
             }
         }
 
@@ -1477,7 +1477,7 @@ watch(() => selectedRecord.value, () => {
                     }
 
                     &.save {
-                        color: #293FE6;
+                        color: var(--main-color);
                     }
 
                     &::after {
@@ -1535,7 +1535,7 @@ watch(() => selectedRecord.value, () => {
                 right: 20px;
                 bottom: 20px;
                 border-radius: 50%;
-                background-color: #293FE6;
+                background-color: var(--main-color);
                 color: #fff;
                 padding: 7px;
                 cursor: pointer;
@@ -1920,7 +1920,7 @@ watch(() => selectedRecord.value, () => {
                         }
 
                         &.fileUpload {
-                            color: #293FE6;
+                            color: var(--main-color);
                             font-size: 14px;
                             font-weight: 500;
                             border-bottom: 0;
@@ -1989,7 +1989,7 @@ watch(() => selectedRecord.value, () => {
                 .addDataRow {
                     text-align: center;
                     padding: 6px 0;
-                    color: #293FE6;
+                    color: var(--main-color);
                     background-color: rgba(41, 63, 230, 0.05);
                     border-radius: 4px;
                     font-size: 0.7rem;
@@ -2024,7 +2024,7 @@ watch(() => selectedRecord.value, () => {
         .createForm {
             .header {
                 .tit {
-                    color: #293FE6;
+                    color: var(--main-color);
                     font-size: 0.8rem;
                     font-weight: 700;
                 }
@@ -2069,7 +2069,7 @@ watch(() => selectedRecord.value, () => {
 
             .create {
                 margin-right: 1rem;
-                color: #293FE6;
+                color: var(--main-color);
             }
 
             .menu {

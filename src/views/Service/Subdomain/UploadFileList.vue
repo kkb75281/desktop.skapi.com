@@ -8,7 +8,7 @@
             .material-symbols-outlined.big(v-else @click="hideList = false;") expand_less
             .material-symbols-outlined.mid(:class="{'nonClickable' : props.uploadingPromise}" @click="emits('cancel')" style="margin-left:10px") close
     .progressBar
-        .progress(:style="{ width: props.wholeProgress + '%', height: '100%', background: '#293FE6', position: 'absolute' }")
+        .progress(:style="{ width: props.wholeProgress + '%', height: '100%', background: 'var(--main-color)', position: 'absolute' }")
     .content   
         .listWrap 
             .list(v-for="(file, key, idx) in fileList" :class="hideDuplicateFolder(fileList, key, idx)" :key="idx")
@@ -106,7 +106,7 @@ let hideDuplicateFolder = (fileList, key, idx) => {
                 margin-right: 20px;
                 font-size: 16px;
                 font-weight: 700;
-                color: #293FE6;
+                color: var(--main-color);
             }
         }
     }
@@ -141,7 +141,7 @@ let hideDuplicateFolder = (fileList, key, idx) => {
                 align-items: center;
                 flex-wrap: nowrap;
                 margin-left: 12px;
-                color: rgba(0,0,0,0.6);
+                color: var(--secondary-text);
 
                 .type {
                     margin-right: 20px;

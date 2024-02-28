@@ -1,20 +1,21 @@
 <template lang="pug">
-header#navBar(style='--position: relative;')
+header#navBar(style='--position: relative; --background-color:unset;' :style="style")
     nav#top
         .left
             router-link.logo(to="/")
                 template(v-if="route.name == 'home'")
                     img.full(src="@/assets/img/logo/logo-white.svg")
                     img.symbol(src="@/assets/img/logo/symbol-logo-white.png" style="image-orientation: none;")
-                template(v-else-if="route.name == 'dashboard' || route.name == 'accountSettings'")
+                template(v-else-if="route.name == 'myServices' || route.name == 'accountSettings'")
                     img.full(src="@/assets/img/logo/logo.png")
                     img.symbol(src="@/assets/img/logo/symbol-logo.png" style="image-orientation: none;")
-                //- img(v-else-if="route.name == 'dashboard' || route.name == 'accountSettings'" src="@/assets/img/logo/logo.png")
+                //- img(v-else-if="route.name == 'myServices' || route.name == 'accountSettings'" src="@/assets/img/logo/logo.png")
                 img.small(v-else src="@/assets/img/logo/symbol-logo.png")
         .right(:class="{'flex' : route.params.service && currentService}")
             .topRoute(v-if="route.params.service && currentService" ref="topRoute") 
-                router-link.service(:to="`/dashboard/${currentService.service}`") 
-                    h5 {{ currentService.name }}
+                router-link.service(:to="`/myServices/${currentService.service}`") 
+                    h5(v-if="serviceFetching") ...
+                    h5(v-else) {{ currentService.name }}
             .topMenu(:class="{'white' : route.name == 'home'}")
                 template(v-if="account")
                     ul
@@ -22,13 +23,13 @@ header#navBar(style='--position: relative;')
                             a(href="https://twitter.com/skapijs" target="_blank")
                                 img(src="@/assets/img/icon/twitter.svg")
                         li
-                            a(href="https://discord.gg/SnNjFPYZMa" target="_blank")
+                            a(href="https://discord.com/invite/thqvysPnQt" target="_blank")
                                 img(src="@/assets/img/icon/discord.svg")
                     ul
                         li.doc
                             a(href="https://docs.skapi.com" target="_blank") Documentation
                         li.dash
-                            router-link(to="/dashboard") My Services
+                            router-link(to="/myServices") My Services
                         li.account(@click.stop="accountInfo = !accountInfo") {{ account.email.charAt(0).toUpperCase() }}
                 template(v-else)
                     ul
@@ -50,6 +51,9 @@ header#navBar(style='--position: relative;')
                 //- img(v-if="account.approved.includes('ggl')" src="@/assets/img/icon/google.svg" style="display:inline-block;width:20px;height:20px;vertical-align:middle;margin-right:10px;")
                 span {{ account.email }}
             .settings 
+                .setting(@click="openCustomerPortal")
+                    span.material-symbols-outlined.sml credit_card
+                    span Billing
                 .setting(@click="navigateToPage")
                     span.material-symbols-outlined.sml settings
                     span Account Settings
@@ -57,20 +61,32 @@ header#navBar(style='--position: relative;')
                     span.material-symbols-outlined.sml logout
                     span Logout
             a.policy
-                router-link(to="/privacy" target="_blank") terms of service ● privacy policy
+                router-link(to="public/pp.html" target="_blank") terms of service ● privacy policy
+
+#proceeding(v-if="running")   
+    .inner    
+        img.loading(src="@/assets/img/loading_white.png")
+        br
+        br
+        h5 Page Loading
 </template>
 
 <script setup>
 import { onBeforeUnmount, onMounted, ref } from 'vue'
 import { useRouter, useRoute } from 'vue-router';
-import { skapi, account, bodyClick } from '@/main';
-import { services, currentService, storageInfo, serviceUsers } from '@/data';
+import { skapi, account, bodyClick, customer } from '@/main';
+import { services, currentService, storageInfo, serviceUsers, serviceFetching } from '@/data';
 import { serviceRecords } from '@/views/Service/Records/RecordFetch';
 
 let route = useRoute();
 let router = useRouter();
 let topRoute = ref(null);
 let accountInfo = ref(false);
+let running = ref(false);
+
+let props = defineProps({
+  style: Object
+});
 
 bodyClick.nav = ()=>{
     accountInfo.value = false;
@@ -100,6 +116,29 @@ let logout = async () => {
     router.push({ path: '/' });
 }
 
+let openCustomerPortal = async () => {
+    running.value = true;
+
+    let resolvedCustomer = await customer;
+
+    skapi.clientSecretRequest({
+        clientSecretName: 'stripe_test',
+        url: `https://api.stripe.com/v1/billing_portal/sessions`,
+        method: 'POST',
+        headers: {
+            Authorization: 'Bearer $CLIENT_SECRET',
+            'Content-Type': 'application/x-www-form-urlencoded'
+        },
+        data: {
+            customer: resolvedCustomer.id,
+            return_url: window.location.origin + route.path
+        }
+    }).then(response => {
+        window.location = response.url;
+        running.value = false;
+    });
+}
+
 let resize = () => {
     if(topRoute.value) {
         if (window.innerWidth < 1024) {
@@ -119,6 +158,29 @@ onBeforeUnmount(() => {
 </script>
 
 <style lang="less" scoped>
+#proceeding {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background-color: rgba(0,0,0,0.25);
+    z-index: 9999999;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+
+    .loading {
+        width: 2rem;
+        height: 2rem;
+    }
+    h5 {
+        color: #fff;
+    }
+}
+
 #top {
     position: var(--position);
     left: 0;
@@ -204,7 +266,7 @@ onBeforeUnmount(() => {
     
                     &.active {
                         a {
-                            color: #293FE6;
+                            color: var(--main-color);
                         }
                     }
     
@@ -216,7 +278,7 @@ onBeforeUnmount(() => {
             .service {
                 // display: none;
                 text-decoration: none;
-                color: #293FE6;
+                color: var(--main-color);
             }
         }
 
@@ -290,7 +352,7 @@ onBeforeUnmount(() => {
                     }
                     
                     a {
-                        color: rgba(0,0,0,0.6);
+                        color: var(--secondary-text);
                         text-decoration: none;
                         font-size: 1rem;
                         font-weight: 700;
@@ -314,7 +376,7 @@ onBeforeUnmount(() => {
                             border-radius: 8px;
                             font-size: 0.8rem;
                             font-weight: 700;
-                            background: #293FE6;
+                            background: var(--main-color);
                         }
     
                         img {
@@ -336,7 +398,7 @@ onBeforeUnmount(() => {
                         width: 2rem;
                         height: 2rem;
                         border-radius: 50%;
-                        background-color: #293FE6;
+                        background-color: var(--main-color);
                         color: #fff;
                         font-size: 1rem;
                         // display: flex;
@@ -381,6 +443,9 @@ onBeforeUnmount(() => {
             padding: 20px;
             border-bottom: 1px solid rgba(0, 0, 0, 0.15);
 
+            a {
+                text-decoration: none;
+            }
             .setting {
                 display: flex;
                 align-items: center;
@@ -388,7 +453,7 @@ onBeforeUnmount(() => {
                 cursor: pointer;
                 font-size: 0.8rem;
                 font-weight: 500;
-                color: #293FE6;
+                color: var(--main-color);
 
                 &:last-child {
                     margin-bottom: 0;
@@ -396,7 +461,7 @@ onBeforeUnmount(() => {
 
                 span {
                     &:first-child {
-                        fill: #293FE6;
+                        fill: var(--main-color);
                         margin-right: 10px;
                     }
                 }

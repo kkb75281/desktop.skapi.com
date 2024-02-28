@@ -1,5 +1,5 @@
 <template lang="pug">
-main#dashboard
+main#myServices
     .titleWrap
         .inner 
             h2 My Services
@@ -27,7 +27,7 @@ main#dashboard
                                 button(type="submit").create Create
 
                 template(v-if='services.length')
-                    router-link.box.card.clicked(v-for="service in services" :to="'/dashboard/' + service.service" :style='{opacity: service?.pending ? ".5" : null}')
+                    router-link.box.card.clicked(v-for="service in services" :to="'/myServices/' + service.service" :style='{opacity: service?.pending ? ".5" : null}')
                         .inner
                             .title 
                                 h4 {{ service.name }}
@@ -127,7 +127,7 @@ skapi.getProfile().then(u => {
 </script>
 
 <style lang="less" scoped>
-#dashboard {
+#myServices {
     position: relative;
     margin-top: 3.4rem;
 
@@ -205,7 +205,7 @@ skapi.getProfile().then(u => {
                     justify-content: center;
                     font-size: 1rem;
                     font-weight: 700;
-                    color: #293FE6;
+                    color: var(--main-color);
                     cursor: pointer;
 
                     .material-symbols-outlined {
@@ -219,7 +219,7 @@ skapi.getProfile().then(u => {
 
                     form {
                         h5 {
-                            color: #293FE6;
+                            color: var(--main-color);
                             font-weight: 500;
                             // margin-bottom: 20px;
                         }
@@ -252,11 +252,11 @@ skapi.getProfile().then(u => {
                                 &.cancel {
                                     padding-left: 10px;
                                     background-color: unset;
-                                    color: #293FE6;
+                                    color: var(--main-color);
                                 }
 
                                 &.create {
-                                    background-color: #293FE6;
+                                    background-color: var(--main-color);
                                     color: #fff;
                                 }
                             }
@@ -277,7 +277,7 @@ skapi.getProfile().then(u => {
 }
 
 @media (max-width: 1023px) {
-    #dashboard {
+    #myServices {
         .wrapper {
             .boxWrap {
                 .box {
@@ -303,7 +303,7 @@ skapi.getProfile().then(u => {
 }
 
 @media (max-width: 767px) {
-    #dashboard {
+    #myServices {
         .wrapper {
             .boxWrap {
                 .box {

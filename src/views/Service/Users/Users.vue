@@ -105,10 +105,10 @@ main#users
                                     label(for="timestamp")
                                         .material-symbols-outlined.mid.check check
                                         span Date Created
-                .material-symbols-outlined.mid.refresh(@click='refresh' :class='{"rotate_animation": fetching }' title="refresh") cached
-                .material-symbols-outlined.mid.create(:class="{'nonClickable' : !account.email_verified || currentService.active == 0}" @click="!account.email_verified ? false : inviteUserShow=true" title="invite User") mail
-                .material-symbols-outlined.mid.create(:class="{'nonClickable' : !account.email_verified || currentService.active == 0}" @click="!account.email_verified ? false : createUserShow=true" title="create User") person_add
-                .menu(:class='{"nonClickable": !checkedUsers.length || !account.email_verified || currentService.active == 0}' @click.stop="!account.email_verified ? false : showUserSetting = !showUserSetting" title="menu")
+                .material-symbols-outlined.mid.refresh(@click='refresh' :class='{"rotate_animation": fetching }') cached
+                .material-symbols-outlined.mid.create(:class="{'nonClickable' : !account.email_verified || currentService.active <= 0 }" @click="!account.email_verified ? false : inviteUserShow=true") mail
+                .material-symbols-outlined.mid.create(:class="{'nonClickable' : !account.email_verified || currentService.active <= 0 }" @click="!account.email_verified ? false : createUserShow=true") person_add
+                .menu(:class='{"nonClickable": !checkedUsers.length || !account.email_verified || currentService.active <= 0}' @click.stop="!account.email_verified ? false : showUserSetting = !showUserSetting")
                     .material-symbols-outlined.mid.clickable more_vert
                     #moreVert(v-if="showUserSetting" @click.stop style="--moreVert-left: 0")
                         .inner
@@ -720,7 +720,7 @@ onMounted(() => {
 
             .create {
                 margin-right: 1rem;
-                color: #293FE6;
+                color: var(--main-color);
             }
 
             .menu {
@@ -924,9 +924,9 @@ button.msgButton {
     padding: 0 28px;
     height: 44px;
     border-radius: 8px;
-    border: 2px solid #293FE6;
+    border: 2px solid var(--main-color);
     background-color: unset;
-    color: #293FE6;
+    color: var(--main-color);
     font-size: 16px;
     font-weight: 700;
     cursor: pointer;

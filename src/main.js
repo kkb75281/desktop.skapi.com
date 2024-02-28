@@ -6,11 +6,13 @@ import App from './App.vue'
 import router from './router'
 import Admin from '@/skapi-extensions/js/admin.js'
 
-console.log(import.meta.env.MODE, '02.02 17:40')
+console.log(import.meta.env.MODE, import.meta.env.VITE_DATE)
 let domain = import.meta.env.VITE_DOMAIN;
 let skapi = new Admin(import.meta.env.VITE_ADMIN, JSON.parse(import.meta.env.VITE_ETC), JSON.parse(import.meta.env.VITE_REG));
 
 let account = ref('pending');
+
+let customer = null;
 
 function generateNonce(length = 32) {
     let text = "";
@@ -61,13 +63,58 @@ if (url.hash) {
             window.localStorage.setItem('remember', 'true');
             // logged in!
             account.value = res;
-            router.push({ path: '/dashboard' });
+            router.push({ path: '/myServices' });
         });
     }
 }
 else {
     skapi.getProfile().then(u => {
         account.value = u;
+
+        let getCustomer = async () => {
+            let misc = JSON.parse(account.value?.misc || null);
+        
+            if (misc?.stripe_customer_id) {
+                // stripe_customer_id exists
+        
+                let customer_id = misc.stripe_customer_id;
+        
+                // get customer info, and update customer.value
+                customer = skapi.clientSecretRequest({
+                    clientSecretName: 'stripe_test',
+                    url: `https://api.stripe.com/v1/customers/${customer_id}`,
+                    method: 'GET',
+                    headers: {
+                        Authorization: 'Bearer $CLIENT_SECRET'
+                    }
+                });
+            }
+        
+            else {
+                // stripe_customer_id does not exist
+        
+                // create customer, save customer id in user misc
+                customer = skapi.clientSecretRequest({
+                    clientSecretName: 'stripe_test',
+                    url: 'https://api.stripe.com/v1/customers',
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/x-www-form-urlencoded',
+                        Authorization: 'Bearer $CLIENT_SECRET'
+                    },
+                    data: {
+                        name: account.value.name || account.value.email,
+                        email: account.value.email
+                    }
+                })
+        
+                // update customer id in user misc
+                account.value = await skapi.updateProfile({
+                    misc: JSON.stringify({ stripe_customer_id: (await customer).id })
+                });
+            }
+        };
+        getCustomer();
     }).catch(err => err);
 }
 
@@ -85,4 +132,4 @@ document.body.addEventListener('click', () => {
     }
 })
 
-export { skapi, account, bodyClick, googleOpenId, domain }
+export { skapi, account, bodyClick, googleOpenId, domain, customer }

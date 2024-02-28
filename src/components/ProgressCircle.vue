@@ -72,7 +72,7 @@ watch(() => props.percent, (value) => {
             top: 0;
             width: calc(@size / 2);
             height: @size;
-            border: calc(@size * 0.1) solid #293FE6;
+            border: calc(@size * 0.1) solid var(--main-color);
             box-sizing: border-box;
         }
     }
