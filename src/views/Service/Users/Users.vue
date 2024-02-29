@@ -122,8 +122,8 @@ main#users
                                 .material-symbols-outlined.mid delete
                                 span Delete
             .pagenator 
-                .material-symbols-outlined.sml.prevPage.clickable(:class='{"nonClickable": currentPage === 1 || fetching }' @click='e=>{currentPage--; nextTick(selectNone)}') arrow_back_ios
-                .material-symbols-outlined.sml.nextPage.clickable(:class='{"nonClickable": maxPage <= currentPage && userPage?.endOfList || fetching }' @click='nextPage') arrow_forward_ios
+                .material-symbols-outlined.sml.prevPage.clickable(:class='{"nonClickable": currentPage === 1 || fetching }' @click='e=>{currentPage--; nextTick(selectNone)}' title="prev page") arrow_back_ios
+                .material-symbols-outlined.sml.nextPage.clickable(:class='{"nonClickable": maxPage <= currentPage && userPage?.endOfList || fetching }' @click='nextPage' title="next page") arrow_forward_ios
         br
         br
         .tableWrap 

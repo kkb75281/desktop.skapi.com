@@ -5,7 +5,7 @@ main#subdomain
             h4.title Hosting
             .buttonWrap(v-if="currentService.subdomain") 
                 .refresh.clickable(:class="{'nonClickable' : !account.email_verified || subdomainState || refreshCDNRun}" @click='refreshCdn()')
-                    .material-symbols-outlined.mid(:class="{'rotate_animation': refreshCDNRun}") cached
+                    .material-symbols-outlined.mid(:class="{'rotate_animation': refreshCDNRun}" title="refresh") cached
                     span Refresh CDN
                 .delete.clickable(:class="{'nonClickable' : !account.email_verified || subdomainState || currentService.active <= 0}" @click='showDeleteSubdomain = true;')
                     .material-symbols-outlined.mid delete
@@ -29,7 +29,7 @@ main#subdomain
                 template(v-else)
                     .cont
                         p {{ computedSubdomain }}
-                            a.link(:href="'http://' + computedSubdomain + '.' + domain" target="_blank")
+                            a.link(:href="'http://' + computedSubdomain + '.' + domain" target="_blank" title="link")
                                 .material-symbols-outlined.sml link
                         .material-symbols-outlined.mid.clickable(@click="modifySudomain=true;" :class="{'nonClickable' : !account.email_verified || currentService.active <= 0}") edit
             .setting
@@ -41,10 +41,10 @@ main#subdomain
                             img.loading(style='position: absolute;right: 1em;top: 8px;' src="@/assets/img/loading.png")
                         template(v-else)
                             label.uploadBtn(v-if="subdomainInfo?.[computedSubdomain]?.['404']" @click='removeSet404')
-                                .material-symbols-outlined.mid cancel
+                                .material-symbols-outlined.mid(title="cancel") cancel
                                 span Remove
                             label.uploadBtn(for="file404" v-else)
-                                .material-symbols-outlined.mid upload
+                                .material-symbols-outlined.mid(title="upload") upload
                                 span Upload
                             input#file404(hidden type="file" @change="set404" accept='text/html')
 
@@ -210,7 +210,7 @@ let clientY = 0;
 let showfileSetting = (index) => {
     checkedFiles.value = [];
     clickedIndex = index-1;
-    console.log(files.value[clickedIndex+1])
+    // console.log(files.value[clickedIndex+1])
     clientY = 145 + (40 *(index-1)) + 'px';
 
     if(settingIndex == index-1 && showMore.value) {
@@ -218,7 +218,7 @@ let showfileSetting = (index) => {
         settingIndex = null;
         checkedFiles.value = [];
         uploadedFile.value[index-1].classList.remove('clicked');
-        console.log(checkedFiles.value)
+        // console.log(checkedFiles.value)
 
         return;
     }
@@ -233,7 +233,7 @@ let showfileSetting = (index) => {
     settingIndex = index-1;
     checkedFiles.value.push(files.value[index].path + "/" + files.value[index].name);
     uploadedFile.value[index-1].classList.add('clicked');
-    console.log(checkedFiles.value)
+    // console.log(checkedFiles.value)
 }
 
 let clickedFileList = (e, index) => {
@@ -257,7 +257,7 @@ let clickedFileList = (e, index) => {
     if(shiftKey.value) {
         initialCheckedFiles();
         endIndex.value = index-1;
-        console.log(startIndex.value, endIndex.value)
+        // console.log(startIndex.value, endIndex.value)
 
         for(let j = Math.min(startIndex.value, endIndex.value); j < Math.max(startIndex.value, endIndex.value) + 1; j++) {
             if(!uploadedFile.value[j].className.includes('clicked')) { 
@@ -268,7 +268,7 @@ let clickedFileList = (e, index) => {
         for(let k=0; k<file.length; k++) {
             checkedFiles.value.push(file[k].path + '/' + file[k].name);
         }
-        console.log(checkedFiles.value)
+        // console.log(checkedFiles.value)
         return;
     }
 
@@ -276,7 +276,7 @@ let clickedFileList = (e, index) => {
         checkedFiles.value.splice(removeIndex, 1);
         e.currentTarget.classList.remove('clicked');
         clickedIndex = null;
-        console.log(checkedFiles.value)
+        // console.log(checkedFiles.value)
 
         return;
     } 
@@ -284,10 +284,10 @@ let clickedFileList = (e, index) => {
     checkedFiles.value.push(e.currentTarget.id);
     e.currentTarget.classList.add('clicked');
     clickedIndex = index-1;
-    console.log(files.value[clickedIndex+1])
+    // console.log(files.value[clickedIndex+1])
 
     startIndex.value = index-1;
-    console.log(checkedFiles.value)
+    // console.log(checkedFiles.value)
 }
 
 let controlKey = ref(false);
@@ -456,7 +456,7 @@ let deleteSelectedFiles = async () => {
 }
 
 let selectedFileUrl = () => {
-    console.log(files.value[clickedIndex+1])
+    // console.log(files.value[clickedIndex+1])
 
     if(files.value[clickedIndex+1].name[0] === '#') {
         return files.value[clickedIndex+1].name; // is a folder
@@ -565,7 +565,7 @@ let removeSubdomain = e => {
 }
 
 let registerSubdomain = e => {
-    console.log(e)
+    // console.log(e)
     subdomainPromiseRunning.value = true;
     skapi.registerSubdomain(currentService.value.service, {
         subdomain: document.getElementById('modifySudomain').value,
@@ -674,8 +674,8 @@ let onDrop = async (event, files) => {
             allFiles.push({ file, path: file.name });
             formData.append('files[]', file, file.name);
         }
-        console.log(files)
-        console.log(allFiles)
+        // console.log(files)
+        // console.log(allFiles)
     }
     else {
         let items = event.dataTransfer.items;
@@ -683,7 +683,7 @@ let onDrop = async (event, files) => {
 
         for (let i = 0; i < items.length; i++) {
             let item = items[i].webkitGetAsEntry();
-            console.log(item.name)
+            // console.log(item.name)
 
             if (item) {
                 filePromises.push(traverseFileTree(item));
@@ -691,8 +691,8 @@ let onDrop = async (event, files) => {
             }
         }
 
-        console.log(items)
-        console.log(filePromises)
+        // console.log(items)
+        // console.log(filePromises)
 
 
         let allFileGroups = await Promise.all(filePromises);
@@ -702,7 +702,7 @@ let onDrop = async (event, files) => {
             formData.append('files[]', file, path);
         });
 
-        console.log(allFileGroups)
+        // console.log(allFileGroups)
 
     }
 

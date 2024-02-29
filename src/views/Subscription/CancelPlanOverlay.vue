@@ -58,7 +58,7 @@ let cancelSubscription = async () => {
         }
     });
 
-    console.log(response);
+    // console.log(response);
 
     if (response.error) {
         alert(response.error.message);
@@ -98,7 +98,7 @@ let resumeSubscription = async () => {
         }
     });
 
-    console.log(response);
+    // console.log(response);
 
     if (response.error) {
         alert(response.error.message);

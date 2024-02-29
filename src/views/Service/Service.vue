@@ -251,7 +251,7 @@ let dateFormat = (timestamp) => {
 
     return dateStr;
 }
-console.log(currentService.value)
+
 let showPlanCaution = ref(false);
 let modifyServiceName = ref(false);
 let modifyCors = ref(false);
@@ -323,7 +323,7 @@ let saveSecretKey = (index) => {
             client_secret: keyValue
         }
     }).then(s=>{
-        console.log({s});
+        // console.log({s});
         for(let i=0; i<clientSecretState.value.length; i++) {
             clientSecretState.value[i].keyAdd = false;
             clientSecretState.value[i].keyEdit = false;
@@ -335,7 +335,7 @@ let saveSecretKey = (index) => {
 }
 let checkKeyInp = (index) => {
     if(secretKeyEdit.value) {
-        console.log(clientCopy[index])
+        // console.log(clientCopy[index])
 
         if(clientCopy[index].key !== clientSecretState.value[index].key || clientCopy[index].value !== clientSecretState.value[index].value) {
             clientSecretState.value[index].key = clientCopy[index].key;

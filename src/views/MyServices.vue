@@ -245,7 +245,7 @@ main#myServices
                 .inner
                     .title 
                         h4 Premium Mode
-                        .price $129
+                        .price $89
                     .contWrap(style="justify-content:space-between;")
                         ul
                             li 
@@ -557,7 +557,7 @@ let addService = () => {
     // });
     skapi.createService({ name: newServiceName })
         .then(async(s) => {
-            console.log({s});
+            // console.log({s});
             skapi.insertService(s);
             // services.value[0] = s;
             services.value.unshift(s);

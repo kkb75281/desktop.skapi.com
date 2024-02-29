@@ -37,7 +37,7 @@ header#navBar(style='--position: relative; --background-color:unset;' :style="st
                             a(href="https://twitter.com/skapijs" target="_blank")
                                 img(src="@/assets/img/icon/twitter.svg")
                         li
-                            a(href="https://discord.com/channels/1164154380816236626/1164154380816236628" target="_blank")
+                            a(href="https://discord.gg/SnNjFPYZMa" target="_blank")
                                 img(src="@/assets/img/icon/discord.svg")
                     ul
                         li.doc 

@@ -60,7 +60,7 @@
                         td(:class="{'currentMode' : currentService.group == 3}" style="padding-top: 1.8rem;")
                             .mode
                                 p Premium Mode
-                                span.fee $129
+                                span.fee $89
                                 p(style="font-size:0.8rem") Billed monthly
                     tr
                         td(:class="{'currentMode' : currentService.group == 1}")
@@ -278,13 +278,13 @@ let getCurrentService = async () => {
         }
     }
 
-    console.log(currentService.value)
+    // console.log(currentService.value)
 }
 
 let checkDate = () => {
     let currentDate =+ new Date();
     let cancelDate = currentService.value.subsInfo.cancel_at * 1000;
-    console.log(currentDate, cancelDate)
+    // console.log(currentDate, cancelDate)
 
     if(currentDate > cancelDate || currentService.value.active == -1) {
         createPlan();
@@ -379,7 +379,7 @@ let updatePlan = async (ticket_id) => {
         }
     });
 
-    console.log(response);
+    // console.log(response);
     getCurrentService();
     serviceFetching.value = false;
 
