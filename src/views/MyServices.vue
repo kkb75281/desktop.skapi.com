@@ -67,8 +67,10 @@ main#myServices
                                     .state(style="color:#FCA642") Suspended
                                 template(v-else style="color:#52D687") 
                                     .state(style="color:#52D687") Running
-                            template(v-else)
+                            template(v-else-if="service.group == 1 || service.group == 51") 
                                 .state(style="color:#52D687") Running
+                            template(v-else)
+                                .state ...
                         td.center
                             template(v-if="skapi.services[service.service].group == 50")
                                 .percent.purple Unlimited
