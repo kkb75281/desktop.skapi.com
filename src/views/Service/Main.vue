@@ -184,6 +184,7 @@ else {
 @media (max-width:1023px) {
     #serviceMain {
         .left {
+            width: 88px;
             .back {
                 p {
                     display: none;
