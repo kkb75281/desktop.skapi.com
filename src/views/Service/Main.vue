@@ -167,7 +167,7 @@ else {
                 h3 {
                     padding-right: 50px;
                     margin-left: 13px;
-                    font-size: 20px;aaaa
+                    font-size: 20px;
                     font-weight: 500;
                 }
             }
