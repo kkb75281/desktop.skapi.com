@@ -513,6 +513,7 @@ if (serviceFetching.value) {
     serviceFetching.value.then(() => {
         // services.value = skapi.serviceMap.map(sid => skapi.services[sid]).reverse();
         getServiceInfo();
+        console.log(services.value)
     })
 }
 else {
